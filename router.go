@@ -405,11 +405,6 @@ func router() *echo.Echo {
 	//Admin City
 	admin.POST("/tes-sent-email", controllers.TestSentEmail).Name = "TestSentEmail"
 
-	//Motion Pay
-	// auth.GET("/motionpay-status", controllers.MotionPayStatus).Name = "MotionPayStatus"
-	// auth.POST("/motionpay-linking", controllers.LinkingMotionPay).Name = "LinkingMotionPay"
-	// auth.POST("/motionpay-unlinking", controllers.UnlinkingMotionPay).Name = "UnlinkingMotionPay"
-
 	//Admin OA Institusi
 	admin.GET("/oa-institution-data-cs", controllers.GetListOaInstitusiDataCS).Name = "GetListOaInstitusiDataCS"
 	admin.GET("/oa-institution-approve-cs", controllers.GetListOaInstitusiApproveCS).Name = "GetListOaInstitusiApproveCS"
