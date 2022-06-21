@@ -1,0 +1,5 @@
+mfbo_api.exe
+go.mod
+go.sum
+config/config.go
+mfbo_api
