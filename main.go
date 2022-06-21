@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"mf-bo-api/config"
 	"net/http"
 	"os"
 	"os/signal"
@@ -23,6 +24,11 @@ func main() {
 		}
 	}()
 
+	//cron running
+	if config.Envi == "PROD" {
+		// go scheduler()
+	}
+
 	// Wait for interrupt signal to gracefully shutdown the server
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
@@ -31,6 +37,6 @@ func main() {
 	if err := e.Shutdown(ctx); err != nil {
 		e.Logger.Fatal(err)
 	} else {
-		e.Logger.Info("MF-BO-API Gracefully shutdown")
+		e.Logger.Info("Gracefully shutdown")
 	}
 }

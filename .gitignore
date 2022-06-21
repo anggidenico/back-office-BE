@@ -1,5 +1,5 @@
-mfbo_api.exe
+mf-bo-api.exe
 go.mod
 go.sum
 config/config.go
-mfbo_api
+mf-bo-api

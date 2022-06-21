@@ -1,0 +1,168 @@
+<html>
+    <head>
+        <style>
+            body{
+                line-height: 25px;
+            }
+            .right td {
+                text-align: right;
+            }
+            .right {
+                text-align: right;
+            }
+                        .data-table td {
+                                border: 1px solid black;
+                        }
+        </style>
+    </head>
+    <body>
+        <table width="100%">
+            <tr>
+                <td style="text-align:center">
+                    <h1>ACCOUNT STATEMENT</h1>
+                    <h3>{{.Date}}</h3>
+                </td>
+            <tr>
+            <tr>
+                <td style="text-align:left">
+                    <img src="images/logo.PNG"/>
+                </td>
+            <tr>
+            <tr>
+                <td>
+                    <table width="100%">
+                        <tr>
+                            <td width="50%">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            No. CIF: {{.Cif}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            No. SID: {{.Sid}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            {{.Name}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            {{.Address}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            {{.City}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            {{.Country}}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td class="right" width="50%">
+                                <table width="100%">
+                                    <tr>
+                                        <td>
+                                            MNC ASSET MANAGEMENT
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            MNC Financial Center lt. 9 & 10
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Jl. Kebon Sirih No. 21-27
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Phone: (62-21) 2970 9600
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Fax: (62-21) 3983 6853/73
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td height="30px">
+                <td>
+            </tr>
+            <tr>
+                <td>
+                    <table width="100%" cellpadding="5" cellspacing="0" class="data-table">
+                        <tr>
+                            <td>
+                                Tanggal Transaksi
+                            </td>
+                            <td>
+                                Tipe Transaksi
+                            </td>
+                            <td>
+                                Nama Produk
+                            </td>
+                            <td>
+                                Jumlah Transaksi
+                            </td>
+                            <td>
+                                NAV/Unit
+                            </td>
+                            <td>
+                                Tanggal NAV
+                            </td>
+                            <td>
+                                Unit
+                            </td>
+                            <td>
+                                Total Pembelian
+                            </td>
+                        </tr>
+                    {{range .Datas}}
+                        <tr>
+                            <td>
+                                {{.TanggalTransaksi}}
+                            </td align="Right">
+                            <td>
+                                {{.TipeTransaksi}}
+                            </td>
+                            <td align="Right">
+                                {{.ProductName}}
+                            </td>
+                            <td align="Right">
+                                {{.JumlahTransaksi}}
+                            </td>
+                            <td>
+                                {{.NavValue}}
+                            </td>
+                            <td align="Right">
+                                {{.NavDate}}
+                            </td>
+                            <td align="Right">
+                                {{.Unit}}
+                            </td>
+                            <td align="Right">
+                                {{.TotalPembelian}}
+                            </td>
+                        </tr>
+                    {{end}}
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

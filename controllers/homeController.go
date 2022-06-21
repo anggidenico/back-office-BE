@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"mfbo_api/lib"
+	"mf-bo-api/lib"
 	"net/http"
 
 	"github.com/labstack/echo"
