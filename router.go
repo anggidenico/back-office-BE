@@ -440,6 +440,7 @@ func router() *echo.Echo {
 	admin.GET("/transaction/correction", controllers.GetListAdminTransactionCorrection).Name = "GetListAdminTransactionCorrection"
 	admin.POST("/updatetransaction/subscription", controllers.UpdateTransactionSubscription).Name = "UpdateTransactionSubscription"
 	admin.POST("/updatetransaction/redemption", controllers.UpdateTransactionRedemption).Name = "UpdateTransactionRedemption"
+
 	return e
 }
 
