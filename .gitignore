@@ -1,6 +1,6 @@
-mf-bo-api.exe
 go.mod
 go.sum
 config/config.go
 mf-bo-api
 mf-bo-api.code-workspace
+mf-bo-api.exe
