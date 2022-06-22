@@ -3,3 +3,4 @@ go.mod
 go.sum
 config/config.go
 mf-bo-api
+mf-bo-api.code-workspace
