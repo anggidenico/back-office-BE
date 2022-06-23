@@ -14,7 +14,7 @@ func main() {
 
 	// Configure server
 	s := &http.Server{
-		Addr: "0.0.0.0:8090",
+		Addr: "0.0.0.0:8050",
 	}
 
 	// Start server
