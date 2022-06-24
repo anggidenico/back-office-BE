@@ -24,6 +24,8 @@ import (
 	"github.com/shopspring/decimal"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
+
+	wkhtml "github.com/SebastiaanKlippert/go-wkhtmltopdf"
 )
 
 func GetListCustomerIndividuInquiry(c echo.Context) error {
@@ -4368,6 +4370,101 @@ func CheckUniqueNoId(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Data = responseData
+
+	return c.JSON(http.StatusOK, response)
+}
+
+func IndividuSendAccountStatement(c echo.Context) error {
+	customer_key := c.Param("key")
+	if customer_key == "" {
+		log.Error("Wrong input for parameter: key")
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
+	} else {
+
+		var customer models.CustomerIndividuInquiry
+		_, err := models.AdminGetCustomerIndividuByCustomerKey(&customer, customer_key)
+		if err != nil {
+
+			return lib.CustomError(http.StatusNotFound)
+		} else {
+			if customer.Email != nil {
+				// log.Println("========= LEWAT SINI ==========")
+
+				pdfg, err := wkhtml.NewPDFGenerator()
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
+				}
+
+				// Set global options
+				pdfg.Dpi.Set(300)
+				pdfg.Orientation.Set(wkhtml.OrientationLandscape)
+				pdfg.Grayscale.Set(false)
+
+				// Create a new input page from an URL
+				page := wkhtml.NewPage(config.BasePath + "/mail/account-statement-" + customer_key + ".html")
+
+				// Set options for this page
+				page.FooterRight.Set("[page]")
+				page.FooterFontSize.Set(10)
+				page.Zoom.Set(0.95)
+				page.Allow.Set(config.BasePath + "/mail/images")
+
+				// Add to document
+				pdfg.AddPage(page)
+
+				// Create PDF document in internal buffer
+				err = pdfg.Create()
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
+				}
+				err = os.MkdirAll(config.BasePath+"/files/"+customer_key, 0755)
+				// Write buffer contents to file on disk
+				err = pdfg.WriteFile(config.BasePath + "/files/" + customer_key + "/account-statement.pdf")
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
+				}
+				log.Info("Success create file")
+				t := template.New("index-portofolio.html")
+
+				t, err = t.ParseFiles(config.BasePath + "/mail/index-portofolio.html")
+				if err != nil {
+					log.Println(err)
+				}
+
+				var tpl bytes.Buffer
+				if err := t.Execute(&tpl, struct{ FileUrl string }{FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+					log.Println(err)
+				}
+
+				result := tpl.String()
+
+				mailer := gomail.NewMessage()
+				mailer.SetHeader("From", config.EmailFrom)
+				mailer.SetHeader("To", *customer.Email)
+				mailer.SetHeader("Subject", "[MotionFunds] Laporan Akun")
+				mailer.SetBody("text/html", result)
+				mailer.Attach(config.BasePath + "/files/" + customer_key + "/account-statement.pdf")
+
+				err = lib.SendEmail(mailer)
+				if err != nil {
+					log.Error(err)
+					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
+				} else {
+					log.Info("Email sent")
+				}
+
+			}
+		}
+	}
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = ""
 
 	return c.JSON(http.StatusOK, response)
 }

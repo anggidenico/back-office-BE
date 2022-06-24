@@ -67,6 +67,7 @@ type CustomerIndividuInquiry struct {
 	CustomerKey      *uint64 `db:"customer_key"                json:"customer_key"`
 	Cif              string  `db:"cif"                         json:"cif"`
 	FullName         string  `db:"full_name"                   json:"full_name"`
+	Email            *string `db:"email"                       json:"email"`
 	DateBirth        string  `db:"date_birth"                  json:"date_birth"`
 	IDcardNo         string  `db:"ktp"                         json:"ktp"`
 	PhoneMobile      string  `db:"phone_mobile"                json:"phone_mobile"`
@@ -637,7 +638,8 @@ func AdminGetHeaderCustomerIndividu(c *CustomerIndividuInquiry, requestKey strin
 					WHEN c.unit_holder_idno IS NULL THEN "-"
 					ELSE c.unit_holder_idno
 				END) AS cif,
-				pd.full_name AS full_name, 
+				pd.full_name AS full_name,
+				pd.email_address AS email,
 				DATE_FORMAT(pd.date_birth, '%d %M %Y') AS date_birth, 
 				pd.idcard_no AS ktp, 
 				pd.phone_mobile AS phone_mobile, 
@@ -1081,5 +1083,56 @@ func UpdateMsCustomerByField(params map[string]string, value string, field strin
 		log.Error(err)
 		return http.StatusBadRequest, err
 	}
+	return http.StatusOK, nil
+}
+
+func AdminGetCustomerIndividuByCustomerKey(c *CustomerIndividuInquiry, requestKey string) (int, error) {
+	query := `SELECT 
+				r.oa_request_key as oa_request_key, 
+				c.customer_key as customer_key, 
+				(CASE
+					WHEN c.unit_holder_idno IS NULL THEN "-"
+					ELSE c.unit_holder_idno
+				END) AS cif,
+				pd.full_name AS full_name,
+				pd.email_address AS email,
+				DATE_FORMAT(pd.date_birth, '%d %M %Y') AS date_birth, 
+				pd.idcard_no AS ktp, 
+				pd.phone_mobile AS phone_mobile, 
+				(CASE
+					WHEN c.sid_no IS NULL THEN "-"
+					ELSE c.sid_no
+				END) AS sid,
+				(CASE
+					WHEN c.cif_suspend_flag IS NOT NULL AND c.cif_suspend_flag = 0 THEN "Tidak"
+					WHEN c.cif_suspend_flag IS NOT NULL AND c.cif_suspend_flag = 1 THEN "Ya"
+					ELSE "Tidak"
+				END) AS cif_suspend_flag, 
+				pd.mother_maiden_name AS mother_maiden_name, 
+				r.oa_status AS oa_status, 
+				r.branch_key AS branch_key, 
+				br.branch_name AS branch_name, 
+				ag.agent_name AS agent_name, 
+				DATE_FORMAT(r.rec_created_date, '%d %M %Y') AS created_date, 
+				u1.ulogin_full_name as created_by, 
+				DATE_FORMAT(r.rec_modified_date, '%d %M %Y') AS modified_date, 
+				u2.ulogin_full_name as modified_by 
+			FROM oa_request AS r 
+			left join ms_customer as c on c.customer_key = r.customer_key 
+			INNER JOIN oa_personal_data AS pd ON pd.oa_request_key = r.oa_request_key 
+			LEFT JOIN ms_branch AS br ON br.branch_key = r.branch_key 
+			LEFT JOIN ms_agent AS ag ON ag.agent_key = r.agent_key 
+			LEFT JOIN sc_user_login AS u1 ON u1.user_login_key = r.rec_created_by 
+			LEFT JOIN sc_user_login AS u2 ON u2.user_login_key = r.rec_modified_by 
+			WHERE r.rec_status = 1 AND c.customer_key = ` + requestKey
+
+	// Main query
+	log.Println(query)
+	err := db.Db.Get(c, query)
+	if err != nil {
+		log.Println(err)
+		return http.StatusBadGateway, err
+	}
+
 	return http.StatusOK, nil
 }
