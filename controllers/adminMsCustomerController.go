@@ -4396,22 +4396,20 @@ func IndividuSendAccountStatement(c echo.Context) error {
 					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 				}
 
-				url_temp := "var/www/dev_mfbo_api"
-
 				// Set global options
 				pdfg.Dpi.Set(300)
 				pdfg.Orientation.Set(wkhtml.OrientationLandscape)
 				pdfg.Grayscale.Set(false)
 
 				// Create a new input page from an URL
-				page := wkhtml.NewPage(url_temp + "/mail/account-statement-" + customer_key + ".html")
+				page := wkhtml.NewPage(config.BasePath + "/mail/account-statement-" + customer_key + ".html")
 				log.Println("========= LEWAT SINI ==========")
 
 				// Set options for this page
 				page.FooterRight.Set("[page]")
 				page.FooterFontSize.Set(10)
 				page.Zoom.Set(0.95)
-				page.Allow.Set(url_temp + "/mail/images")
+				page.Allow.Set(config.BasePath + "/mail/images")
 
 				// Add to document
 				pdfg.AddPage(page)
@@ -4422,9 +4420,9 @@ func IndividuSendAccountStatement(c echo.Context) error {
 					log.Error(err.Error())
 					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 				}
-				err = os.MkdirAll(url_temp+"/files/"+customer_key, 0755)
+				err = os.MkdirAll(config.BasePath+"/files/"+customer_key, 0755)
 				// Write buffer contents to file on disk
-				err = pdfg.WriteFile(url_temp + "/files/" + customer_key + "/account-statement.pdf")
+				err = pdfg.WriteFile(config.BasePath + "/files/" + customer_key + "/account-statement.pdf")
 				if err != nil {
 					log.Error(err.Error())
 					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
@@ -4432,7 +4430,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 				log.Info("Success create file")
 				t := template.New("index-portofolio.html")
 
-				t, err = t.ParseFiles(url_temp + "/mail/index-portofolio.html")
+				t, err = t.ParseFiles(config.BasePath + "/mail/index-portofolio.html")
 				if err != nil {
 					log.Println(err)
 				}
