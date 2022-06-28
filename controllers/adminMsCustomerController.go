@@ -4402,13 +4402,13 @@ func IndividuSendAccountStatement(c echo.Context) error {
 				pdfg.Grayscale.Set(false)
 
 				// Create a new input page from an URL
-				page := wkhtml.NewPage(config.BasePath + "/mail/account-statement-" + customer_key + ".html")
+				page := wkhtml.NewPage(config.BaseUrl + "/mail/account-statement-" + customer_key + ".html")
 
 				// Set options for this page
 				page.FooterRight.Set("[page]")
 				page.FooterFontSize.Set(10)
 				page.Zoom.Set(0.95)
-				page.Allow.Set(config.BasePath + "/mail/images")
+				page.Allow.Set(config.BaseUrl + "/mail/images")
 
 				// Add to document
 				pdfg.AddPage(page)
