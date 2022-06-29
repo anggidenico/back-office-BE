@@ -4568,7 +4568,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 				status, err = models.GetMsProductIn(&productDB, userProduct, "product_key")
 				if err != nil {
 					log.Error(err.Error())
-					return lib.CustomError(status, err.Error(), "Failed get data")
+					return lib.CustomError(status, err.Error(), "Failed get data 1")
 				}
 				if len(productDB) < 1 {
 					log.Error("product not found")
@@ -4583,7 +4583,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 				status, err = models.GetLastNavIn(&navDB2, userProduct)
 				if err != nil {
 					log.Error(err.Error())
-					return lib.CustomError(status, err.Error(), "Failed get data")
+					return lib.CustomError(status, err.Error(), "Failed get data 2")
 				}
 
 				navData := make(map[uint64]models.TrNav)
@@ -4687,7 +4687,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 				// log.Println("============== LEWAT SINI ================")
 
 				params = make(map[string]string)
-				params["user_login_key"] = strconv.FormatUint(lib.Profile.UserID, 10)
+				params["user_login_key"] = customer_key
 				params["orderBy"] = "oa_request_key"
 				params["orderType"] = "DESC"
 				var requestDB []models.OaRequest
@@ -4742,7 +4742,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 				if err != nil {
 					log.Println(err)
 				}
-				f, err := os.Create(config.BasePath + "/mail/account-statement-" + strconv.FormatUint(lib.Profile.UserID, 10) + ".html")
+				f, err := os.Create(config.BasePath + "/mail/account-statement-" + customer_key + ".html")
 				if err != nil {
 					log.Println("create file: ", err)
 				}
