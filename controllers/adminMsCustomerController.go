@@ -4377,7 +4377,7 @@ func CheckUniqueNoId(c echo.Context) error {
 func IndividuSendAccountStatement(c echo.Context) error {
 	customer_key := c.Param("key")
 	if customer_key == "" {
-		log.Error("Wrong input for parameter: key")
+		log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	} else {
 
@@ -4389,6 +4389,369 @@ func IndividuSendAccountStatement(c echo.Context) error {
 		} else {
 			if customer.Email != nil {
 				// log.Println("========= LEWAT SINI ==========")
+
+				//========== GET PORTOFOLIO DAHULU ==========
+				var err error
+				var status int
+				decimal.MarshalJSONWithoutQuotes = true
+
+				zero := decimal.NewFromInt(0)
+				responseData := make(map[string]interface{})
+				params := make(map[string]string)
+
+				customerKey := customer_key
+				params["customer_key"] = customerKey
+				params["trans_status_key"] = "9"
+				var transactionDB []models.TrTransaction
+				status, err = models.GetAllTrTransaction(&transactionDB, params)
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(status, err.Error(), "Failed get transaction data")
+				}
+				if len(transactionDB) < 1 {
+					log.Error("Transaction not found")
+					return lib.CustomError(http.StatusNotFound, "Transaction not found", "Transaction not found")
+				}
+
+				var transactionIDs []string
+				var productIDs []string
+				for _, transaction := range transactionDB {
+					transactionIDs = append(transactionIDs, strconv.FormatUint(transaction.TransactionKey, 10))
+					productIDs = append(productIDs, strconv.FormatUint(transaction.ProductKey, 10))
+				}
+				var productDB []models.MsProduct
+				status, err = models.GetMsProductIn(&productDB, productIDs, "product_key")
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(status, err.Error(), "Failed get product data")
+				}
+				if len(productDB) < 1 {
+					log.Error("Product data not found")
+					return lib.CustomError(http.StatusNotFound, "Product data not found", "Product data not found")
+				}
+
+				var currencyIDs []string
+				productData := make(map[uint64]uint64)
+				netSubProduct := make(map[uint64]decimal.Decimal)
+				totalProduct := make(map[uint64]decimal.Decimal)
+				for _, product := range productDB {
+					currencyIDs = append(currencyIDs, strconv.FormatUint(*product.CurrencyKey, 10))
+					productData[product.ProductKey] = *product.CurrencyKey
+					netSubProduct[product.ProductKey] = zero
+					totalProduct[product.ProductKey] = zero
+				}
+
+				var currencyDB []models.MsCurrency
+				status, err = models.GetMsCurrencyIn(&currencyDB, currencyIDs, "currency_key")
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(status, err.Error(), "Failed get currency data")
+				}
+
+				ccy := make(map[uint64]string)
+				for _, currency := range currencyDB {
+					ccy[currency.CurrencyKey] = currency.Code
+				}
+
+				var rateDB []models.TrCurrencyRate
+				status, err = models.GetLastCurrencyIn(&rateDB, currencyIDs)
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(status, err.Error(), "Failed get currency rate data")
+				}
+
+				rateData := make(map[uint64]decimal.Decimal)
+				rateData[1] = decimal.NewFromInt(1)
+				for _, rate := range rateDB {
+					rateData[rate.CurrencyKey] = rate.RateValue
+				}
+
+				var tcDB []models.TrTransactionConfirmation
+				status, err = models.GetTrTransactionConfirmationIn(&tcDB, transactionIDs, "transaction_key")
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(status, err.Error(), "Failed get TC data")
+				}
+				if len(tcDB) < 1 {
+					log.Error("TC data not found")
+					return lib.CustomError(http.StatusNotFound, "TC data not found", "TC data not found")
+				}
+
+				tcData := make(map[uint64]models.TrTransactionConfirmation)
+				for _, tc := range tcDB {
+					tcData[tc.TransactionKey] = tc
+				}
+				netSub := zero
+				for _, transaction := range transactionDB {
+					if tc, ok := tcData[transaction.TransactionKey]; ok {
+						if transaction.TransTypeKey == 1 || transaction.TransTypeKey == 4 {
+							netSub = netSub.Add(tc.ConfirmedAmount.Mul(rateData[productData[transaction.ProductKey]]))
+							netSubProduct[transaction.ProductKey] = netSubProduct[transaction.ProductKey].Add(tc.ConfirmedAmount.Mul(rateData[productData[transaction.ProductKey]]))
+						} else {
+							netSub = netSub.Sub(tc.ConfirmedAmount.Mul(rateData[productData[transaction.ProductKey]]))
+							netSubProduct[transaction.ProductKey] = netSubProduct[transaction.ProductKey].Add(tc.ConfirmedAmount.Mul(rateData[productData[transaction.ProductKey]]))
+						}
+					}
+				}
+
+				responseData["net_sub"] = netSub
+
+				params = make(map[string]string)
+				var userProduct []string
+				balanceUnit := make(map[uint64]decimal.Decimal)
+				avgNav := make(map[uint64]decimal.Decimal)
+				suspend := make(map[uint64]bool)
+				if lib.Profile.CustomerKey != nil && *lib.Profile.CustomerKey > 0 {
+					paramsAcc := make(map[string]string)
+					paramsAcc["customer_key"] = strconv.FormatUint(*lib.Profile.CustomerKey, 10)
+					paramsAcc["rec_status"] = "1"
+
+					var accDB []models.TrAccount
+					status, err = models.GetAllTrAccount(&accDB, paramsAcc)
+					if err != nil {
+						log.Error(err.Error())
+					}
+
+					var accIDs []string
+					accProduct := make(map[uint64]uint64)
+					acaProduct := make(map[uint64]uint64)
+					var acaDB []models.TrAccountAgent
+					if len(accDB) > 0 {
+						for _, acc := range accDB {
+							accIDs = append(accIDs, strconv.FormatUint(acc.AccKey, 10))
+							accProduct[acc.AccKey] = acc.ProductKey
+							if (acc.SubSuspendFlag != nil && *acc.SubSuspendFlag == 1) ||
+								(acc.RedSuspendFlag != nil && *acc.RedSuspendFlag == 1) {
+								suspend[acc.ProductKey] = true
+							} else {
+								suspend[acc.ProductKey] = false
+							}
+						}
+						status, err = models.GetTrAccountAgentIn(&acaDB, accIDs, "acc_key")
+						if err != nil {
+							log.Error(err.Error())
+						}
+						if len(acaDB) > 0 {
+							var acaIDs []string
+							for _, aca := range acaDB {
+								acaIDs = append(acaIDs, strconv.FormatUint(aca.AcaKey, 10))
+								acaProduct[aca.AcaKey] = aca.AccKey
+							}
+							var balanceDB []models.TrBalance
+							status, err = models.GetLastBalanceIn(&balanceDB, acaIDs)
+							if err != nil {
+								log.Error(err.Error())
+							}
+							if len(balanceDB) > 0 {
+								for _, balance := range balanceDB {
+									log.Info(balance.BalanceKey, balance.AcaKey)
+									if accKey, ok := acaProduct[balance.AcaKey]; ok {
+										if balance.BalanceUnit.Cmp(zero) == 1 {
+											if productKey, ok := accProduct[accKey]; ok {
+												if _, ok := balanceUnit[productKey]; ok {
+													balanceUnit[productKey] = balanceUnit[productKey].Add(balance.BalanceUnit)
+												} else {
+													balanceUnit[productKey] = balance.BalanceUnit
+												}
+												avgNav[productKey] = *balance.AvgNav
+												userProduct = append(userProduct, strconv.FormatUint(productKey, 10))
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				productDB = nil
+				status, err = models.GetMsProductIn(&productDB, userProduct, "product_key")
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(status, err.Error(), "Failed get data")
+				}
+				if len(productDB) < 1 {
+					log.Error("product not found")
+					return lib.CustomError(http.StatusNotFound, "Product not found", "Product not found")
+				}
+				productData = make(map[uint64]uint64)
+				for _, product := range productDB {
+					productData[product.ProductKey] = *product.CurrencyKey
+				}
+
+				var navDB2 []models.TrNav
+				status, err = models.GetLastNavIn(&navDB2, userProduct)
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(status, err.Error(), "Failed get data")
+				}
+
+				navData := make(map[uint64]models.TrNav)
+				total := zero
+				for _, nav := range navDB2 {
+					navData[nav.ProductKey] = nav
+					if b, ok := balanceUnit[nav.ProductKey]; ok {
+						total = total.Add(b.Mul(nav.NavValue).Mul(rateData[productData[nav.ProductKey]]))
+						totalProduct[nav.ProductKey] = totalProduct[nav.ProductKey].Add(b.Mul(nav.NavValue).Mul(rateData[productData[nav.ProductKey]]))
+					}
+				}
+				responseData["total_invest"] = total.Truncate(2)
+
+				imba := total.Sub(netSub).Div(netSub).Mul(decimal.NewFromInt(100))
+				responseData["imba"] = imba.String() + `%`
+				var products []interface{}
+				var portofolio models.Portofolio
+				//portofolio.Total = ac0.FormatMoneyDecimal(total)
+				portofolio.Total = total.String()
+
+				var portofolioDatas []models.ProductPortofolio
+				totalGainLoss := zero
+				for _, product := range productDB {
+					data := make(map[string]interface{})
+					var portofolioData models.ProductPortofolio
+
+					data["fund_type"] = *product.FundTypeKey
+					data["product_key"] = product.ProductKey
+					data["product_id"] = product.ProductID
+					if _, ok := suspend[product.ProductKey]; ok {
+						data["suspend"] = suspend[product.ProductKey]
+					} else {
+						data["suspend"] = false
+					}
+					data["product_code"] = product.ProductCode
+					data["product_name"] = product.ProductName
+					data["product_name_alt"] = product.ProductNameAlt
+
+					imba := totalProduct[product.ProductKey].Sub(netSubProduct[product.ProductKey]).Div(netSubProduct[product.ProductKey]).Mul(decimal.NewFromInt(100))
+					data["imba"] = imba.Truncate(2).String() + `%`
+					portofolioData.ProductName = product.ProductNameAlt
+					portofolioData.CCY = ccy[*product.CurrencyKey]
+					data["ccy"] = ccy[*product.CurrencyKey]
+					// portofolioData.AvgNav = sac2.FormatMoneyDecimal(avgNav[product.ProductKey])
+					// portofolioData.Kurs = ac0.FormatMoneyDecimal(rateData[*product.CurrencyKey])
+					portofolioData.AvgNav = avgNav[product.ProductKey].String()
+					portofolioData.Kurs = rateData[*product.CurrencyKey].String()
+
+					if product.RecImage1 != nil && *product.RecImage1 != "" {
+						data["rec_image1"] = config.ImageUrl + "/images/product/" + *product.RecImage1
+					} else {
+						data["rec_image1"] = config.ImageUrl + "/images/product/default.png"
+					}
+					if n, ok := navData[product.ProductKey]; ok {
+						//portofolioData.Nav = ac2.FormatMoneyDecimal(n.NavValue)
+						portofolioData.Nav = n.NavValue.String()
+						if b, ok := balanceUnit[product.ProductKey]; ok {
+							invest_value := b.Mul(n.NavValue).Mul(rateData[*product.CurrencyKey])
+							data["invest_value"] = invest_value.Truncate(2)
+							//portofolioData.Amount = ac0.FormatMoneyDecimal(b.Mul(n.NavValue))
+							//portofolioData.Amount = b.Mul(n.NavValue)
+							portofolioData.Amount = n.NavValue.String()
+							//portofolioData.AmountIDR = ac0.FormatMoneyDecimal(data["invest_value"].(decimal.Decimal))
+							portofolioData.AmountIDR = data["invest_value"].(decimal.Decimal).String()
+							//portofolioData.Unit = ac2.FormatMoneyDecimal(b)
+							portofolioData.Unit = b.String()
+							data["unit_balance"] = b.Truncate(2)
+							gainLoss := avgNav[product.ProductKey].Sub(n.NavValue).Mul(b)
+							//portofolioData.GainLoss = ac0.FormatMoneyDecimal(gainLoss)
+							totalGainLoss = totalGainLoss.Add(gainLoss.Mul(rateData[*product.CurrencyKey]))
+							//portofolioData.GainLossIDR = ac0.FormatMoneyDecimal(gainLoss.Mul(rateData[*product.CurrencyKey]))
+							portofolioData.GainLossIDR = gainLoss.Mul(rateData[*product.CurrencyKey]).String()
+							percent := b.Mul(n.NavValue).Mul(rateData[*product.CurrencyKey]).Div(total).Mul(decimal.NewFromInt(100))
+							//data["percent"] = percent.Truncate(1).String() + `%`
+							data["percent"] = percent.Truncate(2).String() + `%`
+						}
+					}
+					portofolioDatas = append(portofolioDatas, portofolioData)
+					products = append(products, data)
+				}
+
+				// PDF Template
+				//portofolio.TotalGainLoss = ac0.FormatMoneyDecimal(totalGainLoss)
+				portofolio.TotalGainLoss = totalGainLoss.String()
+				portofolio.Datas = portofolioDatas
+				var customer models.MsCustomer
+				status, err = models.GetMsCustomer(&customer, customerKey)
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(status, "Failed get customer", "Customer not found")
+				}
+				dateLayout := lib.TIMESTAMPFORMAT
+				portofolio.Date = time.Now().Format(dateLayout)
+				portofolio.Cif = customer.UnitHolderIDno
+				sid := ""
+				if customer.SidNo != nil {
+					sid = *customer.SidNo
+				}
+				portofolio.Sid = sid
+				portofolio.Name = customer.FullName
+				// log.Println("============== LEWAT SINI ================")
+
+				params = make(map[string]string)
+				params["user_login_key"] = strconv.FormatUint(lib.Profile.UserID, 10)
+				params["orderBy"] = "oa_request_key"
+				params["orderType"] = "DESC"
+				var requestDB []models.OaRequest
+				status, err = models.GetAllOaRequest(&requestDB, 100, 0, true, params)
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(status, "Failed get request", "Failed get request")
+				}
+
+				request := requestDB[0]
+
+				var personalData models.OaPersonalData
+				status, err = models.GetOaPersonalData(&personalData, strconv.FormatUint(request.OaRequestKey, 10), "oa_request_key")
+				if err != nil {
+					log.Error(err.Error())
+					return lib.CustomError(status, "Failed get personal data", "Failed get personal data")
+				}
+
+				var country models.MsCountry
+				status, err = models.GetMsCountry(&country, strconv.FormatUint(personalData.Nationality, 10))
+				if err != nil {
+					log.Error(err.Error())
+				}
+
+				portofolio.Country = country.CouName
+
+				var address models.OaPostalAddress
+				status, err = models.GetOaPostalAddress(&address, strconv.FormatUint(*personalData.IDcardAddressKey, 10))
+				if err != nil {
+					log.Error(err.Error())
+				}
+
+				portofolio.Address = *address.AddressLine1
+
+				var city models.MsCity
+				status, err = models.GetMsCity(&city, strconv.FormatUint(*address.KabupatenKey, 10))
+				if err != nil {
+					log.Error(err.Error())
+				}
+
+				postalcode := ""
+				if address.PostalCode != nil {
+					postalcode = *address.PostalCode
+				}
+
+				portofolio.City = city.CityName + " " + postalcode
+
+				//========== GENERATE HALAMAN HTML DAHULU ==========
+				tm := template.New("account-statement-template.html")
+
+				tm, err = tm.ParseFiles(config.BasePath + "/mail/account-statement-template.html")
+				if err != nil {
+					log.Println(err)
+				}
+				f, err := os.Create(config.BasePath + "/mail/account-statement-" + strconv.FormatUint(lib.Profile.UserID, 10) + ".html")
+				if err != nil {
+					log.Println("create file: ", err)
+				}
+				if err := tm.Execute(f, portofolio); err != nil {
+					log.Println(err)
+				}
+				f.Close()
+
+				//========== GENERATE HALAMAN HTML DAHULU ==========
 
 				pdfg, err := wkhtml.NewPDFGenerator()
 				if err != nil {
