@@ -4402,7 +4402,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 				pdfg.Grayscale.Set(false)
 
 				// Create a new input page from an URL
-				page := wkhtml.NewPage(config.BasePath + "/mail/account-statement-" + "10" + ".html")
+				page := wkhtml.NewPage(config.BasePath + "/mail/account-statement-" + customer_key + ".html")
 				log.Println("========= LEWAT SINI ==========")
 
 				// Set options for this page
