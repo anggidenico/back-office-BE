@@ -4381,13 +4381,13 @@ func IndividuSendAccountStatement(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	} else {
 
-		var customer models.CustomerIndividuInquiry
-		_, err := models.AdminGetCustomerIndividuByCustomerKey(&customer, customer_key)
+		var customerz models.CustomerIndividuInquiry
+		_, err := models.AdminGetCustomerIndividuByCustomerKey(&customerz, customer_key)
 		if err != nil {
 
 			return lib.CustomError(http.StatusNotFound)
 		} else {
-			if customer.Email != nil {
+			if customerz.Email != nil {
 				// log.Println("========= LEWAT SINI ==========")
 
 				//========== GET PORTOFOLIO DAHULU ==========
@@ -4807,7 +4807,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 
 				mailer := gomail.NewMessage()
 				mailer.SetHeader("From", config.EmailFrom)
-				mailer.SetHeader("To", "rdpohan@gmail.com")
+				mailer.SetHeader("To", *customerz.Email)
 				mailer.SetHeader("Subject", "[MotionFunds] Laporan Akun")
 				mailer.SetBody("text/html", result)
 				mailer.Attach(config.BasePath + "/files/" + customer_key + "/account-statement.pdf")
