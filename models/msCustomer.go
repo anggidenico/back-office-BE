@@ -950,7 +950,7 @@ func GetHeaderCustomerDetailAccountStatement(c *HeaderCustomerDetailAccountState
 			ORDER BY oa.oa_request_key DESC LIMIT 1`
 
 	// Main query
-	log.Println(query)
+	log.Println("========== QUERY GET HEADER CUSTOMER DETAIL ==========", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

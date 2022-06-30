@@ -1412,7 +1412,7 @@ func AdminLastAvgNav(c *NavValue, productKey string, customerKey string, date st
 			ORDER BY tc.tc_key DESC LIMIT 1`
 
 	// Main query
-	log.Println(query)
+	log.Println("========== QUERY GET LAST AVERAGE NAV ==========", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

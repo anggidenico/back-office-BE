@@ -19,13 +19,13 @@ func AdminDetailAccountStatementCustomerProduct(c echo.Context) error {
 
 	customerKey := c.QueryParam("customer_key")
 	if customerKey == "" {
-		log.Error("Missing required parameter: menu_key")
-		return lib.CustomError(http.StatusBadRequest, "menu_key can not be blank", "menu_key can not be blank")
+		log.Error("Missing required parameter: customer_key")
+		return lib.CustomError(http.StatusBadRequest, "customer_key can not be blank", "customer_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(customerKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: menu_key")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: menu_key", "Wrong input for parameter: menu_key")
+			log.Error("Wrong input for parameter: customer_key")
+			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	}
 

@@ -398,7 +398,7 @@ func AdminLastNavValue(c *NavValue, productKey string, date string) (int, error)
 			ORDER BY nav_date DESC LIMIT 1`
 
 	// Main query
-	log.Println(query)
+	log.Println("========== QUERY GET LAST NAV VALUE ==========", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

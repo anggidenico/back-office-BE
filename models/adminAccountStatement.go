@@ -74,7 +74,7 @@ func AdminGetAllAccountStatementCustomerProduct(c *[]AccountStatementCustomerPro
 			ORDER BY t.product_key, t.nav_date ASC`
 
 	// Main query
-	log.Println(query)
+	log.Println("========== QUERY GET ALL ACCOUNT STATEMENT CUSTOMER PRODUCT ==========", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

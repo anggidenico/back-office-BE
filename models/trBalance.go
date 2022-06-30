@@ -302,7 +302,7 @@ func GetBeginningEndingBalanceAcc(c *BeginningEndingBalance, desc string, date s
 			GROUP BY nv.product_key`
 
 	// Main query
-	log.Println(query)
+	log.Println("========== QUERY GET BEGINNING AND ENDING BALANCE ACCOUNT ==========", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
