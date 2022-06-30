@@ -4386,7 +4386,9 @@ func IndividuSendAccountStatement(c echo.Context) error {
 		if err != nil {
 
 			return lib.CustomError(http.StatusNotFound)
+
 		} else {
+
 			if customerz.Email != nil {
 				// log.Println("========= LEWAT SINI ==========")
 
