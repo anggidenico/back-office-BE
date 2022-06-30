@@ -62,7 +62,7 @@ func AdminGetAllAccountStatementCustomerProduct(c *[]AccountStatementCustomerPro
 			LEFT JOIN tr_balance AS trdm ON trdm.balance_key = t_red.balance_key 
 			INNER JOIN ms_product AS p ON p.product_key = t.product_key 
 			INNER JOIN tr_transaction_type AS tt ON tt.trans_type_key = t.trans_type_key 
-			INNER JOIN tr_nav AS nav ON nav.nav_date = t.nav_date AND nav.product_key = t.product_key AND nav.nav_status = '231' AND nav.publish_mode = '236' 
+			INNER JOIN tr_nav AS nav ON nav.nav_date = t.nav_date AND nav.product_key = t.product_key AND nav.nav_status = '236' AND nav.publish_mode = '236' 
 			INNER JOIN ms_currency AS cur ON cur.currency_key = p.currency_key 
 			INNER JOIN ms_product_bank_account AS pb ON pb.product_key = t.product_key AND pb.bank_account_purpose = '269' 
 			INNER JOIN ms_bank_account AS ba ON ba.bank_account_key = pb.bank_account_key  
