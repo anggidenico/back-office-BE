@@ -4375,568 +4375,546 @@ func CheckUniqueNoId(c echo.Context) error {
 }
 
 func IndividuSendAccountStatement(c echo.Context) error {
-	customer_key := c.Param("key")
-	if customer_key == "" {
-		log.Error("Missing required parameter: key")
-		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
+	var err error
+	decimal.MarshalJSONWithoutQuotes = true
+
+	customerKey := c.QueryParam("customer_key")
+	if customerKey == "" {
+		log.Error("Missing required parameter: customer_key")
+		return lib.CustomError(http.StatusBadRequest, "customer_key can not be blank", "customer_key can not be blank")
 	} else {
-
-		var customerz models.CustomerIndividuInquiry
-		_, err := models.AdminGetCustomerIndividuByCustomerKey(&customerz, customer_key)
-		if err != nil {
-
-			return lib.CustomError(http.StatusNotFound)
-
-		} else {
-
-			if customerz.Email != nil {
-				// log.Println("========= LEWAT SINI ==========")
-
-				//========== GET DATA nya DAHULU ==========
-
-				var err error
-				decimal.MarshalJSONWithoutQuotes = true
-
-				if customer_key == "" {
-					log.Error("Missing required parameter: customer_key")
-					return lib.CustomError(http.StatusBadRequest, "customer_key can not be blank", "customer_key can not be blank")
-				} else {
-					n, err := strconv.ParseUint(customer_key, 10, 64)
-					if err != nil || n == 0 {
-						log.Error("Wrong input for parameter: customer_key")
-						return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
-					}
-				}
-
-				var customer models.HeaderCustomerDetailAccountStatement
-				_, err = models.GetHeaderCustomerDetailAccountStatement(&customer, customer_key)
-				if err != nil {
-					log.Error("Customer not found")
-					return lib.CustomError(http.StatusBadRequest, "Customer not found", "Customer not found")
-				}
-
-				var datefrom string
-				var dateto string
-
-				datefrom = c.QueryParam("date_from")
-				if datefrom == "" {
-					log.Error("Missing required parameter: date_from")
-					return lib.CustomError(http.StatusBadRequest, "date_from can not be blank", "date_from can not be blank")
-				}
-
-				dateto = c.QueryParam("date_to")
-				if dateto == "" {
-					log.Error("Missing required parameter: date_to")
-					return lib.CustomError(http.StatusBadRequest, "date_to can not be blank", "date_to can not be blank")
-				}
-				layoutISO := "2006-01-02"
-
-				from, _ := time.Parse(layoutISO, datefrom)
-				from = time.Date(from.Year(), from.Month(), from.Day(), 0, 0, 0, 0, time.UTC)
-
-				to, _ := time.Parse(layoutISO, dateto)
-				to = time.Date(to.Year(), to.Month(), to.Day(), 0, 0, 0, 0, time.UTC)
-
-				var dateawal string
-				var dateakhir string
-
-				if from.Before(to) {
-					dateawal = datefrom
-					dateakhir = dateto
-				}
-
-				if from.After(to) {
-					dateawal = dateto
-					dateakhir = datefrom
-				}
-
-				responseData := make(map[string]interface{})
-
-				//get header
-				layout := "2006-01-02"
-				newLayout := "02 Jan 2006"
-				header := make(map[string]interface{})
-				dateParem, _ := time.Parse(layout, dateawal)
-				header["date_from"] = dateParem.Format(newLayout)
-				dateParem, _ = time.Parse(layout, dateakhir)
-				header["date_to"] = dateParem.Format(newLayout)
-				header["customer_key"] = customer.CustomerKey
-				header["cif"] = customer.Cif
-				header["sid"] = customer.Sid
-				header["full_name"] = customer.FullName
-				header["address"] = customer.Address
-
-				responseData["header"] = header
-
-				var transactions []models.AccountStatementCustomerProduct
-
-				status, err := models.AdminGetAllAccountStatementCustomerProduct(&transactions, customer_key, dateawal, dateakhir)
-
-				if err != nil {
-					if err != sql.ErrNoRows {
-						log.Error(err.Error())
-						return lib.CustomError(status, err.Error(), "Failed get data transaction")
-					}
-				}
-
-				if len(transactions) > 0 {
-					var datatrans []interface{}
-					var productKey uint64
-					var transGroupProduct []interface{}
-					product := make(map[string]interface{})
-					count := make(map[string]interface{})
-					var totalSubs decimal.Decimal
-					var totalRedm decimal.Decimal
-					nol := decimal.NewFromInt(0)
-
-					var accKeyLast uint64
-					var productKeyLast uint64
-
-					for idx, tr := range transactions {
-						if idx != 0 {
-							if productKey != tr.ProductKey {
-								var balanceEnding models.BeginningEndingBalance
-								_, err = models.GetBeginningEndingBalanceAcc(&balanceEnding, "ENDING BALANCE", dateakhir, strconv.FormatUint(accKeyLast, 10), strconv.FormatUint(productKeyLast, 10))
-
-								endingbalance := make(map[string]interface{})
-								if err != nil {
-									var lastavgnav models.NavValue
-									_, err = models.AdminLastAvgNav(&lastavgnav, strconv.FormatUint(productKeyLast, 10), customer_key, dateakhir)
-									if err != nil {
-										endingbalance["avg_nav"] = nol
-									} else {
-										endingbalance["avg_nav"] = lastavgnav.NavValue.Truncate(2)
-									}
-
-									var lastnav models.NavValue
-									_, err = models.AdminLastNavValue(&lastnav, strconv.FormatUint(productKeyLast, 10), dateakhir)
-									if err != nil {
-										endingbalance["nav_value"] = nol
-									} else {
-										endingbalance["nav_value"] = lastnav.NavValue.Truncate(2)
-									}
-
-									dateParem, _ = time.Parse(layout, dateakhir)
-									endingbalance["date"] = dateParem.Format(newLayout)
-									endingbalance["description"] = "ENDING BALANCE"
-									endingbalance["amount"] = nol
-									endingbalance["unit"] = nol
-									endingbalance["fee"] = nol
-									transGroupProduct = append(transGroupProduct, endingbalance)
-								} else {
-									endingbalance["date"] = balanceEnding.Tanggal
-									endingbalance["description"] = balanceEnding.Description
-									endingbalance["amount"] = balanceEnding.Amount.Truncate(0)
-									endingbalance["nav_value"] = balanceEnding.NavValue.Truncate(2)
-									endingbalance["unit"] = balanceEnding.Unit.Truncate(2)
-									endingbalance["avg_nav"] = balanceEnding.AvgNav.Truncate(2)
-									endingbalance["fee"] = balanceEnding.Fee.Truncate(0)
-									transGroupProduct = append(transGroupProduct, endingbalance)
-								}
-
-								row := make(map[string]interface{})
-								row["count"] = count
-								row["product"] = product
-								row["list"] = transGroupProduct
-								datatrans = append(datatrans, row)
-								productKey = tr.ProductKey
-
-								transGroupProduct = nil
-								product = make(map[string]interface{})
-								count = make(map[string]interface{})
-								totalSubs = nol
-								totalRedm = nol
-
-								var balance models.BeginningEndingBalance
-								_, err = models.GetBeginningEndingBalanceAcc(&balance, "BEGINNING BALANCE", dateawal, strconv.FormatUint(tr.AccKey, 10), strconv.FormatUint(tr.ProductKey, 10))
-
-								beginning := make(map[string]interface{})
-								if err != nil {
-									var lastavgnav models.NavValue
-									_, err = models.AdminLastAvgNav(&lastavgnav, strconv.FormatUint(tr.ProductKey, 10), customer_key, dateawal)
-									if err != nil {
-										beginning["avg_nav"] = nol
-									} else {
-										beginning["avg_nav"] = lastavgnav.NavValue.Truncate(2)
-									}
-
-									var lastnav models.NavValue
-									_, err = models.AdminLastNavValue(&lastnav, strconv.FormatUint(tr.ProductKey, 10), dateawal)
-									if err != nil {
-										beginning["nav_value"] = nol
-									} else {
-										beginning["nav_value"] = lastnav.NavValue.Truncate(2)
-									}
-									dateParem, _ = time.Parse(layout, dateawal)
-									beginning["date"] = dateParem.Format(newLayout)
-									beginning["description"] = "BEGINNING BALANCE"
-									beginning["amount"] = nol
-									beginning["unit"] = nol
-									beginning["fee"] = nol
-									transGroupProduct = append(transGroupProduct, beginning)
-								} else {
-									beginning["date"] = balance.Tanggal
-									beginning["description"] = balance.Description
-									beginning["amount"] = balance.Amount.Truncate(0)
-									beginning["nav_value"] = balance.NavValue.Truncate(2)
-									beginning["unit"] = balance.Unit.Truncate(2)
-									beginning["avg_nav"] = balance.AvgNav.Truncate(2)
-									beginning["fee"] = balance.Fee.Truncate(0)
-									transGroupProduct = append(transGroupProduct, beginning)
-								}
-
-								trans := make(map[string]interface{})
-								trans["date"] = tr.NavDate
-								trans["description"] = tr.Trans
-								trans["amount"] = tr.Amount.Round(0).Truncate(0)
-								trans["nav_value"] = tr.NavValue.Truncate(2)
-								trans["unit"] = tr.Unit.Truncate(2)
-								trans["avg_nav"] = tr.AvgNavSub.Truncate(2)
-								trans["fee"] = tr.Fee.Truncate(0)
-								transGroupProduct = append(transGroupProduct, trans)
-
-								if (tr.TransTypeKey == uint64(1)) || (tr.TransTypeKey == uint64(4)) {
-									totalSubs = totalSubs.Add(tr.Amount.Round(0)).Truncate(0)
-								}
-								if (tr.TransTypeKey == uint64(2)) || (tr.TransTypeKey == uint64(3)) {
-									totalRedm = totalRedm.Add(tr.Amount.Round(0)).Truncate(0)
-								}
-								count["subs"] = totalSubs
-								count["redm"] = totalRedm
-
-								product["product_id"] = tr.ProductKey
-								product["product_name"] = tr.ProductName
-								product["product_bank_name"] = tr.BankName
-								product["product_bank_account_name"] = tr.AccountName
-								product["product_bank_account_no"] = tr.AccountNo
-								product["product_code"] = tr.ProductCode
-								product["currency"] = tr.Currency
-
-								if idx == (len(transactions) - 1) {
-									var balanceEndingLast models.BeginningEndingBalance
-									_, err = models.GetBeginningEndingBalanceAcc(&balanceEndingLast, "ENDING BALANCE", dateakhir, strconv.FormatUint(accKeyLast, 10), strconv.FormatUint(productKeyLast, 10))
-
-									endingbalancelast := make(map[string]interface{})
-									if err != nil {
-
-										var lastavgnav models.NavValue
-										_, err = models.AdminLastAvgNav(&lastavgnav, strconv.FormatUint(productKeyLast, 10), customer_key, dateakhir)
-										if err != nil {
-											endingbalancelast["avg_nav"] = nol
-										} else {
-											endingbalancelast["avg_nav"] = lastavgnav.NavValue.Truncate(2)
-										}
-
-										var lastnav models.NavValue
-										_, err = models.AdminLastNavValue(&lastnav, strconv.FormatUint(productKeyLast, 10), dateakhir)
-										if err != nil {
-											endingbalancelast["nav_value"] = nol
-										} else {
-											endingbalancelast["nav_value"] = lastnav.NavValue.Truncate(2)
-										}
-										dateParem, _ = time.Parse(layout, dateakhir)
-										endingbalancelast["date"] = dateParem.Format(newLayout)
-										endingbalancelast["description"] = "ENDING BALANCE"
-										endingbalancelast["amount"] = nol
-										endingbalancelast["unit"] = nol
-										endingbalancelast["fee"] = nol
-										transGroupProduct = append(transGroupProduct, endingbalancelast)
-									} else {
-										endingbalancelast["date"] = balanceEndingLast.Tanggal
-										endingbalancelast["description"] = balanceEndingLast.Description
-										endingbalancelast["amount"] = balanceEndingLast.Amount.Truncate(0)
-										endingbalancelast["nav_value"] = balanceEndingLast.NavValue.Truncate(2)
-										endingbalancelast["unit"] = balanceEndingLast.Unit.Truncate(2)
-										endingbalancelast["avg_nav"] = balanceEndingLast.AvgNav.Truncate(2)
-										endingbalancelast["fee"] = balanceEndingLast.Fee.Truncate(0)
-										transGroupProduct = append(transGroupProduct, endingbalancelast)
-									}
-
-									row := make(map[string]interface{})
-									row["count"] = count
-									row["product"] = product
-									row["list"] = transGroupProduct
-									datatrans = append(datatrans, row)
-								}
-							} else {
-								trans := make(map[string]interface{})
-								trans["date"] = tr.NavDate
-								trans["description"] = tr.Trans
-								trans["amount"] = tr.Amount.Round(0).Truncate(0)
-								trans["nav_value"] = tr.NavValue.Truncate(2)
-								trans["unit"] = tr.Unit.Truncate(2)
-								trans["avg_nav"] = tr.AvgNavSub.Truncate(2)
-								trans["fee"] = tr.Fee.Truncate(0)
-								transGroupProduct = append(transGroupProduct, trans)
-
-								if (tr.TransTypeKey == 1) || (tr.TransTypeKey == 4) {
-									totalSubs = totalSubs.Add(tr.Amount.Round(0)).Truncate(0)
-								}
-								if (tr.TransTypeKey == 2) || (tr.TransTypeKey == 3) {
-									totalRedm = totalRedm.Add(tr.Amount.Round(0)).Truncate(0)
-								}
-								count["subs"] = totalSubs
-								count["redm"] = totalRedm
-
-								product["product_id"] = tr.ProductKey
-								product["product_name"] = tr.ProductName
-								product["product_bank_name"] = tr.BankName
-								product["product_bank_account_name"] = tr.AccountName
-								product["product_bank_account_no"] = tr.AccountNo
-								product["product_code"] = tr.ProductCode
-								product["currency"] = tr.Currency
-
-								if idx == (len(transactions) - 1) {
-									var balanceEndingLast models.BeginningEndingBalance
-									_, err = models.GetBeginningEndingBalanceAcc(&balanceEndingLast, "ENDING BALANCE", dateakhir, strconv.FormatUint(accKeyLast, 10), strconv.FormatUint(productKeyLast, 10))
-
-									endingbalancelast := make(map[string]interface{})
-									if err != nil {
-
-										endingbalancelast["avg_nav"] = trans["avg_nav"]
-
-										var lastnav models.NavValue
-										_, err = models.AdminLastNavValue(&lastnav, strconv.FormatUint(productKeyLast, 10), dateakhir)
-										if err != nil {
-											endingbalancelast["nav_value"] = nol
-										} else {
-											endingbalancelast["nav_value"] = lastnav.NavValue.Truncate(2)
-										}
-										dateParem, _ = time.Parse(layout, dateakhir)
-										endingbalancelast["date"] = dateParem.Format(newLayout)
-										endingbalancelast["description"] = "ENDING BALANCE"
-										endingbalancelast["amount"] = nol
-										endingbalancelast["unit"] = nol
-										endingbalancelast["fee"] = nol
-										transGroupProduct = append(transGroupProduct, endingbalancelast)
-									} else {
-										endingbalancelast["date"] = balanceEndingLast.Tanggal
-										endingbalancelast["description"] = balanceEndingLast.Description
-										endingbalancelast["amount"] = balanceEndingLast.Amount.Truncate(0)
-										endingbalancelast["nav_value"] = balanceEndingLast.NavValue.Truncate(2)
-										endingbalancelast["unit"] = balanceEndingLast.Unit.Truncate(2)
-										endingbalancelast["avg_nav"] = balanceEndingLast.AvgNav.Truncate(2)
-										endingbalancelast["fee"] = balanceEndingLast.Fee.Truncate(0)
-										transGroupProduct = append(transGroupProduct, endingbalancelast)
-									}
-
-									row := make(map[string]interface{})
-									row["count"] = count
-									row["product"] = product
-									row["list"] = transGroupProduct
-									datatrans = append(datatrans, row)
-								}
-
-							}
-						} else {
-
-							var balance models.BeginningEndingBalance
-							_, err = models.GetBeginningEndingBalanceAcc(&balance, "BEGINNING BALANCE", dateawal, strconv.FormatUint(tr.AccKey, 10), strconv.FormatUint(tr.ProductKey, 10))
-
-							beginning := make(map[string]interface{})
-							if err != nil {
-								var lastavgnav models.NavValue
-								_, err = models.AdminLastAvgNav(&lastavgnav, strconv.FormatUint(tr.ProductKey, 10), customer_key, dateawal)
-								if err != nil {
-									beginning["avg_nav"] = nol
-								} else {
-									beginning["avg_nav"] = lastavgnav.NavValue.Truncate(2)
-								}
-
-								var lastnav models.NavValue
-								_, err = models.AdminLastNavValue(&lastnav, strconv.FormatUint(tr.ProductKey, 10), dateawal)
-								if err != nil {
-									beginning["nav_value"] = nol
-								} else {
-									beginning["nav_value"] = lastnav.NavValue.Truncate(2)
-								}
-								dateParem, _ = time.Parse(layout, dateawal)
-								beginning["date"] = dateParem.Format(newLayout)
-								beginning["description"] = "BEGINNING BALANCE"
-								beginning["amount"] = nol
-								beginning["unit"] = nol
-								beginning["fee"] = nol
-								transGroupProduct = append(transGroupProduct, beginning)
-							} else {
-								beginning["date"] = balance.Tanggal
-								beginning["description"] = balance.Description
-								beginning["amount"] = balance.Amount.Truncate(0)
-								beginning["nav_value"] = balance.NavValue.Truncate(2)
-								beginning["unit"] = balance.Unit.Truncate(2)
-								beginning["avg_nav"] = balance.AvgNav.Truncate(2)
-								beginning["fee"] = balance.Fee.Truncate(0)
-								transGroupProduct = append(transGroupProduct, beginning)
-							}
-
-							trans := make(map[string]interface{})
-							trans["date"] = tr.NavDate
-							trans["description"] = tr.Trans
-							trans["amount"] = tr.Amount.Round(0).Truncate(0)
-							trans["nav_value"] = tr.NavValue.Truncate(2)
-							trans["unit"] = tr.Unit.Truncate(2)
-							trans["avg_nav"] = tr.AvgNavSub.Truncate(2)
-							trans["fee"] = tr.Fee.Truncate(0)
-							transGroupProduct = append(transGroupProduct, trans)
-
-							if (tr.TransTypeKey == 1) || (tr.TransTypeKey == 4) {
-								totalSubs = totalSubs.Add(tr.Amount.Round(0)).Truncate(0)
-							}
-							if (tr.TransTypeKey == 2) || (tr.TransTypeKey == 3) {
-								totalRedm = totalRedm.Add(tr.Amount.Round(0)).Truncate(0)
-							}
-							count["subs"] = totalSubs
-							count["redm"] = totalRedm
-
-							product["product_id"] = tr.ProductKey
-							product["product_name"] = tr.ProductName
-							product["product_bank_name"] = tr.BankName
-							product["product_bank_account_name"] = tr.AccountName
-							product["product_bank_account_no"] = tr.AccountNo
-							product["product_code"] = tr.ProductCode
-							product["currency"] = tr.Currency
-
-							if idx == (len(transactions) - 1) {
-								var balanceEndingLast models.BeginningEndingBalance
-								_, err = models.GetBeginningEndingBalanceAcc(&balanceEndingLast, "ENDING BALANCE", dateakhir, strconv.FormatUint(tr.AccKey, 10), strconv.FormatUint(tr.ProductKey, 10))
-
-								endingbalancelast := make(map[string]interface{})
-								if err != nil {
-									var lastavgnav models.NavValue
-									_, err = models.AdminLastAvgNav(&lastavgnav, strconv.FormatUint(tr.ProductKey, 10), customer_key, dateakhir)
-									if err != nil {
-										endingbalancelast["avg_nav"] = nol
-									} else {
-										endingbalancelast["avg_nav"] = lastavgnav.NavValue.Truncate(2)
-									}
-
-									var lastnav models.NavValue
-									_, err = models.AdminLastNavValue(&lastnav, strconv.FormatUint(tr.ProductKey, 10), dateakhir)
-									if err != nil {
-										endingbalancelast["nav_value"] = nol
-									} else {
-										endingbalancelast["nav_value"] = lastnav.NavValue.Truncate(2)
-									}
-									dateParem, _ = time.Parse(layout, dateakhir)
-									endingbalancelast["date"] = dateParem.Format(newLayout)
-									endingbalancelast["description"] = "ENDING BALANCE"
-									endingbalancelast["amount"] = nol
-									endingbalancelast["unit"] = nol
-									endingbalancelast["fee"] = nol
-									transGroupProduct = append(transGroupProduct, endingbalancelast)
-								} else {
-									endingbalancelast["date"] = balanceEndingLast.Tanggal
-									endingbalancelast["description"] = balanceEndingLast.Description
-									endingbalancelast["amount"] = balanceEndingLast.Amount.Truncate(0)
-									endingbalancelast["nav_value"] = balanceEndingLast.NavValue.Truncate(2)
-									endingbalancelast["unit"] = balanceEndingLast.Unit.Truncate(2)
-									endingbalancelast["avg_nav"] = balanceEndingLast.AvgNav.Truncate(2)
-									endingbalancelast["fee"] = balanceEndingLast.Fee.Truncate(0)
-									transGroupProduct = append(transGroupProduct, endingbalancelast)
-								}
-
-								row := make(map[string]interface{})
-								row["count"] = count
-								row["product"] = product
-								row["list"] = transGroupProduct
-								datatrans = append(datatrans, row)
-							}
-						}
-						accKeyLast = tr.AccKey
-						productKeyLast = tr.ProductKey
-						productKey = tr.ProductKey
-					}
-
-					responseData["transaction"] = datatrans
-
-				}
-
-				//========== GENERATE HALAMAN HTML DAHULU ==========
-				tm := template.New("account-statement-template.html")
-
-				tm, err = tm.ParseFiles(config.BasePath + "/mail/account-statement-template.html")
-				if err != nil {
-					log.Println(err)
-				}
-				f, err := os.Create(config.BasePath + "/mail/account-statement-" + customer_key + ".html")
-				if err != nil {
-					log.Println("create file: ", err)
-				}
-				if err := tm.Execute(f, responseData); err != nil {
-					log.Println(err)
-				}
-				f.Close()
-
-				//========== GENERATE HALAMAN HTML DAHULU ==========
-
-				pdfg, err := wkhtml.NewPDFGenerator()
-				if err != nil {
-					log.Error(err.Error())
-					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
-				}
-
-				// Set global options
-				pdfg.Dpi.Set(300)
-				pdfg.Orientation.Set(wkhtml.OrientationLandscape)
-				pdfg.Grayscale.Set(false)
-
-				// Create a new input page from an URL
-				page := wkhtml.NewPage(config.BasePath + "/mail/account-statement-" + customer_key + ".html")
-				log.Println("========= LEWAT SINI ==========")
-
-				// Set options for this page
-				page.FooterRight.Set("[page]")
-				page.FooterFontSize.Set(10)
-				page.Zoom.Set(0.95)
-				page.Allow.Set(config.BasePath + "/mail/images")
-
-				// Add to document
-				pdfg.AddPage(page)
-
-				// Create PDF document in internal buffer
-				err = pdfg.Create()
-				if err != nil {
-					log.Error(err.Error())
-					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
-				}
-				err = os.MkdirAll(config.BasePath+"/files/"+customer_key, 0755)
-				// Write buffer contents to file on disk
-				err = pdfg.WriteFile(config.BasePath + "/files/" + customer_key + "/account-statement.pdf")
-				if err != nil {
-					log.Error(err.Error())
-					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
-				}
-				log.Info("Success create file")
-				t := template.New("index-portofolio.html")
-
-				t, err = t.ParseFiles(config.BasePath + "/mail/index-portofolio.html")
-				if err != nil {
-					log.Println(err)
-				}
-
-				var tpl bytes.Buffer
-				if err := t.Execute(&tpl, struct{ FileUrl string }{FileUrl: config.FileUrl + "/images/mail"}); err != nil {
-					log.Println(err)
-				}
-
-				result := tpl.String()
-
-				mailer := gomail.NewMessage()
-				mailer.SetHeader("From", config.EmailFrom)
-				mailer.SetHeader("To", *customerz.Email)
-				mailer.SetHeader("Subject", "[MotionFunds] Laporan Akun")
-				mailer.SetBody("text/html", result)
-				mailer.Attach(config.BasePath + "/files/" + customer_key + "/account-statement.pdf")
-
-				err = lib.SendEmail(mailer)
-				if err != nil {
-					log.Error(err)
-					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
-				} else {
-					log.Info("Email sent")
-				}
-
-			}
+		n, err := strconv.ParseUint(customerKey, 10, 64)
+		if err != nil || n == 0 {
+			log.Error("Wrong input for parameter: customer_key")
+			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
+	}
+
+	var customer models.HeaderCustomerDetailAccountStatement
+	_, err = models.GetHeaderCustomerDetailAccountStatement(&customer, customerKey)
+	if err != nil {
+		log.Error("Customer not found")
+		return lib.CustomError(http.StatusBadRequest, "Customer not found", "Customer not found")
+	}
+
+	var datefrom string
+	var dateto string
+
+	datefrom = c.QueryParam("date_from")
+	if datefrom == "" {
+		log.Error("Missing required parameter: date_from")
+		return lib.CustomError(http.StatusBadRequest, "date_from can not be blank", "date_from can not be blank")
+	}
+
+	dateto = c.QueryParam("date_to")
+	if dateto == "" {
+		log.Error("Missing required parameter: date_to")
+		return lib.CustomError(http.StatusBadRequest, "date_to can not be blank", "date_to can not be blank")
+	}
+	layoutISO := "2006-01-02"
+
+	from, _ := time.Parse(layoutISO, datefrom)
+	from = time.Date(from.Year(), from.Month(), from.Day(), 0, 0, 0, 0, time.UTC)
+
+	to, _ := time.Parse(layoutISO, dateto)
+	to = time.Date(to.Year(), to.Month(), to.Day(), 0, 0, 0, 0, time.UTC)
+
+	var dateawal string
+	var dateakhir string
+
+	if from.Before(to) {
+		dateawal = datefrom
+		dateakhir = dateto
+	}
+
+	if from.After(to) {
+		dateawal = dateto
+		dateakhir = datefrom
+	}
+
+	responseData := make(map[string]interface{})
+
+	//get header
+	layout := "2006-01-02"
+	newLayout := "02 Jan 2006"
+	header := make(map[string]interface{})
+	dateParem, _ := time.Parse(layout, dateawal)
+	header["date_from"] = dateParem.Format(newLayout)
+	dateParem, _ = time.Parse(layout, dateakhir)
+	header["date_to"] = dateParem.Format(newLayout)
+	header["customer_key"] = customer.CustomerKey
+	header["cif"] = customer.Cif
+	header["sid"] = customer.Sid
+	header["full_name"] = customer.FullName
+	header["address"] = customer.Address
+
+	responseData["header"] = header
+
+	var transactions []models.AccountStatementCustomerProduct
+
+	status, err := models.AdminGetAllAccountStatementCustomerProduct(&transactions, customerKey, dateawal, dateakhir)
+
+	if err != nil {
+		if err != sql.ErrNoRows {
+			log.Error(err.Error())
+			return lib.CustomError(status, err.Error(), "Failed get data transaction")
+		}
+	}
+
+	if len(transactions) > 0 {
+		var datatrans []interface{}
+		var productKey uint64
+		var transGroupProduct []interface{}
+		product := make(map[string]interface{})
+		count := make(map[string]interface{})
+		var totalSubs decimal.Decimal
+		var totalRedm decimal.Decimal
+		nol := decimal.NewFromInt(0)
+
+		var accKeyLast uint64
+		var productKeyLast uint64
+
+		for idx, tr := range transactions {
+			if idx != 0 {
+				if productKey != tr.ProductKey {
+					var balanceEnding models.BeginningEndingBalance
+					_, err = models.GetBeginningEndingBalanceAcc(&balanceEnding, "ENDING BALANCE", dateakhir, strconv.FormatUint(accKeyLast, 10), strconv.FormatUint(productKeyLast, 10))
+
+					endingbalance := make(map[string]interface{})
+					if err != nil {
+						var lastavgnav models.NavValue
+						_, err = models.AdminLastAvgNav(&lastavgnav, strconv.FormatUint(productKeyLast, 10), customerKey, dateakhir)
+						if err != nil {
+							endingbalance["avg_nav"] = nol
+						} else {
+							endingbalance["avg_nav"] = lastavgnav.NavValue.Truncate(2)
+						}
+
+						var lastnav models.NavValue
+						_, err = models.AdminLastNavValue(&lastnav, strconv.FormatUint(productKeyLast, 10), dateakhir)
+						if err != nil {
+							endingbalance["nav_value"] = nol
+						} else {
+							endingbalance["nav_value"] = lastnav.NavValue.Truncate(2)
+						}
+
+						dateParem, _ = time.Parse(layout, dateakhir)
+						endingbalance["date"] = dateParem.Format(newLayout)
+						endingbalance["description"] = "ENDING BALANCE"
+						endingbalance["amount"] = nol
+						endingbalance["unit"] = nol
+						endingbalance["fee"] = nol
+						transGroupProduct = append(transGroupProduct, endingbalance)
+					} else {
+						endingbalance["date"] = balanceEnding.Tanggal
+						endingbalance["description"] = balanceEnding.Description
+						endingbalance["amount"] = balanceEnding.Amount.Truncate(0)
+						endingbalance["nav_value"] = balanceEnding.NavValue.Truncate(2)
+						endingbalance["unit"] = balanceEnding.Unit.Truncate(2)
+						endingbalance["avg_nav"] = balanceEnding.AvgNav.Truncate(2)
+						endingbalance["fee"] = balanceEnding.Fee.Truncate(0)
+						transGroupProduct = append(transGroupProduct, endingbalance)
+					}
+
+					row := make(map[string]interface{})
+					row["count"] = count
+					row["product"] = product
+					row["list"] = transGroupProduct
+					datatrans = append(datatrans, row)
+					productKey = tr.ProductKey
+
+					transGroupProduct = nil
+					product = make(map[string]interface{})
+					count = make(map[string]interface{})
+					totalSubs = nol
+					totalRedm = nol
+
+					var balance models.BeginningEndingBalance
+					_, err = models.GetBeginningEndingBalanceAcc(&balance, "BEGINNING BALANCE", dateawal, strconv.FormatUint(tr.AccKey, 10), strconv.FormatUint(tr.ProductKey, 10))
+
+					beginning := make(map[string]interface{})
+					if err != nil {
+						var lastavgnav models.NavValue
+						_, err = models.AdminLastAvgNav(&lastavgnav, strconv.FormatUint(tr.ProductKey, 10), customerKey, dateawal)
+						if err != nil {
+							beginning["avg_nav"] = nol
+						} else {
+							beginning["avg_nav"] = lastavgnav.NavValue.Truncate(2)
+						}
+
+						var lastnav models.NavValue
+						_, err = models.AdminLastNavValue(&lastnav, strconv.FormatUint(tr.ProductKey, 10), dateawal)
+						if err != nil {
+							beginning["nav_value"] = nol
+						} else {
+							beginning["nav_value"] = lastnav.NavValue.Truncate(2)
+						}
+						dateParem, _ = time.Parse(layout, dateawal)
+						beginning["date"] = dateParem.Format(newLayout)
+						beginning["description"] = "BEGINNING BALANCE"
+						beginning["amount"] = nol
+						beginning["unit"] = nol
+						beginning["fee"] = nol
+						transGroupProduct = append(transGroupProduct, beginning)
+					} else {
+						beginning["date"] = balance.Tanggal
+						beginning["description"] = balance.Description
+						beginning["amount"] = balance.Amount.Truncate(0)
+						beginning["nav_value"] = balance.NavValue.Truncate(2)
+						beginning["unit"] = balance.Unit.Truncate(2)
+						beginning["avg_nav"] = balance.AvgNav.Truncate(2)
+						beginning["fee"] = balance.Fee.Truncate(0)
+						transGroupProduct = append(transGroupProduct, beginning)
+					}
+
+					trans := make(map[string]interface{})
+					trans["date"] = tr.NavDate
+					trans["description"] = tr.Trans
+					trans["amount"] = tr.Amount.Round(0).Truncate(0)
+					trans["nav_value"] = tr.NavValue.Truncate(2)
+					trans["unit"] = tr.Unit.Truncate(2)
+					trans["avg_nav"] = tr.AvgNavSub.Truncate(2)
+					trans["fee"] = tr.Fee.Truncate(0)
+					transGroupProduct = append(transGroupProduct, trans)
+
+					if (tr.TransTypeKey == uint64(1)) || (tr.TransTypeKey == uint64(4)) {
+						totalSubs = totalSubs.Add(tr.Amount.Round(0)).Truncate(0)
+					}
+					if (tr.TransTypeKey == uint64(2)) || (tr.TransTypeKey == uint64(3)) {
+						totalRedm = totalRedm.Add(tr.Amount.Round(0)).Truncate(0)
+					}
+					count["subs"] = totalSubs
+					count["redm"] = totalRedm
+
+					product["product_id"] = tr.ProductKey
+					product["product_name"] = tr.ProductName
+					product["product_bank_name"] = tr.BankName
+					product["product_bank_account_name"] = tr.AccountName
+					product["product_bank_account_no"] = tr.AccountNo
+					product["product_code"] = tr.ProductCode
+					product["currency"] = tr.Currency
+
+					if idx == (len(transactions) - 1) {
+						var balanceEndingLast models.BeginningEndingBalance
+						_, err = models.GetBeginningEndingBalanceAcc(&balanceEndingLast, "ENDING BALANCE", dateakhir, strconv.FormatUint(accKeyLast, 10), strconv.FormatUint(productKeyLast, 10))
+
+						endingbalancelast := make(map[string]interface{})
+						if err != nil {
+
+							var lastavgnav models.NavValue
+							_, err = models.AdminLastAvgNav(&lastavgnav, strconv.FormatUint(productKeyLast, 10), customerKey, dateakhir)
+							if err != nil {
+								endingbalancelast["avg_nav"] = nol
+							} else {
+								endingbalancelast["avg_nav"] = lastavgnav.NavValue.Truncate(2)
+							}
+
+							var lastnav models.NavValue
+							_, err = models.AdminLastNavValue(&lastnav, strconv.FormatUint(productKeyLast, 10), dateakhir)
+							if err != nil {
+								endingbalancelast["nav_value"] = nol
+							} else {
+								endingbalancelast["nav_value"] = lastnav.NavValue.Truncate(2)
+							}
+							dateParem, _ = time.Parse(layout, dateakhir)
+							endingbalancelast["date"] = dateParem.Format(newLayout)
+							endingbalancelast["description"] = "ENDING BALANCE"
+							endingbalancelast["amount"] = nol
+							endingbalancelast["unit"] = nol
+							endingbalancelast["fee"] = nol
+							transGroupProduct = append(transGroupProduct, endingbalancelast)
+						} else {
+							endingbalancelast["date"] = balanceEndingLast.Tanggal
+							endingbalancelast["description"] = balanceEndingLast.Description
+							endingbalancelast["amount"] = balanceEndingLast.Amount.Truncate(0)
+							endingbalancelast["nav_value"] = balanceEndingLast.NavValue.Truncate(2)
+							endingbalancelast["unit"] = balanceEndingLast.Unit.Truncate(2)
+							endingbalancelast["avg_nav"] = balanceEndingLast.AvgNav.Truncate(2)
+							endingbalancelast["fee"] = balanceEndingLast.Fee.Truncate(0)
+							transGroupProduct = append(transGroupProduct, endingbalancelast)
+						}
+
+						row := make(map[string]interface{})
+						row["count"] = count
+						row["product"] = product
+						row["list"] = transGroupProduct
+						datatrans = append(datatrans, row)
+					}
+				} else {
+					trans := make(map[string]interface{})
+					trans["date"] = tr.NavDate
+					trans["description"] = tr.Trans
+					trans["amount"] = tr.Amount.Round(0).Truncate(0)
+					trans["nav_value"] = tr.NavValue.Truncate(2)
+					trans["unit"] = tr.Unit.Truncate(2)
+					trans["avg_nav"] = tr.AvgNavSub.Truncate(2)
+					trans["fee"] = tr.Fee.Truncate(0)
+					transGroupProduct = append(transGroupProduct, trans)
+
+					if (tr.TransTypeKey == 1) || (tr.TransTypeKey == 4) {
+						totalSubs = totalSubs.Add(tr.Amount.Round(0)).Truncate(0)
+					}
+					if (tr.TransTypeKey == 2) || (tr.TransTypeKey == 3) {
+						totalRedm = totalRedm.Add(tr.Amount.Round(0)).Truncate(0)
+					}
+					count["subs"] = totalSubs
+					count["redm"] = totalRedm
+
+					product["product_id"] = tr.ProductKey
+					product["product_name"] = tr.ProductName
+					product["product_bank_name"] = tr.BankName
+					product["product_bank_account_name"] = tr.AccountName
+					product["product_bank_account_no"] = tr.AccountNo
+					product["product_code"] = tr.ProductCode
+					product["currency"] = tr.Currency
+
+					if idx == (len(transactions) - 1) {
+						var balanceEndingLast models.BeginningEndingBalance
+						_, err = models.GetBeginningEndingBalanceAcc(&balanceEndingLast, "ENDING BALANCE", dateakhir, strconv.FormatUint(accKeyLast, 10), strconv.FormatUint(productKeyLast, 10))
+
+						endingbalancelast := make(map[string]interface{})
+						if err != nil {
+
+							endingbalancelast["avg_nav"] = trans["avg_nav"]
+
+							var lastnav models.NavValue
+							_, err = models.AdminLastNavValue(&lastnav, strconv.FormatUint(productKeyLast, 10), dateakhir)
+							if err != nil {
+								endingbalancelast["nav_value"] = nol
+							} else {
+								endingbalancelast["nav_value"] = lastnav.NavValue.Truncate(2)
+							}
+							dateParem, _ = time.Parse(layout, dateakhir)
+							endingbalancelast["date"] = dateParem.Format(newLayout)
+							endingbalancelast["description"] = "ENDING BALANCE"
+							endingbalancelast["amount"] = nol
+							endingbalancelast["unit"] = nol
+							endingbalancelast["fee"] = nol
+							transGroupProduct = append(transGroupProduct, endingbalancelast)
+						} else {
+							endingbalancelast["date"] = balanceEndingLast.Tanggal
+							endingbalancelast["description"] = balanceEndingLast.Description
+							endingbalancelast["amount"] = balanceEndingLast.Amount.Truncate(0)
+							endingbalancelast["nav_value"] = balanceEndingLast.NavValue.Truncate(2)
+							endingbalancelast["unit"] = balanceEndingLast.Unit.Truncate(2)
+							endingbalancelast["avg_nav"] = balanceEndingLast.AvgNav.Truncate(2)
+							endingbalancelast["fee"] = balanceEndingLast.Fee.Truncate(0)
+							transGroupProduct = append(transGroupProduct, endingbalancelast)
+						}
+
+						row := make(map[string]interface{})
+						row["count"] = count
+						row["product"] = product
+						row["list"] = transGroupProduct
+						datatrans = append(datatrans, row)
+					}
+
+				}
+			} else {
+
+				var balance models.BeginningEndingBalance
+				_, err = models.GetBeginningEndingBalanceAcc(&balance, "BEGINNING BALANCE", dateawal, strconv.FormatUint(tr.AccKey, 10), strconv.FormatUint(tr.ProductKey, 10))
+
+				beginning := make(map[string]interface{})
+				if err != nil {
+					var lastavgnav models.NavValue
+					_, err = models.AdminLastAvgNav(&lastavgnav, strconv.FormatUint(tr.ProductKey, 10), customerKey, dateawal)
+					if err != nil {
+						beginning["avg_nav"] = nol
+					} else {
+						beginning["avg_nav"] = lastavgnav.NavValue.Truncate(2)
+					}
+
+					var lastnav models.NavValue
+					_, err = models.AdminLastNavValue(&lastnav, strconv.FormatUint(tr.ProductKey, 10), dateawal)
+					if err != nil {
+						beginning["nav_value"] = nol
+					} else {
+						beginning["nav_value"] = lastnav.NavValue.Truncate(2)
+					}
+					dateParem, _ = time.Parse(layout, dateawal)
+					beginning["date"] = dateParem.Format(newLayout)
+					beginning["description"] = "BEGINNING BALANCE"
+					beginning["amount"] = nol
+					beginning["unit"] = nol
+					beginning["fee"] = nol
+					transGroupProduct = append(transGroupProduct, beginning)
+				} else {
+					beginning["date"] = balance.Tanggal
+					beginning["description"] = balance.Description
+					beginning["amount"] = balance.Amount.Truncate(0)
+					beginning["nav_value"] = balance.NavValue.Truncate(2)
+					beginning["unit"] = balance.Unit.Truncate(2)
+					beginning["avg_nav"] = balance.AvgNav.Truncate(2)
+					beginning["fee"] = balance.Fee.Truncate(0)
+					transGroupProduct = append(transGroupProduct, beginning)
+				}
+
+				trans := make(map[string]interface{})
+				trans["date"] = tr.NavDate
+				trans["description"] = tr.Trans
+				trans["amount"] = tr.Amount.Round(0).Truncate(0)
+				trans["nav_value"] = tr.NavValue.Truncate(2)
+				trans["unit"] = tr.Unit.Truncate(2)
+				trans["avg_nav"] = tr.AvgNavSub.Truncate(2)
+				trans["fee"] = tr.Fee.Truncate(0)
+				transGroupProduct = append(transGroupProduct, trans)
+
+				if (tr.TransTypeKey == 1) || (tr.TransTypeKey == 4) {
+					totalSubs = totalSubs.Add(tr.Amount.Round(0)).Truncate(0)
+				}
+				if (tr.TransTypeKey == 2) || (tr.TransTypeKey == 3) {
+					totalRedm = totalRedm.Add(tr.Amount.Round(0)).Truncate(0)
+				}
+				count["subs"] = totalSubs
+				count["redm"] = totalRedm
+
+				product["product_id"] = tr.ProductKey
+				product["product_name"] = tr.ProductName
+				product["product_bank_name"] = tr.BankName
+				product["product_bank_account_name"] = tr.AccountName
+				product["product_bank_account_no"] = tr.AccountNo
+				product["product_code"] = tr.ProductCode
+				product["currency"] = tr.Currency
+
+				if idx == (len(transactions) - 1) {
+					var balanceEndingLast models.BeginningEndingBalance
+					_, err = models.GetBeginningEndingBalanceAcc(&balanceEndingLast, "ENDING BALANCE", dateakhir, strconv.FormatUint(tr.AccKey, 10), strconv.FormatUint(tr.ProductKey, 10))
+
+					endingbalancelast := make(map[string]interface{})
+					if err != nil {
+						var lastavgnav models.NavValue
+						_, err = models.AdminLastAvgNav(&lastavgnav, strconv.FormatUint(tr.ProductKey, 10), customerKey, dateakhir)
+						if err != nil {
+							endingbalancelast["avg_nav"] = nol
+						} else {
+							endingbalancelast["avg_nav"] = lastavgnav.NavValue.Truncate(2)
+						}
+
+						var lastnav models.NavValue
+						_, err = models.AdminLastNavValue(&lastnav, strconv.FormatUint(tr.ProductKey, 10), dateakhir)
+						if err != nil {
+							endingbalancelast["nav_value"] = nol
+						} else {
+							endingbalancelast["nav_value"] = lastnav.NavValue.Truncate(2)
+						}
+						dateParem, _ = time.Parse(layout, dateakhir)
+						endingbalancelast["date"] = dateParem.Format(newLayout)
+						endingbalancelast["description"] = "ENDING BALANCE"
+						endingbalancelast["amount"] = nol
+						endingbalancelast["unit"] = nol
+						endingbalancelast["fee"] = nol
+						transGroupProduct = append(transGroupProduct, endingbalancelast)
+					} else {
+						endingbalancelast["date"] = balanceEndingLast.Tanggal
+						endingbalancelast["description"] = balanceEndingLast.Description
+						endingbalancelast["amount"] = balanceEndingLast.Amount.Truncate(0)
+						endingbalancelast["nav_value"] = balanceEndingLast.NavValue.Truncate(2)
+						endingbalancelast["unit"] = balanceEndingLast.Unit.Truncate(2)
+						endingbalancelast["avg_nav"] = balanceEndingLast.AvgNav.Truncate(2)
+						endingbalancelast["fee"] = balanceEndingLast.Fee.Truncate(0)
+						transGroupProduct = append(transGroupProduct, endingbalancelast)
+					}
+
+					row := make(map[string]interface{})
+					row["count"] = count
+					row["product"] = product
+					row["list"] = transGroupProduct
+					datatrans = append(datatrans, row)
+				}
+			}
+			accKeyLast = tr.AccKey
+			productKeyLast = tr.ProductKey
+			productKey = tr.ProductKey
+		}
+
+		responseData["transaction"] = datatrans
+
+	}
+
+	//========== GENERATE HALAMAN HTML DAHULU ==========
+	tm := template.New("account-statement-template.html")
+
+	tm, err = tm.ParseFiles(config.BasePath + "/mail/account-statement-template.html")
+	if err != nil {
+		log.Println(err)
+	}
+	f, err := os.Create(config.BasePath + "/mail/account-statement-" + customerKey + ".html")
+	if err != nil {
+		log.Println("create file: ", err)
+	}
+	if err := tm.Execute(f, responseData); err != nil {
+		log.Println(err)
+	}
+	f.Close()
+
+	//========== GENERATE HALAMAN HTML DAHULU ==========
+
+	pdfg, err := wkhtml.NewPDFGenerator()
+	if err != nil {
+		log.Error(err.Error())
+		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
+	}
+
+	// Set global options
+	pdfg.Dpi.Set(300)
+	pdfg.Orientation.Set(wkhtml.OrientationLandscape)
+	pdfg.Grayscale.Set(false)
+
+	// Create a new input page from an URL
+	page := wkhtml.NewPage(config.BasePath + "/mail/account-statement-" + customerKey + ".html")
+	log.Println("========= LEWAT SINI ==========")
+
+	// Set options for this page
+	page.FooterRight.Set("[page]")
+	page.FooterFontSize.Set(10)
+	page.Zoom.Set(0.95)
+	page.Allow.Set(config.BasePath + "/mail/images")
+
+	// Add to document
+	pdfg.AddPage(page)
+
+	// Create PDF document in internal buffer
+	err = pdfg.Create()
+	if err != nil {
+		log.Error(err.Error())
+		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
+	}
+	err = os.MkdirAll(config.BasePath+"/files/"+customerKey, 0755)
+	// Write buffer contents to file on disk
+	err = pdfg.WriteFile(config.BasePath + "/files/" + customerKey + "/account-statement.pdf")
+	if err != nil {
+		log.Error(err.Error())
+		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
+	}
+	log.Info("Success create file")
+	t := template.New("index-portofolio.html")
+
+	t, err = t.ParseFiles(config.BasePath + "/mail/index-portofolio.html")
+	if err != nil {
+		log.Println(err)
+	}
+
+	var tpl bytes.Buffer
+	if err := t.Execute(&tpl, struct{ FileUrl string }{FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+		log.Println(err)
+	}
+
+	result := tpl.String()
+
+	mailer := gomail.NewMessage()
+	mailer.SetHeader("From", config.EmailFrom)
+	mailer.SetHeader("To", customer.Email)
+	mailer.SetHeader("Subject", "[MotionFunds] Laporan Akun")
+	mailer.SetBody("text/html", result)
+	mailer.Attach(config.BasePath + "/files/" + customerKey + "/account-statement.pdf")
+
+	err = lib.SendEmail(mailer)
+	if err != nil {
+		log.Error(err)
+		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
+	} else {
+		log.Info("Email sent")
 	}
 
 	var response lib.Response

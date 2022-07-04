@@ -187,7 +187,7 @@ func router() *echo.Echo {
 	admin.POST("/customer/pengkinian/create", controllers.AdminSavePengkinianCustomerIndividu).Name = "AdminSavePengkinianCustomerIndividu"
 	admin.POST("/customer/check-unique-email-nohp", controllers.CheckUniqueEmailNoHp).Name = "CheckUniqueEmailNoHp"
 	admin.POST("/customer/check-unique-no-id", controllers.CheckUniqueNoId).Name = "CheckUniqueNoId"
-	admin.GET("/customer/individu/send-account-statement/:key", controllers.IndividuSendAccountStatement).Name = "SendAccount"
+	admin.GET("/customer/individu/send-account-statement", controllers.IndividuSendAccountStatement).Name = "SendAccount"
 
 	//Admin Transaction Report
 	admin.GET("/report/transactionhistorylist", controllers.GetTransactionHistory).Name = "GetTransactionHistory"
