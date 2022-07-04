@@ -36,32 +36,37 @@
                                 <table>
                                     <tr>
                                         <td>
-                                            No. CIF: {{.Cif}}
+                                            No. CIF: {{header .Cif}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            No. SID: {{.Sid}}
+                                            No. SID: {{header .Sid}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            {{.Name}}
+                                            {{header .Name}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            {{.Address}}
+                                            {{header .Email}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            {{.City}}
+                                            {{header .Address}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            {{.Country}}
+                                            {{header .City}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            {{header .Country}}
                                         </td>
                                     </tr>
                                 </table>
@@ -126,7 +131,7 @@
                                 Amount
                             </td>
                             <td>
-                                Gail/Loss
+                                Gain/Loss
                             </td>
                             <td>
                                 Kurs
