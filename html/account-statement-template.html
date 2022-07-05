@@ -110,9 +110,45 @@
             </tr>
             <tr>
                 <td>
+                    {{range .transaction}}
                     <table width="100%" cellpadding="5" cellspacing="0" class="data-table">
-                        <h1>TABLE ISI NYA AKAN DISINI</h1>
+                        <thead>
+                            <tr>
+                                <td colspan="7"><h3>{{.product.product_name}}</h3></td>
+                            </tr>
+                            <tr>
+                                <td>Date</td>
+                                <td>Description</td>
+                                <td>Amount</td>
+                                <td>NAV</td>
+                                <td>Unit</td>
+                                <td>Avg NAV</td>
+                                <td>Fee</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range .list}}
+                            <tr>
+                                <td>{{.date}}</td>
+                                <td>{{.description}}</td>
+                                <td>{{.amount}}</td>
+                                <td>{{.nav_value}}</td>
+                                <td>{{.unit}}</td>
+                                <td>{{.avg_nav}}</td>
+                                <td>{{.fee}}</td>
+                            </tr>
+                            {{end}}
+                            <tr>
+                                <td colspan="3">Total Subscription :</td>
+                                <td colspan="4">{{.count.subs}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Total Redemption :</td>
+                                <td colspan="4">{{.count.redm}}</td>
+                            </tr>
+                        </tbody>
                     </table>
+                    {{end}}
                 </td>
             </tr>
         </table>
