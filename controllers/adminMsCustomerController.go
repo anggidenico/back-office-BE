@@ -4836,7 +4836,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 	//========== GENERATE HALAMAN HTML DAHULU ==========
 	tm := template.New("account-statement-template.html")
 
-	tm, err = tm.ParseFiles("html/account-statement-template.html")
+	tm, err = tm.ParseFiles(config.BasePath + "/mail/account-statement-template.html")
 	if err != nil {
 		log.Println(err)
 	}
