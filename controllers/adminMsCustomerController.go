@@ -4446,6 +4446,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 	header["cif"] = customer.Cif
 	header["sid"] = customer.Sid
 	header["full_name"] = customer.FullName
+	header["email"] = customer.Email
 	header["address"] = customer.Address
 
 	responseData["header"] = header
@@ -4835,7 +4836,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 	//========== GENERATE HALAMAN HTML DAHULU ==========
 	tm := template.New("account-statement-template.html")
 
-	tm, err = tm.ParseFiles(config.BasePath + "/mail/account-statement-template.html")
+	tm, err = tm.ParseFiles("./html/account-statement-template.html")
 	if err != nil {
 		log.Println(err)
 	}

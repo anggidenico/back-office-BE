@@ -8,21 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// type AccStatementEmail struct {
-// 	Header HeaderAccStatementEmail
-
-// }
-
-// type HeaderAccStatementEmail struct {
-// 	DateFrom 	string
-// 	DateTo 		string
-// 	CustomerKey string
-// 	Cif		 	string
-// 	Sid	 		string
-// 	Full_name	string
-// 	Address	 	string
-// }
-
 type AccountStatementCustomerProduct struct {
 	TransactionKey uint64           `db:"transaction_key"         json:"transaction_key"`
 	TransTypeKey   uint64           `db:"trans_type_key"          json:"trans_type_key"`

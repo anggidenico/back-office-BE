@@ -20,7 +20,7 @@
             <tr>
                 <td style="text-align:center">
                     <h1>ACCOUNT STATEMENT</h1>
-                    <h3>{{.Date}}</h3>
+                    <h3>Period {{.header.date_from}} - {{.header.date_to}}</h3>
                 </td>
             <tr>
             <tr>
@@ -41,32 +41,32 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            No. SID: {{.Sid}}
+                                            No. SID: {{.header.sid}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            {{.Name}}
+                                            {{.header.name}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            {{.Email}}
+                                            {{.header.Email}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            {{.Address}}
+                                            {{.header.Address}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            {{.City}}
+                                            {{.header.City}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            {{.Country}}
+                                            {{.header.Country}}
                                         </td>
                                     </tr>
                                 </table>
@@ -111,83 +111,7 @@
             <tr>
                 <td>
                     <table width="100%" cellpadding="5" cellspacing="0" class="data-table">
-                        <tr>
-                            <td>
-                                Product Name
-                            </td>
-                            <td>
-                                NAV/Unit
-                            </td>
-                            <td>
-                                Avg.NAV
-                            </td>
-                            <td>
-                                Unit
-                            </td>
-                            <td>
-                                CCY
-                            </td>
-                            <td>
-                                Amount
-                            </td>
-                            <td>
-                                Gain/Loss
-                            </td>
-                            <td>
-                                Kurs
-                            </td>
-                            <td>
-                                Amount IDR
-                            </td>
-                            <td>
-                                Gain/Loss IDR
-                            </td>
-                        </tr>
-                    {{range .Datas}}
-                        <tr>
-                            <td>
-                                {{.ProductName}}
-                            </td align="Right">
-                            <td>
-                                {{.Nav}}
-                            </td>
-                            <td align="Right">
-                                {{.AvgNav}}
-                            </td>
-                            <td align="Right">
-                                {{.Unit}}
-                            </td>
-                            <td>
-                                {{.CCY}}
-                            </td>
-                            <td align="Right">
-                                {{.Amount}}
-                            </td>
-                            <td align="Right">
-                                {{.GainLoss}}
-                            </td>
-                            <td align="Right">
-                                {{.Kurs}}
-                            </td>
-                            <td align="Right">
-                                {{.AmountIDR}}
-                            </td>
-                            <td align="Right">
-                                {{.GainLossIDR}}
-                            </td>
-                        </tr>
-                    {{end}}
-                        <tr>
-                            <td colspan="8" align="Right">
-                                    Total Amount
-                            </td>
-                            <td align="Right">
-                                    {{.Total}}
-                            </td>
-                            <td align="Right">
-                                    {{.TotalGainLoss}}
-                            </td>
-                        <tr>
+                    
                     </table>
                 </td>
             </tr>
