@@ -627,7 +627,7 @@ func GetAllScUserLoginByNameOrEmail(c *[]ScUserLogin, limit uint64, offset uint6
 	}
 
 	// Main query
-	log.Info(query)
+	log.Info("========= QUERY LOGIN ============", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Error(err)
