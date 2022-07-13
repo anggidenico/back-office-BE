@@ -604,8 +604,9 @@ func GetAllScUserLoginByNameOrEmail(c *[]ScUserLogin, limit uint64, offset uint6
 				condition += " ) "
 			}
 		}
-		condition += " user_category_key IN (2,3)"
 	}
+
+	condition += " AND sc_user_login.user_category_key IN (2,3) "
 
 	// Check order by
 	var orderBy string
