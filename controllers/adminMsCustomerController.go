@@ -4864,7 +4864,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 
 	// Create a new input page from an URL
 	page := wkhtml.NewPage(config.BasePath + "/mail/account-statement-" + customerKey + ".html")
-	log.Println("========= LEWAT SINI ==========")
+	// log.Println("========= LEWAT SINI ==========")
 
 	// Set options for this page
 	page.FooterRight.Set("[page]")
@@ -4889,6 +4889,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 	}
 	log.Info("Success create file")
+
 	t := template.New("index-portofolio.html")
 
 	t, err = t.ParseFiles(config.BasePath + "/mail/index-portofolio.html")
@@ -4897,7 +4898,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 	}
 
 	var tpl bytes.Buffer
-	if err := t.Execute(&tpl, struct{ FileUrl string }{FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+	if err := t.Execute(&tpl, struct{ FileUrl string }{FileUrl: config.BasePath + "/images/mail"}); err != nil {
 		log.Println(err)
 	}
 
