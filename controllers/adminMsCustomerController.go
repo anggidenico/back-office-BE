@@ -4898,7 +4898,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 	}
 
 	var tpl bytes.Buffer
-	if err := t.Execute(&tpl, struct{ FileUrl string }{FileUrl: config.BasePath + "/images/mail"}); err != nil {
+	if err := t.Execute(&tpl, struct{ FileUrl string }{FileUrl: config.FileUrl + "/images/mail"}); err != nil {
 		log.Println(err)
 	}
 
