@@ -28,6 +28,9 @@ type AccountStatementCustomerProduct struct {
 	AccountName    string           `db:"account_holder_name"     json:"account_holder_name"`
 	AccountNo      string           `db:"account_no"              json:"account_no"`
 	AvgNavSub      decimal.Decimal  `db:"avg_nav_sub"             json:"avg_nav_sub"`
+	DecUnit        *int32           `db:"dec_unit"      json:"dec_unit"`
+	DecNav         *int32           `db:"dec_nav" json:"dec_nav"`
+	DecAmount      *int32           `db:"dec_amount"         json:"dec_amount"`
 }
 
 func AdminGetAllAccountStatementCustomerProduct(c *[]AccountStatementCustomerProduct, customerKey string, dateFrom string, dateTo string) (int, error) {
@@ -53,7 +56,10 @@ func AdminGetAllAccountStatementCustomerProduct(c *[]AccountStatementCustomerPro
 				(CASE
 				  WHEN t.trans_type_key IN (1,4) THEN COALESCE(tb.avg_nav,0) 
 				  ELSE COALESCE(trdm.avg_nav,0) 
-				END) AS avg_nav_sub 
+				END) AS avg_nav_sub,
+				p.dec_amount,
+				p.dec_unit,
+				p.dec_nav 
 			FROM tr_transaction AS t 
 			INNER JOIN ms_customer AS c ON c.customer_key = t.customer_key AND c.rec_status =  1 
 			INNER JOIN tr_transaction_confirmation AS tc ON tc.transaction_key = t.transaction_key AND tc.rec_status = 1 

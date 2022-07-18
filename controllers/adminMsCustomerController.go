@@ -4560,10 +4560,10 @@ func IndividuSendAccountStatement(c echo.Context) error {
 					} else {
 						beginning["date"] = balance.Tanggal
 						beginning["description"] = balance.Description
-						beginning["amount"] = balance.Amount.Truncate(0)
-						beginning["nav_value"] = balance.NavValue.Truncate(2)
-						beginning["unit"] = balance.Unit.Truncate(2)
-						beginning["avg_nav"] = balance.AvgNav.Truncate(2)
+						beginning["amount"] = balance.Amount.Truncate(*balance.DecAmount)
+						beginning["nav_value"] = balance.NavValue.Truncate(*balance.DecNav)
+						beginning["unit"] = balance.Unit.Truncate(*balance.DecUnit)
+						beginning["avg_nav"] = balance.AvgNav.Truncate(*balance.DecNav)
 						beginning["fee"] = balance.Fee.Truncate(0)
 						transGroupProduct = append(transGroupProduct, beginning)
 					}
@@ -4571,10 +4571,10 @@ func IndividuSendAccountStatement(c echo.Context) error {
 					trans := make(map[string]interface{})
 					trans["date"] = tr.NavDate
 					trans["description"] = tr.Trans
-					trans["amount"] = tr.Amount.Round(0).Truncate(0)
-					trans["nav_value"] = tr.NavValue.Truncate(2)
-					trans["unit"] = tr.Unit.Truncate(2)
-					trans["avg_nav"] = tr.AvgNavSub.Truncate(2)
+					trans["amount"] = tr.Amount.Round(0).Truncate(*tr.DecAmount)
+					trans["nav_value"] = tr.NavValue.Truncate(*tr.DecNav)
+					trans["unit"] = tr.Unit.Truncate(*tr.DecUnit)
+					trans["avg_nav"] = tr.AvgNavSub.Truncate(*tr.DecNav)
 					trans["fee"] = tr.Fee.Truncate(0)
 					transGroupProduct = append(transGroupProduct, trans)
 
@@ -4627,10 +4627,10 @@ func IndividuSendAccountStatement(c echo.Context) error {
 						} else {
 							endingbalancelast["date"] = balanceEndingLast.Tanggal
 							endingbalancelast["description"] = balanceEndingLast.Description
-							endingbalancelast["amount"] = balanceEndingLast.Amount.Truncate(0)
-							endingbalancelast["nav_value"] = balanceEndingLast.NavValue.Truncate(2)
-							endingbalancelast["unit"] = balanceEndingLast.Unit.Truncate(2)
-							endingbalancelast["avg_nav"] = balanceEndingLast.AvgNav.Truncate(2)
+							endingbalancelast["amount"] = balanceEndingLast.Amount.Truncate(*balanceEndingLast.DecAmount)
+							endingbalancelast["nav_value"] = balanceEndingLast.NavValue.Truncate(*balanceEndingLast.DecNav)
+							endingbalancelast["unit"] = balanceEndingLast.Unit.Truncate(*balanceEndingLast.DecUnit)
+							endingbalancelast["avg_nav"] = balanceEndingLast.AvgNav.Truncate(*balanceEndingLast.DecNav)
 							endingbalancelast["fee"] = balanceEndingLast.Fee.Truncate(0)
 							transGroupProduct = append(transGroupProduct, endingbalancelast)
 						}
@@ -4645,10 +4645,10 @@ func IndividuSendAccountStatement(c echo.Context) error {
 					trans := make(map[string]interface{})
 					trans["date"] = tr.NavDate
 					trans["description"] = tr.Trans
-					trans["amount"] = tr.Amount.Round(0).Truncate(0)
-					trans["nav_value"] = tr.NavValue.Truncate(2)
-					trans["unit"] = tr.Unit.Truncate(2)
-					trans["avg_nav"] = tr.AvgNavSub.Truncate(2)
+					trans["amount"] = tr.Amount.Round(0).Truncate(*tr.DecAmount)
+					trans["nav_value"] = tr.NavValue.Truncate(*tr.DecNav)
+					trans["unit"] = tr.Unit.Truncate(*tr.DecUnit)
+					trans["avg_nav"] = tr.AvgNavSub.Truncate(*tr.DecNav)
 					trans["fee"] = tr.Fee.Truncate(0)
 					transGroupProduct = append(transGroupProduct, trans)
 
@@ -4696,9 +4696,9 @@ func IndividuSendAccountStatement(c echo.Context) error {
 							endingbalancelast["date"] = balanceEndingLast.Tanggal
 							endingbalancelast["description"] = balanceEndingLast.Description
 							endingbalancelast["amount"] = balanceEndingLast.Amount.Truncate(0)
-							endingbalancelast["nav_value"] = balanceEndingLast.NavValue.Truncate(2)
-							endingbalancelast["unit"] = balanceEndingLast.Unit.Truncate(2)
-							endingbalancelast["avg_nav"] = balanceEndingLast.AvgNav.Truncate(2)
+							endingbalancelast["nav_value"] = balanceEndingLast.NavValue.Truncate(*balanceEndingLast.DecNav)
+							endingbalancelast["unit"] = balanceEndingLast.Unit.Truncate(*balanceEndingLast.DecUnit)
+							endingbalancelast["avg_nav"] = balanceEndingLast.AvgNav.Truncate(*balanceEndingLast.DecNav)
 							endingbalancelast["fee"] = balanceEndingLast.Fee.Truncate(0)
 							transGroupProduct = append(transGroupProduct, endingbalancelast)
 						}
@@ -4743,10 +4743,10 @@ func IndividuSendAccountStatement(c echo.Context) error {
 				} else {
 					beginning["date"] = balance.Tanggal
 					beginning["description"] = balance.Description
-					beginning["amount"] = balance.Amount.Truncate(0)
-					beginning["nav_value"] = balance.NavValue.Truncate(2)
-					beginning["unit"] = balance.Unit.Truncate(2)
-					beginning["avg_nav"] = balance.AvgNav.Truncate(2)
+					beginning["amount"] = balance.Amount.Truncate(*balance.DecAmount)
+					beginning["nav_value"] = balance.NavValue.Truncate(*balance.DecNav)
+					beginning["unit"] = balance.Unit.Truncate(*balance.DecUnit)
+					beginning["avg_nav"] = balance.AvgNav.Truncate(*balance.DecNav)
 					beginning["fee"] = balance.Fee.Truncate(0)
 					transGroupProduct = append(transGroupProduct, beginning)
 				}
@@ -4754,10 +4754,10 @@ func IndividuSendAccountStatement(c echo.Context) error {
 				trans := make(map[string]interface{})
 				trans["date"] = tr.NavDate
 				trans["description"] = tr.Trans
-				trans["amount"] = tr.Amount.Round(0).Truncate(0)
-				trans["nav_value"] = tr.NavValue.Truncate(2)
-				trans["unit"] = tr.Unit.Truncate(2)
-				trans["avg_nav"] = tr.AvgNavSub.Truncate(2)
+				trans["amount"] = tr.Amount.Round(0).Truncate(*balance.DecAmount)
+				trans["nav_value"] = tr.NavValue.Truncate(*balance.DecNav)
+				trans["unit"] = tr.Unit.Truncate(*balance.DecUnit)
+				trans["avg_nav"] = tr.AvgNavSub.Truncate(*balance.DecNav)
 				trans["fee"] = tr.Fee.Truncate(0)
 				transGroupProduct = append(transGroupProduct, trans)
 
@@ -4809,10 +4809,10 @@ func IndividuSendAccountStatement(c echo.Context) error {
 					} else {
 						endingbalancelast["date"] = balanceEndingLast.Tanggal
 						endingbalancelast["description"] = balanceEndingLast.Description
-						endingbalancelast["amount"] = balanceEndingLast.Amount.Truncate(0)
-						endingbalancelast["nav_value"] = balanceEndingLast.NavValue.Truncate(2)
-						endingbalancelast["unit"] = balanceEndingLast.Unit.Truncate(2)
-						endingbalancelast["avg_nav"] = balanceEndingLast.AvgNav.Truncate(2)
+						endingbalancelast["amount"] = balanceEndingLast.Amount.Truncate(*balanceEndingLast.DecAmount)
+						endingbalancelast["nav_value"] = balanceEndingLast.NavValue.Truncate(*balanceEndingLast.DecNav)
+						endingbalancelast["unit"] = balanceEndingLast.Unit.Truncate(*balanceEndingLast.DecUnit)
+						endingbalancelast["avg_nav"] = balanceEndingLast.AvgNav.Truncate(*balanceEndingLast.DecNav)
 						endingbalancelast["fee"] = balanceEndingLast.Fee.Truncate(0)
 						transGroupProduct = append(transGroupProduct, endingbalancelast)
 					}
