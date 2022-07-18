@@ -267,6 +267,9 @@ type BeginningEndingBalance struct {
 	Unit        *decimal.Decimal `db:"unit"            json:"unit"`
 	AvgNav      *decimal.Decimal `db:"avg_nav"         json:"avg_nav"`
 	Fee         *decimal.Decimal `db:"fee"             json:"fee"`
+	DecNav      *int32           `db:"dec_nav"         json:"dec_nav"`
+	DecUnit     *int32           `db:"dec_unit"        json:"dec_unit"`
+	DecAmount   *int32           `db:"dec_amount" json:"dec_amount"`
 }
 
 func GetBeginningEndingBalanceAcc(c *BeginningEndingBalance, desc string, date string, accKey string, productKey string) (int, error) {
@@ -277,7 +280,10 @@ func GetBeginningEndingBalanceAcc(c *BeginningEndingBalance, desc string, date s
 				nv.nav_value,
 				SUM(t.balance_unit) AS unit,
 				t.avg_nav,
-				0 AS fee
+				0 AS fee,
+				msp.dec_nav,
+				msp.dec_unit,
+				msp.dec_amount
 			FROM
 				(
 					SELECT 
@@ -299,6 +305,7 @@ func GetBeginningEndingBalanceAcc(c *BeginningEndingBalance, desc string, date s
 						FROM tr_nav WHERE nav_date <= '` + date + `' AND product_key = '` + productKey + `'
 					) ORDER BY nav_key
 				) AS nv ON 1=1
+			INNER JOIN ms_product AS msp ON nv.product_key = msp.product_key
 			GROUP BY nv.product_key`
 
 	// Main query

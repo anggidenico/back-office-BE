@@ -4509,10 +4509,10 @@ func IndividuSendAccountStatement(c echo.Context) error {
 					} else {
 						endingbalance["date"] = balanceEnding.Tanggal
 						endingbalance["description"] = balanceEnding.Description
-						endingbalance["amount"] = balanceEnding.Amount.Truncate(0)
-						endingbalance["nav_value"] = balanceEnding.NavValue.Truncate(2)
-						endingbalance["unit"] = balanceEnding.Unit.Truncate(2)
-						endingbalance["avg_nav"] = balanceEnding.AvgNav.Truncate(2)
+						endingbalance["amount"] = balanceEnding.Amount.Truncate(*balanceEnding.DecAmount)
+						endingbalance["nav_value"] = balanceEnding.NavValue.Truncate(*balanceEnding.DecNav)
+						endingbalance["unit"] = balanceEnding.Unit.Truncate(*balanceEnding.DecUnit)
+						endingbalance["avg_nav"] = balanceEnding.AvgNav.Truncate(*balanceEnding.DecNav)
 						endingbalance["fee"] = balanceEnding.Fee.Truncate(0)
 						transGroupProduct = append(transGroupProduct, endingbalance)
 					}
