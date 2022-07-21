@@ -649,12 +649,12 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 					totalSubs = nol
 					totalRedm = nol
 					totalNettsubs = nol
-					salesKey = tr.SalesKey
+					salesKey = *tr.SalesKey
 					productKey = tr.ProductKey
 
 					//set beginning
 					var balanceBeginning models.BeginningEndingBalance
-					_, err = models.GetBeginningEndingBalanceAca(&balanceBeginning, "BEGINNING BALANCE", dateawal, strconv.FormatUint(tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
+					_, err = models.GetBeginningEndingBalanceAca(&balanceBeginning, "BEGINNING BALANCE", dateawal, strconv.FormatUint(*tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
 
 					beginningbalance := make(map[string]interface{})
 					if err != nil {
@@ -742,7 +742,7 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 					if idx == (len(transactions) - 1) {
 						//set ending
 						var balanceBeginning models.BeginningEndingBalance
-						_, err = models.GetBeginningEndingBalanceAca(&balanceBeginning, "ENDING BALANCE", dateakhir, strconv.FormatUint(tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
+						_, err = models.GetBeginningEndingBalanceAca(&balanceBeginning, "ENDING BALANCE", dateakhir, strconv.FormatUint(*tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
 
 						beginningbalance := make(map[string]interface{})
 						if err != nil {
@@ -792,7 +792,8 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 						datatrans = append(datatrans, row)
 					}
 				} else {
-					if salesKey != tr.SalesKey {
+
+					if salesKey != *tr.SalesKey {
 						// set ending
 						var endingBel models.BeginningEndingBalance
 						_, err = models.GetBeginningEndingBalanceAca(&endingBel, "ENDING BALANCE", dateakhir, strconv.FormatUint(acaKeyLast, 10), strconv.FormatUint(productKeyLast, 10))
@@ -825,10 +826,10 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 						} else {
 							endingBall["date"] = endingBel.Tanggal
 							endingBall["description"] = endingBel.Description
-							endingBall["amount"] = endingBel.Amount.Truncate(0)
-							endingBall["nav_value"] = endingBel.NavValue.Truncate(2)
-							endingBall["unit"] = endingBel.Unit.Truncate(2)
-							endingBall["avg_nav"] = endingBel.AvgNav.Truncate(2)
+							endingBall["amount"] = endingBel.Amount.Truncate(*endingBel.DecAmount)
+							endingBall["nav_value"] = endingBel.NavValue.Truncate(*endingBel.DecNav)
+							endingBall["unit"] = endingBel.Unit.Truncate(*endingBel.DecUnit)
+							endingBall["avg_nav"] = endingBel.AvgNav.Truncate(*endingBel.DecNav)
 							endingBall["fee"] = endingBel.Fee.Truncate(0)
 							transGroupSales = append(transGroupSales, endingBall)
 						}
@@ -846,7 +847,7 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 						totalSubs = nol
 						totalRedm = nol
 						totalNettsubs = nol
-						salesKey = tr.SalesKey
+						salesKey = *tr.SalesKey
 
 						sales["sales_code"] = tr.SalesCode
 						sales["sales_name"] = tr.SalesName
@@ -865,7 +866,7 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 
 						//set beginning
 						var begginingBel models.BeginningEndingBalance
-						_, err = models.GetBeginningEndingBalanceAca(&begginingBel, "BEGINNING BALANCE", dateawal, strconv.FormatUint(tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
+						_, err = models.GetBeginningEndingBalanceAca(&begginingBel, "BEGINNING BALANCE", dateawal, strconv.FormatUint(*tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
 
 						bBall := make(map[string]interface{})
 						if err != nil {
@@ -916,7 +917,7 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 						if idx == (len(transactions) - 1) {
 							//set ending
 							var eBel models.BeginningEndingBalance
-							_, err = models.GetBeginningEndingBalanceAca(&eBel, "ENDING BALANCE", dateakhir, strconv.FormatUint(tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
+							_, err = models.GetBeginningEndingBalanceAca(&eBel, "ENDING BALANCE", dateakhir, strconv.FormatUint(*tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
 
 							eball := make(map[string]interface{})
 							if err != nil {
@@ -991,7 +992,7 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 						if idx == (len(transactions) - 1) {
 							//set ending
 							var eBel models.BeginningEndingBalance
-							_, err = models.GetBeginningEndingBalanceAca(&eBel, "ENDING BALANCE", dateakhir, strconv.FormatUint(tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
+							_, err = models.GetBeginningEndingBalanceAca(&eBel, "ENDING BALANCE", dateakhir, strconv.FormatUint(*tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
 
 							eball := make(map[string]interface{})
 							if err != nil {
@@ -1043,10 +1044,10 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 					}
 				}
 			} else {
-				salesKey = tr.SalesKey
+				salesKey = *tr.SalesKey
 				//set beginning
 				var balanceBeginning models.BeginningEndingBalance
-				_, err = models.GetBeginningEndingBalanceAca(&balanceBeginning, "BEGINNING BALANCE", dateawal, strconv.FormatUint(tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
+				_, err = models.GetBeginningEndingBalanceAca(&balanceBeginning, "BEGINNING BALANCE", dateawal, strconv.FormatUint(*tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
 
 				beginningbalance := make(map[string]interface{})
 				if err != nil {
@@ -1134,7 +1135,7 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 				if idx == (len(transactions) - 1) {
 					//set ending
 					var eBel models.BeginningEndingBalance
-					_, err = models.GetBeginningEndingBalanceAca(&eBel, "ENDING BALANCE", dateakhir, strconv.FormatUint(tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
+					_, err = models.GetBeginningEndingBalanceAca(&eBel, "ENDING BALANCE", dateakhir, strconv.FormatUint(*tr.AcaKey, 10), strconv.FormatUint(tr.ProductKey, 10))
 
 					eball := make(map[string]interface{})
 					if err != nil {
@@ -1184,9 +1185,9 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 					datatrans = append(datatrans, row)
 				}
 			}
-			acaKeyLast = tr.AcaKey
+			acaKeyLast = *tr.AcaKey
 			productKeyLast = tr.ProductKey
-			salesKey = tr.SalesKey
+			salesKey = *tr.SalesKey
 			productKey = tr.ProductKey
 		}
 

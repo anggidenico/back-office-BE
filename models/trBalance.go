@@ -327,7 +327,10 @@ func GetBeginningEndingBalanceAca(c *BeginningEndingBalance, desc string, date s
 				nv.nav_value,
 				SUM(t.balance_unit) AS unit,
 				t.avg_nav,
-				0 AS fee
+				0 AS fee,
+				msp.dec_nav,
+				msp.dec_unit,
+				msp.dec_amount
 			FROM
 				(
 					SELECT 
@@ -350,6 +353,7 @@ func GetBeginningEndingBalanceAca(c *BeginningEndingBalance, desc string, date s
 						FROM tr_nav WHERE nav_date <= '` + date + `' AND product_key = '` + productKey + `'
 					) ORDER BY nav_key
 				) AS nv ON 1=1
+			INNER JOIN ms_product AS msp ON nv.product_key = msp.product_key
 			GROUP BY nv.product_key`
 
 	// Main query

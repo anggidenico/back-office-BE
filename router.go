@@ -32,6 +32,10 @@ func router() *echo.Echo {
 
 	e.POST("/loginbo", controllers.LoginBo).Name = "LoginBo"
 
+	admin.GET("/lookup", controllers.GetGenLookup).Name = "GetGenLookup"
+
+	admin.GET("/city/:field/:key", controllers.GetMsCityList).Name = "GetMsCityList"
+
 	//Admin OA Request
 	admin.GET("/oarequestlist", controllers.GetOaRequestList).Name = "GetOaRequestList"
 	admin.GET("/oarequestdata/:key", controllers.GetOaRequestData).Name = "GetOaRequestData"

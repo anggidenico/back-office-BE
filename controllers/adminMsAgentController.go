@@ -753,9 +753,10 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 		paramsToAppend["customer_key"] = dt_agent_cust.CustomerKey
 		paramsToAppend["customer_name"] = dt_agent_cust.CustomerName
 		paramsToAppend["unit_holder_id"] = dt_agent_cust.UnitHolderID
-		// mengarang AUM
+		// ========== AUM HARDCODE AUM SEMENTARA ==========
 		ac := accounting.Accounting{Precision: 0, Thousand: "."}
 		paramsToAppend["aum"] = ac.FormatMoney(rand.Intn(999999999-100000) + 100000)
+
 		paramsToResponse = append(paramsToResponse, paramsToAppend)
 	}
 
