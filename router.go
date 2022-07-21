@@ -36,6 +36,8 @@ func router() *echo.Echo {
 
 	admin.GET("/city/:field/:key", controllers.GetMsCityList).Name = "GetMsCityList"
 
+	admin.GET("/country", controllers.GetMsCountryList).Name = "GetMsCountryList"
+
 	//Admin OA Request
 	admin.GET("/oarequestlist", controllers.GetOaRequestList).Name = "GetOaRequestList"
 	admin.GET("/oarequestdata/:key", controllers.GetOaRequestData).Name = "GetOaRequestData"
