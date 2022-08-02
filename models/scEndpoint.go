@@ -62,11 +62,11 @@ func AdminGetEndpointNewInUpdateRole(c *[]ScEndpoint, roleKey string, menuIds []
 	query := `SELECT
 				ep.*
 			  FROM sc_endpoint AS ep
-			  LEFT JOIN sc_endpoint_auth AS epa ON epa.endpoint_key = ep.endpoint_key AND epa.rec_status = 1 AND epa.role_key = ` + roleKey + `
-			  WHERE ep.rec_status = 1 AND epa.ep_auth_key IS NULL AND ep.menu_key IN(` + inQuery + `)`
+			  LEFT JOIN sc_endpoint_auth AS epa ON epa.endpoint_key = ep.endpoint_key AND epa.rec_status = 1 AND epa.role_key = ` + roleKey + ` AND epa.ep_auth_key IS NULL
+			  WHERE ep.rec_status = 1 AND ep.menu_key IN(` + inQuery + `)`
 
 	// Main query
-	log.Println(query)
+	log.Println("========== ADMIN GET ENDPOINT NEW IN UPDATE ROLE ========== ", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

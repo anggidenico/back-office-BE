@@ -47,7 +47,7 @@ func CreateScEndpointAuth(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("================ cek query insert endpoint ==================", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

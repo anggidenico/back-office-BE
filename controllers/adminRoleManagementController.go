@@ -889,8 +889,10 @@ func UpdateAdminRoleManagement(c echo.Context) error {
 			paramsEpAuth["endpoint_key"] = strEpKey
 			paramsEpAuth["role_key"] = keyStr
 			paramsEpAuth["rec_status"] = "1"
-			paramsEpAuth["rec_created_date"] = time.Now().Format(dateLayout)
+			varss := time.Now().Format(dateLayout)
+			paramsEpAuth["rec_created_date"] = varss
 			paramsEpAuth["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+			// log.Println("========== LEWAT SINI ========= ")
 			status, err := models.CreateScEndpointAuth(paramsEpAuth)
 			if err != nil {
 				log.Error("Failed create endpoint auth data: " + err.Error())
