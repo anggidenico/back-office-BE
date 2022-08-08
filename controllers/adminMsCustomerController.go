@@ -1531,8 +1531,9 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 	salesCode := c.FormValue("sales_code")
 	if salesCode == "" {
-		log.Error("Missing required parameter: sales_code")
-		return lib.CustomError(http.StatusBadRequest, "sales_code can not be blank", "sales_code can not be blank")
+		salesCode = "1"
+		// log.Error("Missing required parameter: sales_code")
+		// return lib.CustomError(http.StatusBadRequest, "sales_code can not be blank", "sales_code can not be blank")
 	} else {
 		if len(salesCode) > 20 {
 			log.Error("Wrong input for parameter: sales_code too long")
