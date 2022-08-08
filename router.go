@@ -450,6 +450,11 @@ func router() *echo.Echo {
 	admin.POST("/updatetransaction/subscription", controllers.UpdateTransactionSubscription).Name = "UpdateTransactionSubscription"
 	admin.POST("/updatetransaction/redemption", controllers.UpdateTransactionRedemption).Name = "UpdateTransactionRedemption"
 
+	// quiz
+	admin.GET("/quiz", controllers.GetCmsQuiz).Name = "GetCmsQuiz"
+	admin.GET("/getquizresult", controllers.GetQuizAnswer).Name = "GetQuizAnswer"
+	admin.POST("/quizresult", controllers.PostQuizAnswer).Name = "PostQuizAnswer"
+
 	return e
 }
 
