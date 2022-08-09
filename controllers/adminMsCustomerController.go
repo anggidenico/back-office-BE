@@ -2491,6 +2491,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 				}
 			}
 			// Upload image and move to proper directory
+			log.Println("===== LEWAT SINI =====")
 			err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+idUserLogin+"/"+filename+extension)
 			if err != nil {
 				log.Println(err)
@@ -2534,9 +2535,9 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 			return lib.CustomError(http.StatusInternalServerError)
 		}
 		paramsOaPersonalData["rec_image1"] = filename + extension
-	} else {
-		return lib.CustomError(http.StatusBadRequest)
-	}
+	} //else {
+	// 	return lib.CustomError(http.StatusBadRequest)
+	// }
 
 	status, err, requestKey := models.CreateOaPersonalData(paramsOaPersonalData)
 	if err != nil {
