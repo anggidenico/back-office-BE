@@ -2423,6 +2423,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	bankReq["rec_status"] = "1"
 	bankReq["rec_created_date"] = time.Now().Format(dateLayout)
 	bankReq["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+	log.Println("===== REQUEST BANK ACCOUNT ===== >>>", bankReq)
 	status, err, _ = models.CreateOaRequestBankAccount(bankReq)
 	if err != nil {
 		tx.Rollback()
@@ -2626,6 +2627,8 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	paramsBankRquest["rec_status"] = "1"
 	paramsBankRquest["rec_created_date"] = time.Now().Format(dateLayout)
 	paramsBankRquest["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+	log.Println("===== REQUEST BANK ACCOUNT 2===== >>>", paramsBankRquest)
+
 	status, err, _ = models.CreateOaRequestBankAccount(paramsBankRquest)
 	if err != nil {
 		tx.Rollback()
