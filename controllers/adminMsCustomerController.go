@@ -2620,7 +2620,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 	//create oa_request_bank_account
 	paramsBankRquest := make(map[string]string)
-	paramsBankRquest["oa_request_key"] = bankKey
+	paramsBankRquest["oa_request_key"] = requestID
 	paramsBankRquest["bank_account_key"] = bankAccountID
 	paramsBankRquest["flag_priority"] = "1"
 	paramsBankRquest["bank_account_name"] = accountName
