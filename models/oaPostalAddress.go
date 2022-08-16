@@ -12,7 +12,7 @@ import (
 
 type OaPostalAddress struct {
 	PostalAddressKey  uint64  `db:"postal_address_key"         json:"postal_address_key"`
-	AddressType       string  `db:"address_type"               json:"address_type"`
+	AddressType       *string `db:"address_type"               json:"address_type"`
 	KabupatenKey      *uint64 `db:"kabupaten_key"              json:"kabupaten_key"`
 	KecamatanKey      *uint64 `db:"kecamatan_key"              json:"kecamatan_key"`
 	AddressLine1      *string `db:"address_line1"              json:"address_line1"`
@@ -143,7 +143,9 @@ func GetOaPostalAddressIn(c *[]OaPostalAddress, value []string, field string) (i
 
 func GetOaPostalAddress(c *OaPostalAddress, key string) (int, error) {
 	query := `SELECT oa_postal_address.* FROM oa_postal_address WHERE oa_postal_address.rec_status = 1 AND oa_postal_address.postal_address_key = ` + key
-	log.Println(query)
+	// log.Println(query)
+	log.Println("===== QUERY OA POSTAL ADDRESS ===== >>", query)
+
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

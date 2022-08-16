@@ -2946,17 +2946,20 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	responseData["occup_job"] = personalDataDB.OccupJob
 	responseData["occup_company"] = personalDataDB.OccupCompany
 	responseData["occup_position"] = personalDataDB.OccupPosition
-	_, err = models.GetOaPostalAddress(&address, strconv.FormatUint(*personalDataDB.OccupAddressKey, 10))
-	if err == nil {
-		addressID := make(map[string]interface{})
-		addressID["postal_address_key"] = address.PostalAddressKey
-		addressID["kabupaten_key"] = address.KabupatenKey
-		addressID["kecamatan_key"] = address.KecamatanKey
-		addressID["address_line1"] = address.AddressLine1
-		addressID["address_line2"] = address.AddressLine2
-		addressID["address_line3"] = address.AddressLine3
-		addressID["postal_code"] = address.PostalCode
-		responseData["occup_address"] = addressID
+	if personalDataDB.OccupAddressKey != nil {
+		_, err = models.GetOaPostalAddress(&address, strconv.FormatUint(*personalDataDB.OccupAddressKey, 10))
+		if err == nil {
+			log.Println("===== LEWAT SINI ===== >>")
+			addressID := make(map[string]interface{})
+			addressID["postal_address_key"] = address.PostalAddressKey
+			addressID["kabupaten_key"] = address.KabupatenKey
+			addressID["kecamatan_key"] = address.KecamatanKey
+			addressID["address_line1"] = address.AddressLine1
+			addressID["address_line2"] = address.AddressLine2
+			addressID["address_line3"] = address.AddressLine3
+			addressID["postal_code"] = address.PostalCode
+			responseData["occup_address"] = addressID
+		}
 	}
 	responseData["occup_business_field"] = personalDataDB.OccupBusinessFields
 	responseData["occup_phone"] = personalDataDB.OccupPhone

@@ -148,7 +148,7 @@ func GetAllOaPersonalData(c *[]OaPersonalData, limit uint64, offset uint64, para
 
 func GetOaPersonalData(c *OaPersonalData, key string, field string) (int, error) {
 	query := "SELECT oa_personal_data.* FROM oa_personal_data WHERE oa_personal_data." + field + " = " + key
-	log.Info(query)
+	log.Info("===== GET OA PERSONAL DATA =====>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
