@@ -142,6 +142,52 @@ func AdminGetOaRiskProfileQuizByOaRequestKey(c *[]AdminOaRiskProfileQuiz, key st
 	return http.StatusOK, nil
 }
 
+func RiskProfileQuizIfNull(c *[]OaRiskProfileQuiz, oarequestkey uint64) (int, error) {
+	oa_key := strconv.FormatUint(uint64(oarequestkey), 10)
+	query := `SELECT 
+	0 AS risk_profile_quiz_key,
+	'` + oa_key + `' AS oa_request_key,
+	b.quiz_question_key, 
+	0 AS quiz_option_key,
+	0 AS quiz_option_score,
+	b.rec_order,
+	b.rec_status,
+	NOW() as rec_created_date,
+	'system' as rec_created_by,
+	null as rec_modified_date,
+	null as rec_modified_by,
+	null as rec_image1,
+	null as rec_image2,
+	null as rec_approval_status,
+	null as rec_approval_stage,
+	null as rec_approved_date,
+	null as rec_approved_by,
+	null as rec_deleted_date,
+	null as rec_deleted_by,
+	null as rec_attribute_id1,
+	null as rec_attribute_id2,
+	NULL as rec_attribute_id3
+	FROM cms_quiz_header a 
+	INNER JOIN cms_quiz_question b ON (a.quiz_header_key=b.quiz_header_key)
+	-- INNER JOIN cms_quiz_options c ON (c.quiz_question_key=b.quiz_question_key AND c.rec_status=1)
+	WHERE a.rec_status=1
+	AND a.quiz_type_key=2
+	AND DATE(NOW()) BETWEEN DATE(a.quiz_published_start) AND DATE(a.quiz_published_thru)
+	AND b.rec_status = 1
+	ORDER BY b.rec_order;
+	`
+
+	// Main query
+	log.Println("===== GET ALL OA RISK PROFILE QUIZ IF NULL ===== >>>", query)
+	err := db.Db.Select(c, query)
+	if err != nil {
+		log.Println(err)
+		return http.StatusBadGateway, err
+	}
+
+	return http.StatusOK, nil
+}
+
 func GetAllOaRiskProfileQuiz(c *[]OaRiskProfileQuiz, limit uint64, offset uint64, params map[string]string, nolimit bool) (int, error) {
 	query := `SELECT
               oa_risk_profile_quiz.* FROM 
@@ -186,7 +232,7 @@ func GetAllOaRiskProfileQuiz(c *[]OaRiskProfileQuiz, limit uint64, offset uint64
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("===== GET ALL OA RISK PROFILE QUIZ ===== >>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

@@ -3023,6 +3023,13 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
+	if len(quizDB) < 1 {
+		_, err = models.RiskProfileQuizIfNull(&quizDB, request.OaRequestKey)
+		if err != nil {
+			log.Error(err.Error())
+			return lib.CustomError(status, err.Error(), "Failed get data")
+		}
+	}
 
 	var risk models.OaRiskProfile
 	_, err = models.GetOaRiskProfile(&risk, strconv.FormatUint(request.OaRequestKey, 10), "oa_request_key")
