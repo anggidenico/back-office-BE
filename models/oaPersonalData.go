@@ -404,3 +404,24 @@ func UpdateDocPropertiesOaPersonalDocs(oareqkey string, docnames string, docrema
 	log.Println("========== QUERY UPDATE DOC_NAME and DOC_REMARKS PERSONAL DOCS ==========>>>", query)
 	return http.StatusOK, nil
 }
+
+type UdfOtherValueStruct struct {
+	Values string `db:"udf_values"            json:"udf_values"`
+}
+
+func UdfOtherValueQuery(c *UdfOtherValueStruct, rowKey uint64, uikey string) (int, error) {
+	row_key := strconv.FormatUint(rowKey, 10)
+	query := `SELECT uv.udf_values
+	FROM udf_value uv
+	WHERE uv.row_data_key = ` + row_key + `
+	AND uv.udf_info_key = ` + uikey
+
+	log.Info(query)
+	err := db.Db.Get(c, query)
+	if err != nil {
+		log.Error(err)
+		return http.StatusNotFound, err
+	}
+
+	return http.StatusOK, nil
+}

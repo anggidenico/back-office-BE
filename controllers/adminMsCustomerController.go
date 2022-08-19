@@ -1828,7 +1828,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	positionOther := c.FormValue("position_other")
 	if positionOther != "" {
 		var rowz []string
-		rowz = append(rowz, "8")
+		rowz = append(rowz, "10")
 		rowz = append(rowz, "0")
 		rowz = append(rowz, positionOther)
 		bindVarz = append(bindVarz, rowz)
@@ -1852,7 +1852,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	businessFieldOther := c.FormValue("business_field_other")
 	if businessFieldOther != "" {
 		var rowz []string
-		rowz = append(rowz, "4")
+		rowz = append(rowz, "9")
 		rowz = append(rowz, "0")
 		rowz = append(rowz, businessFieldOther)
 		bindVarz = append(bindVarz, rowz)
@@ -1996,7 +1996,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	relationOccupationOther := c.FormValue("relation_occupation_other")
 	if relationOccupationOther != "" {
 		var row []string
-		row = append(row, "9")
+		row = append(row, "8")
 		row = append(row, "0")
 		row = append(row, relationOccupationOther)
 		bindVarz = append(bindVarz, row)
@@ -2049,7 +2049,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	relationBusinessFieldOther := c.FormValue("relation_business_field_other")
 	if relationBusinessFieldOther != "" {
 		var row []string
-		row = append(row, "10")
+		row = append(row, "9")
 		row = append(row, "0")
 		row = append(row, relationBusinessFieldOther)
 		bindVarz = append(bindVarz, row)
@@ -2913,6 +2913,15 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	responseData["phone_mobile"] = personalDataDB.PhoneMobile
 	responseData["email"] = personalDataDB.EmailAddress
 	responseData["religion"] = personalDataDB.Religion
+	if *personalDataDB.Religion == uint64(26) {
+		var ud models.UdfOtherValueStruct
+		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "1")
+		if err != nil {
+			log.Error(err.Error())
+			return lib.CustomError(status, err.Error(), "Failed get data")
+		}
+		responseData["religion_other"] = ud
+	}
 	responseData["pic_selfie"] = personalDataDB.PicSelfie
 	responseData["pic_ktp"] = personalDataDB.PicKtp
 	responseData["pic_selfie_ktp"] = personalDataDB.PicSelfieKtp
@@ -2943,7 +2952,25 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	}
 
 	responseData["education"] = personalDataDB.Education
+	if *personalDataDB.Education == uint64(43) {
+		var ud models.UdfOtherValueStruct
+		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "3")
+		if err != nil {
+			log.Error(err.Error())
+			return lib.CustomError(status, err.Error(), "Failed get data")
+		}
+		responseData["education_other"] = ud
+	}
 	responseData["occup_job"] = personalDataDB.OccupJob
+	if *personalDataDB.OccupJob == uint64(35) {
+		var ud models.UdfOtherValueStruct
+		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "2")
+		if err != nil {
+			log.Error(err.Error())
+			return lib.CustomError(status, err.Error(), "Failed get data")
+		}
+		responseData["occup_other"] = ud
+	}
 	responseData["occup_company"] = personalDataDB.OccupCompany
 	responseData["occup_position"] = personalDataDB.OccupPosition
 	if personalDataDB.OccupAddressKey != nil {
@@ -2962,22 +2989,76 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		}
 	}
 	responseData["occup_business_field"] = personalDataDB.OccupBusinessFields
+	if *personalDataDB.OccupBusinessFields == uint64(60) {
+		var ud models.UdfOtherValueStruct
+		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "4")
+		if err != nil {
+			log.Error(err.Error())
+			return lib.CustomError(status, err.Error(), "Failed get data")
+		}
+		responseData["occup_business_field_other"] = ud
+	}
 	responseData["occup_phone"] = personalDataDB.OccupPhone
 	responseData["occup_web_url"] = personalDataDB.OccupWebUrl
 	responseData["correspondence"] = personalDataDB.Correspondence
 	responseData["annual_income"] = personalDataDB.AnnualIncome
 	responseData["sourceof_fund"] = personalDataDB.SourceofFund
+	if *personalDataDB.SourceofFund == uint64(76) {
+		var ud models.UdfOtherValueStruct
+		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "5")
+		if err != nil {
+			log.Error(err.Error())
+			return lib.CustomError(status, err.Error(), "Failed get data")
+		}
+		responseData["sourceof_fund_other"] = ud
+	}
 	responseData["invesment_objectives"] = personalDataDB.InvesmentObjectives
+	if *personalDataDB.InvesmentObjectives == uint64(81) {
+		var ud models.UdfOtherValueStruct
+		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "6")
+		if err != nil {
+			log.Error(err.Error())
+			return lib.CustomError(status, err.Error(), "Failed get data")
+		}
+		responseData["invesment_objectives_other"] = ud
+	}
 	responseData["relation_type"] = personalDataDB.RelationType
 	responseData["relation_full_name"] = personalDataDB.RelationFullName
 	responseData["relation_occupation"] = personalDataDB.RelationOccupation
+	if *personalDataDB.RelationOccupation == uint64(157) {
+		var ud models.UdfOtherValueStruct
+		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "8")
+		if err != nil {
+			log.Error(err.Error())
+			return lib.CustomError(status, err.Error(), "Failed get data")
+		}
+		responseData["relation_occupation_other"] = ud
+	}
 	responseData["relation_business_fields"] = personalDataDB.RelationBusinessFields
+	if *personalDataDB.RelationOccupation == uint64(157) {
+		var ud models.UdfOtherValueStruct
+		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "8")
+		if err != nil {
+			log.Error(err.Error())
+			return lib.CustomError(status, err.Error(), "Failed get data")
+		}
+		responseData["relation_occupation_other"] = ud
+	}
 	responseData["mother_maiden_name"] = personalDataDB.MotherMaidenName
 	responseData["emergency_full_name"] = personalDataDB.EmergencyFullName
 	responseData["emergency_relation"] = personalDataDB.EmergencyRelation
 	responseData["emergency_phone_no"] = personalDataDB.EmergencyPhoneNo
 	responseData["beneficial_full_name"] = personalDataDB.BeneficialFullName
 	responseData["beneficial_relation"] = personalDataDB.BeneficialRelation
+	if *personalDataDB.BeneficialRelation == uint64(106) {
+		var ud models.UdfOtherValueStruct
+		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "7")
+		if err != nil {
+			log.Error(err.Error())
+			return lib.CustomError(status, err.Error(), "Failed get data")
+		}
+		responseData["beneficial_relation_other"] = ud
+	}
 
 	//get all bank request
 	var accBank []models.OaRequestByField
@@ -3072,6 +3153,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	var err error
 	var status int
+	var bindVarz [][]string
 
 	paramsOaPersonalData := make(map[string]string)
 
@@ -3309,6 +3391,15 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		}
 	}
 
+	religionOther := c.FormValue("religion_other")
+	if religionOther != "" {
+		var rowz []string
+		rowz = append(rowz, "1")
+		rowz = append(rowz, "0")
+		rowz = append(rowz, religionOther)
+		bindVarz = append(bindVarz, rowz)
+	}
+
 	education := c.FormValue("education")
 	if education == "" {
 		log.Error("Missing required parameter: education")
@@ -3319,6 +3410,15 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			log.Error("Wrong input for parameter: education")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: education", "Wrong input for parameter: education")
 		}
+	}
+
+	educationOther := c.FormValue("education_other")
+	if educationOther != "" {
+		var rowz []string
+		rowz = append(rowz, "3")
+		rowz = append(rowz, "0")
+		rowz = append(rowz, educationOther)
+		bindVarz = append(bindVarz, rowz)
 	}
 
 	//UPLOAD DOKUMEN FOTO E-KTP & SELFIE DENGAN KTP
@@ -3355,6 +3455,16 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: job", "Wrong input for parameter: job")
 		}
 	}
+
+	jobOther := c.FormValue("job_other")
+	if jobOther != "" {
+		var rowz []string
+		rowz = append(rowz, "2")
+		rowz = append(rowz, "0")
+		rowz = append(rowz, jobOther)
+		bindVarz = append(bindVarz, rowz)
+	}
+
 	company := c.FormValue("company")
 	if company != "" {
 		paramsOaPersonalData["occup_company"] = company
@@ -3371,6 +3481,15 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		}
 	}
 
+	positionOther := c.FormValue("position_other")
+	if positionOther != "" {
+		var rowz []string
+		rowz = append(rowz, "10")
+		rowz = append(rowz, "0")
+		rowz = append(rowz, positionOther)
+		bindVarz = append(bindVarz, rowz)
+	}
+
 	businessField := c.FormValue("business_field")
 	if businessField != "" {
 		n, err := strconv.ParseUint(businessField, 10, 64)
@@ -3380,6 +3499,15 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			log.Error("Wrong input for parameter: business_field")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: business_field", "Wrong input for parameter: business_field")
 		}
+	}
+
+	businessFieldOther := c.FormValue("business_field_other")
+	if businessFieldOther != "" {
+		var rowz []string
+		rowz = append(rowz, "9")
+		rowz = append(rowz, "0")
+		rowz = append(rowz, businessFieldOther)
+		bindVarz = append(bindVarz, rowz)
 	}
 
 	annualIncome := c.FormValue("annual_income")
@@ -3410,6 +3538,15 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		}
 	}
 
+	fundSourceOther := c.FormValue("fund_source_other")
+	if fundSourceOther != "" {
+		var row []string
+		row = append(row, "5")
+		row = append(row, "0")
+		row = append(row, fundSourceOther)
+		bindVarz = append(bindVarz, row)
+	}
+
 	objectives := c.FormValue("objectives")
 	if objectives == "" {
 		log.Error("Missing required parameter: objectives")
@@ -3422,6 +3559,15 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			log.Error("Wrong input for parameter: objectives")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: objectives", "Wrong input for parameter: objectives")
 		}
+	}
+
+	objectivesOther := c.FormValue("objectives_other")
+	if objectivesOther != "" {
+		var row []string
+		row = append(row, "6")
+		row = append(row, "0")
+		row = append(row, objectivesOther)
+		bindVarz = append(bindVarz, row)
 	}
 
 	corespondence := c.FormValue("corespondence")
@@ -3474,6 +3620,15 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			log.Error("Wrong input for parameter: relation_occupation")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: relation_occupation", "Wrong input for parameter: relation_occupation")
 		}
+	}
+
+	relationBusinessFieldOther := c.FormValue("relation_business_field_other")
+	if relationBusinessFieldOther != "" {
+		var row []string
+		row = append(row, "10")
+		row = append(row, "0")
+		row = append(row, relationBusinessFieldOther)
+		bindVarz = append(bindVarz, row)
 	}
 
 	relationType := c.FormValue("relation_type")
@@ -3592,32 +3747,32 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	branchName2 := c.FormValue("branch_name_2")
 	flagPriority2 := c.FormValue("flag_priority_2")
 
-	if bankKey2 != "" || accountNo2 != "" || accountName2 != "" || branchName2 != "" || flagPriority2 != "" {
-		if bankKey2 == "" {
-			log.Error("Missing required parameter: bank_key_2")
-			return lib.CustomError(http.StatusBadRequest, "bank_key_2 can not be blank", "bank_key_2 can not be blank")
-		}
+	// if bankKey2 != "" || accountNo2 != "" || accountName2 != "" || branchName2 != "" || flagPriority2 != "" {
+	// 	if bankKey2 == "" {
+	// 		log.Error("Missing required parameter: bank_key_2")
+	// 		return lib.CustomError(http.StatusBadRequest, "bank_key_2 can not be blank", "bank_key_2 can not be blank")
+	// 	}
 
-		if accountNo2 == "" {
-			log.Error("Missing required parameter: account_no_2")
-			return lib.CustomError(http.StatusBadRequest, "account_no_2 can not be blank", "account_no_2 can not be blank")
-		}
+	// 	if accountNo2 == "" {
+	// 		log.Error("Missing required parameter: account_no_2")
+	// 		return lib.CustomError(http.StatusBadRequest, "account_no_2 can not be blank", "account_no_2 can not be blank")
+	// 	}
 
-		if accountName2 == "" {
-			log.Error("Missing required parameter: account_name_2")
-			return lib.CustomError(http.StatusBadRequest, "account_name_2 can not be blank", "account_name_2 can not be blank")
-		}
+	// 	if accountName2 == "" {
+	// 		log.Error("Missing required parameter: account_name_2")
+	// 		return lib.CustomError(http.StatusBadRequest, "account_name_2 can not be blank", "account_name_2 can not be blank")
+	// 	}
 
-		if branchName2 == "" {
-			log.Error("Missing required parameter: branch_name_2")
-			return lib.CustomError(http.StatusBadRequest, "branch_name_2 can not be blank", "branch_name_2 can not be blank")
-		}
+	// 	if branchName2 == "" {
+	// 		log.Error("Missing required parameter: branch_name_2")
+	// 		return lib.CustomError(http.StatusBadRequest, "branch_name_2 can not be blank", "branch_name_2 can not be blank")
+	// 	}
 
-		if flagPriority2 == "" {
-			log.Error("Missing required parameter: flag_priority_2")
-			return lib.CustomError(http.StatusBadRequest, "flag_priority_2 can not be blank", "flag_priority_2 can not be blank")
-		}
-	}
+	// 	if flagPriority2 == "" {
+	// 		log.Error("Missing required parameter: flag_priority_2")
+	// 		return lib.CustomError(http.StatusBadRequest, "flag_priority_2 can not be blank", "flag_priority_2 can not be blank")
+	// 	}
+	// }
 
 	//bank account 3
 	bankKey3 := c.FormValue("bank_key_3")
@@ -3626,32 +3781,32 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	branchName3 := c.FormValue("branch_name_3")
 	flagPriority3 := c.FormValue("flag_priority_3")
 
-	if bankKey3 != "" || accountNo3 != "" || accountName3 != "" || branchName3 != "" || flagPriority3 != "" {
-		if bankKey3 == "" {
-			log.Error("Missing required parameter: bank_key_3")
-			return lib.CustomError(http.StatusBadRequest, "bank_key_3 can not be blank", "bank_key_3 can not be blank")
-		}
+	// if bankKey3 != "" || accountNo3 != "" || accountName3 != "" || branchName3 != "" || flagPriority3 != "" {
+	// 	if bankKey3 == "" {
+	// 		log.Error("Missing required parameter: bank_key_3")
+	// 		return lib.CustomError(http.StatusBadRequest, "bank_key_3 can not be blank", "bank_key_3 can not be blank")
+	// 	}
 
-		if accountNo3 == "" {
-			log.Error("Missing required parameter: account_no_3")
-			return lib.CustomError(http.StatusBadRequest, "account_no_3 can not be blank", "account_no_3 can not be blank")
-		}
+	// 	if accountNo3 == "" {
+	// 		log.Error("Missing required parameter: account_no_3")
+	// 		return lib.CustomError(http.StatusBadRequest, "account_no_3 can not be blank", "account_no_3 can not be blank")
+	// 	}
 
-		if accountName3 == "" {
-			log.Error("Missing required parameter: account_name_3")
-			return lib.CustomError(http.StatusBadRequest, "account_name_3 can not be blank", "account_name_3 can not be blank")
-		}
+	// 	if accountName3 == "" {
+	// 		log.Error("Missing required parameter: account_name_3")
+	// 		return lib.CustomError(http.StatusBadRequest, "account_name_3 can not be blank", "account_name_3 can not be blank")
+	// 	}
 
-		if branchName3 == "" {
-			log.Error("Missing required parameter: branch_name_3")
-			return lib.CustomError(http.StatusBadRequest, "branch_name_3 can not be blank", "branch_name_3 can not be blank")
-		}
+	// 	if branchName3 == "" {
+	// 		log.Error("Missing required parameter: branch_name_3")
+	// 		return lib.CustomError(http.StatusBadRequest, "branch_name_3 can not be blank", "branch_name_3 can not be blank")
+	// 	}
 
-		if flagPriority3 == "" {
-			log.Error("Missing required parameter: flag_priority_3")
-			return lib.CustomError(http.StatusBadRequest, "flag_priority_3 can not be blank", "flag_priority_3 can not be blank")
-		}
-	}
+	// 	if flagPriority3 == "" {
+	// 		log.Error("Missing required parameter: flag_priority_3")
+	// 		return lib.CustomError(http.StatusBadRequest, "flag_priority_3 can not be blank", "flag_priority_3 can not be blank")
+	// 	}
+	// }
 
 	countPriority := 0
 	if flagPriority == "1" {
@@ -4163,6 +4318,19 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	paramsOaRiskProfile["rec_status"] = "1"
 	paramsOaRiskProfile["rec_created_date"] = time.Now().Format(dateLayout)
 	paramsOaRiskProfile["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+
+	var bindInterface []interface{}
+	for i := 0; i < len(bindVarz); i++ {
+		bindVarz[i][1] = requestID
+		bindInterface = append(bindInterface, bindVarz[i])
+	}
+
+	if len(bindInterface) > 0 {
+		status, err = models.CreateMultipleUdfValue(bindInterface)
+		if err != nil {
+			log.Error(err.Error())
+		}
+	}
 
 	status, err = models.CreateOaRiskProfile(paramsOaRiskProfile)
 	if err != nil {
