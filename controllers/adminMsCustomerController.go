@@ -2491,7 +2491,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 				}
 			}
 			// Upload image and move to proper directory
-			log.Println("===== LEWAT SINI =====")
+			// log.Println("===== LEWAT SINI =====")
 			err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+idUserLogin+"/"+filename+extension)
 			if err != nil {
 				log.Println(err)
@@ -2920,7 +2920,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 			log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
-		responseData["religion_other"] = ud
+		responseData["religion_other"] = ud.Values
 	}
 	responseData["pic_selfie"] = personalDataDB.PicSelfie
 	responseData["pic_ktp"] = personalDataDB.PicKtp
@@ -2959,7 +2959,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 			log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
-		responseData["education_other"] = ud
+		responseData["education_other"] = ud.Values
 	}
 	responseData["occup_job"] = personalDataDB.OccupJob
 	if *personalDataDB.OccupJob == uint64(35) {
@@ -2969,7 +2969,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 			log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
-		responseData["occup_other"] = ud
+		responseData["occup_other"] = ud.Values
 	}
 	responseData["occup_company"] = personalDataDB.OccupCompany
 	responseData["occup_position"] = personalDataDB.OccupPosition
@@ -2997,7 +2997,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 			log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
-		responseData["occup_business_field_other"] = ud
+		responseData["occup_business_field_other"] = ud.Values
 	}
 	responseData["occup_phone"] = personalDataDB.OccupPhone
 	responseData["occup_web_url"] = personalDataDB.OccupWebUrl
@@ -3011,7 +3011,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 			log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
-		responseData["sourceof_fund_other"] = ud
+		responseData["sourceof_fund_other"] = ud.Values
 	}
 	responseData["invesment_objectives"] = personalDataDB.InvesmentObjectives
 	if personalDataDB.InvesmentObjectives != nil && *personalDataDB.InvesmentObjectives == uint64(81) {
@@ -3021,7 +3021,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 			log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
-		responseData["invesment_objectives_other"] = ud
+		responseData["invesment_objectives_other"] = ud.Values
 	}
 	responseData["relation_type"] = personalDataDB.RelationType
 	responseData["relation_full_name"] = personalDataDB.RelationFullName
@@ -3033,7 +3033,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 			log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
-		responseData["relation_occupation_other"] = ud
+		responseData["relation_occupation_other"] = ud.Values
 	}
 	responseData["relation_business_fields"] = personalDataDB.RelationBusinessFields
 	if personalDataDB.RelationBusinessFields != nil && *personalDataDB.RelationBusinessFields == uint64(157) {
@@ -3043,7 +3043,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 			log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
-		responseData["relation_occupation_other"] = ud
+		responseData["relation_occupation_other"] = ud.Values
 	}
 	responseData["mother_maiden_name"] = personalDataDB.MotherMaidenName
 	responseData["emergency_full_name"] = personalDataDB.EmergencyFullName
@@ -3058,7 +3058,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 			log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
-		responseData["beneficial_relation_other"] = ud
+		responseData["beneficial_relation_other"] = ud.Values
 	}
 
 	//get all bank request
