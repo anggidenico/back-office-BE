@@ -2988,8 +2988,9 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 			responseData["occup_address"] = addressID
 		}
 	}
+	// log.Println("===== LEWAT SINI ===== >>")
 	responseData["occup_business_field"] = personalDataDB.OccupBusinessFields
-	if *personalDataDB.OccupBusinessFields == uint64(60) {
+	if personalDataDB.OccupBusinessFields != nil && *personalDataDB.OccupBusinessFields == uint64(60) {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "4")
 		if err != nil {
@@ -3003,7 +3004,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	responseData["correspondence"] = personalDataDB.Correspondence
 	responseData["annual_income"] = personalDataDB.AnnualIncome
 	responseData["sourceof_fund"] = personalDataDB.SourceofFund
-	if *personalDataDB.SourceofFund == uint64(76) {
+	if personalDataDB.SourceofFund != nil && *personalDataDB.SourceofFund == uint64(76) {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "5")
 		if err != nil {
@@ -3013,7 +3014,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		responseData["sourceof_fund_other"] = ud
 	}
 	responseData["invesment_objectives"] = personalDataDB.InvesmentObjectives
-	if *personalDataDB.InvesmentObjectives == uint64(81) {
+	if personalDataDB.InvesmentObjectives != nil && *personalDataDB.InvesmentObjectives == uint64(81) {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "6")
 		if err != nil {
@@ -3025,7 +3026,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	responseData["relation_type"] = personalDataDB.RelationType
 	responseData["relation_full_name"] = personalDataDB.RelationFullName
 	responseData["relation_occupation"] = personalDataDB.RelationOccupation
-	if *personalDataDB.RelationOccupation == uint64(157) {
+	if personalDataDB.RelationOccupation != nil && *personalDataDB.RelationOccupation == uint64(157) {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "8")
 		if err != nil {
@@ -3035,7 +3036,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		responseData["relation_occupation_other"] = ud
 	}
 	responseData["relation_business_fields"] = personalDataDB.RelationBusinessFields
-	if *personalDataDB.RelationOccupation == uint64(157) {
+	if personalDataDB.RelationBusinessFields != nil && *personalDataDB.RelationBusinessFields == uint64(157) {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "8")
 		if err != nil {
@@ -3050,7 +3051,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	responseData["emergency_phone_no"] = personalDataDB.EmergencyPhoneNo
 	responseData["beneficial_full_name"] = personalDataDB.BeneficialFullName
 	responseData["beneficial_relation"] = personalDataDB.BeneficialRelation
-	if *personalDataDB.BeneficialRelation == uint64(106) {
+	if personalDataDB.BeneficialRelation != nil && *personalDataDB.BeneficialRelation == uint64(106) {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "7")
 		if err != nil {
