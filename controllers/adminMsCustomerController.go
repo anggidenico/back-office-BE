@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
+	"encoding/json"
 	"html/template"
 	"math"
 	"mf-bo-api/config"
@@ -3187,6 +3188,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		log.Error("oa not found")
 		return lib.CustomError(http.StatusNotFound, "Customer not found", "Customer not found")
 	}
+	log.Println(oaData)
 
 	oaRequestType := c.FormValue("oa_request_type")
 	if oaRequestType == "" {
@@ -3837,17 +3839,37 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: quiz_option", "Missing required parameter: quiz_option")
 	}
 
-	s := strings.Split(quizOption, ",")
+	var quizSlice []interface{}
+	err = json.Unmarshal([]byte(quizOption), &quizSlice)
+	if err != nil {
+		log.Error(err.Error())
+		log.Error("Missing required parameter: shares_holder")
+		return lib.CustomError(http.StatusBadRequest, err.Error(), "Wrong input for parameter: shares_holder")
+	}
+	log.Println("===== TEST PARAMETER QUIZ SLICE ===== >>>", quizSlice)
+
+	// s := strings.Split(quizOption, ",")
 	var quizoptionkey []string
 
-	for _, value := range s {
-		is := strings.TrimSpace(value)
-		if is != "" {
-			if _, ok := lib.Find(quizoptionkey, is); !ok {
-				quizoptionkey = append(quizoptionkey, is)
+	if len(quizSlice) > 0 {
+		for _, val := range quizSlice {
+			valueMap := val.(map[string]interface{})
+			if val, ok := valueMap["option_key"]; ok {
+				stg := val.(float64)
+				stg2 := strconv.FormatFloat(stg, 'f', -1, 64)
+				quizoptionkey = append(quizoptionkey, stg2)
 			}
 		}
 	}
+
+	// for _, value := range s {
+	// 	is := strings.TrimSpace(value)
+	// 	if is != "" {
+	// 		if _, ok := lib.Find(quizoptionkey, is); !ok {
+	// 			quizoptionkey = append(quizoptionkey, is)
+	// 		}
+	// 	}
+	// }
 	if len(quizoptionkey) <= 0 {
 		log.Error("Missing required parameter: quiz_option")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: quiz_option", "Missing required parameter: quiz_option")
@@ -4286,7 +4308,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if len(questionOptions) < 1 {
 		tx.Rollback()
 		log.Error("Missing required parameter: quiz_option")
-		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: quiz_option", "Missing required parameter: quiz_option")
+		// return lib.CustomError(http.StatusBadRequest, "Missing required parameter: quiz_option", "Missing required parameter: quiz_option")
 	}
 
 	var bindVar []interface{}
@@ -4344,7 +4366,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if err != nil {
 		tx.Rollback()
 		log.Error(err.Error())
-		return lib.CustomError(status, err.Error(), "Failed input data")
+		// return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
 	tx.Commit()
