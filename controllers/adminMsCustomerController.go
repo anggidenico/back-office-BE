@@ -2974,20 +2974,31 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	}
 	responseData["occup_company"] = personalDataDB.OccupCompany
 	responseData["occup_position"] = personalDataDB.OccupPosition
+	// log.Println("============ OCCUP ADDRESS KEY =================== >>", personalDataDB.OccupAddressKey)
+
 	if personalDataDB.OccupAddressKey != nil {
 		_, err = models.GetOaPostalAddress(&address, strconv.FormatUint(*personalDataDB.OccupAddressKey, 10))
 		if err == nil {
-			log.Println("===== LEWAT SINI ===== >>")
-			addressID := make(map[string]interface{})
-			addressID["postal_address_key"] = address.PostalAddressKey
-			addressID["kabupaten_key"] = address.KabupatenKey
-			addressID["kecamatan_key"] = address.KecamatanKey
-			addressID["address_line1"] = address.AddressLine1
-			addressID["address_line2"] = address.AddressLine2
-			addressID["address_line3"] = address.AddressLine3
-			addressID["postal_code"] = address.PostalCode
-			responseData["occup_address"] = addressID
+			addressID_occup := make(map[string]interface{})
+			addressID_occup["postal_address_key"] = address.PostalAddressKey
+			addressID_occup["kabupaten_key"] = address.KabupatenKey
+			addressID_occup["kecamatan_key"] = address.KecamatanKey
+			addressID_occup["address_line1"] = address.AddressLine1
+			addressID_occup["address_line2"] = address.AddressLine2
+			addressID_occup["address_line3"] = address.AddressLine3
+			addressID_occup["postal_code"] = address.PostalCode
+			responseData["occup_address"] = addressID_occup
 		}
+	} else {
+		addressID_occup := make(map[string]interface{})
+		addressID_occup["postal_address_key"] = ""
+		addressID_occup["kabupaten_key"] = ""
+		addressID_occup["kecamatan_key"] = ""
+		addressID_occup["address_line1"] = ""
+		addressID_occup["address_line2"] = ""
+		addressID_occup["address_line3"] = ""
+		addressID_occup["postal_code"] = ""
+		responseData["occup_address"] = addressID_occup
 	}
 	// log.Println("===== LEWAT SINI ===== >>")
 	responseData["occup_business_field"] = personalDataDB.OccupBusinessFields
