@@ -3191,8 +3191,8 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if len(oaRequestDB) > 0 {
 		oaData = oaRequestDB[0]
 		if *oaData.Oastatus == uint64(258) || *oaData.Oastatus == uint64(259) {
-			// log.Error("oa in progress approval")
-			// return lib.CustomError(http.StatusNotFound, "Terdapat Data Request yang dalam approval. Mohon Tunggu proses approval untuk dapat melakukan pengkinian lagi.", "Terdapat Data Request yang dalam approval. Mohon Tunggu proses approval untuk dapat melakukan pengkinian lagi.")
+			log.Error("oa in progress approval")
+			return lib.CustomError(http.StatusNotFound, "Terdapat Data Request yang dalam approval. Mohon Tunggu proses approval untuk dapat melakukan pengkinian lagi.", "Terdapat Data Request yang dalam approval. Mohon Tunggu proses approval untuk dapat melakukan pengkinian lagi.")
 		}
 	} else {
 		log.Error("oa not found")
