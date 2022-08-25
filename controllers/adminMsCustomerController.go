@@ -2914,7 +2914,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	responseData["phone_mobile"] = personalDataDB.PhoneMobile
 	responseData["email"] = personalDataDB.EmailAddress
 	responseData["religion"] = personalDataDB.Religion
-	if *personalDataDB.Religion == uint64(26) {
+	if personalDataDB.Religion != nil && *personalDataDB.Religion == uint64(26) {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "1")
 		if err != nil {
@@ -2953,7 +2953,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	}
 
 	responseData["education"] = personalDataDB.Education
-	if *personalDataDB.Education == uint64(43) {
+	if personalDataDB.Education != nil && *personalDataDB.Education == uint64(43) {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "3")
 		if err != nil {
@@ -2963,7 +2963,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		responseData["education_other"] = ud.Values
 	}
 	responseData["occup_job"] = personalDataDB.OccupJob
-	if *personalDataDB.OccupJob == uint64(35) {
+	if personalDataDB.OccupJob != nil && *personalDataDB.OccupJob == uint64(35) {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "2")
 		if err != nil {
@@ -3026,7 +3026,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		responseData["sourceof_fund_other"] = ud.Values
 	}
 	responseData["invesment_objectives"] = personalDataDB.InvesmentObjectives
-	if personalDataDB.InvesmentObjectives != nil && *personalDataDB.InvesmentObjectives == uint64(81) {
+	if personalDataDB.InvesmentObjectives != nil && *personalDataDB.InvesmentObjectives == uint64(82) {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "6")
 		if err != nil {
@@ -3048,14 +3048,14 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		responseData["relation_occupation_other"] = ud.Values
 	}
 	responseData["relation_business_fields"] = personalDataDB.RelationBusinessFields
-	if personalDataDB.RelationBusinessFields != nil && *personalDataDB.RelationBusinessFields == uint64(157) {
+	if personalDataDB.RelationBusinessFields != nil && *personalDataDB.RelationBusinessFields == uint64(174) {
 		var ud models.UdfOtherValueStruct
-		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "8")
+		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "9")
 		if err != nil {
 			log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
-		responseData["relation_occupation_other"] = ud.Values
+		responseData["relation_business_fields"] = ud.Values
 	}
 	responseData["mother_maiden_name"] = personalDataDB.MotherMaidenName
 	responseData["emergency_full_name"] = personalDataDB.EmergencyFullName
