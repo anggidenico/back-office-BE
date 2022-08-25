@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
-	"encoding/json"
 	"html/template"
 	"math"
 	"mf-bo-api/config"
@@ -3192,8 +3191,8 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if len(oaRequestDB) > 0 {
 		oaData = oaRequestDB[0]
 		if *oaData.Oastatus == uint64(258) || *oaData.Oastatus == uint64(259) {
-			log.Error("oa in progress approval")
-			return lib.CustomError(http.StatusNotFound, "Terdapat Data Request yang dalam approval. Mohon Tunggu proses approval untuk dapat melakukan pengkinian lagi.", "Terdapat Data Request yang dalam approval. Mohon Tunggu proses approval untuk dapat melakukan pengkinian lagi.")
+			// log.Error("oa in progress approval")
+			// return lib.CustomError(http.StatusNotFound, "Terdapat Data Request yang dalam approval. Mohon Tunggu proses approval untuk dapat melakukan pengkinian lagi.", "Terdapat Data Request yang dalam approval. Mohon Tunggu proses approval untuk dapat melakukan pengkinian lagi.")
 		}
 	} else {
 		log.Error("oa not found")
@@ -3850,37 +3849,36 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: quiz_option", "Missing required parameter: quiz_option")
 	}
 
-	var quizSlice []interface{}
-	err = json.Unmarshal([]byte(quizOption), &quizSlice)
-	if err != nil {
-		log.Error(err.Error())
-		log.Error("Missing required parameter: shares_holder")
-		return lib.CustomError(http.StatusBadRequest, err.Error(), "Wrong input for parameter: shares_holder")
-	}
-	log.Println("===== TEST PARAMETER QUIZ SLICE ===== >>>", quizSlice)
-
-	// s := strings.Split(quizOption, ",")
+	s := strings.Split(quizOption, ",")
 	var quizoptionkey []string
+	// var quizSlice []interface{}
 
-	if len(quizSlice) > 0 {
-		for _, val := range quizSlice {
-			valueMap := val.(map[string]interface{})
-			if val, ok := valueMap["option_key"]; ok {
-				stg := val.(float64)
-				stg2 := strconv.FormatFloat(stg, 'f', -1, 64)
-				quizoptionkey = append(quizoptionkey, stg2)
-			}
-		}
-	}
+	// err = json.Unmarshal([]byte(quizOption), &quizSlice)
+	// if err != nil {
+	// 	log.Error(err.Error())
+	// 	log.Error("Missing required parameter: shares_holder")
+	// }
+	// log.Println("===== TEST PARAMETER QUIZ SLICE ===== >>>", quizSlice)
 
-	// for _, value := range s {
-	// 	is := strings.TrimSpace(value)
-	// 	if is != "" {
-	// 		if _, ok := lib.Find(quizoptionkey, is); !ok {
-	// 			quizoptionkey = append(quizoptionkey, is)
+	// if len(quizSlice) > 0 {
+	// 	for _, val := range quizSlice {
+	// 		valueMap := val.(map[string]interface{})
+	// 		if val, ok := valueMap["option_key"]; ok {
+	// 			stg := val.(float64)
+	// 			stg2 := strconv.FormatFloat(stg, 'f', -1, 64)
+	// 			quizoptionkey = append(quizoptionkey, stg2)
 	// 		}
 	// 	}
 	// }
+
+	for _, value := range s {
+		is := strings.TrimSpace(value)
+		if is != "" {
+			if _, ok := lib.Find(quizoptionkey, is); !ok {
+				quizoptionkey = append(quizoptionkey, is)
+			}
+		}
+	}
 	if len(quizoptionkey) <= 0 {
 		log.Error("Missing required parameter: quiz_option")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: quiz_option", "Missing required parameter: quiz_option")
