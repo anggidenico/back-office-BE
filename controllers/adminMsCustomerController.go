@@ -2807,6 +2807,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	var oaRequestDB []models.OaRequest
 	params := make(map[string]string)
 	params["customer_key"] = customerKey
+	params["rec_status"] = "1"
 	params["orderBy"] = "oa_request_key"
 	params["orderType"] = "DESC"
 	status, err := models.GetAllOaRequest(&oaRequestDB, 0, 0, true, params)
