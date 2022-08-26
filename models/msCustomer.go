@@ -337,8 +337,8 @@ func AdminGetAllCustomerIndividuInquery(c *[]CustomerIndividuInquiry, limit uint
 	}
 	// Check order by
 
-	query := ` SELECT dat.* FROM 
-			(SELECT 
+	query := ` SELECT dat.* FROM (
+				SELECT 
 				r.oa_request_key as oa_request_key, 
 				c.customer_key as customer_key, 
 				'-' AS cif, 
@@ -364,44 +364,53 @@ func AdminGetAllCustomerIndividuInquery(c *[]CustomerIndividuInquiry, limit uint
 			LEFT JOIN ms_agent AS ag ON ag.agent_key = r.agent_key 
 			LEFT JOIN sc_user_login AS u1 ON u1.user_login_key = r.rec_created_by 
 			LEFT JOIN sc_user_login AS u2 ON u2.user_login_key = r.rec_modified_by 
-			WHERE r.oa_status in (258, 259, 260, 261, 262) AND r.rec_status = 1 AND r.customer_key IS NULL ` + conditionNoCus +
-		` UNION ALL` +
-		` SELECT 
-				r.oa_request_key as oa_request_key,
-				c.customer_key as customer_key,
-				c.unit_holder_idno AS cif, 
-				pd.full_name AS full_name, 
-				DATE_FORMAT(pd.date_birth, '%d %M %Y') AS date_birth, 
-				pd.idcard_no AS ktp, 
-				pd.phone_mobile AS phone_mobile, 
-				(CASE
-					WHEN c.sid_no IS NULL THEN "-"
-					ELSE c.sid_no
-				END) AS sid,
-				(CASE
-					WHEN c.cif_suspend_flag = 0 THEN "Tidak"
-					ELSE "Ya"
-				END) AS cif_suspend_flag, 
-				pd.mother_maiden_name AS mother_maiden_name,
-				r.oa_status AS oa_status, 
-				br.branch_key AS branch_key, 
-				br.branch_name AS branch_name, 
-				ag.agent_name AS agent_name, 
-				DATE_FORMAT(r.rec_created_date, '%d %M %Y %H:%i') AS created_date, 
-				u1.ulogin_name as created_by, 
-				DATE_FORMAT(r.rec_modified_date, '%d %M %Y %H:%i') AS modified_date, 
-				u2.ulogin_name as modified_by 
-			FROM oa_request AS r
-			INNER JOIN ms_customer AS c ON r.customer_key = c.customer_key 
-			INNER JOIN (SELECT oa_request_key, customer_key FROM vwCurrentOA)
-			AS t2 ON r.oa_request_key = t2.oa_request_key
-			INNER JOIN oa_personal_data AS pd ON pd.oa_request_key = r.oa_request_key
-			LEFT JOIN ms_branch AS br ON br.branch_key = r.branch_key 
-			LEFT JOIN ms_agent AS ag ON ag.agent_key = r.agent_key 
-			LEFT JOIN sc_user_login AS u1 ON u1.user_login_key = r.rec_created_by 
-			LEFT JOIN sc_user_login AS u2 ON u2.user_login_key = r.rec_modified_by 
-			WHERE r.oa_status in (258, 259, 260, 261, 262) AND r.rec_status = 1 AND r.customer_key IS NOT NULL` + condition +
-		` GROUP BY r.customer_key ) AS dat`
+			WHERE r.oa_status in (258, 259, 260, 261, 262) AND r.rec_status = 1 AND r.customer_key IS NULL ` + conditionNoCus + ` 
+			
+			UNION ALL 
+			
+			SELECT
+			r2.oa_request_key as oa_request_key,
+			c.customer_key as customer_key,
+			c.unit_holder_idno AS cif,
+			pd.full_name AS full_name,
+			DATE_FORMAT(pd.date_birth, '%d %M %Y') AS date_birth,
+			pd.idcard_no AS ktp,
+			pd.phone_mobile AS phone_mobile,
+			(CASE
+				WHEN c.sid_no IS NULL THEN "-"
+				ELSE c.sid_no
+			END) AS sid,
+			(CASE
+				WHEN c.cif_suspend_flag = 0 THEN "Tidak"
+				ELSE "Ya"
+			END) AS cif_suspend_flag,
+			pd.mother_maiden_name AS mother_maiden_name,
+			r.oa_status AS oa_status,
+			br.branch_key AS branch_key,
+			br.branch_name AS branch_name,
+			ag.agent_name AS agent_name,
+			DATE_FORMAT(r.rec_created_date, '%d %M %Y %H:%i') AS created_date,
+			u1.ulogin_name as created_by,
+			DATE_FORMAT(r.rec_modified_date, '%d %M %Y %H:%i') AS modified_date,
+			u2.ulogin_name as modified_by
+		FROM oa_request AS r
+		INNER JOIN ms_customer AS c ON r.customer_key = c.customer_key
+		INNER JOIN (
+			SELECT 
+				MAX(r1.oa_request_key) AS oa_request_key, 
+				r1.customer_key 
+			FROM oa_request r1 
+			WHERE r1.rec_status = 1 
+			AND r1.oa_status IN (258, 259, 260, 261, 262) 
+			GROUP BY r1.customer_key
+		) AS r2 ON (r.customer_key = r2.customer_key AND r2.oa_request_key=r.oa_request_key)
+		INNER JOIN oa_personal_data AS pd ON pd.oa_request_key = r.oa_request_key
+		LEFT JOIN ms_branch AS br ON br.branch_key = r.branch_key
+		LEFT JOIN ms_agent AS ag ON ag.agent_key = r.agent_key
+		LEFT JOIN sc_user_login AS u1 ON u1.user_login_key = r.rec_created_by
+		LEFT JOIN sc_user_login AS u2 ON u2.user_login_key = r.rec_modified_by
+		WHERE r.oa_status in (258, 259, 260, 261, 262) AND r.rec_status = 1 AND r.customer_key IS NOT NULL ` + condition + ` 
+		) AS dat`
 
 	var orderBy string
 	var orderType string

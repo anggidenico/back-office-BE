@@ -2798,15 +2798,15 @@ func GetAdminListCustomerRedemption(c echo.Context) error {
 }
 
 func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
-	customerKey := c.Param("key")
-	key, _ := strconv.ParseUint(customerKey, 10, 64)
+	requestKey := c.Param("key")
+	key, _ := strconv.ParseUint(requestKey, 10, 64)
 	if key == 0 {
 		return lib.CustomError(http.StatusNotFound)
 	}
 
 	var oaRequestDB []models.OaRequest
 	params := make(map[string]string)
-	params["customer_key"] = customerKey
+	params["oa_request_key"] = requestKey
 	params["rec_status"] = "1"
 	params["orderBy"] = "oa_request_key"
 	params["orderType"] = "DESC"
@@ -2815,7 +2815,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Oa Request not found")
 	}
-	var requestKey string
+	// var requestKey string
 	var oaData models.OaRequest
 	if len(oaRequestDB) > 0 {
 		oaData = oaRequestDB[0]
@@ -3098,7 +3098,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 
 	var requestDB []models.OaRequest
 	paramRequest := make(map[string]string)
-	paramRequest["customer_key"] = customerKey
+	paramRequest["customer_key"] = strconv.FormatUint(*oaData.CustomerKey, 10)
 	paramRequest["orderBy"] = "oa_request_key"
 	paramRequest["orderType"] = "DESC"
 	_, err = models.GetAllOaRequest(&requestDB, 1, 0, false, paramRequest)
@@ -3126,7 +3126,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	}
 
 	var risk models.OaRiskProfile
-	_, err = models.GetOaRiskProfile(&risk, strconv.FormatUint(request.OaRequestKey, 10), "oa_request_key")
+	_, err = models.GetOaRiskProfile(&risk, requestKey, "oa_request_key")
 	if err != nil {
 		log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
