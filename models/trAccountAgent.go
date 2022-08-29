@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/shopspring/decimal"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -143,5 +144,81 @@ func GetTrAccountAgentIn(c *[]TrAccountAgent, value []string, field string) (int
 		return http.StatusBadGateway, err
 	}
 
+	return http.StatusOK, nil
+}
+
+type AumBalanceUnitStruct struct {
+	BalanceUnit decimal.Decimal `db:"balance_unit" json:"balance_unit"`
+}
+
+func AumBalanceQuery(c *AumBalanceUnitStruct, acaKey string, date string) (int, error) {
+	query := `SELECT SUM(trbal.balance_unit) AS balance_unit 
+		FROM tr_balance trbal
+		INNER JOIN (
+			SELECT bal.*
+			FROM tr_balance bal
+			WHERE bal.rec_status = 1
+			AND bal.aca_key = "` + acaKey + `"
+			AND bal.balance_date <= " ` + date + `"
+		) c ON c.aca_key = trbal.aca_key AND c.balance_date = trbal.balance_date`
+
+	log.Println("===== QUERY GET AUM BALANCE UNIT ===== >>>", query)
+	err := db.Db.Get(c, query)
+	if err != nil {
+		log.Println(err)
+		return http.StatusBadGateway, err
+	}
+	return http.StatusOK, nil
+}
+
+type AumNavValueStruct struct {
+	NavValue decimal.Decimal `db:"nav_value" json:"nav_value"`
+}
+
+func AumNavValueQuery(c *AumNavValueStruct, productKey string, date string) (int, error) {
+	query := `SELECT nav.nav_value
+		FROM tr_nav nav
+		INNER JOIN (
+			SELECT nab.*
+			FROM tr_nav nab
+			WHERE nab.rec_status = 1
+			AND nab.publish_mode = 236
+			AND nab.nav_status = 234
+			AND nab.product_key = "` + productKey + `"
+			AND nab.nav_date <= "` + date + `"
+		) c ON c.product_key = nav.product_key AND c.nav_date = nav.nav_date
+		ORDER BY nav.nav_date DESC LIMIT 1`
+
+	log.Println("===== QUERY GET Nav Value Aum report ===== >>>", query)
+	err := db.Db.Get(c, query)
+	if err != nil {
+		log.Println(err)
+		return http.StatusBadGateway, err
+	}
+	return http.StatusOK, nil
+}
+
+type AumCurrencyRateStruct struct {
+	RateValue decimal.Decimal `db:"rate_value" json:"rate_value"`
+}
+
+func AumCurrencyRateQuery(c *AumCurrencyRateStruct, currencyKey string, date string) (int, error) {
+	query := `SELECT tcur.rate_value
+		FROM tr_currency_rate tcur
+		INNER JOIN (
+			SELECT curt.*
+			FROM tr_currency_rate curt
+			WHERE curt.rec_status = 1 
+			AND curt.currency_key  = "` + currencyKey + `" 
+			AND curt.rate_date <= "` + date + `"
+		) c ON c.rate_date = tcur.rate_date AND c.currency_key = tcur.currency_key
+		ORDER BY tcur.rate_date DESC LIMIT 1`
+
+	log.Println("===== QUERY GET currency rate Aum report ===== >>>", query)
+	err := db.Db.Get(c, query)
+	if err != nil {
+		log.Println(err)
+		return http.StatusBadGateway, err
+	}
 	return http.StatusOK, nil
 }

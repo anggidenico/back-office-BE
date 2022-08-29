@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"math"
-	"math/rand"
 	"mf-bo-api/config"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
@@ -12,7 +11,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	"github.com/leekchan/accounting"
 	"github.com/shopspring/decimal"
 	log "github.com/sirupsen/logrus"
 )
@@ -670,6 +668,8 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 	var err error
 	var status int
 	var paramsToResponse []interface{}
+	timeNow := time.Now().Format(lib.DATEFORMATONLY)
+	var total_aum decimal.Decimal
 
 	//Get parameter limit
 	limitStr := c.QueryParam("limit")
@@ -754,8 +754,62 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 		paramsToAppend["customer_name"] = dt_agent_cust.CustomerName
 		paramsToAppend["unit_holder_id"] = dt_agent_cust.UnitHolderID
 		// ========== AUM HARDCODE AUM SEMENTARA ==========
-		ac := accounting.Accounting{Precision: 0, Thousand: "."}
-		paramsToAppend["aum"] = ac.FormatMoney(rand.Intn(999999999-100000) + 100000)
+		// ac := accounting.Accounting{Precision: 0, Thousand: "."}
+		// paramsToAppend["aum"] = ac.FormatMoney(rand.Intn(999999999-100000) + 100000)
+
+		//========== PERHITUNGAN AUM REAL ==========
+
+		// GET TR_ACCOUNT KEY
+		var accKey string
+		paramsAcc := make(map[string]string)
+		paramsAcc["rec_status"] = "1"
+		paramsAcc["customer_key"] = dt_agent_cust.CustomerKey
+		var trAccountDB []models.TrAccount
+		status, err = models.GetAllTrAccount(&trAccountDB, paramsAcc)
+		if len(trAccountDB) > 0 {
+			// GET TR_ACCOUNT_AGENT KEY
+			accKey = strconv.FormatUint(trAccountDB[0].AccKey, 10)
+			if trAccountDB[0].SubSuspendFlag != nil && *trAccountDB[0].SubSuspendFlag == 1 {
+				log.Error("Account suspended")
+				return lib.CustomError(status, "Account suspended ", "Account suspended ")
+			}
+
+			// GET ACCOUNT AGENT ACA KEY
+			paramsAccAgent := make(map[string]string)
+			paramsAccAgent["acc_key"] = accKey
+			paramsAccAgent["rec_status"] = "1"
+			var acaKey string
+			var accountAgentDB []models.TrAccountAgent
+			status, err = models.GetAllTrAccountAgent(&accountAgentDB, paramsAccAgent)
+			if len(accountAgentDB) > 0 {
+				acaKey = strconv.FormatUint(accountAgentDB[0].AcaKey, 10)
+			}
+			log.Println(acaKey)
+			// GET BALANCE AMOUNT
+			var bal models.AumBalanceUnitStruct
+			_, err = models.AumBalanceQuery(&bal, accKey, timeNow)
+			if err != nil {
+				log.Println(err)
+			}
+			balance_unit := bal.BalanceUnit
+
+			for _, dt := range trAccountDB {
+				// GET NAV VALUE
+				var navVal models.AumNavValueStruct
+				prodKey := strconv.FormatUint(dt.ProductKey, 10)
+				_, err = models.AumNavValueQuery(&navVal, prodKey, timeNow)
+				if err != nil {
+					log.Println(err)
+				}
+				navValues := navVal.NavValue
+				// SUM THE AUM
+				aums := navValues.Mul(balance_unit)
+				total_aum = total_aum.Add(aums)
+			}
+
+			paramsToAppend["aum"] = total_aum.Truncate(2)
+		}
+		log.Println(accKey)
 
 		paramsToResponse = append(paramsToResponse, paramsToAppend)
 	}
