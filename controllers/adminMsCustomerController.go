@@ -4299,7 +4299,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		paramsOaPersonalData["rec_image1"] = signatureDefault
 	}
 
-	status, err, _ = models.CreateOaPersonalData(paramsOaPersonalData)
+	status, err, personalDataID := models.CreateOaPersonalData(paramsOaPersonalData)
 	if err != nil {
 		tx.Rollback()
 		log.Error("Failed create personal data: " + err.Error())
@@ -4354,7 +4354,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	var bindInterface []interface{}
 	for i := 0; i < len(bindVarz); i++ {
-		bindVarz[i][1] = requestID
+		bindVarz[i][1] = personalDataID
 		bindInterface = append(bindInterface, bindVarz[i])
 	}
 

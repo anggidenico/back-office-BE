@@ -374,7 +374,7 @@ func GetAllOaRequest(c *[]OaRequest, limit uint64, offset uint64, nolimit bool, 
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("========== QUERY GET OA REQUEST ========== >>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

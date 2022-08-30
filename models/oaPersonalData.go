@@ -413,10 +413,9 @@ func UdfOtherValueQuery(c *UdfOtherValueStruct, rowKey uint64, uikey string) (in
 	row_key := strconv.FormatUint(rowKey, 10)
 	query := `SELECT uv.udf_values
 	FROM udf_value uv
-	WHERE uv.row_data_key = ` + row_key + `
-	AND uv.udf_info_key = ` + uikey
+	WHERE uv.udf_info_key = ` + uikey + ` AND uv.row_data_key = ` + row_key
 
-	log.Info(query)
+	log.Info("========= QUERY UDF OTHER VALUES ========== >>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
