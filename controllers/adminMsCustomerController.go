@@ -1852,7 +1852,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	businessFieldOther := c.FormValue("business_field_other")
 	if businessFieldOther != "" {
 		var rowz []string
-		rowz = append(rowz, "9")
+		rowz = append(rowz, "4")
 		rowz = append(rowz, "0")
 		rowz = append(rowz, businessFieldOther)
 		bindVarz = append(bindVarz, rowz)
@@ -3007,7 +3007,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "4")
 		if err != nil {
 			log.Error(err.Error())
-			return lib.CustomError(status, err.Error(), "Failed get data")
+			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["occup_business_field_other"] = ud.Values
 	}
@@ -3021,7 +3021,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "5")
 		if err != nil {
 			log.Error(err.Error())
-			return lib.CustomError(status, err.Error(), "Failed get data")
+			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["sourceof_fund_other"] = ud.Values
 	}
@@ -3031,7 +3031,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "6")
 		if err != nil {
 			log.Error(err.Error())
-			return lib.CustomError(status, err.Error(), "Failed get data")
+			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["invesment_objectives_other"] = ud.Values
 	}
@@ -3043,7 +3043,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "8")
 		if err != nil {
 			log.Error(err.Error())
-			return lib.CustomError(status, err.Error(), "Failed get data")
+			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["relation_occupation_other"] = ud.Values
 	}
@@ -3053,7 +3053,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "9")
 		if err != nil {
 			log.Error(err.Error())
-			return lib.CustomError(status, err.Error(), "Failed get data")
+			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["relation_business_fields"] = ud.Values
 	}
@@ -3068,7 +3068,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "7")
 		if err != nil {
 			log.Error(err.Error())
-			return lib.CustomError(status, err.Error(), "Failed get data")
+			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["beneficial_relation_other"] = ud.Values
 	}
@@ -3121,7 +3121,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		_, err = models.RiskProfileQuizIfNull(&quizDB, request.OaRequestKey)
 		if err != nil {
 			log.Error(err.Error())
-			return lib.CustomError(status, err.Error(), "Failed get data")
+			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
 
@@ -3518,7 +3518,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	businessFieldOther := c.FormValue("business_field_other")
 	if businessFieldOther != "" {
 		var rowz []string
-		rowz = append(rowz, "9")
+		rowz = append(rowz, "4")
 		rowz = append(rowz, "0")
 		rowz = append(rowz, businessFieldOther)
 		bindVarz = append(bindVarz, rowz)
@@ -3636,12 +3636,12 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		}
 	}
 
-	relationBusinessFieldOther := c.FormValue("relation_business_field_other")
-	if relationBusinessFieldOther != "" {
+	relationOccupationOther := c.FormValue("relation_occupation_other")
+	if relationOccupationOther != "" {
 		var row []string
-		row = append(row, "10")
+		row = append(row, "8")
 		row = append(row, "0")
-		row = append(row, relationBusinessFieldOther)
+		row = append(row, relationOccupationOther)
 		bindVarz = append(bindVarz, row)
 	}
 
@@ -3668,6 +3668,15 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			log.Error("Wrong input for parameter: relation_business_field")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: relation_business_field", "Wrong input for parameter: relation_business_field")
 		}
+	}
+
+	relationBusinessFieldOther := c.FormValue("relation_business_field_other")
+	if relationBusinessFieldOther != "" {
+		var row []string
+		row = append(row, "9")
+		row = append(row, "0")
+		row = append(row, relationBusinessFieldOther)
+		bindVarz = append(bindVarz, row)
 	}
 
 	emergencyName := c.FormValue("emergency_name")
@@ -3709,6 +3718,15 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			log.Error("Wrong input for parameter: beneficial_relation")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: beneficial_relation", "Wrong input for parameter: beneficial_relation")
 		}
+	}
+
+	beneficialRelationOther := c.FormValue("relation_business_field_other")
+	if beneficialRelationOther != "" {
+		var row []string
+		row = append(row, "7")
+		row = append(row, "0")
+		row = append(row, beneficialRelationOther)
+		bindVarz = append(bindVarz, row)
 	}
 
 	beneficialName := c.FormValue("beneficial_name")
@@ -4306,6 +4324,19 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
+	var bindInterface []interface{}
+	for i := 0; i < len(bindVarz); i++ {
+		bindVarz[i][1] = personalDataID
+		bindInterface = append(bindInterface, bindVarz[i])
+	}
+
+	if len(bindInterface) > 0 {
+		status, err = models.CreateMultipleUdfValue(bindInterface)
+		if err != nil {
+			log.Error(err.Error())
+		}
+	}
+
 	//SAVE CMS_QUIZ_OPTIONS
 	var questionOptions []models.QuestionOptionQuiz
 	status, err = models.AdminGetQuestionOptionQuiz(&questionOptions, quizoptionkey)
@@ -4351,19 +4382,6 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	paramsOaRiskProfile["rec_status"] = "1"
 	paramsOaRiskProfile["rec_created_date"] = time.Now().Format(dateLayout)
 	paramsOaRiskProfile["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-
-	var bindInterface []interface{}
-	for i := 0; i < len(bindVarz); i++ {
-		bindVarz[i][1] = personalDataID
-		bindInterface = append(bindInterface, bindVarz[i])
-	}
-
-	if len(bindInterface) > 0 {
-		status, err = models.CreateMultipleUdfValue(bindInterface)
-		if err != nil {
-			log.Error(err.Error())
-		}
-	}
 
 	status, err = models.CreateOaRiskProfile(paramsOaRiskProfile)
 	if err != nil {
