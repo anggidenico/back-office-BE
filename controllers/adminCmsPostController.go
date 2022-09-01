@@ -340,7 +340,7 @@ func GetAdminCmsPostData(c echo.Context) error {
 		responseData.PostPinned = true
 	}
 	if post.RecImage1 != nil && *post.RecImage1 != "" {
-		responseData.RecImage1 = config.ImageUrl + "/images/post/" + dir + "/" + *post.RecImage1
+		responseData.RecImage1 = config + "/images/post/" + dir + "/" + *post.RecImage1
 	} else {
 		responseData.RecImage1 = config.ImageUrl + "/images/post/default.png"
 	}
@@ -572,7 +572,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 			filename = lib.RandStringBytesMaskImprSrc(20)
 			log.Println("Generate filename:", filename)
 			// Upload image and move to proper directory
-			err = lib.UploadImage(file, config.BasePathImage+"/images/post/"+pathType+"/"+randName+"_"+filename+extension)
+			err = lib.UploadImage(file, config.ImageUrl+"/images/post/"+pathType+"/"+randName+"_"+filename+extension)
 			if err != nil {
 				log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
@@ -855,7 +855,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 			filename = lib.RandStringBytesMaskImprSrc(20)
 			log.Println("Generate filename:", filename)
 			// Upload image and move to proper directory
-			err = lib.UploadImage(file, config.BasePathImage+"/images/post/"+pathType+"/"+randName+"_"+filename+extension)
+			err = lib.UploadImage(file, config.ImageUrl+"/images/post/"+pathType+"/"+randName+"_"+filename+extension)
 			if err != nil {
 				log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)

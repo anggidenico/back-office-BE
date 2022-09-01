@@ -1646,7 +1646,7 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 	if err := t.Execute(&tpl, struct {
 		Url     string
 		FileUrl string
-	}{Url: config.BaseUrl + "/verifyuser?token=" + verifyKey, FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+	}{Url: config.BaseUrl + "/verifyuser?token=" + verifyKey, FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
 		log.Println(err)
 	}
 

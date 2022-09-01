@@ -2654,7 +2654,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 		if err := t.Execute(&tpl, struct {
 			Name    string
 			FileUrl string
-		}{Name: fullname, FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
+		}{Name: fullname, FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
 			log.Println(err)
 		}
 
@@ -4308,7 +4308,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			}
 		}
 		// Upload image and move to proper directory
-		err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+idUserLogin+"/signature/"+filename+extension)
+		err = lib.UploadImage(file, config.ImageUrl+"/images/user/"+idUserLogin+"/signature/"+filename+extension)
 		if err != nil {
 			log.Println(err)
 			return lib.CustomError(http.StatusInternalServerError)
@@ -4414,7 +4414,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		if err := t.Execute(&tpl, struct {
 			Name    string
 			FileUrl string
-		}{Name: fullname, FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
+		}{Name: fullname, FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
 			log.Println(err)
 		}
 
@@ -5133,7 +5133,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 	}
 
 	var tpl bytes.Buffer
-	if err := t.Execute(&tpl, struct{ FileUrl string }{FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
+	if err := t.Execute(&tpl, struct{ FileUrl string }{FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
 		log.Println(err)
 	}
 

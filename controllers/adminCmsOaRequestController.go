@@ -2346,7 +2346,7 @@ func sendEmailApproveOa(fullName string, email string) {
 			FileUrl string
 		}{
 			Name:    fullName,
-			FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
+			FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
 		log.Println(err)
 	}
 

@@ -127,7 +127,7 @@ func CustomerUpdateFile(c echo.Context) error {
 						filename := lib.RandStringBytesMaskImprSrc(50)
 						updateFile["file_name"] = filename + extension
 						updateFile["file_ext"] = extension
-						updateFile["file_path"] = config.BasePathImage + "/images/user/" + strconv.FormatUint(userData.UserLoginKey, 10) + "/ms_file/" + filename + extension
+						updateFile["file_path"] = config.ImageUrl + "/images/user/" + strconv.FormatUint(userData.UserLoginKey, 10) + "/ms_file/" + filename + extension
 
 						err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+strconv.FormatUint(userData.UserLoginKey, 10)+"/ms_file/"+filename+extension)
 						if err != nil {
@@ -163,7 +163,7 @@ func CustomerUpdateFile(c echo.Context) error {
 						createFile["file_name"] = filename + extension
 						createFile["file_ext"] = extension
 						createFile["blob_mode"] = "0"
-						createFile["file_path"] = config.BasePathImage + "/images/user/" + strconv.FormatUint(userData.UserLoginKey, 10) + "/ms_file/" + filename + extension
+						createFile["file_path"] = config.ImageUrl + "/images/user/" + strconv.FormatUint(userData.UserLoginKey, 10) + "/ms_file/" + filename + extension
 
 						err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+strconv.FormatUint(userData.UserLoginKey, 10)+"/ms_file/"+filename+extension)
 						if err != nil {
