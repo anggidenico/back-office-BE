@@ -4117,7 +4117,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	}
 
 	//MS_BANK_ACCOUNT 2
-	if bankKey2 != "" || accountNo2 != "" || accountName2 != "" || branchName2 != "" || flagPriority2 != "" {
+	if bankKey2 != "" || accountNo2 != "" || accountName2 != "" || branchName2 != "" {
 		//MS_BANK_ACCOUNT 2
 		paramsBank2 := make(map[string]string)
 		paramsBank2["bank_key"] = bankKey2
@@ -4164,7 +4164,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	}
 
 	//MS_BANK_ACCOUNT 3
-	if bankKey3 != "" || accountNo3 != "" || accountName3 != "" || branchName3 != "" || flagPriority3 != "" {
+	if bankKey3 != "" || accountNo3 != "" || accountName3 != "" || branchName3 != "" {
 		//MS_BANK_ACCOUNT 3
 		paramsBank3 := make(map[string]string)
 		paramsBank3["bank_key"] = bankKey3
@@ -4177,6 +4177,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		paramsBank3["rec_status"] = "1"
 		paramsBank3["rec_created_date"] = time.Now().Format(dateLayout)
 		paramsBank3["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+		log.Println("========== LEWAT SINI ========== >>>")
 		status, err, bankAccountID3 := models.CreateMsBankAccount(paramsBank3)
 		if err != nil {
 			tx.Rollback()
