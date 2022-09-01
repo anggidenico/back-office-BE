@@ -2654,7 +2654,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 		if err := t.Execute(&tpl, struct {
 			Name    string
 			FileUrl string
-		}{Name: fullname, FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+		}{Name: fullname, FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
 			log.Println(err)
 		}
 
@@ -4414,7 +4414,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		if err := t.Execute(&tpl, struct {
 			Name    string
 			FileUrl string
-		}{Name: fullname, FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+		}{Name: fullname, FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
 			log.Println(err)
 		}
 
@@ -5133,7 +5133,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 	}
 
 	var tpl bytes.Buffer
-	if err := t.Execute(&tpl, struct{ FileUrl string }{FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+	if err := t.Execute(&tpl, struct{ FileUrl string }{FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
 		log.Println(err)
 	}
 

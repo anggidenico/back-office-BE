@@ -165,7 +165,7 @@ func Register(c echo.Context) error {
 	if err := t.Execute(&tpl, struct {
 		Url     string
 		FileUrl string
-	}{Url: config.BaseUrl + "/verifyemail?token=" + verifyKey, FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+	}{Url: config.BaseUrl + "/verifyemail?token=" + verifyKey, FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
 		log.Println(err)
 	}
 
@@ -751,7 +751,7 @@ func ResendVerification(c echo.Context) error {
 		if err := t.Execute(&tpl, struct {
 			Url     string
 			FileUrl string
-		}{Url: config.BaseUrl + "/verifyemail?token=" + verifyKey, FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+		}{Url: config.BaseUrl + "/verifyemail?token=" + verifyKey, FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
 			log.Println(err)
 		}
 
@@ -879,7 +879,7 @@ func ForgotPassword(c echo.Context) error {
 		Password string
 		FileUrl  string
 		Name     string
-	}{Password: str, FileUrl: config.FileUrl + "/images/mail", Name: name}); err != nil {
+	}{Password: str, FileUrl: config.BasePathImage + "/images/mail", Name: name}); err != nil {
 		log.Println(err)
 	}
 
@@ -1280,7 +1280,7 @@ func ChangePassword(c echo.Context) error {
 			FileUrl string
 		}{
 			Name:    fullnameuser,
-			FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+			FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
 		log.Println(err)
 	}
 
@@ -1807,7 +1807,7 @@ func ChangeForgotPassword(c echo.Context) error {
 			FileUrl string
 		}{
 			Name:    fullnameuser,
-			FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+			FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
 		log.Println(err)
 	}
 
@@ -2121,7 +2121,7 @@ func ForgotPin(c echo.Context) error {
 		PIN     string
 		FileUrl string
 		Name    string
-	}{PIN: pin, FileUrl: config.FileUrl + "/images/mail", Name: name}); err != nil {
+	}{PIN: pin, FileUrl: config.BasePathImage + "/images/mail", Name: name}); err != nil {
 		log.Println(err)
 	}
 

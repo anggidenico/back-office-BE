@@ -225,7 +225,7 @@ func PostQuizAnswer(c echo.Context) error {
 		if err := t.Execute(&tpl, struct {
 			Name    string
 			FileUrl string
-		}{Name: personalData.FullName, FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+		}{Name: personalData.FullName, FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
 			log.Println(err)
 		}
 
@@ -274,7 +274,7 @@ func PostQuizAnswer(c echo.Context) error {
 		if err := t.Execute(&tpl, struct {
 			Name    string
 			FileUrl string
-		}{Name: personalData.FullName, FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+		}{Name: personalData.FullName, FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
 			log.Println(err)
 		}
 

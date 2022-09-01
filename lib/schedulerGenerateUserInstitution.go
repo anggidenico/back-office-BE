@@ -177,7 +177,7 @@ func sendEmail(email string, token string) error {
 	if err := t.Execute(&tpl, struct {
 		Url     string
 		FileUrl string
-	}{Url: config.BaseUrl + "/verify-email-user?token=" + token, FileUrl: config.FileUrl + "/images/mail"}); err != nil {
+	}{Url: config.BaseUrl + "/verify-email-user?token=" + token, FileUrl: config.BasePathImage + "/images/mail"}); err != nil {
 		log.Println(err)
 		fmt.Println("======FAILED SEND EMAIL TO " + email + "============")
 		return err
