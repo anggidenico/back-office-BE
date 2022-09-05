@@ -3630,7 +3630,7 @@ func SentEmailOaPengkinianToBackOffice(
 	mailParam["TanggalLahir"] = date.Format(dateLayout)
 	mailParam["Email"] = oaPersonalData.EmailAddress
 	mailParam["NoHp"] = oaPersonalData.PhoneMobile
-	mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+	mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 
 	if *oaRequest.OaRequestType == uint64(127) { // oa new
 		subject = "[MotionFunds] Mohon Verifikasi Pembukaan Rekening Reksa Dana"
@@ -3719,7 +3719,7 @@ func SentEmailOaPengkinianToSales(
 	mailParam["TanggalLahir"] = date.Format(dateLayout)
 	mailParam["Email"] = oaPersonalData.EmailAddress
 	mailParam["NoHp"] = oaPersonalData.PhoneMobile
-	mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+	mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 
 	if *oaRequest.OaRequestType == uint64(127) { // oa new
 		subject = "[MotionFunds] Mohon Verifikasi Pembukaan Rekening Reksa Dana"

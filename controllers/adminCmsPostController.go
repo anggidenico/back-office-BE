@@ -340,7 +340,7 @@ func GetAdminCmsPostData(c echo.Context) error {
 		responseData.PostPinned = true
 	}
 	if post.RecImage1 != nil && *post.RecImage1 != "" {
-		responseData.RecImage1 = config + "/images/post/" + dir + "/" + *post.RecImage1
+		responseData.RecImage1 = config.ImageUrl + "/images/post/" + dir + "/" + *post.RecImage1
 	} else {
 		responseData.RecImage1 = config.ImageUrl + "/images/post/default.png"
 	}
