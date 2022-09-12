@@ -389,3 +389,32 @@ func AdminDetailMsHoliday(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, response)
 }
+
+func AdminCheckHoliday(c echo.Context) error {
+	var err error
+	responseData := make(map[string]interface{})
+
+	date := c.QueryParam("date")
+	if date == "" {
+		log.Error("Missing required parameter: date")
+		return lib.CustomError(http.StatusBadRequest, "date can not be blank", "date can not be blank")
+	}
+
+	var holiday models.MsHoliday
+	_, err = models.GetHolidayStatus(&holiday, date)
+	if err != nil {
+		log.Error(err.Error())
+		// return lib.CustomError(http.StatusBadRequest, "Holiday not found", "Holiday not found")
+		responseData["is_holiday"] = false
+	} else {
+		responseData["is_holiday"] = true
+	}
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = responseData
+
+	return c.JSON(http.StatusOK, response)
+}

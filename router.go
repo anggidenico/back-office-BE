@@ -395,6 +395,7 @@ func router() *echo.Echo {
 	admin.POST("/holiday/create", controllers.AdminCreateMsHoliday).Name = "AdminCreateMsHoliday"
 	admin.POST("/holiday/update", controllers.AdminUpdateMsHoliday).Name = "AdminUpdateMsHoliday"
 	admin.GET("/holiday/detail/:holiday_key", controllers.AdminDetailMsHoliday).Name = "AdminDetailMsHoliday"
+	admin.GET("/holiday/status", controllers.AdminCheckHoliday).Name = "AdminCheckHoliday"
 
 	//Admin City
 	admin.GET("/city-list", controllers.AdminGetListMsCity).Name = "AdminGetListMsCity"

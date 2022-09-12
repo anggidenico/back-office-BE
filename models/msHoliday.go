@@ -297,3 +297,15 @@ func CountMsHolidayValidateUnique(c *CountData, field string, value string, key 
 
 	return http.StatusOK, nil
 }
+
+func GetHolidayStatus(c *MsHoliday, date string) (int, error) {
+	query := `SELECT ms_holiday.* FROM ms_holiday WHERE ms_holiday.rec_status = '1' AND ms_holiday.holiday_date = "` + date + `"`
+	log.Println("========== QUERY GET HOLIDAY STATUS ==========>>>", query)
+	err := db.Db.Get(c, query)
+	if err != nil {
+		log.Println(err)
+		return http.StatusNotFound, err
+	}
+
+	return http.StatusOK, nil
+}
