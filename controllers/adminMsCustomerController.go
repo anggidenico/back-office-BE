@@ -2400,6 +2400,19 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	}
 	paramsOaPersonalData["bank_account_key"] = bankAccountID
 
+	oaSource := c.FormValue("oa_source")
+	if oaSource != "" {
+		_, err := strconv.ParseUint(oaSource, 10, 64)
+		if err != nil {
+			log.Error("Wrong input for parameter: oa_source")
+			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_source", "Wrong input for parameter: oa_source")
+		}
+	} else {
+		log.Error("Missing required parameter: oa_source")
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: oa_source", "Missing required parameter: oa_source")
+	}
+	paramsOaRequest["oa_source"] = oaSource
+
 	//SAVE OA_REQUEST
 	status, err, requestID := models.CreateOaRequest(paramsOaRequest)
 	if err != nil {
@@ -3205,18 +3218,6 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if oaRequestType == "" {
 		log.Error("Missing required parameter: oa_request_type")
 		return lib.CustomError(http.StatusBadRequest, "oa_request_type can not be blank", "oa_request_type can not be blank")
-	}
-
-	oaSource := c.FormValue("oa_source")
-	if oaSource != "" {
-		_, err := strconv.ParseUint(oaSource, 10, 64)
-		if err != nil {
-			log.Error("Wrong input for parameter: oa_source")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_source", "Wrong input for parameter: oa_source")
-		}
-	} else {
-		log.Error("Missing required parameter: oa_source")
-		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: oa_source", "Missing required parameter: oa_source")
 	}
 
 	branchkey := c.FormValue("branch_key")
@@ -4065,6 +4066,19 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		}
 		paramsOaPersonalData["occup_address_key"] = addressCompanyID
 	}
+
+	oaSource := c.FormValue("oa_source")
+	if oaSource != "" {
+		_, err := strconv.ParseUint(oaSource, 10, 64)
+		if err != nil {
+			log.Error("Wrong input for parameter: oa_source")
+			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_source", "Wrong input for parameter: oa_source")
+		}
+	} else {
+		log.Error("Missing required parameter: oa_source")
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: oa_source", "Missing required parameter: oa_source")
+	}
+	paramsOaRequest["oa_source"] = oaSource
 
 	//SAVE OA_REQUEST
 	status, err, requestID := models.CreateOaRequest(paramsOaRequest)

@@ -3023,6 +3023,20 @@ func SaveOaInstitutionData(c echo.Context) error {
 			paramsOaRequest["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 			paramsOaRequest["rec_modified_date"] = time.Now().Format(layout)
 			paramsOaRequest["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+
+			oaSource := c.FormValue("oa_source")
+			if oaSource != "" {
+				_, err := strconv.ParseUint(oaSource, 10, 64)
+				if err != nil {
+					log.Error("Wrong input for parameter: oa_source")
+					return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_source", "Wrong input for parameter: oa_source")
+				}
+			} else {
+				log.Error("Missing required parameter: oa_source")
+				return lib.CustomError(http.StatusBadRequest, "Missing required parameter: oa_source", "Missing required parameter: oa_source")
+			}
+			paramsOaRequest["oa_source"] = oaSource
+
 			status, err, requestID := models.CreateOaRequest(paramsOaRequest)
 			if err != nil {
 				error = true
