@@ -63,7 +63,7 @@ type OaInstitutionAuthPersonDetail struct {
 func GetOaInstitutionAuthPerson(c *OaInstitutionAuthPerson, key string, field string) (int, error) {
 	query := `SELECT oa_institution_auth_person.* FROM oa_institution_auth_person 
 	WHERE oa_institution_auth_person.rec_status = 1 AND oa_institution_auth_person.` + field + ` = ` + key
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -88,7 +88,7 @@ func CreateOaInstitutionAuthPerson(params map[string]string) (int, error, string
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -127,7 +127,7 @@ func GetOaInstitutionAuthPersonRequest(c *[]OaInstitutionAuthPersonDetail, oaReq
 			WHERE ap.rec_status = "1" AND ap.oa_request_key = "` + oaReqKey + `"`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -153,7 +153,7 @@ func UpdateOaInstitutionAuthPerson(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE insti_auth_person_key = " + params["insti_auth_person_key"]
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -194,7 +194,7 @@ func DeleteOaInstitutionAuthPerson(params map[string]string, authKey []string, r
 	} else {
 		query += " WHERE rec_status = 1 AND oa_request_key = '" + requestKey + "'"
 	}
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

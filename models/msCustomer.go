@@ -174,7 +174,7 @@ func GetMsCustomerIn(c *[]MsCustomer, value []string, field string) (int, error)
 	query := query2 + " WHERE ms_customer." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("========== QUERY GET CUSTOMER IN ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -186,7 +186,7 @@ func GetMsCustomerIn(c *[]MsCustomer, value []string, field string) (int, error)
 
 func GetMsCustomer(c *MsCustomer, key string) (int, error) {
 	query := `SELECT ms_customer.* FROM ms_customer WHERE ms_customer.rec_status = 1 AND ms_customer.customer_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -211,7 +211,7 @@ func CreateMsCustomer(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("========== QUERY CREATE CUSTOMER ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -226,6 +226,7 @@ func CreateMsCustomer(params map[string]string) (int, error, string) {
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
+
 	return http.StatusOK, nil, strconv.FormatInt(lastID, 10)
 }
 
@@ -245,7 +246,7 @@ func UpdateMsCustomer(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE customer_key = " + params["customer_key"]
-	log.Info(query)
+	log.Info("========== QUERY INSERT MS CUSTOMER ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -269,7 +270,7 @@ func UpdateMsCustomer(params map[string]string) (int, error) {
 
 func GetMsCustomerByClientCode(c *MsCustomer, clientCode string) (int, error) {
 	query := `SELECT ms_customer.* FROM ms_customer WHERE ms_customer.rec_status = 1 AND ms_customer.client_code = ` + clientCode
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -283,7 +284,7 @@ func GetLastUnitHolder(c *MsCustomer, value string) (int, error) {
 	query := `SELECT ms_customer.* FROM ms_customer 
 	WHERE ms_customer.unit_holder_idno LIKE '` + value + `%' AND ms_customer.rec_status = 1
 	ORDER BY unit_holder_idno DESC LIMIT 1`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -432,7 +433,7 @@ func AdminGetAllCustomerIndividuInquery(c *[]CustomerIndividuInquiry, limit uint
 
 	// Main query
 	// log.Println("======================== query cutomer individu list ================================")
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	// log.Println("=====================================================================================")
 	err := db.Db.Select(c, query)
 	if err != nil {
@@ -503,7 +504,7 @@ func CountAdminGetAllCustomerIndividuInquery(c *CountData, params map[string]str
 		` GROUP BY r.customer_key ) AS dat`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -584,7 +585,7 @@ func AdminGetAllCustomerInstitutionInquery(c *[]CustomerInstituionInquiry, limit
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -629,7 +630,7 @@ func CountAdminGetAllCustomerInstitutionInquery(c *CountData, params map[string]
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -680,7 +681,7 @@ func AdminGetHeaderCustomerIndividu(c *CustomerIndividuInquiry, requestKey strin
 			WHERE r.rec_status = 1 AND r.oa_request_key = ` + requestKey
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -717,7 +718,7 @@ func AdminGetHeaderCustomerInstitution(c *CustomerInstituionInquiry, customerKey
 			LEFT JOIN ms_agent AS ag ON ag.agent_key = c.openacc_agent_key AND ag.rec_status = 1 
 			WHERE c.rec_status = 1 AND c.investor_type = 264 AND c.customer_key = ` + customerKey
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -755,7 +756,7 @@ func AdminGetHeaderDetailCustomer(c *DetailCustomerInquiry, customerKey string) 
 			LEFT JOIN oa_institution_data AS id ON id.oa_request_key = r.oa_request_key
 			WHERE c.rec_status = 1 AND c.customer_key = ` + customerKey
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -787,7 +788,7 @@ func GetCustomerDetailPersonalData(c *CustomerDetailPersonalData, customerKey st
 			WHERE c.rec_status = 1 AND c.customer_key = ` + customerKey
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -849,7 +850,7 @@ func GetCustomerDropdown(c *[]CustomerDropdown, params map[string]string, params
 	query += conditionOrder
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -917,7 +918,7 @@ func GetCustomerRedemptionDropdown(c *[]CustomerDropdown, params map[string]stri
 	query += conditionOrder
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -992,7 +993,7 @@ func AdminGetHeaderDetailCustomerInstitution(c *HeaderCustomerInstitution, custo
 			LEFT JOIN ms_city AS ci ON ci.city_key = pa.kabupaten_key 
 			WHERE c.customer_key = "` + customerKey + `" GROUP BY c.customer_key ORDER BY o.oa_request_key DESC LIMIT 1`
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1046,7 +1047,7 @@ func GetCustomerBranchAgentDropdown(c *[]CustomerDropdown, branchKey string, age
 			ORDER BY c.full_name ASC`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1069,7 +1070,7 @@ func UpdateMsCustomerByField(params map[string]string, value string, field strin
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -1132,7 +1133,7 @@ func AdminGetCustomerIndividuByCustomerKey(c *CustomerIndividuInquiry, requestKe
 			WHERE r.rec_status = 1 AND c.customer_key = ` + requestKey
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

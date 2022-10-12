@@ -88,7 +88,7 @@ func GetAllMsAgent(c *[]MsAgent, limit uint64, offset uint64, params map[string]
 	}
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Error(err)
@@ -106,7 +106,7 @@ func GetMsAgentIn(c *[]MsAgent, value []string, field string) (int, error) {
 	query := query2 + " WHERE ms_agent.rec_status = 1 AND ms_agent." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Info(err)
@@ -118,7 +118,7 @@ func GetMsAgentIn(c *[]MsAgent, value []string, field string) (int, error) {
 
 func GetMsAgent(c *MsAgent, key string) (int, error) {
 	query := `SELECT ms_agent.* FROM ms_agent WHERE ms_agent.rec_status = 1 AND ms_agent.agent_key = ` + key
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Info(err)
@@ -130,7 +130,7 @@ func GetMsAgent(c *MsAgent, key string) (int, error) {
 
 func GetMsAgentByField(c *MsAgent, value string, field string) (int, error) {
 	query := `SELECT ms_agent.* FROM ms_agent WHERE ms_agent.rec_status = 1 AND ms_agent.` + field + ` = ` + value
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Info(err)
@@ -145,7 +145,7 @@ func GetMsAgentDropdown(c *[]MsAgentDropdown) (int, error) {
 				agent_key, 
  				CONCAT(agent_code, " - ", agent_name) AS agent_name 
 			FROM ms_agent WHERE ms_agent.rec_status = 1`
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Info(err)
@@ -233,7 +233,7 @@ func AdminGetListAgent(c *[]ListAgentAdmin, limit uint64, offset uint64, params 
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -284,7 +284,7 @@ func CountAdminGetListAgent(c *CountData, params map[string]string, searchLike s
 			WHERE a.rec_status = 1 ` + condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -310,7 +310,7 @@ func UpdateMsAgent(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE agent_key = " + params["agent_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -344,7 +344,7 @@ func CreateMsAgent(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -372,7 +372,7 @@ func CountMsAgentValidateUnique(c *CountData, field string, value string, key st
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -421,7 +421,7 @@ func AdminGetDetailAgent(c *MsAgentBranchDetail, key string) (int, error) {
 			WHERE a.rec_status = 1 AND a.agent_key = '` + key + `'`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -488,7 +488,7 @@ func AdminGetListAgentCustomer(c *[]AgentCustomerDetailList, searchLike string, 
 
 	query += ` ORDER BY t1.agent_key ASC` + limitOffset
 
-	// log.Println(query)
+	// log.Println("==========  ==========>>>",query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

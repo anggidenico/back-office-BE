@@ -92,7 +92,7 @@ func GetAllScLoginSession(c *[]ScLoginSession, limit uint64, offset uint64, para
 	}
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Error(err)
@@ -104,7 +104,7 @@ func GetAllScLoginSession(c *[]ScLoginSession, limit uint64, offset uint64, para
 
 func GetScLoginSession(c *ScLoginSession, key string) (int, error) {
 	query := `SELECT sc_login_session.* WHERE sc_login_session.user_login_key = ` + key
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -129,7 +129,7 @@ func CreateScLoginSession(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -176,7 +176,7 @@ func UpdateScLoginSession(params map[string]string) (int, error) {
 	}
 
 	query += " WHERE user_login_key = " + params["user_login_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

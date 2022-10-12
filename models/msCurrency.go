@@ -63,7 +63,7 @@ func GetMsCurrencyIn(c *[]MsCurrency, value []string, field string) (int, error)
 func GetMsCurrency(c *MsCurrency, key string) (int, error) {
 	query := `SELECT ms_currency.* FROM ms_currency WHERE ms_currency.rec_status = '1' 
 	AND ms_currency.currency_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -119,7 +119,7 @@ func AdminGetListMsCurrency(c *[]MsCurrency, limit uint64, offset uint64, params
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -197,7 +197,7 @@ func AdminGetListCurrency(c *[]ListCurrency, limit uint64, offset uint64, params
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -242,7 +242,7 @@ func CountAdminGetCurrency(c *CountData, params map[string]string, searchLike st
 			WHERE rec_status = 1` + condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -267,7 +267,7 @@ func CreateMsCurrency(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -299,7 +299,7 @@ func UpdateMsCurrency(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE currency_key = " + params["currency_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -329,7 +329,7 @@ func CountMsCurrencyValidateUnique(c *CountData, field string, value string, key
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

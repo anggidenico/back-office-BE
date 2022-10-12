@@ -72,7 +72,7 @@ func CreateScUserNotif(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -91,7 +91,7 @@ func CreateScUserNotif(params map[string]string) (int, error) {
 
 func GetScUserNotif(c *ScUserNotif, key string) (int, error) {
 	query := `SELECT sc_user_notif.* FROM sc_user_notif WHERE sc_user_notif.notif_hdr_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -118,7 +118,7 @@ func UpdateScUserNotif(params map[string]string) (int, error) {
 	}
 	query += " WHERE notif_hdr_key = " + params["notif_hdr_key"]
 
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -205,7 +205,7 @@ func AdminGetAllUserNotif(c *[]UserNotifField, limit uint64, offset uint64, para
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -256,7 +256,7 @@ func CountAdminGetAllUserNotif(c *CountData, params map[string]string, paramsLik
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -283,7 +283,7 @@ func AdminGetDetailUserNotif(c *UserNotifField, key string) (int, error) {
 			WHERE s.rec_status = 1 and s.notif_hdr_key = ` + key
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -307,7 +307,7 @@ func AdminGetAllUserNotifOnceCron(c *[]UserNotifCron) (int, error) {
 			AND DATE(NOW()) = DATE(s.notif_start)`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -331,7 +331,7 @@ func AdminGetAllUserNotifOnceBeginOnceBefore(c *[]UserNotifCron) (int, error) {
 			((DATE(NOW()) = DATE(s.notif_start)) OR (DATE(NOW()) = DATE(s.notif_end)))`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -355,7 +355,7 @@ func AdminGetAllUserNotifOnceAday(c *[]UserNotifCron) (int, error) {
 			(DATE(NOW()) <= DATE(s.notif_end)) AND (DATE(NOW()) >= DATE(s.notif_start))`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

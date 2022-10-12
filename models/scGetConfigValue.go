@@ -16,7 +16,7 @@ func GetScAppConfigValueByCode(c *ScAppConfig1, code string) (int, error) {
 	FROM sc_app_config 
 	WHERE sc_app_config.rec_status = 1 
 	AND sc_app_config.app_config_code ='` + code + `' `
-	// log.Println(query)
+	// log.Println("==========  ==========>>>",query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

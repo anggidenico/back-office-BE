@@ -184,7 +184,7 @@ func CreateMsProduct(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -315,7 +315,7 @@ func GetAllMsProduct(c *[]MsProduct, limit uint64, offset uint64, params map[str
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -337,7 +337,7 @@ func GetAutoinvestProduct(c *[]MsProduct, customerKey string) (int, error) {
 			AND (ta.sub_suspend_flag IS NULL OR ta.sub_suspend_flag = 0) `
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -349,7 +349,7 @@ func GetAutoinvestProduct(c *[]MsProduct, customerKey string) (int, error) {
 
 func GetMsProduct(c *MsProduct, key string) (int, error) {
 	query := `SELECT ms_product.* FROM ms_product WHERE ms_product.product_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -426,7 +426,7 @@ func AdminGetAllMsProductWithLike(c *[]MsProduct, limit uint64, offset uint64, p
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -467,7 +467,7 @@ func AdminGetCountMsProductWithLike(c *CountData, params map[string]string, para
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -493,7 +493,7 @@ func UpdateMsProduct(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE product_key = " + params["product_key"]
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -575,7 +575,7 @@ func AdminGetValidateUniqueDataInsertUpdate(c *CountData, paramsOr map[string]st
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -594,7 +594,7 @@ func AdminGetProductSubscription(c *[]ProductSubscriptionFundType, fundtypeKey s
 			ORDER BY p.rec_order ASC`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -716,7 +716,7 @@ func AdminGetProductRedemption(c *[]ProductRedemption, customerKey string) (int,
 			GROUP BY p.product_key ORDER BY f.rec_order ASC`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -771,7 +771,7 @@ func AdminGetProductHaveBalanceSwitchIn(c *[]ProductHaveBalanceSwitchIn, custome
 			GROUP BY p.product_key ORDER BY f.rec_order ASC`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -811,7 +811,7 @@ func AdminGetProductNotInBalanceSwitchIn(c *[]ProductHaveBalanceSwitchIn, value 
 			GROUP BY p.product_key ORDER BY p.product_key ASC`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

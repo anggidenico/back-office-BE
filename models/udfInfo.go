@@ -70,7 +70,7 @@ func GetAllUdfInfo(c *[]UdfInfo, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

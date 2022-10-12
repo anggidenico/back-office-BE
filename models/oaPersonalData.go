@@ -136,7 +136,7 @@ func GetAllOaPersonalData(c *[]OaPersonalData, limit uint64, offset uint64, para
 	}
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Error(err)
@@ -173,7 +173,7 @@ func CreateOaPersonalData(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -195,7 +195,7 @@ func GetOaPersonalDataByOaRequestKey(c *OaPersonalData, key string) (int, error)
 			FROM oa_personal_data 
 			WHERE oa_personal_data.oa_request_key = ` + key +
 		` order by oa_personal_data.personal_data_key DESC LIMIT 1`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -213,7 +213,7 @@ func GetOaPersonalDataIn(c *[]OaPersonalData, value []string, field string) (int
 	query := query2 + " WHERE oa_personal_data." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -239,7 +239,7 @@ func ValidateUniquePersonalData(c *CountData, field string, value string, custom
 	}
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -265,7 +265,7 @@ func UpdateOaPersonalData(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE personal_data_key = " + params["personal_data_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -294,7 +294,7 @@ func GetFullName(c *FullNameData, userLoginKey string) (int, error) {
 	INNER JOIN oa_request AS o ON op.oa_request_key = o.oa_request_key
 	INNER JOIN sc_user_login AS u ON u.user_login_key = o.user_login_key 
 	WHERE u.user_login_key = "` + userLoginKey + `" ORDER BY o.oa_request_key DESC LIMIT 1`
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -320,7 +320,7 @@ func UpdateOaPersonalDataByKeyIn(params map[string]string, valueIn []string, fie
 	inQuery := strings.Join(valueIn, ",")
 	query += " WHERE oa_personal_data." + fieldIn + " IN(" + inQuery + ")"
 
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

@@ -1737,10 +1737,13 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			}
 
 			status, err, requestID := models.CreateMsCustomer(paramsCustomer)
+			log.Println("========== PARAMETER  INSERT CUSTOMER ==========>>>", paramsCustomer)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error create customer")
+				log.Error("Error create customer", err.Error())
 				return lib.CustomError(status, err.Error(), "failed input data")
+			} else {
+				log.Println("========== BERHASIL CREATE KE MS CUSTOMER ========== ")
 			}
 			request, err := strconv.ParseUint(requestID, 10, 64)
 			if request == 0 {
@@ -1756,10 +1759,13 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			paramOaUpdate["oa_request_key"] = oarequestkey
 
 			_, err = models.UpdateOaRequest(paramOaUpdate)
+			log.Println("========== PARAMETER UPDATE OA REQUEST ==========>>>", paramOaUpdate)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error update oa request")
+				log.Error("Error update oa request", err.Error())
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
+			} else {
+				log.Println("========== BERHASIL UPDATE OA REQUEST ========== ")
 			}
 
 			//create user message
@@ -1790,7 +1796,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			status, err = models.CreateScUserMessage(paramsUserMessage)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error create user message")
+				log.Error("Error create user message", err.Error())
 				return lib.CustomError(status, err.Error(), "failed input data")
 			}
 			lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
@@ -1804,16 +1810,18 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			strUserLoginKeyOa := strconv.FormatUint(*oareq.UserLoginKey, 10)
 			paramsUserLogin["user_login_key"] = strUserLoginKeyOa
 			_, err = models.UpdateScUserLogin(paramsUserLogin)
+			log.Println("========== PARAMETER UPDATE SC USER LOGIN ==========>>>", paramsUserLogin)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error update oa request")
+				log.Error("Error update oa request", err.Error())
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
+			} else {
+				log.Println("========== BERHASIL INSERT CUSTOMER_KEY KE OA_REQUEST ==========")
 			}
 
 			//create agent customer
 			paramsAgentCustomer := make(map[string]string)
 			paramsAgentCustomer["customer_key"] = requestID
-
 			paramsAgentCustomer["agent_key"] = "1"
 			if oareq.SalesCode != nil {
 				var agent models.MsAgent
@@ -1838,7 +1846,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 
 			tx.Commit()
 
-			log.Info("Success create customer")
+			// log.Info("Success create customer")
 
 			//send email to customer
 			var userData models.ScUserLogin
@@ -1933,7 +1941,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			}
 			_, err = models.CreateMultipleMsCustomerBankkAccount(bindVarMsBank)
 			if err != nil {
-				log.Error("Failed create promo product: " + err.Error())
+				log.Error("========== FAILED CREATE MS CUSTOMER BANK ACCOUNT ==========" + err.Error())
 				return lib.CustomError(status, err.Error(), "failed input data")
 			}
 		}

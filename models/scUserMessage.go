@@ -79,7 +79,7 @@ func CreateScUserMessage(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -137,7 +137,7 @@ func GetAllScUserMessage(c *[]ScUserMessage, params map[string]string, limitStr 
 	}
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -149,7 +149,7 @@ func GetAllScUserMessage(c *[]ScUserMessage, params map[string]string, limitStr 
 
 func GetScUserMessage(c *ScUserMessage, key string) (int, error) {
 	query := `SELECT sc_user_message.* FROM sc_user_message WHERE sc_user_message.umessage_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -192,7 +192,7 @@ func UpdateScUserMessage(params map[string]string, where map[string]string) (int
 		}
 	}
 	query += condition
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -242,7 +242,7 @@ func GetCountUserMessage(c *CountData, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -265,7 +265,7 @@ func UpdateScUserMessageByField(params map[string]string, field string, value st
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -310,7 +310,7 @@ func CreateMultipleUserMessage(params []interface{}) (int, error) {
 			q += ","
 		}
 	}
-	log.Info(q)
+	log.Println("==========  ==========>>>", q)
 	query, args, err := sqlx.In(q, params...)
 	if err != nil {
 		return http.StatusBadGateway, err
@@ -349,7 +349,7 @@ func CreateMultipleUserMessageFromUserNotif(params []interface{}) (int, error) {
 			q += ","
 		}
 	}
-	log.Info(q)
+	log.Println("==========  ==========>>>", q)
 	query, args, err := sqlx.In(q, params...)
 	if err != nil {
 		return http.StatusBadGateway, err

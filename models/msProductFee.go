@@ -130,7 +130,7 @@ func GetAllMsProductFee(c *[]MsProductFee, params map[string]string) (int, error
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -209,7 +209,7 @@ func AdminGetAllMsProductFee(c *[]AdminListMsProductFee, limit uint64, offset ui
 	}
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -262,7 +262,7 @@ func AdminCountDataGetAllMsProductFee(c *CountData, params map[string]string, se
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -274,7 +274,7 @@ func AdminCountDataGetAllMsProductFee(c *CountData, params map[string]string, se
 
 func GetMsProductFee(c *MsProductFee, key string) (int, error) {
 	query := `SELECT ms_product_fee.* FROM ms_product_fee WHERE ms_product_fee.rec_status = 1 AND ms_product_fee.fee_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -300,7 +300,7 @@ func UpdateMsProductFee(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE fee_key = " + params["fee_key"]
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -337,7 +337,7 @@ func CreateMsProductFee(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -369,7 +369,7 @@ func GetProductFeeValueSubscription(c *ProductFeeValueSubscription, productKey s
 			WHERE pf.rec_status = 1 AND pf.fee_type = 183 AND pf.product_key = "` + productKey + `" LIMIT 1`
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

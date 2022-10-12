@@ -55,7 +55,7 @@ func CreateTrTransactionFifo(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -84,7 +84,7 @@ func UpdateTrTransactionFifo(params map[string]string, value string, field strin
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	// log.Info(query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

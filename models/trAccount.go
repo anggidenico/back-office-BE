@@ -77,7 +77,7 @@ func CreateTrAccount(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -131,7 +131,7 @@ func GetAllTrAccount(c *[]TrAccount, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -155,7 +155,7 @@ func GetTrAccountIn(c *[]TrAccount, value []string, field string, groupBy *strin
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -178,7 +178,7 @@ func UpdateTrAccountUploadSinvest(params map[string]string, value string, field 
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -266,7 +266,7 @@ func AdminGetAllTrAccount(c *[]TrAccountAdmin, limit uint64, offset uint64, para
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -307,7 +307,7 @@ func CountAdminGetAllTrAccount(c *CountData, params map[string]string) (int, err
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -342,7 +342,7 @@ func AdminGetDetailTrAccount(c *TrAccountAdmin, accKey string) (int, error) {
 			INNER JOIN ms_customer AS c ON c.customer_key = a.customer_key
 			WHERE a.rec_status = 1 AND c.rec_status = 1 AND p.rec_status = 1 AND a.acc_key = '` + accKey + `'`
 
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -365,7 +365,7 @@ func UpdateTrAccountByProductAndCustomer(params map[string]string, productKey st
 		i++
 	}
 	query += " WHERE product_key = " + productKey + " AND customer_key = " + customerKey
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -401,7 +401,7 @@ func GetCustomerAccountByProduct(c *[]CustomerDropdown, productKey string) (int,
 			GROUP BY a.customer_key ORDER BY c.full_name ASC `
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -413,7 +413,7 @@ func GetCustomerAccountByProduct(c *[]CustomerDropdown, productKey string) (int,
 
 func GetTrAccount(c *TrAccount, key string) (int, error) {
 	query := `SELECT tr_account.* FROM tr_account WHERE tr_account.acc_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -426,7 +426,7 @@ func GetTrAccount(c *TrAccount, key string) (int, error) {
 func GetTrAccountByField(c *TrAccount, value string, field string) (int, error) {
 	query := `SELECT * FROM tr_account WHERE rec_status = 1 AND 
 	` + field + ` = "` + value + `" LIMIT 1`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -443,7 +443,7 @@ type TrAccountIfua struct {
 func GetCifTrAccountByField(c *TrAccountIfua, value string, field string) (int, error) {
 	query := `SELECT ifua_no FROM tr_account WHERE (ifua_no IS NOT NULL OR ifua_no != "") AND 
 	rec_status = 1 AND ` + field + ` = "` + value + `" LIMIT 1`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

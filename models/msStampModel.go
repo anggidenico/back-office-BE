@@ -105,7 +105,7 @@ func GetStampNominal(c *[]StampDutyValue, params map[string]string) (int, error)
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

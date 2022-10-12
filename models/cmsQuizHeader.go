@@ -77,7 +77,7 @@ func GetAllCmsQuizHeader(c *[]CmsQuizHeader, params map[string]string) (int, err
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -89,7 +89,7 @@ func GetAllCmsQuizHeader(c *[]CmsQuizHeader, params map[string]string) (int, err
 
 func GetCmsQuizHeader(c *CmsQuizHeader, key string) (int, error) {
 	query := `SELECT cms_quiz_header.* FROM cms_quiz_header WHERE cms_quiz_header.quiz_header_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

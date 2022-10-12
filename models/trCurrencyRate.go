@@ -38,7 +38,7 @@ type TrCurrencyRate struct {
 
 func GetTrCurrencyRate(c *TrCurrencyRate, key string) (int, error) {
 	query := `SELECT tr_currency_rate.* FROM tr_currency_rate WHERE tr_currency_rate.rec_status = 1 AND tr_currency_rate.curr_rate_key = ` + key
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Info(err)
@@ -138,7 +138,7 @@ func AdminGetListCurrencyRate(c *[]ListCurrencyRate, limit uint64, offset uint64
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -186,7 +186,7 @@ func CountAdminGetCurrencyRate(c *CountData, params map[string]string, searchLik
 			WHERE cr.rec_status = 1` + condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -211,7 +211,7 @@ func CreateTrCurrenctyRate(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -243,7 +243,7 @@ func UpdateTrCurrenctyRate(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE curr_rate_key = " + params["curr_rate_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -273,7 +273,7 @@ func CountTrCurrencyRateValidateUniqueDateRateCurrency(c *CountData, date string
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

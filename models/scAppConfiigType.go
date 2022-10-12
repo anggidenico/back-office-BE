@@ -21,7 +21,7 @@ func AdminGetListDropdownScAppConfigType(c *[]ListDropdownScAppConfigType) (int,
 			FROM sc_app_config_type AS c
 			WHERE c.rec_status = 1 `
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

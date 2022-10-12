@@ -67,7 +67,7 @@ func CreateScLinkage(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -88,7 +88,7 @@ func GetLinkageByField(c *ScLinkage, value string, field string) (int, error) {
 				* FROM 
 				sc_linkage where rec_status = '1' AND ` + field + ` = "` + value + `"  order by linked_key desc limit 1`
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -136,7 +136,7 @@ func GetLinkageByParams(c *ScLinkage, params map[string]string) (int, error) {
 
 	condition += " LIMIT 1"
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -162,7 +162,7 @@ func UpdateScLinkage(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE linked_key = " + params["linked_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -193,7 +193,7 @@ func UnlinkedUser(params map[string]string, field string, value string) (int, er
 		i++
 	}
 	query += " WHERE rec_status = 1 AND " + field + " = '" + value + "'"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

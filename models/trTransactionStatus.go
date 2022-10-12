@@ -45,7 +45,7 @@ func GetMsTransactionStatusIn(c *[]TrTransactionStatus, value []string, field st
 	query := query2 + " WHERE tr_transaction_status.rec_status = 1 AND tr_transaction_status." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -57,7 +57,7 @@ func GetMsTransactionStatusIn(c *[]TrTransactionStatus, value []string, field st
 
 func GetTrTransactionStatus(c *TrTransactionStatus, key string) (int, error) {
 	query := `SELECT tr_transaction_status.* FROM tr_transaction_status WHERE tr_transaction_status.rec_status = 1 AND tr_transaction_status.trans_status_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -107,7 +107,7 @@ func GetAllMsTransactionStatus(c *[]TrTransactionStatus, params map[string]strin
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

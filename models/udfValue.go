@@ -26,7 +26,7 @@ func GetUdfValueIn(c *[]UdfValue, value []string, field string) (int, error) {
 	query := query2 + " WHERE udf_value." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -49,7 +49,7 @@ func CreateMultipleUdfValue(params []interface{}) (int, error) {
 			q += ","
 		}
 	}
-	log.Info(q)
+	log.Println("==========  ==========>>>", q)
 	query, args, err := sqlx.In(q, params...)
 	if err != nil {
 		return http.StatusBadGateway, err
@@ -69,7 +69,7 @@ func DeleteUdfValue(field string, value string, valueIn []string) (int, error) {
 	query := `DELETE FROM mam_core.udf_value where ` + field + ` = "` + value + `" 
 	AND udf_info_key IN (` + inQuery + `)`
 
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -163,11 +163,11 @@ func CreateUdfValue(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	// log.Println("================================ QUERYNYA ADALAH ===============================")
-	// log.Println(query)
-	// log.Info(query)
+	// log.Println("==========  ==========>>>",query)
+	// log.Println("==========  ==========>>>", query)
 	// log.Println("================================================================================")
 
 	tx, err := db.Db.Begin()
@@ -202,7 +202,7 @@ func UpdateDeleteUdfValue(params map[string]string, valueIn []string, fieldIn st
 	query += " WHERE udf_info_key IN(" + inQuery + ")"
 	query += " AND row_data_key = '" + rowDataKey + "'"
 
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

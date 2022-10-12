@@ -41,7 +41,7 @@ type MsFundStructureInfo struct {
 func GetMsFundStructure(c *MsFundStructure, key string) (int, error) {
 	query := `SELECT ms_fund_structure.* FROM ms_fund_structure 
 				WHERE ms_fund_structure.rec_status = 1 AND ms_fund_structure.fund_structure_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -97,7 +97,7 @@ func AdminGetListMsFundStructure(c *[]MsFundStructure, limit uint64, offset uint
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

@@ -142,7 +142,7 @@ func GetAllTrPromoActive(c *[]TrPromo, limit uint64, offset uint64, params map[s
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -167,7 +167,7 @@ func CreateTrPromo(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -256,7 +256,7 @@ func AdminGetAllTrPromo(c *[]TrPromoData, limit uint64, offset uint64, params ma
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -308,7 +308,7 @@ func AdminGetCountTrPromo(c *CountData, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -334,7 +334,7 @@ func UpdateTrPromo(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE promo_key = " + params["promo_key"]
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -358,7 +358,7 @@ func UpdateTrPromo(params map[string]string) (int, error) {
 
 func GetTrPromo(c *TrPromo, field string, value string) (int, error) {
 	query := `SELECT tr_promo.* FROM tr_promo WHERE tr_promo.rec_status = 1 AND tr_promo.` + field + ` = '` + value + `'`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -371,7 +371,7 @@ func GetTrPromo(c *TrPromo, field string, value string) (int, error) {
 func GetTrPromoValidasiDuplikat(c *TrPromo, field string, value string, promoKeyNot string) (int, error) {
 	query := `SELECT tr_promo.* FROM tr_promo WHERE tr_promo.rec_status = 1 AND tr_promo.` + field + ` = '` + value + `' 
 	AND tr_promo.promo_key != '` + promoKeyNot + `'`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -390,7 +390,7 @@ func AdminGetAllPromoOnce(c *[]TrPromoCron) (int, error) {
 			DATE(NOW()) = DATE(promo_notif_start)`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -409,7 +409,7 @@ func AdminGetAllPromoOnceBeginOnceBefore(c *[]TrPromoCron) (int, error) {
 			((DATE(NOW()) = DATE(promo_notif_start)) OR (DATE(NOW()) = DATE(promo_notif_end)))`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -428,7 +428,7 @@ func AdminGetAllPromoOnceAday(c *[]TrPromoCron) (int, error) {
 			(DATE(NOW()) <= DATE(promo_notif_end)) AND (DATE(NOW()) >= DATE(promo_notif_start))`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -445,7 +445,7 @@ func GetTrPromoProductActive(c *TrPromo, promoCode string, productKey string) (i
 			INNER JOIN tr_promo_product AS pp ON pp.promo_key = t.promo_key 
 			WHERE t.rec_status = 1 AND pp.rec_status = 1 AND t.promo_valid_date1 <= NOW() 
 			AND t.promo_valid_date2 >= NOW() AND pp.product_key = '` + productKey + `' AND t.promo_code = '` + promoCode + `'`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -476,7 +476,7 @@ func AdminGetDetailTransactionPromo(c *TrPromoData, trKey string, promoCode stri
 			WHERE p.promo_code = '` + promoCode + `'`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

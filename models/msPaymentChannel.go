@@ -113,7 +113,7 @@ func GetAllMsPaymentChannel(c *[]MsPaymentChannel, params map[string]string) (in
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -125,7 +125,7 @@ func GetAllMsPaymentChannel(c *[]MsPaymentChannel, params map[string]string) (in
 
 func GetMsPaymentChannel(c *MsPaymentChannel, key string) (int, error) {
 	query := `SELECT ms_payment_channel.* FROM ms_payment_channel WHERE ms_payment_channel.pchannel_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -143,7 +143,7 @@ func GetMsPaymentChannelIn(c *[]MsPaymentChannel, value []string, field string) 
 	query := query2 + " WHERE ms_payment_channel." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -186,7 +186,7 @@ func GetPaymentChannelByCusomerKey(c *[]SubscribePaymentChannel, product string,
 			WHERE p.product_key = ` + product
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

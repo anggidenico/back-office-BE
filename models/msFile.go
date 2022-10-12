@@ -88,7 +88,7 @@ func GetAllMsFile(c *[]MsFile, limit uint64, offset uint64, params map[string]st
 	}
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Error(err)
@@ -114,7 +114,7 @@ func UpdateMsFile(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE file_key = " + params["file_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -148,7 +148,7 @@ func CreateMsFile(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -206,7 +206,7 @@ func GetALlDetailMsFile(c *[]MsFileDetail, params map[string]string) (int, error
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Error(err)
@@ -230,7 +230,7 @@ func UpdateMsFileWithIn(params map[string]string, value []string, field string) 
 		i++
 	}
 	query += " WHERE " + field + " IN(" + inQuery + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

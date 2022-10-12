@@ -47,7 +47,7 @@ func GetScEndpointIn(c *[]ScEndpoint, value []string, field string) (int, error)
 	query := query2 + " WHERE sc_endpoint.rec_status = 1 AND sc_endpoint." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -90,7 +90,7 @@ func CheckAllowedEndpoint(c *CountData, roleKey string, endpoint string) (int, e
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

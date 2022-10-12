@@ -59,7 +59,7 @@ type OaInstitutionSharesHolderDetail struct {
 func GetOaInstitutionSharesHolder(c *OaInstitutionSharesHolder, key string, field string) (int, error) {
 	query := `SELECT oa_institution_shares_holder.* FROM oa_institution_shares_holder 
 	WHERE oa_institution_shares_holder.rec_status = 1 AND oa_institution_shares_holder.` + field + ` = ` + key
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -84,7 +84,7 @@ func CreateOaInstitutionSharesHolder(params map[string]string) (int, error, stri
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -121,7 +121,7 @@ func GetOaInstitutionSharesHolderRequest(c *[]OaInstitutionSharesHolderDetail, o
 			WHERE sh.rec_status = "1" AND sh.oa_request_key = "` + oaReqKey + `"`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -147,7 +147,7 @@ func UpdateOaInstitutionSharesHolder(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE inst_shares_holder_key = " + params["inst_shares_holder_key"]
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -188,7 +188,7 @@ func DeleteOaInstitutionSharesHolder(params map[string]string, sharesKey []strin
 	} else {
 		query += " WHERE rec_status = 1 AND oa_request_key = '" + requestKey + "'"
 	}
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

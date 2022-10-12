@@ -54,7 +54,7 @@ type MsRiskProfile struct {
 
 func GetMsRiskProfile(c *MsRiskProfile, key string) (int, error) {
 	query := `SELECT ms_risk_profile.* FROM ms_risk_profile WHERE ms_risk_profile.risk_profile_key = ` + key
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -72,7 +72,7 @@ func GetMsRiskProfileIn(c *[]MsRiskProfile, value []string) (int, error) {
 	query := query2 + " WHERE ms_risk_profile.risk_profile_key IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -84,7 +84,7 @@ func GetMsRiskProfileIn(c *[]MsRiskProfile, value []string) (int, error) {
 
 func GetMsRiskProfileScore(c *MsRiskProfile, score string) (int, error) {
 	query := "SELECT ms_risk_profile.* FROM ms_risk_profile WHERE ms_risk_profile.min_score <= " + score + " AND ms_risk_profile.max_score >= " + score
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -140,7 +140,7 @@ func AdminGetListMsRiskProfile(c *[]MsRiskProfile, limit uint64, offset uint64, 
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

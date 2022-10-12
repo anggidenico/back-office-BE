@@ -39,7 +39,7 @@ type MsBankCharges struct {
 func GetMsBankCharges(c *MsBankCharges, key string) (int, error) {
 	query := `SELECT ms_bank_charges.* FROM ms_bank_charges WHERE ms_bank_charges.rec_status = '1' 
 	AND ms_bank_charges.bcharges_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -126,7 +126,7 @@ func AdminGetListBankCharges(c *[]ListBankChargesAdmin, limit uint64, offset uin
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -176,7 +176,7 @@ func CountAdminGetListBankCharges(c *CountData, params map[string]string, search
 			WHERE bc.rec_status = 1 ` + condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -201,7 +201,7 @@ func CreateMsBankCharges(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -233,7 +233,7 @@ func UpdateMsBankCharges(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE bcharges_key = " + params["bcharges_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

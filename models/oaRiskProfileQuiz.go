@@ -71,7 +71,7 @@ func CreateOaRiskProfileQuiz(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -103,7 +103,7 @@ func CreateMultipleOaRiskProfileQuiz(params []interface{}) (int, error) {
 			q += ","
 		}
 	}
-	log.Info(q)
+	log.Println("==========  ==========>>>", q)
 	query, args, err := sqlx.In(q, params...)
 	if err != nil {
 		return http.StatusBadGateway, err
@@ -132,7 +132,7 @@ func AdminGetOaRiskProfileQuizByOaRequestKey(c *[]AdminOaRiskProfileQuiz, key st
 			INNER JOIN cms_quiz_options AS cms_quiz_options ON cms_quiz_options.quiz_option_key = oa_risk_profile_quiz.quiz_option_key
 			INNER JOIN cms_quiz_header AS cms_quiz_header ON cms_quiz_header.quiz_header_key = cms_quiz_question.quiz_header_key
 			WHERE oa_risk_profile_quiz.rec_status = 1 AND oa_risk_profile_quiz.oa_request_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -257,7 +257,7 @@ func UpdateOaRiskProfileQuiz(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE risk_profile_quiz_key = " + params["risk_profile_quiz_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -297,7 +297,7 @@ func DeleteOaRiskProfileQuiz(params map[string]string, riskKey []string, request
 	} else {
 		query += " WHERE rec_status = 1 AND oa_request_key = '" + requestKey + "'"
 	}
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -321,7 +321,7 @@ func DeleteOaRiskProfileQuiz(params map[string]string, riskKey []string, request
 
 func GetOaRiskProfileQuiz(c *OaRiskProfileQuiz, key string, field string) (int, error) {
 	query := "SELECT oa_risk_profile_quiz.* FROM oa_risk_profile_quiz WHERE oa_risk_profile_quiz.rec_status = 1 AND oa_risk_profile_quiz." + field + " = " + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

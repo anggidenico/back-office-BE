@@ -47,7 +47,7 @@ func GetMsProductCategoryIn(c *[]MsProductCategory, value []string, field string
 	query := query2 + " WHERE ms_product_category.rec_status = 1 AND ms_product_category." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -60,7 +60,7 @@ func GetMsProductCategoryIn(c *[]MsProductCategory, value []string, field string
 func GetMsProductCategory(c *MsProductCategory, key string) (int, error) {
 	query := `SELECT ms_product_category.* FROM ms_product_category 
 				WHERE ms_product_category.rec_status = 1 AND ms_product_category.product_category_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -116,7 +116,7 @@ func AdminGetListMsProductCategory(c *[]MsProductCategory, limit uint64, offset 
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

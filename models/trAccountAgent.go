@@ -52,7 +52,7 @@ func CreateTrAccountAgent(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -106,7 +106,7 @@ func GetAllTrAccountAgent(c *[]TrAccountAgent, params map[string]string) (int, e
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -118,7 +118,7 @@ func GetAllTrAccountAgent(c *[]TrAccountAgent, params map[string]string) (int, e
 
 func GetTrAccountAgent(c *TrAccountAgent, key string) (int, error) {
 	query := `SELECT tr_account_agent.* FROM tr_account_agent WHERE tr_account_agent.rec_status = 1 AND tr_account_agent.aca_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

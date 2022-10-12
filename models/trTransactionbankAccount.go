@@ -56,7 +56,7 @@ func CreateTrTransactionBankAccount(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -85,7 +85,7 @@ func UpdateTrTransactionBankAccount(params map[string]string, value string, fiel
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -113,7 +113,7 @@ func GetTrTransactionBankAccountByField(c *TrTransactionBankAccount, value strin
 			  tr_transaction_bank_account 
 			  where tr_transaction_bank_account.rec_status = 1 and tr_transaction_bank_account.` + field + ` = ` + value + ` limit 1`
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -138,7 +138,7 @@ func GetTrTransactionBankAccountIn(c *[]TransactionPoductBankAccount, value []st
 	WHERE t.transaction_key IN(` + inQuery + `)`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

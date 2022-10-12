@@ -62,7 +62,7 @@ func CreateMsCustomerBankAccount(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -91,7 +91,7 @@ func GetAllMsCustomerBankAccountTransaction(c *[]MsCustomerBankAccountInfo, cust
 	query := query2 + " WHERE ba.rec_status = 1 AND ba.customer_key = '" + customerKey + "' ORDER BY ba.flag_priority DESC"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -115,7 +115,7 @@ func GetMsCustomerBankAccountTransactionByKey(c *MsCustomerBankAccountInfo, cust
 	query := query2 + " WHERE ba.rec_status = 1 AND ba.cust_bankacc_key = '" + custBankKey + "'"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -161,7 +161,7 @@ func GetAllMsCustomerBankAccount(c *[]MsCustomerBankAccount, params map[string]s
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -182,7 +182,7 @@ func CheckMsBankAccountPengkinianData(c *CheckBankAccountPengkinianData, custome
 			limit 1`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -205,7 +205,7 @@ func GetMsCustomerBankAccountTransactionByCustBankaccKey(c *MsCustomerBankAccoun
 	query := query2 + " WHERE ba.rec_status = 1 AND ba.cust_bankacc_key = '" + custBankaccKey + "'"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -228,7 +228,7 @@ func UpdateDataByField(params map[string]string, field string, value string) (in
 		i++
 	}
 	query += " WHERE rec_status = '1' AND " + field + " = '" + value + "'"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -278,12 +278,13 @@ func CreateMultipleMsCustomerBankkAccount(params []interface{}) (int, error) {
 		log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
+	log.Println("========== QUERY BULK INSERT MS CUSTOMER BANK ACCOUNT ==========", query)
 	return http.StatusOK, nil
 }
 
 func GetMsCustomerBankAccount(c *MsCustomerBankAccount, key string) (int, error) {
 	query := `SELECT ms_customer_bank_account.* FROM ms_customer_bank_account WHERE ms_customer_bank_account.cust_bankacc_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -320,7 +321,7 @@ func GetCustomerBankAccountSinvest(c *[]CustomerBankAccountSinvest, customerKey 
 			AND cb.customer_key = "` + customerKey + `"`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

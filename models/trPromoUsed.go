@@ -51,7 +51,7 @@ func CreateTrPromoUsed(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -83,7 +83,7 @@ func AdminGetCountPromoUsed(c *CountData, promoKey *string, customerKey *string,
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -96,7 +96,7 @@ func AdminGetCountPromoUsed(c *CountData, promoKey *string, customerKey *string,
 func GetTrPromoUsedByField(c *TrPromoUsed, field string, value string) (int, error) {
 	query := `SELECT tr_promo_used.* FROM tr_promo_used WHERE tr_promo_used.rec_status = 1 
 	AND tr_promo_used.` + field + ` = '` + value + `' LIMIT 1`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -122,7 +122,7 @@ func UpdateTrPromoUsed(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE tr_promo_used = " + params["promo_used_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

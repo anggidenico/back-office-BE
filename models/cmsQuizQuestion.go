@@ -85,7 +85,7 @@ func GetAllCmsQuizQuestion(c *[]CmsQuizQuestion, params map[string]string) (int,
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -109,7 +109,7 @@ func AdminGetQuestionOptionQuiz(c *[]QuestionOptionQuiz, optionKey []string) (in
 			AND q.quiz_header_key = 2 AND q.rec_status = 1 
 			AND o.quiz_option_key IN(` + inQuery + `) ORDER BY q.rec_order ASC `
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -146,7 +146,7 @@ func GetListQuestionOptionCustomer(c *[]QuestionOptionCustomer, oaReqKey string)
 			ORDER BY q.quiz_question_key, o.quiz_option_key ASC`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

@@ -56,7 +56,7 @@ func CreateTrPromoProduct(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -85,7 +85,7 @@ func UpdateTrPromoProductByField(params map[string]string, field string, value s
 		i++
 	}
 	query += " WHERE " + field + " = '" + value + "'"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -123,7 +123,7 @@ func AdminGetPromoProductInNotIn(c *[]TrPromoProduct, valueIn []string, fieldIn 
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -147,7 +147,7 @@ func UpdateTrPromoProductByFieldIn(params map[string]string, field string, value
 		i++
 	}
 	query += " WHERE " + field + " IN(" + inQuery + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -182,7 +182,7 @@ func AdminGetPromoProductByPromoKey(c *[]TrPromoProductData, promoKey string) (i
 			AND a.promo_key = '` + promoKey + `'`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

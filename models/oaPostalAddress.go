@@ -70,7 +70,7 @@ func CreateOaPostalAddress(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -104,7 +104,7 @@ func UpdateOaPostalAddress(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE postal_address_key = " + params["postal_address_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -131,7 +131,7 @@ func GetOaPostalAddressIn(c *[]OaPostalAddress, value []string, field string) (i
 	query := query2 + " WHERE oa_postal_address." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -143,7 +143,7 @@ func GetOaPostalAddressIn(c *[]OaPostalAddress, value []string, field string) (i
 
 func GetOaPostalAddress(c *OaPostalAddress, key string) (int, error) {
 	query := `SELECT oa_postal_address.* FROM oa_postal_address WHERE oa_postal_address.rec_status = 1 AND oa_postal_address.postal_address_key = ` + key
-	// log.Println(query)
+	// log.Println("==========  ==========>>>",query)
 	log.Println("===== QUERY OA POSTAL ADDRESS ===== >>", query)
 
 	err := db.Db.Get(c, query)
@@ -177,7 +177,7 @@ func GetOaPostalAddressDetailIn(c *[]AddressDetail, value []string, field string
 			WHERE p.rec_status = 1 AND p.` + field + ` IN(` + inQuery + `)`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

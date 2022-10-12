@@ -62,7 +62,7 @@ type OaCustomerPipeline struct {
 func GetOaCustomerPipeline(c *OaCustomerPipeline, key string, field string) (int, error) {
 	query := `SELECT oa_customer_pipeline.* FROM oa_customer_pipeline 
 	WHERE oa_customer_pipeline.rec_status = 1 AND oa_customer_pipeline.` + field + ` = ` + key
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -87,7 +87,7 @@ func CreateOaCustomerPipeline(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

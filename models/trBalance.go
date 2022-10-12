@@ -82,7 +82,7 @@ func CreateTrBalance(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -116,7 +116,7 @@ func GetLastBalanceCustomerByProductKey(c *[]TrBalanceCustomerProduk, customerKe
 		  AND tc.rec_status = 1 AND tr.trans_type_key = 1 AND tb.balance_unit > 0 
 				GROUP BY tb.tc_key  ORDER BY tc.tc_key ASC`
 
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -128,7 +128,7 @@ func GetLastBalanceCustomerByProductKey(c *[]TrBalanceCustomerProduk, customerKe
 
 func GetLastTrBalanceByTcRed(c *TrBalance, tcKeyRed string) (int, error) {
 	query := `SELECT * FROM tr_balance WHERE rec_status = 1 AND tc_key_red = ` + tcKeyRed + ` ORDER BY rec_order DESC LIMIT 1`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -149,7 +149,7 @@ func GetLastAvgNavTrBalanceCustomerByProductKey(c *AvgNav, customerKey string, p
 		` AND tr.trans_status_key = 9 AND tr.rec_status = 1 AND tb.rec_status = 1 AND tc.rec_status = 1 
 				ORDER BY tb.balance_key DESC LIMIT 1`
 
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -172,7 +172,7 @@ func UpdateTrBalance(params map[string]string, value string, field string) (int,
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	// log.Info(query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -217,7 +217,7 @@ func GetSumBalanceUnit(c *[]SumBalanceUnit, acaKeys []string) (int, error) {
 				GROUP BY t.aca_key`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -249,7 +249,7 @@ func GetBalanceUnitByCustomerAndProduct(c *SumBalanceUnit, customerKey string, p
 			GROUP BY t.aca_key`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -357,7 +357,7 @@ func GetBeginningEndingBalanceAca(c *BeginningEndingBalance, desc string, date s
 			GROUP BY nv.product_key`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

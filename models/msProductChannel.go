@@ -74,7 +74,7 @@ func GetAllMsProductChannel(c *[]MsProductChannel, params map[string]string) (in
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -86,7 +86,7 @@ func GetAllMsProductChannel(c *[]MsProductChannel, params map[string]string) (in
 
 func GetMsProductChannel(c *MsProductChannel, key string) (int, error) {
 	query := `SELECT ms_product_channel.* FROM ms_product_channel WHERE ms_product_channel.prod_channel_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -104,7 +104,7 @@ func GetMsProductChannelIn(c *[]MsBank, value []string, field string) (int, erro
 	query := query2 + " WHERE ms_product_channel." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

@@ -130,7 +130,7 @@ func AdminGetListMenuRole(c *[]ListMenuRoleManagement, roleKey string, isParent 
 	query += " ORDER BY menu.app_module_key ASC"
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -150,7 +150,7 @@ func AdminGetParentMenuListRoleLogin(c *[]ListParentMenuRoleUser, value []string
 			 FROM sc_menu WHERE menu_key IN(` + inQuery + `) ORDER BY menu_key ASC`
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -172,7 +172,7 @@ func AdminGetMenuListRoleLogin(c *[]ListMenuRoleUser, roleKey string) (int, erro
 			GROUP BY au.menu_key ORDER BY m.rec_order`
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -286,7 +286,7 @@ func AdminGetListMenu(c *[]ListMenuAdmin, limit uint64, offset uint64, params ma
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -348,7 +348,7 @@ func CountAdminGetListMenu(c *CountData, params map[string]string, searchLike st
 			WHERE dat.parent_rec_status = 1`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -374,7 +374,7 @@ func UpdateScMenu(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE menu_key = " + params["menu_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -408,7 +408,7 @@ func CreateScMenu(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -436,7 +436,7 @@ func CountScMenuValidateUnique(c *CountData, field string, value string, key str
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -448,7 +448,7 @@ func CountScMenuValidateUnique(c *CountData, field string, value string, key str
 
 func GetScMenu(c *ScMenu, key string) (int, error) {
 	query := `SELECT sc_menu.* FROM sc_menu WHERE sc_menu.rec_status = 1 AND sc_menu.menu_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

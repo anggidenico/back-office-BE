@@ -161,7 +161,7 @@ func GetAllCmsPost(c *[]CmsPost, limit uint64, offset uint64, params map[string]
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -214,7 +214,7 @@ func GetCmsPostIn(c *[]CmsPost, value []string, field string, params map[string]
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -226,7 +226,7 @@ func GetCmsPostIn(c *[]CmsPost, value []string, field string, params map[string]
 
 func GetCmsPost(c *CmsPost, key string) (int, error) {
 	query := `SELECT cms_post.* FROM cms_post WHERE cms_post.rec_status = 1 AND cms_post.post_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -287,7 +287,7 @@ func GetAdminCmsPostListIn(c *[]CmsPost, limit uint64, offset uint64, nolimit bo
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -330,7 +330,7 @@ func GetCountCmsPost(c *CmsPostCount, params map[string]string, ids []string) (i
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -355,7 +355,7 @@ func CreatePost(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -387,7 +387,7 @@ func UpdateCmsPost(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE post_key = " + params["post_key"]
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -427,7 +427,7 @@ func GetPublicGuidance(c *[]PublicGuidance) (int, error) {
 	AND t2.post_subtype_code IN ('PUBLIC_GUIDANCE','PUBLIC_ADDRESS')`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

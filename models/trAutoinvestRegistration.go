@@ -72,7 +72,7 @@ func CreateTrAutoinvestRegistration(params map[string]string) (int, error, strin
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -95,7 +95,7 @@ func GetTrAutoinvestRegistration(c *TrAutoinvestRegistration, key string) (int, 
 	FROM tr_autoinvest_registration 
 	WHERE tr_autoinvest_registration.rec_status = "1" 
 	AND tr_autoinvest_registration.autoinvest_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -115,7 +115,7 @@ func GetTrAutoinvestRegistrationCountData(c *TrAutoinvestRegistrationCount, acc 
 	if autoInvestKey != "" {
 		query += " AND autoinvest_key != " + autoInvestKey
 	}
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -141,7 +141,7 @@ func UpdateTrAutoinvestRegistration(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE autoinvest_key = " + params["autoinvest_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -172,7 +172,7 @@ func GetTrAutoinvestRegistrationIn(c *[]TrAutoinvestRegistration, value []string
 	query := query2 + " AND tr_autoinvest_registration." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

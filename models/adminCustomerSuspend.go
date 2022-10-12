@@ -112,7 +112,7 @@ func AdminGetAllCustomerStatusSuspend(c *[]CustomerIndividuStatusSuspend, limit 
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -162,7 +162,7 @@ func CountAdminGetAllCustomerStatusSuspend(c *CountData, params map[string]strin
 			AND r.customer_key IS NOT NULL ` + condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -229,7 +229,7 @@ func AdminGetDetailCustomerStatusSuspend(c *CustomerIndividuStatusSuspend, param
 			GROUP BY c.customer_key limit 1`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

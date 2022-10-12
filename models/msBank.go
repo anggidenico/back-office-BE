@@ -83,7 +83,7 @@ func GetAllMsBank(c *[]MsBank, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -95,7 +95,7 @@ func GetAllMsBank(c *[]MsBank, params map[string]string) (int, error) {
 
 func GetMsBank(c *MsBank, key string) (int, error) {
 	query := `SELECT ms_bank.* FROM ms_bank WHERE ms_bank.bank_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -112,7 +112,7 @@ func GetMsBankIn(c *[]MsBank, value []string, field string) (int, error) {
 
 	// Main query
 	// log.Println("==================== QUERY NYA ADALAH : ====================")
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	// log.Println("=============================================================")
 
 	err := db.Db.Select(c, query)
@@ -205,7 +205,7 @@ func AdminGetListBank(c *[]ListBankAdmin, limit uint64, offset uint64, params ma
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -251,7 +251,7 @@ func CountAdminGetListBank(c *CountData, params map[string]string, searchLike st
 			WHERE rec_status = 1 ` + condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -277,7 +277,7 @@ func UpdateMsBank(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE bank_key = " + params["bank_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -311,7 +311,7 @@ func CreateMsBank(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -338,7 +338,7 @@ func CountMsBankValidateUnique(c *CountData, field string, value string, key str
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

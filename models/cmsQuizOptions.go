@@ -78,7 +78,7 @@ func GetAllCmsQuizOptions(c *[]CmsQuizOptions, params map[string]string) (int, e
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -96,7 +96,7 @@ func GetCmsQuizOptionsIn(c *[]CmsQuizOptions, value []string, field string) (int
 	query := query2 + " WHERE cms_quiz_options." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

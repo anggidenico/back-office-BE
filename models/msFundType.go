@@ -92,7 +92,7 @@ func GetAllMsFundType(c *[]MsFundType, limit uint64, offset uint64, params map[s
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -104,7 +104,7 @@ func GetAllMsFundType(c *[]MsFundType, limit uint64, offset uint64, params map[s
 
 func GetMsFundType(c *MsFundType, key string) (int, error) {
 	query := `SELECT ms_fund_type.* FROM ms_fund_type WHERE ms_fund_type.fund_type_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -122,7 +122,7 @@ func GetMsFundTypeIn(c *[]MsFundType, value []string, field string) (int, error)
 	query := query2 + " ms_fund_type." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -176,7 +176,7 @@ func AdminGetAllMsFundType(c *[]MsFundType, limit uint64, offset uint64, params 
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

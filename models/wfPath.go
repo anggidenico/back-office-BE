@@ -72,7 +72,7 @@ func GetAllWfPath(c *[]WfPath, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -87,7 +87,7 @@ func GetWfPathByProfilAndStageCurrent(c *WfPath, profileKey string, stageCurrent
 			FROM wf_path 
 			WHERE wf_path.rec_status = "1" AND wf_path.wf_profile_key = "` + profileKey + `" 
 			AND wf_path.stage_current = "` + stageCurrent + `"`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

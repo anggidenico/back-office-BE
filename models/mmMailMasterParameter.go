@@ -41,7 +41,7 @@ func GetMmMailMasterParameter(c *MmMailMaster, field string, key string) (int, e
 	query := `SELECT mm_mail_master_parameter.* FROM mm_mail_master_parameter 
 	WHERE mm_mail_master_parameter.rec_status = '1' 
 	AND mm_mail_master_parameter.` + field + ` = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -67,7 +67,7 @@ func UpdateMmMailMasterParameter(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE mail_parameter_key = " + params["mail_parameter_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -151,7 +151,7 @@ func GetAllMmMailParametergent(c *[]MmMailMasterParameter, params map[string]str
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Error(err)
@@ -175,7 +175,7 @@ func UpdateDeleteAllParameter(field string, params map[string]string, mailParame
 		i++
 	}
 	query += " WHERE " + field + " IN(" + inQuery + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

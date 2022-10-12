@@ -44,7 +44,7 @@ func CreateNurturingNotifSummary(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.DbDashboard.Begin()
 	if err != nil {
@@ -76,7 +76,7 @@ func UpdateCmsPost(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE id = " + params["id"]
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

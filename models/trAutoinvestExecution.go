@@ -39,7 +39,7 @@ func GetTrAutoinvestExecution(c *TrAutoinvestExecution, key string) (int, error)
 	FROM tr_autoinvest_registration 
 	WHERE tr_autoinvest_registration.rec_status = "1" 
 	AND tr_autoinvest_registration.autoinvest_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -85,7 +85,7 @@ func GetAllTrAutoinvestExecution(c *[]TrAutoinvestExecution, params map[string]s
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -110,7 +110,7 @@ func CreateTrAutoinvestExecution(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

@@ -54,7 +54,7 @@ func CreateTrTransactionBacth(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -81,7 +81,7 @@ func CheckTrTransactionBatchByTransKey(c *CheckTrTransactionBacth, transactionKe
 			  WHERE t.transaction_key = '` + transactionKey + `' LIMIT 1`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

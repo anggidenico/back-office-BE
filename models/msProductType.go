@@ -47,7 +47,7 @@ func GetMsProductTypeIn(c *[]MsProductType, value []string, field string) (int, 
 	query := query2 + " WHERE ms_product_type.rec_status = 1 AND ms_product_type." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -60,7 +60,7 @@ func GetMsProductTypeIn(c *[]MsProductType, value []string, field string) (int, 
 func GetMsProductType(c *MsProductType, key string) (int, error) {
 	query := `SELECT ms_product_type.* FROM ms_product_type 
 				WHERE ms_product_type.rec_status = 1 AND ms_product_type.product_type_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -116,7 +116,7 @@ func AdminGetListMsProductType(c *[]MsProductType, limit uint64, offset uint64, 
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

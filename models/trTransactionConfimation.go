@@ -54,7 +54,7 @@ type TrTransactionConfirmationInfo struct {
 func GetTrTransactionConfirmation(c *TrTransactionConfirmation, key string) (int, error) {
 	query := `SELECT tr_transaction_confirmation.* FROM tr_transaction_confirmation 
 	          WHERE tr_transaction_confirmation.rec_status = 1 AND tr_transaction_confirmation.tc_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -67,7 +67,7 @@ func GetTrTransactionConfirmation(c *TrTransactionConfirmation, key string) (int
 func GetTrTransactionConfirmationByTransactionKey(c *TrTransactionConfirmation, transactionKey string) (int, error) {
 	query := `SELECT tr_transaction_confirmation.* FROM tr_transaction_confirmation 
 	          WHERE tr_transaction_confirmation.rec_status = 1 AND tr_transaction_confirmation.transaction_key = ` + transactionKey
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -92,7 +92,7 @@ func CreateTrTransactionConfirmation(params map[string]string) (int, error, stri
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -144,7 +144,7 @@ func UpdateTrTransactionConfirmation(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE tc_key = " + params["tc_key"]
-	// log.Info(query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

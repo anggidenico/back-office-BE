@@ -79,7 +79,7 @@ func CreateOaInstitutionUser(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -120,7 +120,7 @@ func GetOaInstitutionUserRequest(c *[]OaInstitutionUserDetail, oaReqKey string, 
 				AND u.oa_request_key = "` + oaReqKey + `"`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -141,7 +141,7 @@ func ValidateUniqueInstitutionUser(c *CountData, field string, value string, ins
 	}
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -154,7 +154,7 @@ func ValidateUniqueInstitutionUser(c *CountData, field string, value string, ins
 func GetOaInstitutionUser(c *OaInstitutionUser, key string, field string) (int, error) {
 	query := `SELECT oa_institution_user.* FROM oa_institution_user 
 	WHERE oa_institution_user.rec_status = 1 AND oa_institution_user.` + field + ` = ` + key + ` LIMIT 1`
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -180,7 +180,7 @@ func UpdateOaInstitutionUser(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE insti_user_key = " + params["insti_user_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -218,7 +218,7 @@ func DeleteOaInstitutionUser(params map[string]string, userKey []string, request
 	} else {
 		query += " WHERE rec_status = 1 AND oa_request_key = '" + requestKey + "'"
 	}
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -281,7 +281,7 @@ func GetOaInstitutionUserGenerateLogin(c *[]OaInstitutionUserGenerateLogin) (int
 			ORDER BY r.rec_modified_date, r.oa_request_key, iu.role_key ASC LIMIT 6`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -317,7 +317,7 @@ func GetOaInstitutionUserGenerateLoginFailedSendEmail(c *[]OaInstitutionUserGene
 			ORDER BY r.rec_modified_date, r.oa_request_key, iu.role_key ASC LIMIT 6`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -335,7 +335,7 @@ func GetCountUserActive(c *OaRequestCountData, oaKey string) (int, error) {
 			AND user_login_key IS NOT NULL`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

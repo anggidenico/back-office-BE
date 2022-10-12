@@ -168,7 +168,7 @@ func GetAllScUserLogin(c *[]ScUserLogin, limit uint64, offset uint64, params map
 	}
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Error(err)
@@ -180,7 +180,7 @@ func GetAllScUserLogin(c *[]ScUserLogin, limit uint64, offset uint64, params map
 
 func GetScUserLogin(c *ScUserLogin, email string) (int, error) {
 	query := `SELECT sc_user_login.* WHERE sc_user_login.ulogin_email = ` + email
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -205,7 +205,7 @@ func CreateScUserLogin(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -237,7 +237,7 @@ func UpdateScUserLogin(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE user_login_key = " + params["user_login_key"]
-	log.Info(query)
+	log.Println("========== QUERY UPDATE SC USER LOGIN ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -248,7 +248,7 @@ func UpdateScUserLogin(params map[string]string) (int, error) {
 	_, err = tx.Exec(query)
 
 	// log.Infoln("========== query dan parameter upload image ==========")
-	log.Infoln(query)
+	log.Println("========== QUERY UPDATE SC USER LOGIN ==========", query)
 	// log.Infoln("========================================")
 	// log.Infoln(params)
 	// log.Infoln("========================================")
@@ -277,7 +277,7 @@ func GetScUserLoginIn(c *[]ScUserLogin, value []string, field string) (int, erro
 	query := query2 + " WHERE sc_user_login." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -289,7 +289,7 @@ func GetScUserLoginIn(c *[]ScUserLogin, value []string, field string) (int, erro
 
 func GetScUserLoginByKey(c *ScUserLogin, key string) (int, error) {
 	query := `SELECT sc_user_login.* FROM sc_user_login WHERE sc_user_login.rec_status = 1 AND sc_user_login.user_login_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -301,7 +301,7 @@ func GetScUserLoginByKey(c *ScUserLogin, key string) (int, error) {
 
 func GetScUserLoginByCustomerKey(c *ScUserLogin, key string) (int, error) {
 	query := `SELECT sc_user_login.* FROM sc_user_login WHERE sc_user_login.rec_status = 1 AND sc_user_login.customer_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -404,7 +404,7 @@ func AdminGetAllScUserLogin(c *[]AdminListScUserLogin, limit uint64, offset uint
 	}
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -459,7 +459,7 @@ func AdminCountDataGetAllScUserlogin(c *CountData, params map[string]string, sea
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -506,7 +506,7 @@ func AdminGetValidateUniqueInsertUpdateScUserLogin(c *CountData, paramsOr map[st
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -544,7 +544,7 @@ func GetCountScUserLogin(c *CountData, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -653,7 +653,7 @@ func CreateScUserLoginReturnKey(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -677,7 +677,7 @@ func GetUserLocked(c *[]UserLoginKeyLocked) (int, error) {
 			FROM sc_user_login 
 			WHERE ulogin_locked = 1 AND rec_status = 1
 			AND DATE_ADD(locked_date, INTERVAL 1 HOUR) < NOW()`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -703,7 +703,7 @@ func UpdateScUserLoginByKeyIn(params map[string]string, valueIn []string, fieldI
 	inQuery := strings.Join(valueIn, ",")
 	query += " WHERE sc_user_login." + fieldIn + " IN(" + inQuery + ")"
 
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -735,7 +735,7 @@ func AdminGetAllUserBlastPromo(c *[]UserBlastPromo) (int, error) {
 			WHERE u.user_category_key = 1 AND u.rec_status = 1 AND u.token_notif IS NOT NULL`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -756,7 +756,7 @@ func ValidateUniqueData(c *CountData, field string, value string, userLoginKey *
 	}
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -778,7 +778,7 @@ func CheckCreatePin(c *CountData, userLoginKey string) (int, error) {
 			AND u.user_login_key = '` + userLoginKey + `' GROUP BY u.user_login_key`
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Error(err)
@@ -810,7 +810,7 @@ func SetNullTokenNotif(tokenNotif string) (int, error) {
 
 func GetScUserKey(c *ScUserLogin, key string) (int, error) {
 	query := `SELECT sc_user_login.* FROM sc_user_login WHERE sc_user_login.user_login_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -835,7 +835,7 @@ func CreateScUserLoginWithReturnPK(params map[string]string) (int, error, string
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

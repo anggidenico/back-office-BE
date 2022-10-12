@@ -42,7 +42,7 @@ type ScUserCategoryInfo struct {
 func GetScUserCategory(c *ScUserCategory, key string) (int, error) {
 	query := `SELECT sc_user_category.* FROM sc_user_category 
 				WHERE sc_user_category.rec_status = 1 AND sc_user_category.user_category_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -96,7 +96,7 @@ func GetAllScUserCategory(c *[]ScUserCategory, limit uint64, offset uint64, para
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

@@ -51,7 +51,7 @@ func CreateOaRequestBankAccount(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -85,7 +85,7 @@ func UpdateOaRequestBankAccount(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE req_bankacc_key = " + params["req_bankacc_key"]
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -172,7 +172,7 @@ func CreateMultipleOaRequestBankAccount(params []interface{}) (int, error) {
 			q += ","
 		}
 	}
-	log.Info(q)
+	log.Println("==========  ==========>>>", q)
 	query, args, err := sqlx.In(q, params...)
 	if err != nil {
 		return http.StatusBadGateway, err
@@ -192,7 +192,7 @@ func GetOaRequestBankAccount(c *OaRequestBankAccount, key string, field string) 
 				FROM oa_request_bank_account 
 				WHERE rec_status = 1 
 				AND ` + field + ` = "` + key + `"`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -220,7 +220,7 @@ func DeleteOaRequestBankAccount(params map[string]string, bankKey []string, requ
 	} else {
 		query += " WHERE rec_status = 1 AND oa_request_key = '" + requestKey + "'"
 	}
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -267,7 +267,7 @@ func GetBankAccountPriority(c *BankAccountPriority, oaRequest string) (int, erro
 			AND orba.oa_request_key = "` + oaRequest + `" ORDER BY orba.flag_priority DESC LIMIT 1`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

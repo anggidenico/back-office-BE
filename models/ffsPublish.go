@@ -41,7 +41,7 @@ func GetLastFfsIn(c *[]FfsPublish, productKey []string) (int, error) {
 			   ffs_publish`
 	query := query2 + " WHERE ffs_publish.product_key IN(" + inQuery + ") GROUP BY product_key"
 
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		return http.StatusBadGateway, err
@@ -62,7 +62,7 @@ func GetLastFfsByPeriodeIn(c *[]FfsPublish, productKey []string) (int, error) {
 				) b ON (a.product_key = b.product_key AND a.periode_key=b.periode_key)
 				WHERE a.product_key  IN(` + inQuery + `) GROUP BY product_key`
 
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		return http.StatusBadGateway, err

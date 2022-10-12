@@ -91,7 +91,7 @@ func GetAllGenLookup(c *[]GenLookup, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -109,7 +109,7 @@ func GetGenLookupIn(c *[]GenLookup, value []string, field string) (int, error) {
 	query := query2 + " WHERE gen_lookup." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -121,7 +121,7 @@ func GetGenLookupIn(c *[]GenLookup, value []string, field string) (int, error) {
 
 func GetGenLookup(c *GenLookup, key string) (int, error) {
 	query := `SELECT gen_lookup.* FROM gen_lookup WHERE gen_lookup.lookup_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -200,7 +200,7 @@ func AdminGetLookup(c *[]ListLookup, limit uint64, offset uint64, params map[str
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -246,7 +246,7 @@ func CountAdminGetLookup(c *CountData, params map[string]string, searchLike stri
 			WHERE g.rec_status = 1 ` + condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -272,7 +272,7 @@ func UpdateLookup(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE lookup_key = " + params["lookup_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -306,7 +306,7 @@ func CreateLookup(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -325,7 +325,7 @@ func CreateLookup(params map[string]string) (int, error) {
 
 func GetLookup(c *GenLookup, key string) (int, error) {
 	query := `SELECT * FROM gen_lookup WHERE rec_status = 1 AND lookup_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

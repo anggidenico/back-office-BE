@@ -81,7 +81,7 @@ func GetAllMsCountry(c *[]MsCountry, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -99,7 +99,7 @@ func GetMsCountryIn(c *[]MsCountry, value []string, field string) (int, error) {
 	query := query2 + " WHERE ms_country.rec_status = 1 AND ms_country." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -111,7 +111,7 @@ func GetMsCountryIn(c *[]MsCountry, value []string, field string) (int, error) {
 
 func GetMsCountry(c *MsCountry, key string) (int, error) {
 	query := `SELECT ms_country.* FROM ms_country WHERE ms_country.rec_status = '1' AND ms_country.country_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -193,7 +193,7 @@ func AdminGetListCountry(c *[]ListCountry, limit uint64, offset uint64, params m
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -240,7 +240,7 @@ func CountAdminGetCountry(c *CountData, params map[string]string, searchLike str
 			WHERE c.rec_status = 1` + condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -265,7 +265,7 @@ func CreateMsCountry(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -297,7 +297,7 @@ func UpdateMsCountry(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE country_key = " + params["country_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -327,7 +327,7 @@ func CountMsCountryValidateUnique(c *CountData, field string, value string, key 
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

@@ -56,7 +56,7 @@ func GetMmMailSentLog(c *MmMailMaster, field string, key string) (int, error) {
 	query := `SELECT mm_mail_sent_log.* FROM mm_mail_sent_log 
 	WHERE mm_mail_sent_log.rec_status = '1' 
 	AND mm_mail_sent_log.` + field + ` = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -81,7 +81,7 @@ func CreateMmMailSentLog(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -115,7 +115,7 @@ func UpdateMmMailSentLog(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE mm_mail_sent_log = " + params["mm_mail_sent_log"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

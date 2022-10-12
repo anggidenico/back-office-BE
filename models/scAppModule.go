@@ -19,7 +19,7 @@ func AdminGetListAppModuleDropdown(c *[]ListAppModuleDropdown) (int, error) {
 			FROM sc_app_module
 			WHERE rec_status = 1 ORDER BY rec_order ASC`
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

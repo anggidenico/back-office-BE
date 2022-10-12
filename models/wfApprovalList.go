@@ -59,7 +59,7 @@ func CreateWfApprovalList(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -93,7 +93,7 @@ func UpdateWfApprovalList(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE approval_hdr_key = " + params["approval_hdr_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -128,7 +128,7 @@ func UpdateWfApprovalListByApprovalItemAndKey(params map[string]string, appItem 
 		i++
 	}
 	query += " WHERE approval_item = '" + appItem + "' AND approval_references_key = " + key
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -152,7 +152,7 @@ func UpdateWfApprovalListByApprovalItemAndKey(params map[string]string, appItem 
 
 func GetWfApprovalListByApprovalItemAndKey(c *WfApprovalList, appItem string, key string) (int, error) {
 	query := `SELECT * FROM wf_approval_list WHERE rec_status = 1 AND approval_references_key = "` + key + `" AND approval_item = "` + appItem + `" LIMIT 1`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

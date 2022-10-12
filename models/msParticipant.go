@@ -45,7 +45,7 @@ func AdminGetListDropdownMsParticipant(c *[]ListDropdownMsParticipant) (int, err
 			FROM ms_participant AS p
 			WHERE p.rec_status = 1 `
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

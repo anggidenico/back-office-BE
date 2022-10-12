@@ -162,7 +162,7 @@ func AdminGetAllAccountStatementCustomerAgent(c *[]AccountStatementCustomerAgent
 			ORDER BY t.product_key, t.nav_date, ag.agent_key ASC`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

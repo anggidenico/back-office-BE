@@ -152,7 +152,7 @@ func GetAdminCountListAutoInvestRegistration(c *CountData, params map[string]str
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -175,7 +175,7 @@ func AdminValidateAccAndiInvestDateExecute(c *CountData, accKey string, dateExec
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

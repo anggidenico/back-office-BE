@@ -88,7 +88,7 @@ func GetAllMsProductFeeItem(c *[]MsProductFeeItem, params map[string]string) (in
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -107,7 +107,7 @@ func GetMsProductFeeItemIn(c *[]MsProductFeeItem, value []string, field string) 
 	query := query2 + " AND ms_product_fee_item." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -129,7 +129,7 @@ func UpdateMsProductFeeItemByField(params map[string]string, value string, field
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -166,7 +166,7 @@ func CreateMsProductFeeItem(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -187,7 +187,7 @@ func GetLastMsProductFeeItemByFeeKey(c *MsProductFeeItem, feeKey string, fieldOr
 			FROM ms_product_fee_item 
 			WHERE ms_product_fee_item.rec_status = 1 AND 
 			ms_product_fee_item.product_fee_key = ` + feeKey + ` ORDER BY ` + fieldOrder + ` ` + orderByType + ` LIMIT 1`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -200,7 +200,7 @@ func GetLastMsProductFeeItemByFeeKey(c *MsProductFeeItem, feeKey string, fieldOr
 func GetMsProductFeeItem(c *MsProductFeeItem, key string) (int, error) {
 	query := `SELECT ms_product_fee_item.* FROM ms_product_fee_item 
 				WHERE ms_product_fee_item.rec_status = 1 AND ms_product_fee_item.product_fee_item_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -217,7 +217,7 @@ func GetMsProductFeeItemCalculateFifoWithLimit(c *MsProductFeeItem, productKey s
 			WHERE i.rec_status = 1 AND i.principle_limit <= ` + pLimit + ` 
 			AND pf.product_key = ` + productKey + ` AND pf.fee_type = ` + feeType + ` 
 			ORDER BY i.principle_limit ASC LIMIT 1`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -233,7 +233,7 @@ func GetMsProductFeeItemLastCalculateFifo(c *MsProductFeeItem, productKey string
 			JOIN ms_product_fee AS pf ON pf.fee_key = i.product_fee_key 
 			WHERE i.rec_status = 1 AND pf.product_key = ` + productKey + ` AND pf.fee_type = ` + feeType + ` 
 			ORDER BY i.principle_limit ASC LIMIT 1`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)

@@ -75,7 +75,7 @@ func UpdateEndpointAuthByField(params map[string]string, value string, field str
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -105,7 +105,7 @@ func AdminGetEndpointAuthUncheckUpdate(c *[]ScEndpointAuth, roleKey string, menu
 			  WHERE epa.menu_key NOT IN(` + inQuery + `) AND epa.rec_status = 1  AND epa.role_key = ` + roleKey
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

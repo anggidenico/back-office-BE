@@ -481,7 +481,7 @@ func AdminGetAllTrTransaction(c *[]TrTransaction, limit uint64, offset uint64, n
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -535,7 +535,7 @@ func AdminGetCountTrTransaction(c *CountData, params map[string]string, valueIn 
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -630,7 +630,7 @@ func GetAllTrTransactionCount(c *CountData, params map[string]string) (int, erro
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -651,7 +651,7 @@ func GetTransactionJoinSettlement(c *[]TrTransaction, customerKey string, paymen
 		` AND t.rec_status = 1`
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -677,7 +677,7 @@ func UpdateTrTransaction(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE transaction_key = " + params["transaction_key"]
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -708,7 +708,7 @@ func SetTransactionInactive(customerKey string, paymentMethodKey string, product
 		` AND t.product_key = ` + productKey +
 		` AND s.settle_payment_method = ` + paymentMethodKey +
 		` AND s.settled_status = 243`
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -751,7 +751,7 @@ func CreateTrTransaction(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -771,7 +771,7 @@ func CreateTrTransaction(params map[string]string) (int, error, string) {
 
 func GetTrTransaction(c *TrTransaction, key string) (int, error) {
 	query := `SELECT tr_transaction.* FROM tr_transaction WHERE tr_transaction.rec_status = "1" AND tr_transaction.transaction_key = ` + key
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -783,7 +783,7 @@ func GetTrTransaction(c *TrTransaction, key string) (int, error) {
 
 func GetTrTransactionByField(c *TrTransaction, field string, value string) (int, error) {
 	query := `SELECT tr_transaction.* FROM tr_transaction WHERE tr_transaction.rec_status = 1 AND tr_transaction.` + field + ` = '` + value + `'`
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -809,7 +809,7 @@ func UpdateTrTransactionByKeyIn(params map[string]string, valueIn []string, fiel
 	inQuery := strings.Join(valueIn, ",")
 	query += " WHERE tr_transaction." + fieldIn + " IN(" + inQuery + ")"
 
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -839,7 +839,7 @@ func GetTrTransactionIn(c *[]TrTransaction, value []string, field string) (int, 
 	query := query2 + " WHERE tr_transaction.rec_status = 1 AND tr_transaction." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -909,7 +909,7 @@ func GetAllTransactionByParamAndValueIn(c *[]TrTransaction, limit uint64, offset
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -956,7 +956,7 @@ func GetTrTransactionDateRange(c *[]TrTransaction, params map[string]string, sta
 	query += condition
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -974,7 +974,7 @@ func GetTrTransactionOnProcess(c *[]TrTransaction, customerKey string) (int, err
 			AND DATE_FORMAT(fn_AddDate(nav_date, 1),'%Y-%m-%d') >= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY trans_date DESC`
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1002,7 +1002,7 @@ func ParamBatchTrTransactionByKey(c *ParamBatchTrTransaction, transactionKey str
 			WHERE t.transaction_key = ` + transactionKey + ` LIMIT 1`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1023,7 +1023,7 @@ func CheckTrTransactionLastProductCustomer(c *TrTransaction, customerKey string,
 	query += " AND transaction_key > " + transKey + " LIMIT 1"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1047,7 +1047,7 @@ func CheckProductAllowRedmOrSwitching(c *[]ProductCheckAllowRedmSwtching, custom
 	query += " GROUP BY product_key"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1136,7 +1136,7 @@ func AdminGetTransactionCustomerHistory(c *[]TransactionCustomerHistory, limit u
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1196,7 +1196,7 @@ func AdminCountTransactionCustomerHistory(c *CountData, params map[string]string
 	query += " GROUP BY t.customer_key, t.product_key"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1268,7 +1268,7 @@ func AdminGetTransactionConsumenProduct(c *[]TransactionConsumenProduct, params 
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1333,7 +1333,7 @@ func AdminGetDetailHeaderTransaksiCustomer(c *DetailHeaderTransaksiCustomer, dat
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1390,7 +1390,7 @@ func AdminGetAllTrTransactionPosting(c *[]TrTransaction, params map[string]strin
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1523,7 +1523,7 @@ func AdminDetailTransactionDataSentEmail(c *DetailTransactionDataSentEmail, tans
 			WHERE t.rec_status = 1 AND t.transaction_key = '` + tansactionKey + `'`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1545,7 +1545,7 @@ func TransactionProductCustomerVA(c *TrTransaction, productKey string, customerK
 			AND t.customer_key = "` + customerKey + `" order by t.transaction_key DESC LIMIT 1`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1653,7 +1653,7 @@ func AdminDetailTransactionVaBelumBayar(c *DetailTransactionVaBelumBayar, tansac
 			AND t.transaction_key = '` + tansactionKey + `'`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1687,7 +1687,7 @@ func AdminGetTransactionExpired(c *[]TrTransactionExpired) (int, error) {
 			AND ts.expired_date IS NOT NULL AND ts.expired_date <= NOW()`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1773,7 +1773,7 @@ func AdminGetTransactionBeforeExpired(c *[]DetailTransactionVaBelumBayar, timeBe
 			AND ((ts.expired_date - NOW()) <= ` + timeBefore + `)`
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1915,7 +1915,7 @@ func GetTransactionInstitution(c *[]ListTransactionInstitution, trStatusKeyIn []
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -1957,7 +1957,7 @@ func GetCountTransactionInstitution(c *CountData, trStatusKeyIn []string, params
 			AND t.trans_status_key IN (` + statusInQuery + `) ` + condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -2086,7 +2086,7 @@ func GetMutasiTransactionInstitution(c *[]ListMutasiTransactionInstitution, prod
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -2151,7 +2151,7 @@ func GetCountMutasiTransactionInstitution(c *CountData, productKey string, dateF
 	query += orderCondition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -2267,7 +2267,7 @@ func AdminGetListTransactionCorrection(c *[]AdminTransactionCorrection, limit ui
 	}
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -2325,7 +2325,7 @@ func CountAdminGetListTransactionCorrection(c *CountData, params map[string]stri
 	query += condition
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
@@ -2350,7 +2350,7 @@ func CheckProductAllowRedmOrSwitchingInUpdate(c *[]ProductCheckAllowRedmSwtching
 	query += " GROUP BY product_key"
 
 	// Main query
-	log.Println(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

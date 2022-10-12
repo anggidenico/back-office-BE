@@ -85,7 +85,7 @@ func DailySubRedmReport(c *[]TrTransactionSubRedmReport, limit uint64, offset ui
 	}
 
 	// Main query
-	log.Info(query)
+	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
