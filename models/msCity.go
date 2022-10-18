@@ -99,7 +99,7 @@ func GetMsCityIn(c *[]MsCity, value []string, field string) (int, error) {
 	query := query2 + " WHERE ms_city." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	log.Println("========== QUERY GET MS CITY IN ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

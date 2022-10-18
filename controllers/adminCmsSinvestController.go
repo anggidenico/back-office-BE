@@ -444,9 +444,10 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 						data.KTPAddress = ktpAddress
 					}
 					if a.KabupatenKey != nil {
+						log.Infoln("========== KABUPATEN KEY: ========== ", a.KabupatenKey)
 						if c, ok := cityData[*a.KabupatenKey]; ok {
-							if c.RecAttributeID2 != nil {
-								data.KTPCityCode = *c.RecAttributeID2
+							if c.CityCode != "" {
+								data.KTPCityCode = c.CityCode
 							}
 						}
 					}
@@ -479,12 +480,12 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 								data.CountryOfCorrespondence = co.CouCode
 							}
 
-							if c.RecAttributeID2 != nil {
-								data.DomicileCityCode = *c.RecAttributeID2
+							if c.CityCode != "" {
+								data.DomicileCityCode = c.CityCode
 							}
 							data.DomicileCityName = c.CityName
-							if c.RecAttributeID2 != nil {
-								data.CorrespondenceCityCode = *c.RecAttributeID2
+							if c.CityCode != "" {
+								data.CorrespondenceCityCode = c.CityCode
 							}
 
 							data.CorrespondenceCityName = c.CityName
