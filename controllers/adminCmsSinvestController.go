@@ -447,7 +447,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 						log.Infoln("========== KABUPATEN KEY: ========== ", a.KabupatenKey)
 						if c, ok := cityData[*a.KabupatenKey]; ok {
 							if c.CityCode != "" {
-								data.KTPCityCode = c.CityCode
+								data.KTPCityCode = *&c.CityCode
 							}
 						}
 					}
@@ -525,7 +525,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 			var bankPriority models.BankAccountPriority
 			status, err = models.GetBankAccountPriority(&bankPriority, strconv.FormatUint(n.OaRequestKey, 10))
 			if err == nil {
-				data.REDMPaymentBankBIMemberCode1 = bankPriority.BankCode
+				data.REDMPaymentBankBIMemberCode1 = bankPriority.SwiftCode
 				data.REDMPaymentBankName1 = bankPriority.BankName
 				data.REDMPaymentACCcy1 = bankPriority.Code
 				data.REDMPaymentACNo1 = bankPriority.AccountNo

@@ -249,6 +249,7 @@ type BankAccountPriority struct {
 	AccountNo         string  `db:"account_no"               json:"account_no"`
 	AccountHolderName string  `db:"account_holder_name"      json:"account_holder_name"`
 	BranchName        *string `db:"branch_name"              json:"branch_name"`
+	SwiftCode         string  `db:"swift_code" json:"swift_code"`
 }
 
 func GetBankAccountPriority(c *BankAccountPriority, oaRequest string) (int, error) {
@@ -258,7 +259,8 @@ func GetBankAccountPriority(c *BankAccountPriority, oaRequest string) (int, erro
 				cur.code,
 				mba.account_no,
 				mba.account_holder_name,
-				mba.branch_name 
+				mba.branch_name,
+				b.swift_code 
 			FROM oa_request_bank_account AS orba 
 			INNER JOIN ms_bank_account AS mba ON mba.bank_account_key = orba.bank_account_key 
 			INNER JOIN ms_bank AS b ON b.bank_key = mba.bank_key 

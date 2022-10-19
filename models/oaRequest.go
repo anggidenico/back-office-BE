@@ -190,6 +190,13 @@ type AdminTransactionBankInfo struct {
 	CustomerAccountNo string  `db:"customer_account_no"   json:"customer_account_no"`
 }
 
+type AdminTransactionBankAccountInfo struct {
+	CustomerKey       uint64  `db:"customer_key"          json:"customer_key"`
+	SwiftCode         *string `db:"swift_code"            json:"swift_code"`
+	BiMemberCode      *string `db:"bi_member_code"        json:"bi_member_code"`
+	CustomerAccountNo string  `db:"customer_account_no"   json:"customer_account_no"`
+}
+
 type OaCustomer struct {
 	OaRequestKey uint64 `db:"oa_request_key"   json:"oa_request_key"`
 	Jenis        string `db:"jenis"            json:"jenis"`
@@ -851,6 +858,33 @@ func GetTransactionBankInfoCustomerIn(c *[]AdminTransactionBankInfo, value []str
 				INNER JOIN ms_bank_account AS ba ON ba.bank_account_key = op.bank_account_key
 				INNER JOIN ms_bank AS b ON b.bank_key = ba.bank_key`
 	query := query2 + " WHERE oa.rec_status = 1 AND oa.customer_key IN(" + inQuery + ")"
+
+	query += " GROUP BY oa.customer_key"
+
+	// Main query
+	log.Println("==========  ==========>>>", query)
+	err := db.Db.Select(c, query)
+	if err != nil {
+		log.Println(err)
+		return http.StatusBadGateway, err
+	}
+
+	return http.StatusOK, nil
+}
+
+func GetTransactionBankAccountInfoCustomerIn(c *[]AdminTransactionBankAccountInfo, value []string) (int, error) {
+	inQuery := strings.Join(value, ",")
+	query2 := `SELECT mcb.customer_key, 
+	b.swift_code AS swift_code, 
+	b.bi_member_code AS bi_member_code, 
+	ba.account_no AS customer_account_no
+	FROM tr_transaction_bank_account tra
+	INNER JOIN tr_transaction tr ON tr.transaction_key = tra.transaction_key
+	INNER JOIN ms_customer_bank_account mcb ON tra.cust_bankacc_key = mcb.cust_bankacc_key
+	INNER JOIN ms_bank_account AS ba ON ba.bank_account_key = mcb.bank_account_key
+	INNER JOIN ms_bank AS b ON b.bank_key = ba.bank_key
+	`
+	query := query2 + " WHERE tra.rec_status = 1 AND tr.trans_status_key IN(6,7) AND mcb.customer_key IN(" + inQuery + ")"
 
 	query += " GROUP BY oa.customer_key"
 

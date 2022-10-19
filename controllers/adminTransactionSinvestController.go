@@ -145,9 +145,9 @@ func DownloadTransactionFormatSinvest(c echo.Context) error {
 	}
 
 	//mapping bank transaction
-	var bankTrans []models.AdminTransactionBankInfo
+	var bankTrans []models.AdminTransactionBankAccountInfo
 	if len(customerIds) > 0 {
-		status, err = models.GetTransactionBankInfoCustomerIn(&bankTrans, customerIds)
+		status, err = models.GetTransactionBankAccountInfoCustomerIn(&bankTrans, customerIds)
 		if err != nil {
 			if err != sql.ErrNoRows {
 				log.Error(err.Error())
@@ -155,7 +155,7 @@ func DownloadTransactionFormatSinvest(c echo.Context) error {
 			}
 		}
 	}
-	bankTransData := make(map[uint64]models.AdminTransactionBankInfo)
+	bankTransData := make(map[uint64]models.AdminTransactionBankAccountInfo)
 	for _, bt := range bankTrans {
 		bankTransData[bt.CustomerKey] = bt
 	}
