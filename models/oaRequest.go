@@ -889,7 +889,7 @@ func GetTransactionBankAccountInfoCustomerIn(c *[]AdminTransactionBankAccountInf
 	query += " GROUP BY mcb.customer_key"
 
 	// Main query
-	log.Println("========== GetTransactionBankAccountInfoCustomerIn ==========>>>", query)
+	log.Println("========== QUERY GetTransactionBankAccountInfoCustomerIn ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
