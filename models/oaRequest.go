@@ -886,10 +886,10 @@ func GetTransactionBankAccountInfoCustomerIn(c *[]AdminTransactionBankAccountInf
 	`
 	query := query2 + " WHERE tra.rec_status = 1 AND tr.trans_status_key IN(6,7) AND mcb.customer_key IN(" + inQuery + ")"
 
-	query += " GROUP BY oa.customer_key"
+	query += " GROUP BY mcb.customer_key"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	log.Println("========== GetTransactionBankAccountInfoCustomerIn ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
