@@ -681,6 +681,7 @@ func GetAllOaRequestDoTransaction(c *[]OaRequest, limit uint64, offset uint64, n
 					SELECT customer_key 
 					FROM tr_transaction 
 					WHERE rec_status = 1 
+					AND trans_status_key IN(6,7,8,9,10)
 					GROUP BY customer_key 
 				) tr ON tr.customer_key = cus.customer_key `
 	var present bool
@@ -738,7 +739,7 @@ func GetAllOaRequestDoTransaction(c *[]OaRequest, limit uint64, offset uint64, n
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	log.Println("========== QUERY GetAllOaRequestDoTransaction ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)

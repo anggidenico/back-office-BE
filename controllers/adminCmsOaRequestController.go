@@ -2121,8 +2121,9 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 	params["rec_status"] = "1"
 
 	var oaStatusIn []string
-	oaStatusIn = append(oaStatusIn, "260")
-	oaStatusIn = append(oaStatusIn, "261")
+	oaStatusIn = append(oaStatusIn, "260") //KYC Approve
+	oaStatusIn = append(oaStatusIn, "261") //CUST BUILD
+	// oaStatusIn = append(oaStatusIn, "262") //SINVEST DONE
 
 	var oaRequestDB []models.OaRequest
 	status, err = models.GetAllOaRequestDoTransaction(&oaRequestDB, limit, offset, noLimit, params, oaStatusIn, "oa_status")
