@@ -253,6 +253,7 @@ type AdminTransactionDetail struct {
 	SalesCode                   *string                              `json:"sales_code"`
 	RiskWaiver                  bool                                 `json:"risk_waiver"`
 	FileUploadDate              *string                              `json:"file_upload_date"`
+	UrlUpload                   []*string                            `json:"url_upload_date"`
 	PaymentMethod               *LookupTrans                         `json:"payment_method"`
 	TransactionSettlement       *[]TransactionSettlement             `json:"transaction_settlement"`
 	TrxRiskLevel                *LookupTrans                         `json:"trx_risk_level"`

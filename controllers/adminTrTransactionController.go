@@ -1206,6 +1206,21 @@ func GetTransactionDetail(c echo.Context) error {
 		}
 	}
 
+	paramsFile := make(map[string]string)
+	paramsFile["ref_fk_key"] = strconv.FormatUint(transaction.TransactionKey, 10)
+	paramsFile["ref_fk_domain"] = "tr_transaction"
+	paramsFile["rec_status"] = "1"
+	var filez []models.MsFile
+	_, err = models.GetAllMsFile(&filez, 100, 100, paramsFile, true)
+	// log.Println("========== jumlah record ==========", len(filez))
+	if len(filez) > 0 {
+		log.Println("========== sudah upload bukti trf ==========")
+		for _, fl := range filez {
+			aa := config.ImageUrl + *fl.FilePath
+			responseData.UrlUpload = append(responseData.UrlUpload, &aa)
+		}
+	}
+
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
@@ -4539,6 +4554,21 @@ func DetailTransaksiInquiry(c echo.Context) error {
 				responseData.IsEnableUnposting = true
 				responseData.MessageEnableUnposting = ""
 			}
+		}
+	}
+
+	paramsFile := make(map[string]string)
+	paramsFile["ref_fk_key"] = strconv.FormatUint(transaction.TransactionKey, 10)
+	paramsFile["ref_fk_domain"] = "tr_transaction"
+	paramsFile["rec_status"] = "1"
+	var filez []models.MsFile
+	_, err = models.GetAllMsFile(&filez, 100, 100, paramsFile, true)
+	// log.Println("========== jumlah record ==========", len(filez))
+	if len(filez) > 0 {
+		log.Println("========== sudah upload bukti trf ==========")
+		for _, fl := range filez {
+			aa := config.ImageUrl + *fl.FilePath
+			responseData.UrlUpload = append(responseData.UrlUpload, &aa)
 		}
 	}
 
