@@ -10,23 +10,24 @@ import (
 )
 
 type MsFile struct {
-	FileKey            uint64       `db:"file_key"                json:"file_key"`
-	RefFkKey           uint64       `db:"ref_fk_key"              json:"ref_fk_key"`
-	RefFkDomain        string       `db:"ref_fk_domain"           json:"ref_fk_domain"`
-	FileName           string       `db:"file_name"               json:"file_name"`
-	FileExt            string       `db:"file_ext"                json:"file_ext"`
-	BlobMode           uint8        `db:"blob_mode"               json:"blob_mode"`
-	FilePath           *string      `db:"file_path"               json:"file_path"`
-	FileUrl            *string      `db:"file_url"                json:"file_url"`
-	FileNotes          *string      `db:"file_notes"              json:"file_notes"`
-	FileObj            *interface{} `db:"file_obj"                json:"properties"`
-	RecCreatedDate     *string      `db:"rec_created_date"        json:"rec_created_date"`
-	RecCreatedBy       *string      `db:"rec_created_by"          json:"rec_created_by"`
-	RecModifiedDate    *string      `db:"rec_modified_date"       json:"rec_modified_date"`
-	RecModifiedBy      *string      `db:"rec_modified_by"         json:"rec_modified_by"`
-	RecStatus          uint8        `db:"rec_status"              json:"rec_status"`
-	CmsPostPostKey     uint64       `db:"cms_postpost_key"        json:"cms_postpost_key"`
-	CmsQuizQuestionKey uint64       `db:"cms_quiz_question_key"   json:"cms_quiz_question_key"`
+	FileKey         *uint64 `db:"file_key"                json:"file_key"`
+	RefFkKey        *uint64 `db:"ref_fk_key"              json:"ref_fk_key"`
+	RefFkDomain     *string `db:"ref_fk_domain"           json:"ref_fk_domain"`
+	FileName        *string `db:"file_name"               json:"file_name"`
+	FileExt         *string `db:"file_ext"                json:"file_ext"`
+	BlobMode        *uint8  `db:"blob_mode"               json:"blob_mode"`
+	FilePath        *string `db:"file_path"               json:"file_path"`
+	FileUrl         *string `db:"file_url"                json:"file_url"`
+	FileNotes       *string `db:"file_notes"              json:"file_notes"`
+	FileObj         *uint64 `db:"file_obj"                json:"properties"`
+	RecStatus       *uint64 `db:"rec_status"                json:"rec_status"`
+	RecCreatedDate  *string `db:"rec_created_date"          json:"rec_created_date"`
+	RecCreatedBy    *string `db:"rec_created_by"            json:"rec_created_by"`
+	RecModifiedDate *string `db:"rec_modified_date"         json:"rec_modified_date"`
+	RecModifiedBy   *string `db:"rec_modified_by"           json:"rec_modified_by"`
+	RecAttributeId1 *string `db:"rec_attribute_id1" json:"rec_attribute_id1"`
+	RecAttributeId2 *string `db:"rec_attribute_id2"         json:"rec_attribute_id2"`
+	RecAttributeId3 *string `db:"rec_attribute_id3"                json:"rec_attribute_id3"`
 }
 
 type MsFileDetail struct {
