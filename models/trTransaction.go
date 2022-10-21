@@ -772,7 +772,7 @@ func CreateTrTransaction(params map[string]string) (int, error, string) {
 
 func GetTrTransaction(c *TrTransaction, key string) (int, error) {
 	query := `SELECT tr_transaction.* FROM tr_transaction WHERE tr_transaction.rec_status = "1" AND tr_transaction.transaction_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	log.Println("========== QUERY GetTrTransaction ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
