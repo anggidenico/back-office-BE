@@ -967,6 +967,7 @@ func GetTransactionDetail(c echo.Context) error {
 	responseData.PostedDate = transaction.PostedDate
 	responseData.PostedUnits = transaction.PostedUnits
 	responseData.SettledDate = transaction.SettledDate
+	responseData.StampFeeAmount = transaction.StampFeeAmount
 
 	strCustomer := strconv.FormatUint(transaction.CustomerKey, 10)
 
@@ -4323,6 +4324,7 @@ func DetailTransaksiInquiry(c echo.Context) error {
 	responseData.PostedDate = transaction.PostedDate
 	responseData.PostedUnits = transaction.PostedUnits
 	responseData.SettledDate = transaction.SettledDate
+	responseData.StampFeeAmount = transaction.StampFeeAmount
 
 	strCustomer := strconv.FormatUint(transaction.CustomerKey, 10)
 
