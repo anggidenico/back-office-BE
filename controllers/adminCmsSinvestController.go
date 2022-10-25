@@ -442,7 +442,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 				if a, ok := postalData[*n.IDcardAddressKey]; ok {
 					//set alamat KTP
 					if a.AddressLine1 != nil {
-						aa := strings.ReplaceAll(*a.AddressLine1, ",", "")
+						aa := strings.Trim(*a.AddressLine1, ",")
 						ktpAddress := aa
 						// log.Printf("%q", ktpAddress)
 						data.KTPAddress = ktpAddress
@@ -451,7 +451,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 						// log.Infoln("========== KABUPATEN KEY: ========== ", a.KabupatenKey)
 						if c, ok := cityData[*a.KabupatenKey]; ok {
 							if c.CityCode != "" {
-								aa := strings.ReplaceAll(*&c.CityCode, ".", "")
+								aa := strings.Trim(*&c.CityCode, ".")
 								data.KTPCityCode = aa
 							}
 						}
@@ -473,7 +473,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 				if a, ok := postalData[*n.DomicileAddressKey]; ok {
 					//set alamat KTP
 					if a.AddressLine1 != nil {
-						aa := strings.ReplaceAll(*a.AddressLine1, ",", "")
+						aa := strings.Trim(*a.AddressLine1, ",")
 						domiAddress := aa
 						// log.Printf("%q", domiAddress)
 						data.DomicileAddress = domiAddress
@@ -488,12 +488,12 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 							}
 
 							if c.CityCode != "" {
-								aa := strings.ReplaceAll(c.CityCode, ".", "")
+								aa := strings.Trim(c.CityCode, ".")
 								data.DomicileCityCode = aa
 							}
 							data.DomicileCityName = c.CityName
 							if c.CityCode != "" {
-								aa := strings.ReplaceAll(c.CityCode, ".", "")
+								aa := strings.Trim(c.CityCode, ".")
 								data.DomicileCityCode = aa
 							}
 
