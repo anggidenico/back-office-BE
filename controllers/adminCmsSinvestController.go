@@ -53,7 +53,9 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 	params["rec_status"] = "1"
 
 	var oaStatusIn []string
-	oaStatusIn = append(oaStatusIn, "260")
+	oaStatusIn = append(oaStatusIn, "260") //KYC Approve
+	oaStatusIn = append(oaStatusIn, "261") //CUST BUILD
+	// oaStatusIn = append(oaStatusIn, "262") //SINVEST DONE
 
 	var oaRequestDB []models.OaRequest
 	status, err = models.GetAllOaRequestDoTransaction(&oaRequestDB, config.LimitQuery, offset, true, params, oaStatusIn, "oa_status")
@@ -468,7 +470,6 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 				if a, ok := postalData[*n.DomicileAddressKey]; ok {
 					//set alamat KTP
 					if a.AddressLine1 != nil {
-
 						domiAddress := strings.TrimSuffix(*a.AddressLine1, "\n\r")
 						data.DomicileAddress = domiAddress
 						data.CorrespondenceAddress = domiAddress
