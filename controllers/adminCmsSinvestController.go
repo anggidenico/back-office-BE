@@ -442,7 +442,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 				if a, ok := postalData[*n.IDcardAddressKey]; ok {
 					//set alamat KTP
 					if a.AddressLine1 != nil {
-						ktpAddress := strings.TrimSuffix(*a.AddressLine1, "\n\r")
+						ktpAddress := strings.TrimSpace(*a.AddressLine1)
 						data.KTPAddress = ktpAddress
 					}
 					if a.KabupatenKey != nil {
@@ -470,7 +470,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 				if a, ok := postalData[*n.DomicileAddressKey]; ok {
 					//set alamat KTP
 					if a.AddressLine1 != nil {
-						domiAddress := strings.TrimSuffix(*a.AddressLine1, "\n\r")
+						domiAddress := strings.TrimSpace(*a.AddressLine1)
 						data.DomicileAddress = domiAddress
 						data.CorrespondenceAddress = domiAddress
 					}
