@@ -443,6 +443,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 					//set alamat KTP
 					if a.AddressLine1 != nil {
 						ktpAddress := strings.TrimSpace(*a.AddressLine1)
+						log.Printf("%q", ktpAddress)
 						data.KTPAddress = ktpAddress
 					}
 					if a.KabupatenKey != nil {
@@ -471,6 +472,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 					//set alamat KTP
 					if a.AddressLine1 != nil {
 						domiAddress := strings.TrimSpace(*a.AddressLine1)
+						log.Printf("%q", domiAddress)
 						data.DomicileAddress = domiAddress
 						data.CorrespondenceAddress = domiAddress
 					}
