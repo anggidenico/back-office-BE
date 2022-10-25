@@ -443,14 +443,14 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 					//set alamat KTP
 					if a.AddressLine1 != nil {
 						ktpAddress := strings.TrimSpace(*a.AddressLine1)
-						log.Printf("%q", ktpAddress)
+						// log.Printf("%q", ktpAddress)
 						data.KTPAddress = ktpAddress
 					}
 					if a.KabupatenKey != nil {
 						// log.Infoln("========== KABUPATEN KEY: ========== ", a.KabupatenKey)
 						if c, ok := cityData[*a.KabupatenKey]; ok {
 							if c.CityCode != "" {
-								data.KTPCityCode = *&c.CityCode
+								data.KTPCityCode = strings.TrimSuffix(*&c.CityCode, ".")
 							}
 						}
 					}
@@ -472,7 +472,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 					//set alamat KTP
 					if a.AddressLine1 != nil {
 						domiAddress := strings.TrimSpace(*a.AddressLine1)
-						log.Printf("%q", domiAddress)
+						// log.Printf("%q", domiAddress)
 						data.DomicileAddress = domiAddress
 						data.CorrespondenceAddress = domiAddress
 					}
@@ -485,11 +485,11 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 							}
 
 							if c.CityCode != "" {
-								data.DomicileCityCode = c.CityCode
+								data.DomicileCityCode = strings.TrimSuffix(c.CityCode, ".")
 							}
 							data.DomicileCityName = c.CityName
 							if c.CityCode != "" {
-								data.CorrespondenceCityCode = c.CityCode
+								data.CorrespondenceCityCode = strings.TrimSuffix(c.CityCode, ".")
 							}
 
 							data.CorrespondenceCityName = c.CityName
