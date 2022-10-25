@@ -442,7 +442,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 				if a, ok := postalData[*n.IDcardAddressKey]; ok {
 					//set alamat KTP
 					if a.AddressLine1 != nil {
-						ktpAddress := *a.AddressLine1
+						ktpAddress := strings.TrimSuffix(*a.AddressLine1, "\n\r")
 						data.KTPAddress = ktpAddress
 					}
 					if a.KabupatenKey != nil {
