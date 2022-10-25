@@ -451,7 +451,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 						// log.Infoln("========== KABUPATEN KEY: ========== ", a.KabupatenKey)
 						if c, ok := cityData[*a.KabupatenKey]; ok {
 							if c.CityCode != "" {
-								aa := strings.Trim(*&c.CityCode, ".")
+								aa := strings.ReplaceAll(c.CityCode, ".", "")
 								data.KTPCityCode = aa
 							}
 						}
@@ -488,12 +488,12 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 							}
 
 							if c.CityCode != "" {
-								aa := strings.Trim(c.CityCode, ".")
+								aa := strings.ReplaceAll(c.CityCode, ".", "")
 								data.DomicileCityCode = aa
 							}
 							data.DomicileCityName = c.CityName
 							if c.CityCode != "" {
-								aa := strings.Trim(c.CityCode, ".")
+								aa := strings.ReplaceAll(c.CityCode, ".", "")
 								data.DomicileCityCode = aa
 							}
 
