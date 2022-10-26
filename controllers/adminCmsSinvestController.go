@@ -499,8 +499,8 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 								log.Println("=============== DOMISILI CITY CODE =================>> ", aa)
 							}
 
-							data.DomicileCityName = re.ReplaceAllString(c.CityName, " ")
-							data.CorrespondenceCityName = re.ReplaceAllString(c.CityName, " ")
+							data.DomicileCityName = re.ReplaceAllString(c.CityName, "")
+							data.CorrespondenceCityName = re.ReplaceAllString(c.CityName, "")
 							log.Println("=============== CITY NAME =================>> ", data.DomicileCityName)
 
 						}
