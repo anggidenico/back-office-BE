@@ -30,7 +30,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 	var status int
 	var offset uint64
 	// var limit uint64
-	re, err := regexp.Compile(`[^\w]`)
+	re, err := regexp.Compile(`[^a-zA-Z0-9 ]+`)
 	if err != nil {
 		log.Fatal(err)
 	}
