@@ -490,6 +490,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 							if c.CityCode != "" {
 								aa := strings.ReplaceAll(c.CityCode, ".", "")
 								data.DomicileCityCode = aa
+								data.CorrespondenceCityCode = aa
 								log.Println("=============== DOMISILI CITY CODE =================>> ", aa)
 							}
 							data.DomicileCityName = c.CityName
