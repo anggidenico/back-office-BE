@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -24,11 +25,15 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 		log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
+
 	var err error
 	var status int
 	var offset uint64
 	// var limit uint64
-
+	re, err := regexp.Compile(`[^\w]`)
+	if err != nil {
+		log.Fatal(err)
+	}
 	items := []string{"oa_request_key", "oa_request_type", "oa_entry_start", "oa_entry_end", "oa_status", "rec_order", "rec_status", "oa_risk_level"}
 
 	params := make(map[string]string)
@@ -493,8 +498,11 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 								data.CorrespondenceCityCode = aa
 								log.Println("=============== DOMISILI CITY CODE =================>> ", aa)
 							}
-							data.DomicileCityName = c.CityName
-							data.CorrespondenceCityName = c.CityName
+
+							data.DomicileCityName = re.ReplaceAllString(c.CityName, "")
+							data.CorrespondenceCityName = re.ReplaceAllString(c.CityName, "")
+							log.Println("=============== CITY NAME =================>> ", data.DomicileCityName)
+
 						}
 					}
 
