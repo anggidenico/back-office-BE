@@ -453,6 +453,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 							if c.CityCode != "" {
 								aa := strings.ReplaceAll(c.CityCode, ".", "")
 								data.KTPCityCode = aa
+								log.Println("=============== KTP CITY CODE =================>> ", aa)
 							}
 						}
 					}
@@ -475,7 +476,6 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 					if a.AddressLine1 != nil {
 						aa := strings.ReplaceAll(*a.AddressLine1, ",", "")
 						domiAddress := aa
-						// log.Printf("%q", domiAddress)
 						data.DomicileAddress = domiAddress
 						data.CorrespondenceAddress = domiAddress
 					}
@@ -490,13 +490,9 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 							if c.CityCode != "" {
 								aa := strings.ReplaceAll(c.CityCode, ".", "")
 								data.DomicileCityCode = aa
+								log.Println("=============== DOMISILI CITY CODE =================>> ", aa)
 							}
 							data.DomicileCityName = c.CityName
-							if c.CityCode != "" {
-								aa := strings.ReplaceAll(c.CityCode, ".", "")
-								data.DomicileCityCode = aa
-							}
-
 							data.CorrespondenceCityName = c.CityName
 						}
 					}
