@@ -95,7 +95,7 @@ func GetAllScRoleCategory(c *[]ScRoleCategory, limit uint64, offset uint64, para
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	log.Println("========== GetAllScRoleCategory ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
