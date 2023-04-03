@@ -74,7 +74,7 @@ type ListMenuRoleManagement struct {
 	MenuParent *uint64 `db:"menu_parent"     json:"menu_parent"`
 	MenuName   string  `db:"menu_name"       json:"menu_name"`
 	MenuDesc   *string `db:"menu_desc"       json:"menu_desc"`
-	Checked    string  `db:"checked"         json:"checked"`
+	// Checked    string  `db:"checked"         json:"checked"`
 }
 
 type ListMenuRoleUser struct {
@@ -106,18 +106,16 @@ type MenuChild struct {
 }
 
 func AdminGetListMenuRole(c *[]ListMenuRoleManagement, roleKey string, isParent bool) (int, error) {
-	query := `SELECT 
-				menu.menu_key AS menu_key, 
-				app.app_module_name AS module_name, 
-				menu.menu_parent AS menu_parent, 
-				menu.menu_name AS menu_name, 
-				menu.menu_desc AS menu_desc, 
-				(CASE 
-					WHEN ep.ep_auth_key IS NULL THEN '0' 
-					ELSE '1' 
-				END) AS checked 
+	// query := `SELECT menu.menu_key AS menu_key, app.app_module_name AS module_name, menu.menu_parent AS menu_parent, menu.menu_name AS menu_name, menu.menu_desc AS menu_desc
+	// 		,(CASE WHEN ep.ep_auth_key IS NULL THEN '0' ELSE '1' END) AS checked
+	// 		FROM sc_menu AS menu
+	// 		LEFT JOIN (SELECT ee.* FROM sc_endpoint_auth AS ee WHERE ee.rec_status = 1 AND ee.role_key = '` + roleKey + `' GROUP BY ee.menu_key) AS ep ON ep.menu_key = menu.menu_key
+	// 		LEFT JOIN sc_app_module AS app ON app.app_module_key = menu.app_module_key
+	// 		WHERE menu.rec_status = 1 AND menu.app_module_key != 1`
+
+	query := `SELECT menu.menu_key AS menu_key, app.app_module_name AS module_name, menu.menu_parent AS menu_parent, menu.menu_name AS menu_name, 
+			menu.menu_desc AS menu_desc
 			FROM sc_menu AS menu 
-			LEFT JOIN (SELECT ee.* FROM sc_endpoint_auth AS ee WHERE ee.rec_status = 1 AND ee.role_key = '` + roleKey + `' GROUP BY ee.menu_key) AS ep ON ep.menu_key = menu.menu_key 
 			LEFT JOIN sc_app_module AS app ON app.app_module_key = menu.app_module_key 
 			WHERE menu.rec_status = 1 AND menu.app_module_key != 1`
 
@@ -130,7 +128,7 @@ func AdminGetListMenuRole(c *[]ListMenuRoleManagement, roleKey string, isParent 
 	query += " ORDER BY menu.app_module_key ASC"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	log.Println("========== AdminGetListMenuRole ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -408,7 +406,7 @@ func CreateScMenu(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	log.Println("========== CreateScMenu ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
