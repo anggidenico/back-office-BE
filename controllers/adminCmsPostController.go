@@ -572,7 +572,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 			filename = lib.RandStringBytesMaskImprSrc(20)
 			log.Println("Generate filename:", filename)
 			// Upload image and move to proper directory
-			err = lib.UploadImage(file, config.ImageUrl+"/images/post/"+pathType+"/"+randName+"_"+filename+extension)
+			err = lib.UploadImage(file, config.BasePathImage+"/images/post/"+pathType+"/"+randName+"_"+filename+extension)
 			if err != nil {
 				log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
