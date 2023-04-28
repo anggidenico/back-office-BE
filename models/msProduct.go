@@ -102,9 +102,11 @@ type MsProduct struct {
 	MaxRedFee             decimal.Decimal `db:"max_red_fee"             json:"max_red_fee"`
 	MaxSwiFee             decimal.Decimal `db:"max_swi_fee"             json:"max_swi_fee"`
 	MinSubAmount          decimal.Decimal `db:"min_sub_amount"          json:"min_sub_amount"`
+	MinTopUpAmount        decimal.Decimal `db:"min_topup_amount"        json:"min_topup_amount"`
 	MinRedAmount          decimal.Decimal `db:"min_red_amount"          json:"min_red_amount"`
 	MinRedUnit            decimal.Decimal `db:"min_red_unit"            json:"min_red_unit"`
 	MinUnitAfterRed       decimal.Decimal `db:"min_unit_after_red"      json:"min_unit_after_red"`
+	MinAmountAfterRed     decimal.Decimal `db:"min_amount_after_red"    json:"min_amount_after_red"`
 	ManagementFee         decimal.Decimal `db:"management_fee"          json:"management_fee"`
 	CustodianFee          decimal.Decimal `db:"custodian_fee"           json:"custodian_fee"`
 	CustodianKey          *uint64         `db:"custodian_key"           json:"custodian_key"`
@@ -120,6 +122,14 @@ type MsProduct struct {
 	FlagRedemption        uint8           `db:"flag_redemption"         json:"flag_redemption"`
 	FlagSwitchOut         uint8           `db:"flag_switch_out"         json:"flag_switch_out"`
 	FlagSwitchIn          uint8           `db:"flag_switch_in"          json:"flag_switch_in"`
+	DecUnit               uint8           `db:"dec_unit" json:"dec_unit"`
+	DecAmount             uint8           `db:"dec_amount" json:"dec_amount"`
+	DecNav                uint8           `db:"dec_nav" json:"dec_nav"`
+	DecPerformance        uint8           `db:"dec_performance" json:"dec_performance"`
+	NpwpDateReg           *string         `db:"npwp_date_reg" json:"npwp_date_reg"`
+	NpwpName              *string         `db:"npwp_name" json:"npwp_name"`
+	NpwpNumber            *string         `db:"npwp_number" json:"npwp_number"`
+	PortfolioCode         *string         `db:"portfolio_code" json:"portfolio_code"`
 	RecOrder              *uint64         `db:"rec_order"               json:"rec_order"`
 	RecStatus             uint8           `db:"rec_status"              json:"rec_status"`
 	RecCreatedDate        *string         `db:"rec_created_date"        json:"rec_created_date"`
@@ -137,14 +147,6 @@ type MsProduct struct {
 	RecAttributeID1       *string         `db:"rec_attribute_id1"       json:"rec_attribute_id1"`
 	RecAttributeID2       *string         `db:"rec_attribute_id2"       json:"rec_attribute_id2"`
 	RecAttributeID3       *string         `db:"rec_attribute_id3"       json:"rec_attribute_id3"`
-	DecUnit               uint8           `db:"dec_unit" 				json:"dec_unit"`
-	DecAmount             uint8           `db:"dec_amount" 				json:"dec_amount"`
-	DecNav                uint8           `db:"dec_nav" 				json:"dec_nav"`
-	DecPerformance        uint8           `db:"dec_performance" 		json:"dec_performance"`
-	NpwpDateReg           *string         `db:"npwp_date_reg" 			json:"npwp_date_reg"`
-	NpwpName              *string         `db:"npwp_name" 				json:"npwp_name"`
-	NpwpNumber            *string         `db:"npwp_number" 			json:"npwp_number"`
-	PortfolioCode         *string         `db:"portfolio_code" 			json:"portfolio_code"`
 }
 
 type AdminMsProductList struct {
@@ -245,7 +247,7 @@ type AdminMsProductDetail struct {
 }
 
 type ProductSubscription struct {
-	ProductKey     uint64          `db:"product_key"		   json:"product_key"`
+	ProductKey     uint64          `db:"product_key" json:"product_key"`
 	FundTypeName   string          `db:"fund_type_name"        json:"fund_type_name"`
 	ProductName    string          `db:"product_name"          json:"product_name"`
 	NavDate        string          `db:"nav_date"              json:"nav_date"`
