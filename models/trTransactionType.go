@@ -13,6 +13,8 @@ type TrTransactionType struct {
 	TypeDescription   *string `db:"type_description"        json:"type_description"`
 	TypeOrder         uint64  `db:"type_order"              json:"type_order"`
 	TypeDomain        *string `db:"type_domain"            json:"type_domain"`
+	TransTypeTitle    *string `db:"trans_type_title" json:"trans_type_title"`
+	TransTypeSubtitle *string `db:"trans_type_subtitle" json:"trans_type_subtitle"`
 	RecOrder          *uint64 `db:"rec_order"            json:"rec_order"`
 	RecStatus         uint8   `db:"rec_status"           json:"rec_status"`
 	RecCreatedDate    *string `db:"rec_created_date"     json:"rec_created_date"`
