@@ -76,7 +76,7 @@ type TrTransaction struct {
 	TrxCode           *uint64          `db:"trx_code"                  json:"trx_code"`
 	NavDate           string           `db:"nav_date"                  json:"nav_date"`
 	EntryMode         *uint64          `db:"entry_mode"                json:"entry_mode"`
-	TransEntry        decimal.Decimal  `db:"trans_entry" 			   json:"trans_entry"`
+	TransEntry        decimal.Decimal  `db:"trans_entry" json:"trans_entry"`
 	TransCalcMethod   *uint64          `db:"trans_calc_method"         json:"trans_calc_method"`
 	TransAmount       decimal.Decimal  `db:"trans_amount"              json:"trans_amount"`
 	TransUnit         decimal.Decimal  `db:"trans_unit"                json:"trans_unit"`
