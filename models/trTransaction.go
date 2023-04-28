@@ -69,13 +69,14 @@ type TrTransaction struct {
 	AgentKey          *uint64          `db:"agent_key"                 json:"agent_key"`
 	CustomerKey       uint64           `db:"customer_key"              json:"customer_key"`
 	ProductKey        uint64           `db:"product_key"               json:"product_key"`
-	CurrencyKey       uint64           `db:"currency_key"               json:"currency_key"`
+	CurrencyKey       uint64           `db:"currency_key"              json:"currency_key"`
 	TransStatusKey    uint64           `db:"trans_status_key"          json:"trans_status_key"`
 	TransDate         string           `db:"trans_date"                json:"trans_date"`
 	TransTypeKey      uint64           `db:"trans_type_key"            json:"trans_type_key"`
 	TrxCode           *uint64          `db:"trx_code"                  json:"trx_code"`
 	NavDate           string           `db:"nav_date"                  json:"nav_date"`
 	EntryMode         *uint64          `db:"entry_mode"                json:"entry_mode"`
+	TransEntry        decimal.Decimal  `db:"trans_entry" 			   json:"trans_entry"`
 	TransCalcMethod   *uint64          `db:"trans_calc_method"         json:"trans_calc_method"`
 	TransAmount       decimal.Decimal  `db:"trans_amount"              json:"trans_amount"`
 	TransUnit         decimal.Decimal  `db:"trans_unit"                json:"trans_unit"`
