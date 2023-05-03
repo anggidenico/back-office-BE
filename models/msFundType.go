@@ -27,6 +27,7 @@ type MsFundType struct {
 	FundTypeKey       uint64  `db:"fund_type_key"         json:"fund_type_key"`
 	FundTypeCode      *string `db:"fund_type_code"        json:"fund_type_code"`
 	FundTypeName      *string `db:"fund_type_name"        json:"fund_type_name"`
+	FunTypeNameAlt    *string `db:"fund_type_name_alt" json:"fund_type_name_alt"`
 	FundTypeDesc      *string `db:"fund_type_desc"        json:"fund_type_desc"`
 	ShowHome          uint8   `db:"show_home"             json:"show_home"`
 	RecOrder          *uint64 `db:"rec_order"             json:"rec_order"`
