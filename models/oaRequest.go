@@ -95,7 +95,7 @@ type OaRequestDetailResponse struct {
 	MaritalStatus              *string              `json:"marital_status"`
 	PepStatus                  *string              `json:"pep_status"`
 	SalesCode                  *string              `json:"sales_code"`
-	PhoneHome                  string               `json:"phone_home"`
+	PhoneHome                  *string              `json:"phone_home"`
 	Religion                   *string              `json:"religion"`
 	Education                  *string              `json:"education"`
 	PicKtp                     *string              `json:"pic_ktp"`
@@ -225,7 +225,7 @@ type DetailPersonalDataCustomerIndividu struct {
 	PlaceBirth          string                      `json:"place_birth"`
 	MaritalStatus       *string                     `json:"marital_status"`
 	PepStatus           *string                     `json:"pep_status"`
-	PhoneHome           string                      `json:"phone_home"`
+	PhoneHome           *string                     `json:"phone_home"`
 	Religion            *string                     `json:"religion"`
 	Education           *string                     `json:"education"`
 	PicKtp              *string                     `json:"pic_ktp"`
@@ -284,7 +284,7 @@ type OaRequestDetailRiskProfil struct {
 	Gender          *string            `json:"gender"`
 	PlaceBirth      string             `json:"place_birth"`
 	MaritalStatus   *string            `json:"marital_status"`
-	PhoneHome       string             `json:"phone_home"`
+	PhoneHome       *string            `json:"phone_home"`
 	Religion        *string            `json:"religion"`
 	Education       *string            `json:"education"`
 	RiskProfile     AdminOaRiskProfile `json:"risk_profile"`

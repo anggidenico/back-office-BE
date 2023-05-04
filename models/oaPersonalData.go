@@ -38,7 +38,7 @@ type OaPersonalData struct {
 	MaritalStatus          *uint64 `db:"marital_status"             json:"marital_status"`
 	IDcardAddressKey       *uint64 `db:"idcard_address_key"         json:"idcard_address_key"`
 	DomicileAddressKey     *uint64 `db:"domicile_address_key"       json:"domicile_address_key"`
-	PhoneHome              string  `db:"phone_home"                 json:"phone_home"`
+	PhoneHome              *string `db:"phone_home"                 json:"phone_home"`
 	PhoneMobile            string  `db:"phone_mobile"               json:"phone_mobile"`
 	EmailAddress           string  `db:"email_address"              json:"email_address"`
 	CorrespondAddress      *uint64 `db:"correspond_address"         json:"correspond_address"`

@@ -515,7 +515,11 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 			}
 
 			homePhone := n.PhoneHome
-			data.HomePhone = homePhone
+			if homePhone != nil {
+				data.HomePhone = *homePhone
+			} else {
+				data.HomePhone = ""
+			}
 
 			mobilePhone := n.PhoneMobile
 			data.MobilePhone = mobilePhone
