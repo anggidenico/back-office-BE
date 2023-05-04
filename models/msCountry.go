@@ -17,9 +17,10 @@ type MsCountryList struct {
 
 type MsCountry struct {
 	CountryKey        uint64  `db:"country_key"           json:"country_key"`
-	CouCode           string  `db:"cou_code"              json:"cou_code"`
-	CouName           string  `db:"cou_name"              json:"cou_name"`
+	CouCode           string  `db:"country_code"              json:"cou_code"`
+	CouName           string  `db:"country_name"              json:"cou_name"`
 	ShortName         *string `db:"short_name"            json:"short_name"`
+	CallingCode       *string `db:"calling_code" json:"calling_code"`
 	FlagBase          uint8   `db:"flag_base"             json:"flag_base"`
 	CurrencyKey       *uint64 `db:"currency_key"          json:"currency_key"`
 	RecOrder          *uint64 `db:"rec_order"             json:"rec_order"`
