@@ -92,6 +92,7 @@ type OaPersonalData struct {
 	RecAttributeID3        *string `db:"rec_attribute_id3"          json:"rec_attribute_id3"`
 	ReqBankAccKey          *uint64 `db:"req_bankacc_key" json:"req_bankacc_key"`
 	PepName                *string `db:"pep_name" json:"pep_name"`
+	PepPosition            *string `db:"pep_position" json:"pep_postiion"`
 }
 
 func GetAllOaPersonalData(c *[]OaPersonalData, limit uint64, offset uint64, params map[string]string, nolimit bool) (int, error) {
