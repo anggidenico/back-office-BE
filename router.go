@@ -461,7 +461,7 @@ func router() *echo.Echo {
 
 func printUrlMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		log.Println(c.Request().URL)
+		log.Println("========== HIT ENDPOINT: ========== >>>", c.Request().URL)
 		return next(c)
 	}
 }
