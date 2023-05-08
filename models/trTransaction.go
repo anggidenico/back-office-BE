@@ -238,7 +238,7 @@ type AdminTransactionDetail struct {
 	TransUnitPercent            *decimal.Decimal                     `json:"trans_unit_percent"`
 	FlagRedemtAll               bool                                 `json:"flag_redempt_all"`
 	FlagNewSub                  bool                                 `json:"flag_newsub"`
-	TransFeePercent             decimal.Decimal                      `json:"trans_fee_percent"`
+	TransFeePercent             *decimal.Decimal                     `json:"trans_fee_percent"`
 	TransFeeAmount              decimal.Decimal                      `json:"trans_fee_amount"`
 	ChargesFeeAmount            decimal.Decimal                      `json:"charges_fee_amount"`
 	ServicesFeeAmount           decimal.Decimal                      `json:"services_fee_amount"`
