@@ -62,7 +62,7 @@ func CreateNotificationHelper(playerID string, heading string, content string, c
 		Contents:         map[string]string{"en": content},
 		Data:             DataNotif,
 		SmallIcon:        "ic_stat_onesignal_default",
-		LargeIcon:        config.FileUrl + "/images/mail/icon_mncduit.png",
+		LargeIcon:        config.ImageUrl + "/images/mail/icon_mncduit.png",
 		IncludePlayerIDs: []string{playerID},
 	}
 	createRes, _, err := client.Notifications.Create(notificationReq)
@@ -87,7 +87,7 @@ func BlastAllNotificationHelper(playerIDs []string, heading string, content stri
 		Contents:         map[string]string{"en": content},
 		Data:             data,
 		SmallIcon:        "ic_stat_onesignal_default",
-		LargeIcon:        config.FileUrl + "/images/mail/icon_mncduit.png",
+		LargeIcon:        config.ImageUrl + "/images/mail/icon_mncduit.png",
 		IncludePlayerIDs: playerIDs,
 	}
 	createRes, _, err := client.Notifications.Create(notificationReq)

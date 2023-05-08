@@ -127,7 +127,7 @@ func sentEmailCustomerTransaksiVaMandiriSebelumExpired(transaction models.Detail
 	var mailTemp, subject string
 	mailParam := make(map[string]string)
 
-	mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+	mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 	mailParam["Name"] = transaction.FullName
 	mailParam["Cif"] = *transaction.Cif
 	mailParam["Date"] = transaction.TransDate

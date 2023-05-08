@@ -493,7 +493,7 @@ func SentEmailInstitusiOaPengkinianToBackOfficeSales(
 	} else {
 		mailParam["NoHp"] = "-"
 	}
-	mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+	mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 
 	if *oaRequest.OaRequestType == uint64(127) { // oa new
 		mailParam["JenisPengajuanData"] = "melengkapi Pembukaan Rekening Reksa Dana melalui MotionFunds"
@@ -640,7 +640,7 @@ func SentEmailOaApprovePicInstitutionCcSales(
 	if oaRequest.PipelineKey != nil {
 		var mailTemp, subject string
 		mailParam := make(map[string]string)
-		mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+		mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 
 		if *oaRequest.OaRequestType == uint64(127) { // oa new
 			mailTemp = "email-sukses-verifikasi-kyc-oa-institusi.html"
@@ -737,7 +737,7 @@ func SentEmailOaRejectPicInstitutionCcSales(
 			dateLayout := "02 Jan 2006"
 			var mailTemp, subject string
 			mailParam := make(map[string]string)
-			mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+			mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 			mailParam["NamaPerusahaan"] = *institutionData.FullName
 			mailParam["AlamatPerusahaan"] = "-"
 			if institutionData.CorrespondenceKey != nil {
@@ -853,7 +853,7 @@ func SentEmailOaRejectToSales(
 		dateLayout := "02 Jan 2006"
 		var mailTemp, subject string
 		mailParam := make(map[string]string)
-		mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+		mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 		mailParam["NamaPerusahaan"] = *institutionData.FullName
 		mailParam["AlamatPerusahaan"] = "-"
 		if institutionData.CorrespondenceKey != nil {

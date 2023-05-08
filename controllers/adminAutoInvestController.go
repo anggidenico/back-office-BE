@@ -1255,7 +1255,7 @@ func mailSubscriptionAutoInvest(params map[string]string) error {
 	mailParam["ProductName"] = params["product_name"]
 	mailParam["ProductIn"] = params["product_name"]
 
-	mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+	mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 
 	t := template.New(mailTemp)
 

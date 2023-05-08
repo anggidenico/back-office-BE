@@ -1577,7 +1577,7 @@ func SendEmailRejected(strCustomerKey string, strIDUserLogin string,
 		Notes          string
 		TransTypeKecil string
 	}{
-		FileUrl:        config.FileUrl + "/images/mail",
+		FileUrl:        config.ImageUrl + "/images/mail",
 		Name:           customer.FullName,
 		Cif:            customer.UnitHolderIDno,
 		Date:           date.Format(newLayout),
@@ -3329,7 +3329,7 @@ func sendEmailTransactionPosted(
 			UnitPenyertaan string
 			TransType      string
 		}{
-			FileUrl:        config.FileUrl + "/images/mail",
+			FileUrl:        config.ImageUrl + "/images/mail",
 			Name:           customer.FullName,
 			Cif:            customer.UnitHolderIDno,
 			Date:           date.Format(newLayout),
@@ -4952,7 +4952,7 @@ func SentEmailTransactionToBackOffice(transactionKey string, roleKey string) {
 		mailParam["BackOfficeGroup"] = "FundAdmin"
 	}
 
-	mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+	mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 	mailParam["NamaLengkap"] = transaction.FullName
 	mailParam["CIF"] = *transaction.Cif
 	mailParam["TanggalTransaksi"] = transaction.TransDate
@@ -5099,7 +5099,7 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 		mailParam["BackOfficeGroup"] = "FundAdmin"
 	}
 
-	mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+	mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 	mailParam["NamaLengkap"] = transaction.FullName
 	mailParam["CIF"] = *transaction.Cif
 	mailParam["TanggalTransaksi"] = transaction.TransDate
@@ -5307,7 +5307,7 @@ func SentEmailTransactionRejectToSales(transactionKey string, notes string) {
 		var mailTemp, subject string
 		mailParam := make(map[string]string)
 
-		mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+		mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 		mailParam["NamaLengkap"] = transaction.FullName
 		mailParam["CIF"] = *transaction.Cif
 		mailParam["TanggalTransaksi"] = transaction.TransDate
@@ -5442,7 +5442,7 @@ func SentEmailTransactionToBackOfficeWithDb(transactionKey string, roleKey strin
 		mailParam["BackOfficeGroup"] = "FundAdmin"
 	}
 
-	mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+	mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 	mailParam["NamaLengkap"] = transaction.FullName
 	mailParam["CIF"] = *transaction.Cif
 	mailParam["TanggalTransaksi"] = transaction.TransDate
@@ -5650,7 +5650,7 @@ func SentEmailTransactionInstitutionRejectBackOfficeToUserCcSales(
 	var mailTemp, subject string
 	mailParam := make(map[string]string)
 
-	mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+	mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 
 	mailParam["NamaLengkap"] = transaction.FullName
 	mailParam["CIF"] = *transaction.Cif
@@ -5767,7 +5767,7 @@ func SentEmailTransactionInstitutionPostingBackOfficeToUserCcSales(
 	var mailTemp, subject string
 	mailParam := make(map[string]string)
 
-	mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+	mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 
 	mailParam["NamaLengkap"] = transaction.FullName
 	mailParam["CIF"] = *transaction.Cif

@@ -3814,7 +3814,7 @@ func SentEmailRejectOaPengkinianToCustomer(
 	layout := "2006-01-02 15:04:05"
 	dateLayout := "02 Jan 2006"
 	date, _ := time.Parse(layout, oaRequest.OaEntryStart)
-	mailParam["FileUrl"] = config.FileUrl + "/images/mail"
+	mailParam["FileUrl"] = config.ImageUrl + "/images/mail"
 	mailParam["Nama"] = oaPersonalData.FullName
 	mailParam["KTP"] = oaPersonalData.IDcardNo
 	mailParam["Tanggal"] = date.Format(dateLayout)
