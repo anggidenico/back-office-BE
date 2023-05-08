@@ -85,9 +85,9 @@ type TrTransaction struct {
 	FlagNewSub        *uint8           `db:"flag_newsub"               json:"flag_newsub"`
 	TransFeePercent   *decimal.Decimal `db:"trans_fee_percent"         json:"trans_fee_percent"`
 	TransFeeAmount    *decimal.Decimal `db:"trans_fee_amount"          json:"trans_fee_amount"`
-	ChargesFeeAmount  decimal.Decimal  `db:"charges_fee_amount"        json:"charges_fee_amount"`
-	ServicesFeeAmount decimal.Decimal  `db:"services_fee_amount"       json:"services_fee_amount"`
-	StampFeeAmount    decimal.Decimal  `db:"stamp_fee_amount"          json:"stamp_fee_amount"`
+	ChargesFeeAmount  *decimal.Decimal `db:"charges_fee_amount"        json:"charges_fee_amount"`
+	ServicesFeeAmount *decimal.Decimal `db:"services_fee_amount"       json:"services_fee_amount"`
+	StampFeeAmount    *decimal.Decimal `db:"stamp_fee_amount"          json:"stamp_fee_amount"`
 	TotalAmount       decimal.Decimal  `db:"total_amount"              json:"total_amount"`
 	SettlementDate    *string          `db:"settlement_date"           json:"settlement_date"`
 	TransBankAccNo    *string          `db:"trans_bank_accno"          json:"trans_bank_accno"`
@@ -240,9 +240,9 @@ type AdminTransactionDetail struct {
 	FlagNewSub                  bool                                 `json:"flag_newsub"`
 	TransFeePercent             *decimal.Decimal                     `json:"trans_fee_percent"`
 	TransFeeAmount              *decimal.Decimal                     `json:"trans_fee_amount"`
-	ChargesFeeAmount            decimal.Decimal                      `json:"charges_fee_amount"`
-	ServicesFeeAmount           decimal.Decimal                      `json:"services_fee_amount"`
-	StampFeeAmount              decimal.Decimal                      `json:"stamp_fee_amount"`
+	ChargesFeeAmount            *decimal.Decimal                     `json:"charges_fee_amount"`
+	ServicesFeeAmount           *decimal.Decimal                     `json:"services_fee_amount"`
+	StampFeeAmount              *decimal.Decimal                     `json:"stamp_fee_amount"`
 	TotalAmount                 decimal.Decimal                      `json:"total_amount"`
 	SettlementDate              *string                              `json:"settlement_date"`
 	TransBankAccNo              *string                              `json:"trans_bank_accno"`
