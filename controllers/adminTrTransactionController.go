@@ -3708,6 +3708,13 @@ func DataTransaksiInquiry(c echo.Context) error {
 		noLimit = false
 	}
 
+	var isAll bool
+	if noLimit == true {
+		isAll = true
+	} else {
+		isAll = false
+	}
+
 	items := []string{"transaction_key", "branch_key", "agent_key", "customer_key", "product_key", "trans_date", "trans_amount", "trans_bank_key"}
 
 	params := make(map[string]string)
@@ -3783,7 +3790,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 
 	var trTransaction []models.TrTransaction
 
-	status, err = models.AdminGetAllTrTransaction(&trTransaction, limit, offset, noLimit, params, transStatusKey, "trans_status_key", true, strconv.FormatUint(lib.Profile.UserID, 10))
+	status, err = models.AdminGetAllTrTransaction(&trTransaction, limit, offset, noLimit, params, transStatusKey, "trans_status_key", isAll, strconv.FormatUint(lib.Profile.UserID, 10))
 
 	if err != nil {
 		log.Error(err.Error())
@@ -4057,6 +4064,8 @@ func DataTransaksiInquiry(c echo.Context) error {
 		if int(countData.CountData) < int(limit) {
 			pagination = 1
 		} else {
+			log.Println("JUMLAH DATANYA => ", countData.CountData)
+			log.Println("LIMIT => ", limit)
 			calc := math.Ceil(float64(countData.CountData) / float64(limit))
 			pagination = int(calc)
 		}

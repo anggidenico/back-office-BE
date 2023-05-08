@@ -425,9 +425,9 @@ func AdminGetAllTrTransaction(c *[]TrTransaction, limit uint64, offset uint64, n
 			  inner join ms_customer as c on c.customer_key = t.customer_key
 			  WHERE t.rec_status = 1 AND t.trans_status_key != 3`
 
-	if isAll == false {
-		query += " AND t.trans_type_key != 3"
-	}
+	// if isAll == false {
+	// 	query += " AND t.trans_type_key != 3"
+	// }
 	var present bool
 	var whereClause []string
 	var condition string
@@ -483,7 +483,7 @@ func AdminGetAllTrTransaction(c *[]TrTransaction, limit uint64, offset uint64, n
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	log.Println("========== AdminGetAllTrTransaction ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err)
@@ -497,8 +497,8 @@ func AdminGetCountTrTransaction(c *CountData, params map[string]string, valueIn 
 	query := `SELECT
               count(t.transaction_key) as count_data
 			  FROM tr_transaction as t
-			  inner join ms_customer as c on c.customer_key = t.customer_key
-			  WHERE t.trans_type_key != 3 `
+			  INNER JOIN ms_customer as c on c.customer_key = t.customer_key
+			  WHERE t.trans_status_key != 3 `
 
 	var whereClause []string
 	var condition string
@@ -537,7 +537,7 @@ func AdminGetCountTrTransaction(c *CountData, params map[string]string, valueIn 
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	log.Println("========== AdminGetCountTrTransaction ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err)
