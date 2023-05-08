@@ -83,7 +83,7 @@ type TrTransaction struct {
 	TransUnitPercent  *decimal.Decimal `db:"trans_unit_percent"        json:"trans_unit_percent"`
 	FlagRedemtAll     *uint8           `db:"flag_redempt_all"          json:"flag_redempt_all"`
 	FlagNewSub        *uint8           `db:"flag_newsub"               json:"flag_newsub"`
-	TransFeePercent   decimal.Decimal  `db:"trans_fee_percent"         json:"trans_fee_percent"`
+	TransFeePercent   *decimal.Decimal `db:"trans_fee_percent"         json:"trans_fee_percent"`
 	TransFeeAmount    decimal.Decimal  `db:"trans_fee_amount"          json:"trans_fee_amount"`
 	ChargesFeeAmount  decimal.Decimal  `db:"charges_fee_amount"        json:"charges_fee_amount"`
 	ServicesFeeAmount decimal.Decimal  `db:"services_fee_amount"       json:"services_fee_amount"`
