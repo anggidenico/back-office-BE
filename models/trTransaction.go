@@ -84,7 +84,7 @@ type TrTransaction struct {
 	FlagRedemtAll     *uint8           `db:"flag_redempt_all"          json:"flag_redempt_all"`
 	FlagNewSub        *uint8           `db:"flag_newsub"               json:"flag_newsub"`
 	TransFeePercent   *decimal.Decimal `db:"trans_fee_percent"         json:"trans_fee_percent"`
-	TransFeeAmount    decimal.Decimal  `db:"trans_fee_amount"          json:"trans_fee_amount"`
+	TransFeeAmount    *decimal.Decimal `db:"trans_fee_amount"          json:"trans_fee_amount"`
 	ChargesFeeAmount  decimal.Decimal  `db:"charges_fee_amount"        json:"charges_fee_amount"`
 	ServicesFeeAmount decimal.Decimal  `db:"services_fee_amount"       json:"services_fee_amount"`
 	StampFeeAmount    decimal.Decimal  `db:"stamp_fee_amount"          json:"stamp_fee_amount"`
@@ -239,7 +239,7 @@ type AdminTransactionDetail struct {
 	FlagRedemtAll               bool                                 `json:"flag_redempt_all"`
 	FlagNewSub                  bool                                 `json:"flag_newsub"`
 	TransFeePercent             *decimal.Decimal                     `json:"trans_fee_percent"`
-	TransFeeAmount              decimal.Decimal                      `json:"trans_fee_amount"`
+	TransFeeAmount              *decimal.Decimal                     `json:"trans_fee_amount"`
 	ChargesFeeAmount            decimal.Decimal                      `json:"charges_fee_amount"`
 	ServicesFeeAmount           decimal.Decimal                      `json:"services_fee_amount"`
 	StampFeeAmount              decimal.Decimal                      `json:"stamp_fee_amount"`
