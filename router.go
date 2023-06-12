@@ -464,10 +464,10 @@ func router() *echo.Echo {
 
 func printUrlMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		log.Println("1. ENDPOINT => ", c.Request().URL)
-		log.Println("2. TIME => ", lib.TIMENOW_TIMESTAMPFORMAT)
-		log.Println("3. USER AGENT => ", c.Request().UserAgent())
-		log.Println("4.IP CLIENT => ", c.RealIP())
+		log.Println("=== 1. ENDPOINT ==> ", c.Request().URL)
+		log.Println("=== 2. TIME ==> ", lib.TIMENOW_TIMESTAMPFORMAT)
+		log.Println("=== 3. USER AGENT ==> ", c.Request().UserAgent())
+		log.Println("=== 4. IP CLIENT ==> ", c.RealIP())
 		
 		return next(c)
 	}
