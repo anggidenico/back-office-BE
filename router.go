@@ -456,6 +456,9 @@ func router() *echo.Echo {
 	admin.GET("/getquizresult", controllers.GetQuizAnswer).Name = "GetQuizAnswer"
 	admin.POST("/quizresult", controllers.PostQuizAnswer).Name = "PostQuizAnswer"
 
+	admin.GET("/bankproduct/:product_key", controllers.GetBankProductSubscription).Name = "GetBankProductSubscription"
+	admin.GET("/bankcustomer/:customer_key", controllers.GetCustomerBankAccountRedemption).Name = "GetCustomerBankAccountRedemption"
+
 	return e
 }
 
