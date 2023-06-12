@@ -24,7 +24,7 @@ func router() *echo.Echo {
 	}))
 
 	e.Use(printUrlMiddleware)
-	e.Use(middleware.Logger())
+	// e.Use(middleware.Logger())
 
 	admin := e.Group("/admin")
 
@@ -461,7 +461,9 @@ func router() *echo.Echo {
 
 func printUrlMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		log.Println("========== HIT ENDPOINT: ========== >>>", c.Request().URL)
+		log.Println("HIT ENDPOINT => ", c.Request().URL)
+		log.Println("HIT FROM DEVICE => ", c.Request().UserAgent())
+		log.Println("IP CLIENT => ", c.RealIP())
 		return next(c)
 	}
 }

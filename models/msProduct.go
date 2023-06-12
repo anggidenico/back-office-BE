@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/config"
 	"mf-bo-api/db"
 	"net/http"
@@ -186,17 +185,17 @@ func CreateMsProduct(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -317,10 +316,10 @@ func GetAllMsProduct(c *[]MsProduct, limit uint64, offset uint64, params map[str
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -339,10 +338,10 @@ func GetAutoinvestProduct(c *[]MsProduct, customerKey string) (int, error) {
 			AND (ta.sub_suspend_flag IS NULL OR ta.sub_suspend_flag = 0) `
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -351,10 +350,10 @@ func GetAutoinvestProduct(c *[]MsProduct, customerKey string) (int, error) {
 
 func GetMsProduct(c *MsProduct, key string) (int, error) {
 	query := `SELECT ms_product.* FROM ms_product WHERE ms_product.product_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -370,10 +369,10 @@ func GetMsProductIn(c *[]MsProduct, value []string, field string) (int, error) {
 	query := query2 + " AND ms_product." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("========= QUERY GET PRODUCT ========= >>>", query)
+	// log.Println("========= QUERY GET PRODUCT ========= >>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -428,10 +427,10 @@ func AdminGetAllMsProductWithLike(c *[]MsProduct, limit uint64, offset uint64, p
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -469,10 +468,10 @@ func AdminGetCountMsProductWithLike(c *CountData, params map[string]string, para
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -495,11 +494,11 @@ func UpdateMsProduct(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE product_key = " + params["product_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -511,7 +510,7 @@ func UpdateMsProduct(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -577,10 +576,10 @@ func AdminGetValidateUniqueDataInsertUpdate(c *CountData, paramsOr map[string]st
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -596,10 +595,10 @@ func AdminGetProductSubscription(c *[]ProductSubscriptionFundType, fundtypeKey s
 			ORDER BY p.rec_order ASC`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -656,10 +655,10 @@ func AdminGetProductSubscriptionByProductKey(c *ProductSubscription, productKey 
 			ORDER BY f.rec_order ASC`
 
 	// Main query
-	log.Println("========== QUERY CEK PRODUCT SUBSCRIPTION =========", query)
+	// log.Println("========== QUERY CEK PRODUCT SUBSCRIPTION =========", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -718,10 +717,10 @@ func AdminGetProductRedemption(c *[]ProductRedemption, customerKey string) (int,
 			GROUP BY p.product_key ORDER BY f.rec_order ASC`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -773,10 +772,10 @@ func AdminGetProductHaveBalanceSwitchIn(c *[]ProductHaveBalanceSwitchIn, custome
 			GROUP BY p.product_key ORDER BY f.rec_order ASC`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -813,10 +812,10 @@ func AdminGetProductNotInBalanceSwitchIn(c *[]ProductHaveBalanceSwitchIn, value 
 			GROUP BY p.product_key ORDER BY p.product_key ASC`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/leekchan/accounting"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
@@ -107,7 +106,7 @@ func NotifTransactionBeforeExpired() {
 					var transaction models.DetailTransactionVaBelumBayar
 					_, err = models.AdminDetailTransactionVaBelumBayar(&transaction, trID)
 					if err != nil {
-						log.Error("Failed get transaction: " + err.Error())
+						// log.Error("Failed get transaction: " + err.Error())
 					}
 					sentEmailCustomerTransaksiVaMandiriSebelumExpired(transaction)
 				}
@@ -153,7 +152,7 @@ func sentEmailCustomerTransaksiVaMandiriSebelumExpired(transaction models.Detail
 	t, _ = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 	var tpl bytes.Buffer
 	if err := t.Execute(&tpl, mailParam); err != nil {
-		log.Error("Failed send mail: " + err.Error())
+		// log.Error("Failed send mail: " + err.Error())
 	} else {
 		result := tpl.String()
 
@@ -165,10 +164,10 @@ func sentEmailCustomerTransaksiVaMandiriSebelumExpired(transaction models.Detail
 
 		err = SendEmail(mailer)
 		if err != nil {
-			log.Error("Failed send mail transaksi sebelum expired to: " + transaction.UloginEmail)
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail transaksi sebelum expired to: " + transaction.UloginEmail)
+			// log.Error("Failed send mail: " + err.Error())
 		} else {
-			log.Println("Sukses email transaksi sebelum expired : " + transaction.UloginEmail)
+			// log.Println("Sukses email transaksi sebelum expired : " + transaction.UloginEmail)
 		}
 
 		// dialer := gomail.NewDialer(
@@ -181,10 +180,10 @@ func sentEmailCustomerTransaksiVaMandiriSebelumExpired(transaction models.Detail
 
 		// err = dialer.DialAndSend(mailer)
 		// if err != nil {
-		// 	log.Error("Failed send mail transaksi sebelum expired to: " + transaction.UloginEmail)
-		// 	log.Error("Failed send mail: " + err.Error())
+		// 	// log.Error("Failed send mail transaksi sebelum expired to: " + transaction.UloginEmail)
+		// 	// log.Error("Failed send mail: " + err.Error())
 		// } else {
-		// 	log.Println("Sukses email transaksi sebelum expired : " + transaction.UloginEmail)
+		// 	// log.Println("Sukses email transaksi sebelum expired : " + transaction.UloginEmail)
 		// }
 	}
 }

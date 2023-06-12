@@ -4,8 +4,6 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type ScUserDept struct {
@@ -55,10 +53,10 @@ type ListUserDeptAdmin struct {
 func GetScUserDept(c *ScUserDept, key string) (int, error) {
 	query := `SELECT sc_user_dept.* FROM sc_user_dept 
 				WHERE sc_user_dept.rec_status = 1 AND sc_user_dept.user_dept_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -109,10 +107,10 @@ func GetAllScUserDept(c *[]ScUserDept, limit uint64, offset uint64, params map[s
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -200,10 +198,10 @@ func AdminGetListScUserDept(c *[]ListUserDeptAdmin, limit uint64, offset uint64,
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -259,10 +257,10 @@ func CountAdminGetListScUserDept(c *CountData, params map[string]string, searchL
 			WHERE dat.parent_rec_status = 1`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -285,11 +283,11 @@ func UpdateScUserDept(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE user_dept_key = " + params["user_dept_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -297,7 +295,7 @@ func UpdateScUserDept(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -318,18 +316,18 @@ func CreateScUserDept(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -346,10 +344,10 @@ func CountScUserDeptValidateUnique(c *CountData, field string, value string, key
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

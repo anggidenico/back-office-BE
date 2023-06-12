@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetListMsCurrency(c echo.Context) error {
@@ -27,7 +26,7 @@ func GetListMsCurrency(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -43,7 +42,7 @@ func GetListMsCurrency(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -59,7 +58,7 @@ func GetListMsCurrency(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -81,7 +80,7 @@ func GetListMsCurrency(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	}
@@ -89,7 +88,7 @@ func GetListMsCurrency(c echo.Context) error {
 	var currency []models.MsCurrency
 	status, err = models.AdminGetListMsCurrency(&currency, limit, offset, params, noLimit)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -129,7 +128,7 @@ func AdminGetListMsCurrency(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -145,7 +144,7 @@ func AdminGetListMsCurrency(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -161,7 +160,7 @@ func AdminGetListMsCurrency(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -181,7 +180,7 @@ func AdminGetListMsCurrency(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -196,11 +195,11 @@ func AdminGetListMsCurrency(c echo.Context) error {
 	status, err = models.AdminGetListCurrency(&currency, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(currency) < 1 {
-		log.Error("Currency not found")
+		// log.Error("Currency not found")
 		return lib.CustomError(http.StatusNotFound, "Currency not found", "Currency not found")
 	}
 
@@ -209,7 +208,7 @@ func AdminGetListMsCurrency(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetCurrency(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -240,7 +239,7 @@ func AdminDeleteMsCurrency(c echo.Context) error {
 	keyStr := c.FormValue("currency_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: currency_key")
+		// log.Error("Missing required parameter: currency_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: currency_key", "Missing required parameter: currency_key")
 	}
 
@@ -252,7 +251,7 @@ func AdminDeleteMsCurrency(c echo.Context) error {
 
 	_, err = models.UpdateMsCurrency(params)
 	if err != nil {
-		log.Error("Error delete ms_currency")
+		// log.Error("Error delete ms_currency")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -272,7 +271,7 @@ func AdminCreateMsCurrency(c echo.Context) error {
 
 	code := c.FormValue("code")
 	if code == "" {
-		log.Error("Missing required parameter: code")
+		// log.Error("Missing required parameter: code")
 		return lib.CustomError(http.StatusBadRequest, "code can not be blank", "code can not be blank")
 	} else {
 		params["code"] = code
@@ -280,7 +279,7 @@ func AdminCreateMsCurrency(c echo.Context) error {
 
 	symbol := c.FormValue("symbol")
 	if symbol == "" {
-		log.Error("Missing required parameter: symbol")
+		// log.Error("Missing required parameter: symbol")
 		return lib.CustomError(http.StatusBadRequest, "symbol can not be blank", "symbol can not be blank")
 	} else {
 		params["symbol"] = symbol
@@ -288,7 +287,7 @@ func AdminCreateMsCurrency(c echo.Context) error {
 
 	name := c.FormValue("name")
 	if name == "" {
-		log.Error("Missing required parameter: name")
+		// log.Error("Missing required parameter: name")
 		return lib.CustomError(http.StatusBadRequest, "name can not be blank", "name can not be blank")
 	} else {
 		params["name"] = name
@@ -296,11 +295,11 @@ func AdminCreateMsCurrency(c echo.Context) error {
 
 	flagBase := c.FormValue("flag_base")
 	if flagBase == "" {
-		log.Error("Missing required parameter: flag_base")
+		// log.Error("Missing required parameter: flag_base")
 		return lib.CustomError(http.StatusBadRequest, "flag_base can not be blank", "flag_base can not be blank")
 	} else {
 		if flagBase != "1" && flagBase != "0" {
-			log.Error("Missing required parameter: flag_base")
+			// log.Error("Missing required parameter: flag_base")
 			return lib.CustomError(http.StatusBadRequest, "flag_base must 1 / 0", "flag_base must 1 / 0")
 		}
 		params["flag_base"] = flagBase
@@ -310,7 +309,7 @@ func AdminCreateMsCurrency(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -323,7 +322,7 @@ func AdminCreateMsCurrency(c echo.Context) error {
 
 	status, err = models.CreateMsCurrency(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -346,18 +345,18 @@ func AdminUpdateMsCurrency(c echo.Context) error {
 	if currencyKey != "" {
 		n, err := strconv.ParseUint(currencyKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: currency_key")
+			// log.Error("Wrong input for parameter: currency_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: currency_key", "Wrong input for parameter: currency_key")
 		}
 		params["currency_key"] = currencyKey
 	} else {
-		log.Error("Missing required parameter: currency_key")
+		// log.Error("Missing required parameter: currency_key")
 		return lib.CustomError(http.StatusBadRequest, "currency_key can not be blank", "currency_key can not be blank")
 	}
 
 	code := c.FormValue("code")
 	if code == "" {
-		log.Error("Missing required parameter: code")
+		// log.Error("Missing required parameter: code")
 		return lib.CustomError(http.StatusBadRequest, "code can not be blank", "code can not be blank")
 	} else {
 		params["code"] = code
@@ -365,7 +364,7 @@ func AdminUpdateMsCurrency(c echo.Context) error {
 
 	symbol := c.FormValue("symbol")
 	if symbol == "" {
-		log.Error("Missing required parameter: symbol")
+		// log.Error("Missing required parameter: symbol")
 		return lib.CustomError(http.StatusBadRequest, "symbol can not be blank", "symbol can not be blank")
 	} else {
 		params["symbol"] = symbol
@@ -373,7 +372,7 @@ func AdminUpdateMsCurrency(c echo.Context) error {
 
 	name := c.FormValue("name")
 	if name == "" {
-		log.Error("Missing required parameter: name")
+		// log.Error("Missing required parameter: name")
 		return lib.CustomError(http.StatusBadRequest, "name can not be blank", "name can not be blank")
 	} else {
 		params["name"] = name
@@ -381,11 +380,11 @@ func AdminUpdateMsCurrency(c echo.Context) error {
 
 	flagBase := c.FormValue("flag_base")
 	if flagBase == "" {
-		log.Error("Missing required parameter: flag_base")
+		// log.Error("Missing required parameter: flag_base")
 		return lib.CustomError(http.StatusBadRequest, "flag_base can not be blank", "flag_base can not be blank")
 	} else {
 		if flagBase != "1" && flagBase != "0" {
-			log.Error("Missing required parameter: flag_base")
+			// log.Error("Missing required parameter: flag_base")
 			return lib.CustomError(http.StatusBadRequest, "flag_base must 1 / 0", "flag_base must 1 / 0")
 		}
 		params["flag_base"] = flagBase
@@ -395,7 +394,7 @@ func AdminUpdateMsCurrency(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -408,7 +407,7 @@ func AdminUpdateMsCurrency(c echo.Context) error {
 
 	status, err = models.UpdateMsCurrency(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -426,19 +425,19 @@ func AdminDetailMsCurrency(c echo.Context) error {
 
 	currencyKey := c.Param("currency_key")
 	if currencyKey == "" {
-		log.Error("Missing required parameter: currency_key")
+		// log.Error("Missing required parameter: currency_key")
 		return lib.CustomError(http.StatusBadRequest, "currency_key can not be blank", "currency_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(currencyKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: currency_key")
+			// log.Error("Wrong input for parameter: currency_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: currency_key", "Wrong input for parameter: currency_key")
 		}
 	}
 	var currency models.MsCurrency
 	_, err = models.GetMsCurrency(&currency, currencyKey)
 	if err != nil {
-		log.Error("Currency not found")
+		// log.Error("Currency not found")
 		return lib.CustomError(http.StatusBadRequest, "Currency not found", "Currency not found")
 	}
 

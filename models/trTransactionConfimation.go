@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -54,10 +53,10 @@ type TrTransactionConfirmationInfo struct {
 func GetTrTransactionConfirmation(c *TrTransactionConfirmation, key string) (int, error) {
 	query := `SELECT tr_transaction_confirmation.* FROM tr_transaction_confirmation 
 	          WHERE tr_transaction_confirmation.rec_status = 1 AND tr_transaction_confirmation.tc_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -67,10 +66,10 @@ func GetTrTransactionConfirmation(c *TrTransactionConfirmation, key string) (int
 func GetTrTransactionConfirmationByTransactionKey(c *TrTransactionConfirmation, transactionKey string) (int, error) {
 	query := `SELECT tr_transaction_confirmation.* FROM tr_transaction_confirmation 
 	          WHERE tr_transaction_confirmation.rec_status = 1 AND tr_transaction_confirmation.transaction_key = ` + transactionKey
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -92,18 +91,18 @@ func CreateTrTransactionConfirmation(params map[string]string) (int, error, stri
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -118,10 +117,10 @@ func GetTrTransactionConfirmationIn(c *[]TrTransactionConfirmation, value []stri
 	query := query2 + " WHERE tr_transaction_confirmation." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("========= QUERY GET Transaction Confirm ========= >>>", query)
+	// log.Println("========= QUERY GET Transaction Confirm ========= >>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -144,11 +143,11 @@ func UpdateTrTransactionConfirmation(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE tc_key = " + params["tc_key"]
-	// log.Println("==========  ==========>>>", query)
+	// // log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		// log.Error(err)
+		// // log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -160,7 +159,7 @@ func UpdateTrTransactionConfirmation(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		// log.Error(err)
+		// // log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil

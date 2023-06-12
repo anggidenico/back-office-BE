@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetGenLookup(c echo.Context) error {
@@ -19,7 +18,7 @@ func GetGenLookup(c echo.Context) error {
 	groupKeyStr := c.QueryParam("group_key")
 	groupKey, _ := strconv.ParseUint(groupKeyStr, 10, 64)
 	if groupKey == 0 {
-		log.Error("Group key should be number")
+		// log.Error("Group key should be number")
 		return lib.CustomError(http.StatusNotFound, "Group key should be number", "Group key should be number")
 	}
 
@@ -29,7 +28,7 @@ func GetGenLookup(c echo.Context) error {
 	var lookupDB []models.GenLookup
 	status, err = models.GetAllGenLookup(&lookupDB, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -47,7 +46,7 @@ func GetGenLookup(c echo.Context) error {
 	var lkpGroupDB []models.GenLookupGroup
 	status, err = models.GetAllGenLookupGroup(&lkpGroupDB, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 

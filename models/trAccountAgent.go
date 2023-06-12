@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type TrAccountAgent struct {
@@ -52,18 +51,18 @@ func CreateTrAccountAgent(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -106,10 +105,10 @@ func GetAllTrAccountAgent(c *[]TrAccountAgent, params map[string]string) (int, e
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -118,10 +117,10 @@ func GetAllTrAccountAgent(c *[]TrAccountAgent, params map[string]string) (int, e
 
 func GetTrAccountAgent(c *TrAccountAgent, key string) (int, error) {
 	query := `SELECT tr_account_agent.* FROM tr_account_agent WHERE tr_account_agent.rec_status = 1 AND tr_account_agent.aca_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -137,10 +136,10 @@ func GetTrAccountAgentIn(c *[]TrAccountAgent, value []string, field string) (int
 	query := query2 + " AND tr_account_agent." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("========= QUERY GET TRX AGENT ========= >>>", query)
+	// log.Println("========= QUERY GET TRX AGENT ========= >>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -162,10 +161,10 @@ func AumBalanceQuery(c *AumBalanceUnitStruct, acaKey string, date string) (int, 
 			AND bal.balance_date <= " ` + date + `"
 		) c ON c.aca_key = trbal.aca_key AND c.balance_date = trbal.balance_date`
 
-	log.Println("===== QUERY GET AUM BALANCE UNIT ===== >>>", query)
+	// log.Println("===== QUERY GET AUM BALANCE UNIT ===== >>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
@@ -189,10 +188,10 @@ func AumNavValueQuery(c *AumNavValueStruct, productKey string, date string) (int
 		) c ON c.product_key = nav.product_key AND c.nav_date = nav.nav_date
 		ORDER BY nav.nav_date DESC LIMIT 1`
 
-	log.Println("===== QUERY GET Nav Value Aum report ===== >>>", query)
+	// log.Println("===== QUERY GET Nav Value Aum report ===== >>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
@@ -214,10 +213,10 @@ func AumCurrencyRateQuery(c *AumCurrencyRateStruct, currencyKey string, date str
 		) c ON c.rate_date = tcur.rate_date AND c.currency_key = tcur.currency_key
 		ORDER BY tcur.rate_date DESC LIMIT 1`
 
-	log.Println("===== QUERY GET currency rate Aum report ===== >>>", query)
+	// log.Println("===== QUERY GET currency rate Aum report ===== >>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil

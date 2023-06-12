@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetMsBankList(c echo.Context) error {
@@ -24,11 +23,11 @@ func GetMsBankList(c echo.Context) error {
 	var bankDB []models.MsBank
 	status, err = models.GetAllMsBank(&bankDB, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(bankDB) < 1 {
-		log.Error("Data not found")
+		// log.Error("Data not found")
 		return lib.CustomError(http.StatusNotFound, "Data not found", "Data not found")
 	}
 	var responseData []models.MsBankList
@@ -68,7 +67,7 @@ func AdminGetListMsBank(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -84,7 +83,7 @@ func AdminGetListMsBank(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -100,7 +99,7 @@ func AdminGetListMsBank(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -120,7 +119,7 @@ func AdminGetListMsBank(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -145,11 +144,11 @@ func AdminGetListMsBank(c echo.Context) error {
 	status, err = models.AdminGetListBank(&bank, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(bank) < 1 {
-		log.Error("Bank not found")
+		// log.Error("Bank not found")
 		return lib.CustomError(http.StatusNotFound, "Bank not found", "Bank not found")
 	}
 
@@ -158,7 +157,7 @@ func AdminGetListMsBank(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetListBank(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -189,7 +188,7 @@ func AdminDeleteMsBank(c echo.Context) error {
 	keyStr := c.FormValue("bank_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: bank_key")
+		// log.Error("Missing required parameter: bank_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_key", "Missing required parameter: bank_key")
 	}
 
@@ -201,7 +200,7 @@ func AdminDeleteMsBank(c echo.Context) error {
 
 	_, err = models.UpdateMsBank(params)
 	if err != nil {
-		log.Error("Error delete ms_bank")
+		// log.Error("Error delete ms_bank")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -221,18 +220,18 @@ func AdminCreateMsBank(c echo.Context) error {
 
 	bankCode := c.FormValue("bank_code")
 	if bankCode == "" {
-		log.Error("Missing required parameter: bank_code")
+		// log.Error("Missing required parameter: bank_code")
 		return lib.CustomError(http.StatusBadRequest, "bank_code can not be blank", "bank_code can not be blank")
 	} else {
 		//validate unique bank_code
 		var countData models.CountData
 		status, err = models.CountMsBankValidateUnique(&countData, "bank_code", bankCode, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: bank_code")
+			// log.Error("Missing required parameter: bank_code")
 			return lib.CustomError(http.StatusBadRequest, "bank_code already used", "bank_code already used")
 		}
 		params["bank_code"] = bankCode
@@ -240,18 +239,18 @@ func AdminCreateMsBank(c echo.Context) error {
 
 	bankName := c.FormValue("bank_name")
 	if bankName == "" {
-		log.Error("Missing required parameter: bank_name")
+		// log.Error("Missing required parameter: bank_name")
 		return lib.CustomError(http.StatusBadRequest, "bank_name can not be blank", "bank_name can not be blank")
 	} else {
 		//validate unique bank_name
 		var countData models.CountData
 		status, err = models.CountMsBankValidateUnique(&countData, "bank_name", bankName, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: bank_name")
+			// log.Error("Missing required parameter: bank_name")
 			return lib.CustomError(http.StatusBadRequest, "bank_name already used", "bank_name already used")
 		}
 		params["bank_name"] = bankName
@@ -259,7 +258,7 @@ func AdminCreateMsBank(c echo.Context) error {
 
 	bankFullName := c.FormValue("bank_fullname")
 	if bankFullName == "" {
-		log.Error("Missing required parameter: bank_fullname")
+		// log.Error("Missing required parameter: bank_fullname")
 		return lib.CustomError(http.StatusBadRequest, "bank_fullname can not be blank", "bank_fullname can not be blank")
 	} else {
 		params["bank_fullname"] = bankFullName
@@ -271,11 +270,11 @@ func AdminCreateMsBank(c echo.Context) error {
 		var countData models.CountData
 		status, err = models.CountMsBankValidateUnique(&countData, "bi_member_code", biMemberCode, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: bi_member_code")
+			// log.Error("Missing required parameter: bi_member_code")
 			return lib.CustomError(http.StatusBadRequest, "bi_member_code already used", "bi_member_code already used")
 		}
 		params["bi_member_code"] = biMemberCode
@@ -283,18 +282,18 @@ func AdminCreateMsBank(c echo.Context) error {
 
 	swiftCode := c.FormValue("swift_code")
 	if swiftCode == "" {
-		log.Error("Missing required parameter: swift_code")
+		// log.Error("Missing required parameter: swift_code")
 		return lib.CustomError(http.StatusBadRequest, "swift_code can not be blank", "swift_code can not be blank")
 	} else {
 		//validate unique swift_code
 		var countData models.CountData
 		status, err = models.CountMsBankValidateUnique(&countData, "swift_code", swiftCode, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: swift_code")
+			// log.Error("Missing required parameter: swift_code")
 			return lib.CustomError(http.StatusBadRequest, "swift_code already used", "swift_code already used")
 		}
 		params["swift_code"] = swiftCode
@@ -302,11 +301,11 @@ func AdminCreateMsBank(c echo.Context) error {
 
 	bankLocal := c.FormValue("bank_local")
 	if bankLocal == "" {
-		log.Error("Missing required parameter: bank_local")
+		// log.Error("Missing required parameter: bank_local")
 		return lib.CustomError(http.StatusBadRequest, "bank_local can not be blank", "bank_local can not be blank")
 	} else {
 		if bankLocal != "1" && bankLocal != "0" {
-			log.Error("Missing required parameter: bank_local")
+			// log.Error("Missing required parameter: bank_local")
 			return lib.CustomError(http.StatusBadRequest, "bank_local must 1 / 0", "bank_local must 1 / 0")
 		}
 		params["flag_local"] = bankLocal
@@ -314,11 +313,11 @@ func AdminCreateMsBank(c echo.Context) error {
 
 	bankGovernment := c.FormValue("bank_government")
 	if bankGovernment == "" {
-		log.Error("Missing required parameter: bank_government")
+		// log.Error("Missing required parameter: bank_government")
 		return lib.CustomError(http.StatusBadRequest, "bank_government can not be blank", "bank_government can not be blank")
 	} else {
 		if bankGovernment != "1" && bankGovernment != "0" {
-			log.Error("Missing required parameter: bank_government")
+			// log.Error("Missing required parameter: bank_government")
 			return lib.CustomError(http.StatusBadRequest, "bank_government must 1 / 0", "bank_government must 1 / 0")
 		}
 		params["flag_government"] = bankGovernment
@@ -338,7 +337,7 @@ func AdminCreateMsBank(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -351,7 +350,7 @@ func AdminCreateMsBank(c echo.Context) error {
 
 	status, err = models.CreateMsBank(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -374,29 +373,29 @@ func AdminUpdateMsBank(c echo.Context) error {
 	if bankKey != "" {
 		n, err := strconv.ParseUint(bankKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: bank_key")
+			// log.Error("Wrong input for parameter: bank_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: bank_key", "Wrong input for parameter: bank_key")
 		}
 		params["bank_key"] = bankKey
 	} else {
-		log.Error("Missing required parameter: bank_key")
+		// log.Error("Missing required parameter: bank_key")
 		return lib.CustomError(http.StatusBadRequest, "bank_key can not be blank", "bank_key can not be blank")
 	}
 
 	bankCode := c.FormValue("bank_code")
 	if bankCode == "" {
-		log.Error("Missing required parameter: bank_code")
+		// log.Error("Missing required parameter: bank_code")
 		return lib.CustomError(http.StatusBadRequest, "bank_code can not be blank", "bank_code can not be blank")
 	} else {
 		//validate unique bank_code
 		var countData models.CountData
 		status, err = models.CountMsBankValidateUnique(&countData, "bank_code", bankCode, bankKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: bank_code")
+			// log.Error("Missing required parameter: bank_code")
 			return lib.CustomError(http.StatusBadRequest, "bank_code already used", "bank_code already used")
 		}
 		params["bank_code"] = bankCode
@@ -404,18 +403,18 @@ func AdminUpdateMsBank(c echo.Context) error {
 
 	bankName := c.FormValue("bank_name")
 	if bankName == "" {
-		log.Error("Missing required parameter: bank_name")
+		// log.Error("Missing required parameter: bank_name")
 		return lib.CustomError(http.StatusBadRequest, "bank_name can not be blank", "bank_name can not be blank")
 	} else {
 		//validate unique bank_name
 		var countData models.CountData
 		status, err = models.CountMsBankValidateUnique(&countData, "bank_name", bankName, bankKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: bank_name")
+			// log.Error("Missing required parameter: bank_name")
 			return lib.CustomError(http.StatusBadRequest, "bank_name already used", "bank_name already used")
 		}
 		params["bank_name"] = bankName
@@ -423,7 +422,7 @@ func AdminUpdateMsBank(c echo.Context) error {
 
 	bankFullName := c.FormValue("bank_fullname")
 	if bankFullName == "" {
-		log.Error("Missing required parameter: bank_fullname")
+		// log.Error("Missing required parameter: bank_fullname")
 		return lib.CustomError(http.StatusBadRequest, "bank_fullname can not be blank", "bank_fullname can not be blank")
 	} else {
 		params["bank_fullname"] = bankFullName
@@ -435,11 +434,11 @@ func AdminUpdateMsBank(c echo.Context) error {
 		var countData models.CountData
 		status, err = models.CountMsBankValidateUnique(&countData, "bi_member_code", biMemberCode, bankKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: bi_member_code")
+			// log.Error("Missing required parameter: bi_member_code")
 			return lib.CustomError(http.StatusBadRequest, "bi_member_code already used", "bi_member_code already used")
 		}
 		params["bi_member_code"] = biMemberCode
@@ -447,18 +446,18 @@ func AdminUpdateMsBank(c echo.Context) error {
 
 	swiftCode := c.FormValue("swift_code")
 	if swiftCode == "" {
-		log.Error("Missing required parameter: swift_code")
+		// log.Error("Missing required parameter: swift_code")
 		return lib.CustomError(http.StatusBadRequest, "swift_code can not be blank", "swift_code can not be blank")
 	} else {
 		//validate unique swift_code
 		var countData models.CountData
 		status, err = models.CountMsBankValidateUnique(&countData, "swift_code", swiftCode, bankKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: swift_code")
+			// log.Error("Missing required parameter: swift_code")
 			return lib.CustomError(http.StatusBadRequest, "swift_code already used", "swift_code already used")
 		}
 		params["swift_code"] = swiftCode
@@ -466,11 +465,11 @@ func AdminUpdateMsBank(c echo.Context) error {
 
 	bankLocal := c.FormValue("bank_local")
 	if bankLocal == "" {
-		log.Error("Missing required parameter: bank_local")
+		// log.Error("Missing required parameter: bank_local")
 		return lib.CustomError(http.StatusBadRequest, "bank_local can not be blank", "bank_local can not be blank")
 	} else {
 		if bankLocal != "1" && bankLocal != "0" {
-			log.Error("Missing required parameter: bank_local")
+			// log.Error("Missing required parameter: bank_local")
 			return lib.CustomError(http.StatusBadRequest, "bank_local must 1 / 0", "bank_local must 1 / 0")
 		}
 		params["flag_local"] = bankLocal
@@ -478,11 +477,11 @@ func AdminUpdateMsBank(c echo.Context) error {
 
 	bankGovernment := c.FormValue("bank_government")
 	if bankGovernment == "" {
-		log.Error("Missing required parameter: bank_government")
+		// log.Error("Missing required parameter: bank_government")
 		return lib.CustomError(http.StatusBadRequest, "bank_government can not be blank", "bank_government can not be blank")
 	} else {
 		if bankGovernment != "1" && bankGovernment != "0" {
-			log.Error("Missing required parameter: bank_government")
+			// log.Error("Missing required parameter: bank_government")
 			return lib.CustomError(http.StatusBadRequest, "bank_government must 1 / 0", "bank_government must 1 / 0")
 		}
 		params["flag_government"] = bankGovernment
@@ -502,7 +501,7 @@ func AdminUpdateMsBank(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -515,7 +514,7 @@ func AdminUpdateMsBank(c echo.Context) error {
 
 	status, err = models.UpdateMsBank(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -533,19 +532,19 @@ func AdminDetailBank(c echo.Context) error {
 
 	bankKey := c.Param("bank_key")
 	if bankKey == "" {
-		log.Error("Missing required parameter: bank_key")
+		// log.Error("Missing required parameter: bank_key")
 		return lib.CustomError(http.StatusBadRequest, "bank_key can not be blank", "bank_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(bankKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: bank_key")
+			// log.Error("Wrong input for parameter: bank_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: bank_key", "Wrong input for parameter: bank_key")
 		}
 	}
 	var bank models.MsBank
 	_, err = models.GetMsBank(&bank, bankKey)
 	if err != nil {
-		log.Error("Bank not found")
+		// log.Error("Bank not found")
 		return lib.CustomError(http.StatusBadRequest, "Bank not found", "Bank not found")
 	}
 

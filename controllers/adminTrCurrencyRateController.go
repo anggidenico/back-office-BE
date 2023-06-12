@@ -11,7 +11,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetListTrCurrencyRate(c echo.Context) error {
@@ -29,7 +28,7 @@ func GetListTrCurrencyRate(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -45,7 +44,7 @@ func GetListTrCurrencyRate(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -61,7 +60,7 @@ func GetListTrCurrencyRate(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -97,7 +96,7 @@ func GetListTrCurrencyRate(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -126,11 +125,11 @@ func GetListTrCurrencyRate(c echo.Context) error {
 	status, err = models.AdminGetListCurrencyRate(&currency, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(currency) < 1 {
-		log.Error("Currency Rate not found")
+		// log.Error("Currency Rate not found")
 		return lib.CustomError(http.StatusNotFound, "Currency Rate not found", "Currency Rate not found")
 	}
 
@@ -139,7 +138,7 @@ func GetListTrCurrencyRate(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetCurrencyRate(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -170,7 +169,7 @@ func AdminDeleteTrCurrencyRate(c echo.Context) error {
 	keyStr := c.FormValue("curr_rate_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: curr_rate_key")
+		// log.Error("Missing required parameter: curr_rate_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: curr_rate_key", "Missing required parameter: curr_rate_key")
 	}
 
@@ -182,7 +181,7 @@ func AdminDeleteTrCurrencyRate(c echo.Context) error {
 
 	_, err = models.UpdateTrCurrenctyRate(params)
 	if err != nil {
-		log.Error("Error delete tr_currency_rate")
+		// log.Error("Error delete tr_currency_rate")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -202,7 +201,7 @@ func AdminCreateTrCurrencyRate(c echo.Context) error {
 
 	rateDate := c.FormValue("rate_date")
 	if rateDate == "" {
-		log.Error("Missing required parameter: rate_date")
+		// log.Error("Missing required parameter: rate_date")
 		return lib.CustomError(http.StatusBadRequest, "rate_date can not be blank", "rate_date can not be blank")
 	} else {
 		params["rate_date"] = rateDate
@@ -212,12 +211,12 @@ func AdminCreateTrCurrencyRate(c echo.Context) error {
 	if rateType != "" {
 		n, err := strconv.ParseUint(rateType, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rate_type")
+			// log.Error("Wrong input for parameter: rate_type")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rate_type", "Wrong input for parameter: rate_type")
 		}
 		params["rate_type"] = rateType
 	} else {
-		log.Error("Missing required parameter: rate_type")
+		// log.Error("Missing required parameter: rate_type")
 		return lib.CustomError(http.StatusBadRequest, "rate_type can not be blank", "rate_type can not be blank")
 	}
 
@@ -225,7 +224,7 @@ func AdminCreateTrCurrencyRate(c echo.Context) error {
 	if rateValue != "" {
 		_, err := decimal.NewFromString(rateValue)
 		if err != nil {
-			log.Error("Wrong input for parameter: rate_value")
+			// log.Error("Wrong input for parameter: rate_value")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rate_value", "Wrong input for parameter: rate_value")
 		}
 		params["rate_value"] = rateValue
@@ -237,12 +236,12 @@ func AdminCreateTrCurrencyRate(c echo.Context) error {
 	if currencyKey != "" {
 		n, err := strconv.ParseUint(currencyKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: currency_key")
+			// log.Error("Wrong input for parameter: currency_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: currency_key", "Wrong input for parameter: currency_key")
 		}
 		params["currency_key"] = currencyKey
 	} else {
-		log.Error("Missing required parameter: currency_key")
+		// log.Error("Missing required parameter: currency_key")
 		return lib.CustomError(http.StatusBadRequest, "currency_key can not be blank", "currency_key can not be blank")
 	}
 
@@ -250,11 +249,11 @@ func AdminCreateTrCurrencyRate(c echo.Context) error {
 	var countData models.CountData
 	status, err = models.CountTrCurrencyRateValidateUniqueDateRateCurrency(&countData, rateDate, rateType, currencyKey, "")
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countData.CountData) > int(0) {
-		log.Error("Data with rate_date, rate_type, and currency_key already exist")
+		// log.Error("Data with rate_date, rate_type, and currency_key already exist")
 		return lib.CustomError(http.StatusBadRequest, "Data with rate_date, rate_type, and currency_key already exist", "Data with rate_date, rate_type, and currency_key already exist")
 	}
 
@@ -265,7 +264,7 @@ func AdminCreateTrCurrencyRate(c echo.Context) error {
 
 	status, err = models.CreateTrCurrenctyRate(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -288,18 +287,18 @@ func AdminUpdateTrCurrencyRate(c echo.Context) error {
 	if currRateKey != "" {
 		n, err := strconv.ParseUint(currRateKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: curr_rate_key")
+			// log.Error("Wrong input for parameter: curr_rate_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: curr_rate_key", "Wrong input for parameter: curr_rate_key")
 		}
 		params["curr_rate_key"] = currRateKey
 	} else {
-		log.Error("Missing required parameter: curr_rate_key")
+		// log.Error("Missing required parameter: curr_rate_key")
 		return lib.CustomError(http.StatusBadRequest, "curr_rate_key can not be blank", "curr_rate_key can not be blank")
 	}
 
 	rateDate := c.FormValue("rate_date")
 	if rateDate == "" {
-		log.Error("Missing required parameter: rate_date")
+		// log.Error("Missing required parameter: rate_date")
 		return lib.CustomError(http.StatusBadRequest, "rate_date can not be blank", "rate_date can not be blank")
 	} else {
 		params["rate_date"] = rateDate
@@ -309,12 +308,12 @@ func AdminUpdateTrCurrencyRate(c echo.Context) error {
 	if rateType != "" {
 		n, err := strconv.ParseUint(rateType, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rate_type")
+			// log.Error("Wrong input for parameter: rate_type")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rate_type", "Wrong input for parameter: rate_type")
 		}
 		params["rate_type"] = rateType
 	} else {
-		log.Error("Missing required parameter: rate_type")
+		// log.Error("Missing required parameter: rate_type")
 		return lib.CustomError(http.StatusBadRequest, "rate_type can not be blank", "rate_type can not be blank")
 	}
 
@@ -322,7 +321,7 @@ func AdminUpdateTrCurrencyRate(c echo.Context) error {
 	if rateValue != "" {
 		_, err := decimal.NewFromString(rateValue)
 		if err != nil {
-			log.Error("Wrong input for parameter: rate_value")
+			// log.Error("Wrong input for parameter: rate_value")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rate_value", "Wrong input for parameter: rate_value")
 		}
 		params["rate_value"] = rateValue
@@ -334,12 +333,12 @@ func AdminUpdateTrCurrencyRate(c echo.Context) error {
 	if currencyKey != "" {
 		n, err := strconv.ParseUint(currencyKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: currency_key")
+			// log.Error("Wrong input for parameter: currency_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: currency_key", "Wrong input for parameter: currency_key")
 		}
 		params["currency_key"] = currencyKey
 	} else {
-		log.Error("Missing required parameter: currency_key")
+		// log.Error("Missing required parameter: currency_key")
 		return lib.CustomError(http.StatusBadRequest, "currency_key can not be blank", "currency_key can not be blank")
 	}
 
@@ -347,11 +346,11 @@ func AdminUpdateTrCurrencyRate(c echo.Context) error {
 	var countData models.CountData
 	status, err = models.CountTrCurrencyRateValidateUniqueDateRateCurrency(&countData, rateDate, rateType, currencyKey, currRateKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countData.CountData) > int(0) {
-		log.Error("Data with rate_date, rate_type, and currency_key already exist")
+		// log.Error("Data with rate_date, rate_type, and currency_key already exist")
 		return lib.CustomError(http.StatusBadRequest, "Data with rate_date, rate_type, and currency_key already exist", "Data with rate_date, rate_type, and currency_key already exist")
 	}
 
@@ -362,7 +361,7 @@ func AdminUpdateTrCurrencyRate(c echo.Context) error {
 
 	status, err = models.UpdateTrCurrenctyRate(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -381,19 +380,19 @@ func AdminDetailTrCurrencyRate(c echo.Context) error {
 
 	currRateKey := c.Param("curr_rate_key")
 	if currRateKey == "" {
-		log.Error("Missing required parameter: curr_rate_key")
+		// log.Error("Missing required parameter: curr_rate_key")
 		return lib.CustomError(http.StatusBadRequest, "curr_rate_key can not be blank", "curr_rate_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(currRateKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: curr_rate_key")
+			// log.Error("Wrong input for parameter: curr_rate_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: curr_rate_key", "Wrong input for parameter: curr_rate_key")
 		}
 	}
 	var currency models.TrCurrencyRate
 	_, err = models.GetTrCurrencyRate(&currency, currRateKey)
 	if err != nil {
-		log.Error("Currency Rate not found")
+		// log.Error("Currency Rate not found")
 		return lib.CustomError(http.StatusBadRequest, "Currency Rate not found", "Currency Rate not found")
 	}
 

@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func AdminGetListMmMailMaster(c echo.Context) error {
@@ -28,7 +27,7 @@ func AdminGetListMmMailMaster(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -44,7 +43,7 @@ func AdminGetListMmMailMaster(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -60,7 +59,7 @@ func AdminGetListMmMailMaster(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -91,7 +90,7 @@ func AdminGetListMmMailMaster(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -110,11 +109,11 @@ func AdminGetListMmMailMaster(c echo.Context) error {
 	status, err = models.AdminGetListMmMailMaster(&mail, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(mail) < 1 {
-		log.Error("Mail Master not found")
+		// log.Error("Mail Master not found")
 		return lib.CustomError(http.StatusNotFound, "Mail Master not found", "Mail Master not found")
 	}
 
@@ -123,7 +122,7 @@ func AdminGetListMmMailMaster(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetMmMailMaster(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -154,7 +153,7 @@ func AdminDeleteMmMailMaster(c echo.Context) error {
 	keyStr := c.FormValue("mail_master_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: mail_master_key")
+		// log.Error("Missing required parameter: mail_master_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: mail_master_key", "Missing required parameter: mail_master_key")
 	}
 
@@ -166,7 +165,7 @@ func AdminDeleteMmMailMaster(c echo.Context) error {
 
 	_, err = models.UpdateMmMailMaster(params)
 	if err != nil {
-		log.Error("Error delete mm_mail_master")
+		// log.Error("Error delete mm_mail_master")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -188,12 +187,12 @@ func AdminCreateMmMailMaster(c echo.Context) error {
 	if mailMasterType != "" {
 		n, err := strconv.ParseUint(mailMasterType, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: mail_master_type")
+			// log.Error("Wrong input for parameter: mail_master_type")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: mail_master_type", "Wrong input for parameter: mail_master_type")
 		}
 		params["mail_master_type"] = mailMasterType
 	} else {
-		log.Error("Missing required parameter: mail_master_type")
+		// log.Error("Missing required parameter: mail_master_type")
 		return lib.CustomError(http.StatusBadRequest, "mail_master_type can not be blank", "mail_master_type can not be blank")
 	}
 
@@ -201,7 +200,7 @@ func AdminCreateMmMailMaster(c echo.Context) error {
 	if mailMasterCategory != "" {
 		n, err := strconv.ParseUint(mailMasterCategory, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: mail_master_category")
+			// log.Error("Wrong input for parameter: mail_master_category")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: mail_master_category", "Wrong input for parameter: mail_master_category")
 		}
 		params["mail_master_category"] = mailMasterCategory
@@ -209,18 +208,18 @@ func AdminCreateMmMailMaster(c echo.Context) error {
 
 	mailTemplateName := c.FormValue("mail_template_name")
 	if mailTemplateName == "" {
-		log.Error("Missing required parameter: mail_template_name")
+		// log.Error("Missing required parameter: mail_template_name")
 		return lib.CustomError(http.StatusBadRequest, "mail_template_name can not be blank", "mail_template_name can not be blank")
 	} else {
 		//validate unique mail_template_name
 		var countData models.CountData
 		status, err = models.CountMmMailMasterValidateUnique(&countData, "mail_template_name", mailTemplateName, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: mail_template_name")
+			// log.Error("Missing required parameter: mail_template_name")
 			return lib.CustomError(http.StatusBadRequest, "mail_template_name already used", "mail_template_name already used")
 		}
 		params["mail_template_name"] = mailTemplateName
@@ -230,7 +229,7 @@ func AdminCreateMmMailMaster(c echo.Context) error {
 	if mailTemplateDesc != "" {
 		params["mail_template_desc"] = mailTemplateDesc
 	} else {
-		log.Error("Missing required parameter: mail_template_desc")
+		// log.Error("Missing required parameter: mail_template_desc")
 		return lib.CustomError(http.StatusBadRequest, "mail_template_desc can not be blank", "mail_template_desc can not be blank")
 	}
 
@@ -238,7 +237,7 @@ func AdminCreateMmMailMaster(c echo.Context) error {
 	if mailSubject != "" {
 		params["mail_subject"] = mailSubject
 	} else {
-		log.Error("Missing required parameter: mail_subject")
+		// log.Error("Missing required parameter: mail_subject")
 		return lib.CustomError(http.StatusBadRequest, "mail_subject can not be blank", "mail_subject can not be blank")
 	}
 
@@ -246,7 +245,7 @@ func AdminCreateMmMailMaster(c echo.Context) error {
 	if mailTo != "" {
 		params["mail_to_email_param"] = mailTo
 	} else {
-		log.Error("Missing required parameter: mail_to_email_param")
+		// log.Error("Missing required parameter: mail_to_email_param")
 		return lib.CustomError(http.StatusBadRequest, "mail_to_email_param can not be blank", "mail_to_email_param can not be blank")
 	}
 
@@ -259,7 +258,7 @@ func AdminCreateMmMailMaster(c echo.Context) error {
 	if mailBody != "" {
 		params["mail_body"] = mailBody
 	} else {
-		log.Error("Missing required parameter: mail_body")
+		// log.Error("Missing required parameter: mail_body")
 		return lib.CustomError(http.StatusBadRequest, "mail_body can not be blank", "mail_body can not be blank")
 	}
 
@@ -274,7 +273,7 @@ func AdminCreateMmMailMaster(c echo.Context) error {
 
 	status, err, lastID := models.CreateMmMailMaster(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -303,7 +302,7 @@ func AdminCreateMmMailMaster(c echo.Context) error {
 		}
 		status, err = models.CreateMultipleMmMailMasterParamenter(bindVar)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed input data")
 		}
 	}
@@ -327,12 +326,12 @@ func AdminUpdateMmMailMaster(c echo.Context) error {
 	if mailMasterKey != "" {
 		n, err := strconv.ParseUint(mailMasterKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: mail_master_key")
+			// log.Error("Wrong input for parameter: mail_master_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: mail_master_key", "Wrong input for parameter: mail_master_key")
 		}
 		params["mail_master_key"] = mailMasterKey
 	} else {
-		log.Error("Missing required parameter: mail_master_key")
+		// log.Error("Missing required parameter: mail_master_key")
 		return lib.CustomError(http.StatusBadRequest, "mail_master_key can not be blank", "mail_master_key can not be blank")
 	}
 
@@ -340,12 +339,12 @@ func AdminUpdateMmMailMaster(c echo.Context) error {
 	if mailMasterType != "" {
 		n, err := strconv.ParseUint(mailMasterType, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: mail_master_type")
+			// log.Error("Wrong input for parameter: mail_master_type")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: mail_master_type", "Wrong input for parameter: mail_master_type")
 		}
 		params["mail_master_type"] = mailMasterType
 	} else {
-		log.Error("Missing required parameter: mail_master_type")
+		// log.Error("Missing required parameter: mail_master_type")
 		return lib.CustomError(http.StatusBadRequest, "mail_master_type can not be blank", "mail_master_type can not be blank")
 	}
 
@@ -353,7 +352,7 @@ func AdminUpdateMmMailMaster(c echo.Context) error {
 	if mailMasterCategory != "" {
 		n, err := strconv.ParseUint(mailMasterCategory, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: mail_master_category")
+			// log.Error("Wrong input for parameter: mail_master_category")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: mail_master_category", "Wrong input for parameter: mail_master_category")
 		}
 		params["mail_master_category"] = mailMasterCategory
@@ -361,18 +360,18 @@ func AdminUpdateMmMailMaster(c echo.Context) error {
 
 	mailTemplateName := c.FormValue("mail_template_name")
 	if mailTemplateName == "" {
-		log.Error("Missing required parameter: mail_template_name")
+		// log.Error("Missing required parameter: mail_template_name")
 		return lib.CustomError(http.StatusBadRequest, "mail_template_name can not be blank", "mail_template_name can not be blank")
 	} else {
 		//validate unique mail_template_name
 		var countData models.CountData
 		status, err = models.CountMmMailMasterValidateUnique(&countData, "mail_template_name", mailTemplateName, mailMasterKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: mail_template_name")
+			// log.Error("Missing required parameter: mail_template_name")
 			return lib.CustomError(http.StatusBadRequest, "mail_template_name already used", "mail_template_name already used")
 		}
 		params["mail_template_name"] = mailTemplateName
@@ -382,7 +381,7 @@ func AdminUpdateMmMailMaster(c echo.Context) error {
 	if mailTemplateDesc != "" {
 		params["mail_template_desc"] = mailTemplateDesc
 	} else {
-		log.Error("Missing required parameter: mail_template_desc")
+		// log.Error("Missing required parameter: mail_template_desc")
 		return lib.CustomError(http.StatusBadRequest, "mail_template_desc can not be blank", "mail_template_desc can not be blank")
 	}
 
@@ -390,7 +389,7 @@ func AdminUpdateMmMailMaster(c echo.Context) error {
 	if mailSubject != "" {
 		params["mail_subject"] = mailSubject
 	} else {
-		log.Error("Missing required parameter: mail_subject")
+		// log.Error("Missing required parameter: mail_subject")
 		return lib.CustomError(http.StatusBadRequest, "mail_subject can not be blank", "mail_subject can not be blank")
 	}
 
@@ -398,7 +397,7 @@ func AdminUpdateMmMailMaster(c echo.Context) error {
 	if mailTo != "" {
 		params["mail_to_email_param"] = mailTo
 	} else {
-		log.Error("Missing required parameter: mail_to_email_param")
+		// log.Error("Missing required parameter: mail_to_email_param")
 		return lib.CustomError(http.StatusBadRequest, "mail_to_email_param can not be blank", "mail_to_email_param can not be blank")
 	}
 
@@ -411,7 +410,7 @@ func AdminUpdateMmMailMaster(c echo.Context) error {
 	if mailBody != "" {
 		params["mail_body"] = mailBody
 	} else {
-		log.Error("Missing required parameter: mail_body")
+		// log.Error("Missing required parameter: mail_body")
 		return lib.CustomError(http.StatusBadRequest, "mail_body can not be blank", "mail_body can not be blank")
 	}
 
@@ -424,7 +423,7 @@ func AdminUpdateMmMailMaster(c echo.Context) error {
 
 	status, err = models.UpdateMmMailMaster(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -471,7 +470,7 @@ func AdminUpdateMmMailMaster(c echo.Context) error {
 			paramsParDelete["rec_status"] = "0"
 			status, err = models.UpdateDeleteAllParameter("mail_parameter_key", paramsParDelete, paramKeyDelete)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed update data")
 			}
 		}
@@ -494,7 +493,7 @@ func AdminUpdateMmMailMaster(c echo.Context) error {
 		if len(bindVar) > 0 {
 			status, err = models.CreateMultipleMmMailMasterParamenter(bindVar)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed input data")
 			}
 		}
@@ -508,7 +507,7 @@ func AdminUpdateMmMailMaster(c echo.Context) error {
 		paramKeyDelete = append(paramKeyDelete, mailMasterKey)
 		status, err = models.UpdateDeleteAllParameter("mail_master_key", paramsDataDelete, paramKeyDelete)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed update data")
 		}
 	}
@@ -527,12 +526,12 @@ func AdminDetailMmMailMaster(c echo.Context) error {
 
 	mailMasterKey := c.Param("mail_master_key")
 	if mailMasterKey == "" {
-		log.Error("Missing required parameter: mail_master_key")
+		// log.Error("Missing required parameter: mail_master_key")
 		return lib.CustomError(http.StatusBadRequest, "mail_master_key can not be blank", "mail_master_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(mailMasterKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: mail_master_key")
+			// log.Error("Wrong input for parameter: mail_master_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: mail_master_key", "Wrong input for parameter: mail_master_key")
 		}
 	}
@@ -540,7 +539,7 @@ func AdminDetailMmMailMaster(c echo.Context) error {
 	var mail models.MmMailMaster
 	_, err = models.GetMmMailMaster(&mail, "mail_master_key", mailMasterKey)
 	if err != nil {
-		log.Error("Mail Master not found")
+		// log.Error("Mail Master not found")
 		return lib.CustomError(http.StatusBadRequest, "Mail Master not found", "Mail Master not found")
 	}
 

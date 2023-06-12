@@ -2,7 +2,6 @@ package lib
 
 import (
 	"fmt"
-	"log"
 	"mf-bo-api/config"
 	"mf-bo-api/models"
 
@@ -11,9 +10,9 @@ import (
 
 func CreateNotifCustomerFromApp(heading string, content string, category string) {
 	if Profile.TokenNotif == nil {
-		log.Println("token kosong")
+		// log.Println("token kosong")
 	} else {
-		log.Println("token : " + *Profile.TokenNotif)
+		// log.Println("token : " + *Profile.TokenNotif)
 		playerID := &Profile.TokenNotif
 		CreateNotificationHelper(**playerID, heading, content, category)
 	}
@@ -24,9 +23,9 @@ func CreateNotifCustomerFromAdminByCustomerId(customerId string, heading string,
 	_, err := models.GetScUserLoginByCustomerKey(&userData, customerId)
 	if err == nil {
 		if userData.TokenNotif == nil {
-			log.Println("token kosong")
+			// log.Println("token kosong")
 		} else {
-			log.Println("token : " + *userData.TokenNotif)
+			// log.Println("token : " + *userData.TokenNotif)
 			playerID := &userData.TokenNotif
 			CreateNotificationHelper(**playerID, heading, content, category)
 		}
@@ -38,9 +37,9 @@ func CreateNotifCustomerFromAdminByUserLoginKey(userLoginKey string, heading str
 	_, err := models.GetScUserKey(&userData, userLoginKey)
 	if err == nil {
 		if userData.TokenNotif == nil {
-			log.Println("token kosong")
+			// log.Println("token kosong")
 		} else {
-			log.Println("token : " + *userData.TokenNotif)
+			// log.Println("token : " + *userData.TokenNotif)
 			playerID := &userData.TokenNotif
 			CreateNotificationHelper(**playerID, heading, content, category)
 		}
@@ -48,9 +47,9 @@ func CreateNotifCustomerFromAdminByUserLoginKey(userLoginKey string, heading str
 }
 
 func CreateNotificationHelper(playerID string, heading string, content string, category string) *onesignal.NotificationCreateResponse {
-	log.Println("playerID : " + playerID)
-	log.Println("Heading : " + heading)
-	log.Println("Content : " + content)
+	// log.Println("playerID : " + playerID)
+	// log.Println("Heading : " + heading)
+	// log.Println("Content : " + content)
 	client := onesignal.NewClient(nil)
 	client.AppKey = config.OneSignalAppKey
 
@@ -67,7 +66,7 @@ func CreateNotificationHelper(playerID string, heading string, content string, c
 	}
 	createRes, _, err := client.Notifications.Create(notificationReq)
 	if err != nil {
-		log.Println("OneSignal Message")
+		// log.Println("OneSignal Message")
 		fmt.Println(err)
 	} else {
 		return createRes
@@ -76,8 +75,8 @@ func CreateNotificationHelper(playerID string, heading string, content string, c
 }
 
 func BlastAllNotificationHelper(playerIDs []string, heading string, content string, data map[string]interface{}) *onesignal.NotificationCreateResponse {
-	log.Println("Heading : " + heading)
-	log.Println("Content : " + content)
+	// log.Println("Heading : " + heading)
+	// log.Println("Content : " + content)
 	client := onesignal.NewClient(nil)
 	client.AppKey = config.OneSignalAppKey
 
@@ -92,7 +91,7 @@ func BlastAllNotificationHelper(playerIDs []string, heading string, content stri
 	}
 	createRes, _, err := client.Notifications.Create(notificationReq)
 	if err != nil {
-		log.Println("OneSignal Message")
+		// log.Println("OneSignal Message")
 		fmt.Println(err)
 	} else {
 		return createRes

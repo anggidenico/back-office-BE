@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type OaInstitutionAuthPerson struct {
@@ -63,10 +61,10 @@ type OaInstitutionAuthPersonDetail struct {
 func GetOaInstitutionAuthPerson(c *OaInstitutionAuthPerson, key string, field string) (int, error) {
 	query := `SELECT oa_institution_auth_person.* FROM oa_institution_auth_person 
 	WHERE oa_institution_auth_person.rec_status = 1 AND oa_institution_auth_person.` + field + ` = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusNotFound, err
 	}
 
@@ -88,18 +86,18 @@ func CreateOaInstitutionAuthPerson(params map[string]string) (int, error, string
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -127,10 +125,10 @@ func GetOaInstitutionAuthPersonRequest(c *[]OaInstitutionAuthPersonDetail, oaReq
 			WHERE ap.rec_status = "1" AND ap.oa_request_key = "` + oaReqKey + `"`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -153,11 +151,11 @@ func UpdateOaInstitutionAuthPerson(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE insti_auth_person_key = " + params["insti_auth_person_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -169,7 +167,7 @@ func UpdateOaInstitutionAuthPerson(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -194,11 +192,11 @@ func DeleteOaInstitutionAuthPerson(params map[string]string, authKey []string, r
 	} else {
 		query += " WHERE rec_status = 1 AND oa_request_key = '" + requestKey + "'"
 	}
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -210,7 +208,7 @@ func DeleteOaInstitutionAuthPerson(params map[string]string, authKey []string, r
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil

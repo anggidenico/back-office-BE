@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type MsBankCharges struct {
@@ -39,10 +38,10 @@ type MsBankCharges struct {
 func GetMsBankCharges(c *MsBankCharges, key string) (int, error) {
 	query := `SELECT ms_bank_charges.* FROM ms_bank_charges WHERE ms_bank_charges.rec_status = '1' 
 	AND ms_bank_charges.bcharges_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -126,10 +125,10 @@ func AdminGetListBankCharges(c *[]ListBankChargesAdmin, limit uint64, offset uin
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -176,10 +175,10 @@ func CountAdminGetListBankCharges(c *CountData, params map[string]string, search
 			WHERE bc.rec_status = 1 ` + condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -201,17 +200,17 @@ func CreateMsBankCharges(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -233,11 +232,11 @@ func UpdateMsBankCharges(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE bcharges_key = " + params["bcharges_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -245,7 +244,7 @@ func UpdateMsBankCharges(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()

@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	log "github.com/sirupsen/logrus"
 )
 
 type MmMailMasterParameter struct {
@@ -41,10 +40,10 @@ func GetMmMailMasterParameter(c *MmMailMaster, field string, key string) (int, e
 	query := `SELECT mm_mail_master_parameter.* FROM mm_mail_master_parameter 
 	WHERE mm_mail_master_parameter.rec_status = '1' 
 	AND mm_mail_master_parameter.` + field + ` = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -67,11 +66,11 @@ func UpdateMmMailMasterParameter(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE mail_parameter_key = " + params["mail_parameter_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -79,7 +78,7 @@ func UpdateMmMailMasterParameter(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -109,7 +108,7 @@ func CreateMultipleMmMailMasterParamenter(params []interface{}) (int, error) {
 	query = db.Db.Rebind(query)
 	_, err = db.Db.Query(query, args...)
 	if err != nil {
-		log.Println(err.Error())
+		// log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
@@ -151,10 +150,10 @@ func GetAllMmMailParametergent(c *[]MmMailMasterParameter, params map[string]str
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -175,11 +174,11 @@ func UpdateDeleteAllParameter(field string, params map[string]string, mailParame
 		i++
 	}
 	query += " WHERE " + field + " IN(" + inQuery + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -187,7 +186,7 @@ func UpdateDeleteAllParameter(field string, params map[string]string, mailParame
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()

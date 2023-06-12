@@ -15,7 +15,6 @@ import (
 	"github.com/labstack/echo"
 	"github.com/leekchan/accounting"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
@@ -35,7 +34,7 @@ func ListAdminAutoInvest(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -51,7 +50,7 @@ func ListAdminAutoInvest(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -67,7 +66,7 @@ func ListAdminAutoInvest(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -112,7 +111,7 @@ func ListAdminAutoInvest(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -124,12 +123,12 @@ func ListAdminAutoInvest(c echo.Context) error {
 	if productKey != "" {
 		n, err := strconv.ParseUint(productKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_key", "Wrong input for parameter: product_key")
 		}
 
 		if len(productKey) > 11 {
-			log.Error("Wrong input for parameter: product_key too long")
+			// log.Error("Wrong input for parameter: product_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key too long, max 11 character", "Missing required parameter: product_key too long, max 11 character")
 		}
 		params["ta.product_key"] = productKey
@@ -139,12 +138,12 @@ func ListAdminAutoInvest(c echo.Context) error {
 	if customerKey != "" {
 		n, err := strconv.ParseUint(customerKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 
 		if len(customerKey) > 11 {
-			log.Error("Wrong input for parameter: customer_key too long")
+			// log.Error("Wrong input for parameter: customer_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key too long, max 11 character", "Missing required parameter: customer_key too long, max 11 character")
 		}
 		params["ta.customer_key"] = customerKey
@@ -155,12 +154,12 @@ func ListAdminAutoInvest(c echo.Context) error {
 
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
 	if len(trAutoinvest) < 1 {
-		log.Error("Data not found")
+		// log.Error("Data not found")
 		return lib.CustomError(http.StatusNotFound, "Data not found", "Data not found")
 	}
 
@@ -169,7 +168,7 @@ func ListAdminAutoInvest(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.GetAdminCountListAutoInvestRegistration(&countData, params)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -203,29 +202,29 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	if productKey != "" {
 		n, err := strconv.ParseUint(productKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_key", "Wrong input for parameter: product_key")
 		}
 
 		if len(productKey) > 11 {
-			log.Error("Wrong input for parameter: product_key too long")
+			// log.Error("Wrong input for parameter: product_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key too long, max 11 character", "Missing required parameter: product_key too long, max 11 character")
 		}
 		paramsAcc["product_key"] = productKey
 	} else {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "product_key can not be blank", "product_key can not be blank")
 	}
 
 	var product models.MsProduct
 	status, err = models.GetMsProduct(&product, productKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 	}
 
 	if product.FlagEnabled != 1 || product.FlagSubscription != 1 {
-		log.Error("Tidak dapat melakukan autoinvest pada produk ini.")
+		// log.Error("Tidak dapat melakukan autoinvest pada produk ini.")
 		return lib.CustomError(http.StatusBadRequest, "Tidak dapat melakukan autoinvest pada produk ini.", "Tidak dapat melakukan autoinvest pada produk ini.")
 	}
 
@@ -233,17 +232,17 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	if customerKey != "" {
 		n, err := strconv.ParseUint(customerKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 
 		if len(customerKey) > 11 {
-			log.Error("Wrong input for parameter: customer_key too long")
+			// log.Error("Wrong input for parameter: customer_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key too long, max 11 character", "Missing required parameter: customer_key too long, max 11 character")
 		}
 		paramsAcc["customer_key"] = customerKey
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "customer_key can not be blank", "customer_key can not be blank")
 	}
 
@@ -251,12 +250,12 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	status, err = models.GetMsCustomer(&customer, customerKey)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	} else {
 		if customer.CifSuspendFlag == 1 {
-			log.Error("Account customer tersuspend. CIF Suspend")
+			// log.Error("Account customer tersuspend. CIF Suspend")
 			return lib.CustomError(http.StatusBadRequest, "Customer Account Suspended", "Customer Account Suspended")
 
 		}
@@ -266,20 +265,20 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	if investAmount != "" {
 		value, err := decimal.NewFromString(investAmount)
 		if err != nil {
-			log.Error("Wrong input for parameter: invest_amount")
+			// log.Error("Wrong input for parameter: invest_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: invest_amount", "Wrong input for parameter: invest_amount")
 		}
 		if value.Cmp(product.MinSubAmount) == -1 {
-			log.Error("invest_amount < minimum sub")
+			// log.Error("invest_amount < minimum sub")
 			return lib.CustomError(http.StatusBadRequest, "invest_amount < minum sub", "Minumum invest_amount untuk product ini adalah: "+product.MinSubAmount.String())
 		}
 		if investAmount == "0" {
-			log.Error("Wrong input for parameter: invest_amount")
+			// log.Error("Wrong input for parameter: invest_amount")
 			return lib.CustomError(http.StatusBadRequest, "invest_amount harus lebih dari 0", "invest_amount harus lebih dari 0")
 		}
 		params["invest_amount"] = investAmount
 	} else {
-		log.Error("Missing required parameter: invest_amount")
+		// log.Error("Missing required parameter: invest_amount")
 		return lib.CustomError(http.StatusBadRequest, "invest_amount can not be blank", "invest_amount can not be blank")
 	}
 
@@ -287,12 +286,12 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	if investFeeRates != "" {
 		_, err := decimal.NewFromString(investFeeRates)
 		if err != nil {
-			log.Error("Wrong input for parameter: invest_fee_rates")
+			// log.Error("Wrong input for parameter: invest_fee_rates")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: invest_fee_rates", "Wrong input for parameter: invest_fee_rates")
 		}
 		params["invest_fee_rates"] = investFeeRates
 	} else {
-		log.Error("Missing required parameter: invest_fee_rates")
+		// log.Error("Missing required parameter: invest_fee_rates")
 		return lib.CustomError(http.StatusBadRequest, "invest_fee_rates can not be blank", "invest_fee_rates can not be blank")
 	}
 
@@ -300,12 +299,12 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	if investFeeAmount != "" {
 		_, err := decimal.NewFromString(investFeeAmount)
 		if err != nil {
-			log.Error("Wrong input for parameter: invest_fee_amount")
+			// log.Error("Wrong input for parameter: invest_fee_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: invest_fee_amount", "Wrong input for parameter: invest_fee_amount")
 		}
 		params["invest_fee_amount"] = investFeeAmount
 	} else {
-		log.Error("Missing required parameter: invest_fee_amount")
+		// log.Error("Missing required parameter: invest_fee_amount")
 		return lib.CustomError(http.StatusBadRequest, "invest_fee_amount can not be blank", "invest_fee_amount can not be blank")
 	}
 
@@ -313,12 +312,12 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	if investFeeCharges != "" {
 		_, err := decimal.NewFromString(investFeeCharges)
 		if err != nil {
-			log.Error("Wrong input for parameter: invest_fee_charges")
+			// log.Error("Wrong input for parameter: invest_fee_charges")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: invest_fee_charges", "Wrong input for parameter: invest_fee_charges")
 		}
 		params["invest_fee_charges"] = investFeeCharges
 	} else {
-		log.Error("Missing required parameter: invest_fee_charges")
+		// log.Error("Missing required parameter: invest_fee_charges")
 		return lib.CustomError(http.StatusBadRequest, "invest_fee_charges can not be blank", "invest_fee_charges can not be blank")
 	}
 
@@ -326,16 +325,16 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	if investDateExecute != "" {
 		n, err := strconv.ParseUint(investDateExecute, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: invest_date_execute")
+			// log.Error("Wrong input for parameter: invest_date_execute")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: invest_date_execute", "Wrong input for parameter: invest_date_execute")
 		}
 		if n > 28 {
-			log.Error("invest_date_execute max tanggal 28")
+			// log.Error("invest_date_execute max tanggal 28")
 			return lib.CustomError(http.StatusBadRequest, "invest_date_execute max tanggal 28", "invest_date_execute max tanggal 28")
 		}
 		params["invest_date_execute"] = investDateExecute
 	} else {
-		log.Error("Missing required parameter: invest_date_execute")
+		// log.Error("Missing required parameter: invest_date_execute")
 		return lib.CustomError(http.StatusBadRequest, "invest_date_execute can not be blank", "invest_date_execute can not be blank")
 	}
 
@@ -343,7 +342,7 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	if dateThru != "" {
 		params["date_thru"] = dateThru
 	} else {
-		log.Error("Missing required parameter: date_thru")
+		// log.Error("Missing required parameter: date_thru")
 		return lib.CustomError(http.StatusBadRequest, "date_thru can not be blank", "date_thru can not be blank")
 	}
 
@@ -351,13 +350,13 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	if settleChannel != "" {
 		n, err := strconv.ParseUint(settleChannel, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: settle_channel")
+			// log.Error("Wrong input for parameter: settle_channel")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: settle_channel", "Wrong input for parameter: settle_channel")
 		}
 
 		params["settle_channel"] = settleChannel
 	} else {
-		log.Error("Missing required parameter: settle_channel")
+		// log.Error("Missing required parameter: settle_channel")
 		return lib.CustomError(http.StatusBadRequest, "settle_channel can not be blank", "settle_channel can not be blank")
 	}
 
@@ -365,13 +364,13 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	if settlePaymentMethod != "" {
 		n, err := strconv.ParseUint(settlePaymentMethod, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: settle_payment_method")
+			// log.Error("Wrong input for parameter: settle_payment_method")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: settle_payment_method", "Wrong input for parameter: settle_payment_method")
 		}
 
 		params["settle_payment_method"] = settlePaymentMethod
 	} else {
-		log.Error("Missing required parameter: settle_payment_method")
+		// log.Error("Missing required parameter: settle_payment_method")
 		return lib.CustomError(http.StatusBadRequest, "settle_payment_method can not be blank", "settle_payment_method can not be blank")
 	}
 
@@ -379,19 +378,19 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	if prodBankAccKey != "" {
 		n, err := strconv.ParseUint(prodBankAccKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: prod_bank_acc_key")
+			// log.Error("Wrong input for parameter: prod_bank_acc_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: prod_bank_acc_key", "Wrong input for parameter: prod_bank_acc_key")
 		}
 
 	} else {
-		log.Error("Missing required parameter: prod_bank_acc_key")
+		// log.Error("Missing required parameter: prod_bank_acc_key")
 		return lib.CustomError(http.StatusBadRequest, "prod_bank_acc_key can not be blank", "prod_bank_acc_key can not be blank")
 	}
 
 	investRemarks := c.FormValue("invest_remarks")
 	if investRemarks != "" {
 		if len(investRemarks) > 140 {
-			log.Error("Wrong input for parameter: invest_remarks too long")
+			// log.Error("Wrong input for parameter: invest_remarks too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: invest_remarks too long, max 140 character", "Missing required parameter: invest_remarks too long, max 140 character")
 		}
 		params["invest_remarks"] = investRemarks
@@ -405,7 +404,7 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	if len(trAccountDB) > 0 {
 		accKey = strconv.FormatUint(trAccountDB[0].AccKey, 10)
 		if trAccountDB[0].SubSuspendFlag != nil && *trAccountDB[0].SubSuspendFlag == 1 {
-			log.Error("Account suspended for this product")
+			// log.Error("Account suspended for this product")
 			return lib.CustomError(status, "Account suspended for this product", "Account suspended for this product")
 		}
 	} else {
@@ -414,7 +413,7 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 		paramsAcc["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 		status, err, accKey = models.CreateTrAccount(paramsAcc)
 		if err != nil {
-			log.Error("Failed create account product data: " + err.Error())
+			// log.Error("Failed create account product data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -422,10 +421,10 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	var countData models.CountData
 	status, err = models.AdminValidateAccAndiInvestDateExecute(&countData, accKey, investDateExecute, "")
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 	if int(countData.CountData) > int(0) {
-		log.Error("Ada data product dengan execute date date yang sama")
+		// log.Error("Ada data product dengan execute date date yang sama")
 		return lib.CustomError(status, "Terdapat data product dengan execute date date yang sama", "Terdapat data product dengan execute date date yang sama")
 	}
 
@@ -439,13 +438,13 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 	var productBankAccount models.MsProductBankAccount
 	status, err = models.GetMsProductBankAccount(&productBankAccount, prodBankAccKey)
 	if err != nil {
-		log.Error("Failed get product bank account: " + err.Error())
+		// log.Error("Failed get product bank account: " + err.Error())
 	} else {
 		params["bank_account_key"] = strconv.FormatUint(*productBankAccount.BankAccountKey, 10)
 		var bankAccount models.MsBankAccount
 		status, err = models.GetBankAccount(&bankAccount, strconv.FormatUint(*productBankAccount.BankAccountKey, 10))
 		if err != nil {
-			log.Error("Failed get bank account: " + err.Error())
+			// log.Error("Failed get bank account: " + err.Error())
 		} else {
 			params["bank_key"] = strconv.FormatUint(bankAccount.BankKey, 10)
 		}
@@ -453,7 +452,7 @@ func AdminCreateTrAutoInvest(c echo.Context) error {
 
 	_, err, _ = models.CreateTrAutoinvestRegistration(params)
 	if err != nil {
-		log.Error("Failed create tr_autoinvest_registration: " + err.Error())
+		// log.Error("Failed create tr_autoinvest_registration: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -476,24 +475,24 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if autoinvestKey != "" {
 		n, err := strconv.ParseUint(autoinvestKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: autoinvest_key")
+			// log.Error("Wrong input for parameter: autoinvest_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: autoinvest_key", "Wrong input for parameter: autoinvest_key")
 		}
 
 		if len(autoinvestKey) > 11 {
-			log.Error("Wrong input for parameter: autoinvest_key too long")
+			// log.Error("Wrong input for parameter: autoinvest_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: autoinvest_key too long, max 11 character", "Missing required parameter: autoinvest_key too long, max 11 character")
 		}
 		params["autoinvest_key"] = autoinvestKey
 	} else {
-		log.Error("Missing required parameter: autoinvest_key")
+		// log.Error("Missing required parameter: autoinvest_key")
 		return lib.CustomError(http.StatusBadRequest, "autoinvest_key can not be blank", "autoinvest_key can not be blank")
 	}
 
 	var invest models.TrAutoinvestRegistration
 	_, err = models.GetTrAutoinvestRegistration(&invest, autoinvestKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, "failed get data", "failed get data")
 	}
 
@@ -501,29 +500,29 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if productKey != "" {
 		n, err := strconv.ParseUint(productKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_key", "Wrong input for parameter: product_key")
 		}
 
 		if len(productKey) > 11 {
-			log.Error("Wrong input for parameter: product_key too long")
+			// log.Error("Wrong input for parameter: product_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key too long, max 11 character", "Missing required parameter: product_key too long, max 11 character")
 		}
 		paramsAcc["product_key"] = productKey
 	} else {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "product_key can not be blank", "product_key can not be blank")
 	}
 
 	var product models.MsProduct
 	status, err = models.GetMsProduct(&product, productKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 	}
 
 	if product.FlagEnabled != 1 || product.FlagSubscription != 1 {
-		log.Error("Tidak dapat melakukan autoinvest pada produk ini.")
+		// log.Error("Tidak dapat melakukan autoinvest pada produk ini.")
 		return lib.CustomError(http.StatusBadRequest, "Tidak dapat melakukan autoinvest pada produk ini.", "Tidak dapat melakukan autoinvest pada produk ini.")
 	}
 
@@ -531,17 +530,17 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if customerKey != "" {
 		n, err := strconv.ParseUint(customerKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 
 		if len(customerKey) > 11 {
-			log.Error("Wrong input for parameter: customer_key too long")
+			// log.Error("Wrong input for parameter: customer_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key too long, max 11 character", "Missing required parameter: customer_key too long, max 11 character")
 		}
 		paramsAcc["customer_key"] = customerKey
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "customer_key can not be blank", "customer_key can not be blank")
 	}
 
@@ -549,12 +548,12 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	status, err = models.GetMsCustomer(&customer, customerKey)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	} else {
 		if customer.CifSuspendFlag == 1 {
-			log.Error("Account customer tersuspend. CIF Suspend")
+			// log.Error("Account customer tersuspend. CIF Suspend")
 			return lib.CustomError(http.StatusBadRequest, "Customer Account Suspended", "Customer Account Suspended")
 
 		}
@@ -564,20 +563,20 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if investAmount != "" {
 		value, err := decimal.NewFromString(investAmount)
 		if err != nil {
-			log.Error("Wrong input for parameter: invest_amount")
+			// log.Error("Wrong input for parameter: invest_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: invest_amount", "Wrong input for parameter: invest_amount")
 		}
 		if value.Cmp(product.MinSubAmount) == -1 {
-			log.Error("invest_amount < minimum sub")
+			// log.Error("invest_amount < minimum sub")
 			return lib.CustomError(http.StatusBadRequest, "invest_amount < minum sub", "Minumum invest_amount untuk product ini adalah: "+product.MinSubAmount.String())
 		}
 		if investAmount == "0" {
-			log.Error("Wrong input for parameter: invest_amount")
+			// log.Error("Wrong input for parameter: invest_amount")
 			return lib.CustomError(http.StatusBadRequest, "invest_amount harus lebih dari 0", "invest_amount harus lebih dari 0")
 		}
 		params["invest_amount"] = investAmount
 	} else {
-		log.Error("Missing required parameter: invest_amount")
+		// log.Error("Missing required parameter: invest_amount")
 		return lib.CustomError(http.StatusBadRequest, "invest_amount can not be blank", "invest_amount can not be blank")
 	}
 
@@ -585,12 +584,12 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if investFeeRates != "" {
 		_, err := decimal.NewFromString(investFeeRates)
 		if err != nil {
-			log.Error("Wrong input for parameter: invest_fee_rates")
+			// log.Error("Wrong input for parameter: invest_fee_rates")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: invest_fee_rates", "Wrong input for parameter: invest_fee_rates")
 		}
 		params["invest_fee_rates"] = investFeeRates
 	} else {
-		log.Error("Missing required parameter: invest_fee_rates")
+		// log.Error("Missing required parameter: invest_fee_rates")
 		return lib.CustomError(http.StatusBadRequest, "invest_fee_rates can not be blank", "invest_fee_rates can not be blank")
 	}
 
@@ -598,12 +597,12 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if investFeeAmount != "" {
 		_, err := decimal.NewFromString(investFeeAmount)
 		if err != nil {
-			log.Error("Wrong input for parameter: invest_fee_amount")
+			// log.Error("Wrong input for parameter: invest_fee_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: invest_fee_amount", "Wrong input for parameter: invest_fee_amount")
 		}
 		params["invest_fee_amount"] = investFeeAmount
 	} else {
-		log.Error("Missing required parameter: invest_fee_amount")
+		// log.Error("Missing required parameter: invest_fee_amount")
 		return lib.CustomError(http.StatusBadRequest, "invest_fee_amount can not be blank", "invest_fee_amount can not be blank")
 	}
 
@@ -611,12 +610,12 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if investFeeCharges != "" {
 		_, err := decimal.NewFromString(investFeeCharges)
 		if err != nil {
-			log.Error("Wrong input for parameter: invest_fee_charges")
+			// log.Error("Wrong input for parameter: invest_fee_charges")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: invest_fee_charges", "Wrong input for parameter: invest_fee_charges")
 		}
 		params["invest_fee_charges"] = investFeeCharges
 	} else {
-		log.Error("Missing required parameter: invest_fee_charges")
+		// log.Error("Missing required parameter: invest_fee_charges")
 		return lib.CustomError(http.StatusBadRequest, "invest_fee_charges can not be blank", "invest_fee_charges can not be blank")
 	}
 
@@ -624,16 +623,16 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if investDateExecute != "" {
 		n, err := strconv.ParseUint(investDateExecute, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: invest_date_execute")
+			// log.Error("Wrong input for parameter: invest_date_execute")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: invest_date_execute", "Wrong input for parameter: invest_date_execute")
 		}
 		if n > 28 {
-			log.Error("invest_date_execute max tanggal 28")
+			// log.Error("invest_date_execute max tanggal 28")
 			return lib.CustomError(http.StatusBadRequest, "invest_date_execute max tanggal 28", "invest_date_execute max tanggal 28")
 		}
 		params["invest_date_execute"] = investDateExecute
 	} else {
-		log.Error("Missing required parameter: invest_date_execute")
+		// log.Error("Missing required parameter: invest_date_execute")
 		return lib.CustomError(http.StatusBadRequest, "invest_date_execute can not be blank", "invest_date_execute can not be blank")
 	}
 
@@ -641,7 +640,7 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if dateThru != "" {
 		params["date_thru"] = dateThru
 	} else {
-		log.Error("Missing required parameter: date_thru")
+		// log.Error("Missing required parameter: date_thru")
 		return lib.CustomError(http.StatusBadRequest, "date_thru can not be blank", "date_thru can not be blank")
 	}
 
@@ -649,13 +648,13 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if settleChannel != "" {
 		n, err := strconv.ParseUint(settleChannel, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: settle_channel")
+			// log.Error("Wrong input for parameter: settle_channel")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: settle_channel", "Wrong input for parameter: settle_channel")
 		}
 
 		params["settle_channel"] = settleChannel
 	} else {
-		log.Error("Missing required parameter: settle_channel")
+		// log.Error("Missing required parameter: settle_channel")
 		return lib.CustomError(http.StatusBadRequest, "settle_channel can not be blank", "settle_channel can not be blank")
 	}
 
@@ -663,13 +662,13 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if settlePaymentMethod != "" {
 		n, err := strconv.ParseUint(settlePaymentMethod, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: settle_payment_method")
+			// log.Error("Wrong input for parameter: settle_payment_method")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: settle_payment_method", "Wrong input for parameter: settle_payment_method")
 		}
 
 		params["settle_payment_method"] = settlePaymentMethod
 	} else {
-		log.Error("Missing required parameter: settle_payment_method")
+		// log.Error("Missing required parameter: settle_payment_method")
 		return lib.CustomError(http.StatusBadRequest, "settle_payment_method can not be blank", "settle_payment_method can not be blank")
 	}
 
@@ -677,19 +676,19 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if prodBankAccKey != "" {
 		n, err := strconv.ParseUint(prodBankAccKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: prod_bank_acc_key")
+			// log.Error("Wrong input for parameter: prod_bank_acc_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: prod_bank_acc_key", "Wrong input for parameter: prod_bank_acc_key")
 		}
 
 	} else {
-		log.Error("Missing required parameter: prod_bank_acc_key")
+		// log.Error("Missing required parameter: prod_bank_acc_key")
 		return lib.CustomError(http.StatusBadRequest, "prod_bank_acc_key can not be blank", "prod_bank_acc_key can not be blank")
 	}
 
 	investRemarks := c.FormValue("invest_remarks")
 	if investRemarks != "" {
 		if len(investRemarks) > 140 {
-			log.Error("Wrong input for parameter: invest_remarks too long")
+			// log.Error("Wrong input for parameter: invest_remarks too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: invest_remarks too long, max 140 character", "Missing required parameter: invest_remarks too long, max 140 character")
 		}
 		params["invest_remarks"] = investRemarks
@@ -703,7 +702,7 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	if len(trAccountDB) > 0 {
 		accKey = strconv.FormatUint(trAccountDB[0].AccKey, 10)
 		if trAccountDB[0].SubSuspendFlag != nil && *trAccountDB[0].SubSuspendFlag == 1 {
-			log.Error("Account suspended for this product")
+			// log.Error("Account suspended for this product")
 			return lib.CustomError(status, "Account suspended for this product", "Account suspended for this product")
 		}
 	} else {
@@ -712,7 +711,7 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 		paramsAcc["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 		status, err, accKey = models.CreateTrAccount(paramsAcc)
 		if err != nil {
-			log.Error("Failed create account product data: " + err.Error())
+			// log.Error("Failed create account product data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -720,10 +719,10 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	var countData models.CountData
 	status, err = models.AdminValidateAccAndiInvestDateExecute(&countData, accKey, investDateExecute, autoinvestKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 	if int(countData.CountData) > int(0) {
-		log.Error("Ada data product dengan execute date date yang sama")
+		// log.Error("Ada data product dengan execute date date yang sama")
 		return lib.CustomError(status, "Terdapat data product dengan execute date date yang sama", "Terdapat data product dengan execute date date yang sama")
 	}
 
@@ -734,13 +733,13 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 	var productBankAccount models.MsProductBankAccount
 	status, err = models.GetMsProductBankAccount(&productBankAccount, prodBankAccKey)
 	if err != nil {
-		log.Error("Failed get product bank account: " + err.Error())
+		// log.Error("Failed get product bank account: " + err.Error())
 	} else {
 		params["bank_account_key"] = strconv.FormatUint(*productBankAccount.BankAccountKey, 10)
 		var bankAccount models.MsBankAccount
 		status, err = models.GetBankAccount(&bankAccount, strconv.FormatUint(*productBankAccount.BankAccountKey, 10))
 		if err != nil {
-			log.Error("Failed get bank account: " + err.Error())
+			// log.Error("Failed get bank account: " + err.Error())
 		} else {
 			params["bank_key"] = strconv.FormatUint(bankAccount.BankKey, 10)
 		}
@@ -748,7 +747,7 @@ func AdminUpdateTrAutoInvest(c echo.Context) error {
 
 	_, err = models.UpdateTrAutoinvestRegistration(params)
 	if err != nil {
-		log.Error("Failed update tr_autoinvest_registration: " + err.Error())
+		// log.Error("Failed update tr_autoinvest_registration: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed update data")
 	}
 
@@ -769,24 +768,24 @@ func AdminDeleteTrAutoInvest(c echo.Context) error {
 	if autoinvestKey != "" {
 		n, err := strconv.ParseUint(autoinvestKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: autoinvest_key")
+			// log.Error("Wrong input for parameter: autoinvest_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: autoinvest_key", "Wrong input for parameter: autoinvest_key")
 		}
 
 		if len(autoinvestKey) > 11 {
-			log.Error("Wrong input for parameter: autoinvest_key too long")
+			// log.Error("Wrong input for parameter: autoinvest_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: autoinvest_key too long, max 11 character", "Missing required parameter: autoinvest_key too long, max 11 character")
 		}
 		params["autoinvest_key"] = autoinvestKey
 	} else {
-		log.Error("Missing required parameter: autoinvest_key")
+		// log.Error("Missing required parameter: autoinvest_key")
 		return lib.CustomError(http.StatusBadRequest, "autoinvest_key can not be blank", "autoinvest_key can not be blank")
 	}
 
 	var invest models.TrAutoinvestRegistration
 	_, err = models.GetTrAutoinvestRegistration(&invest, autoinvestKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, "failed get data", "failed get data")
 	}
 
@@ -797,7 +796,7 @@ func AdminDeleteTrAutoInvest(c echo.Context) error {
 
 	_, err = models.UpdateTrAutoinvestRegistration(params)
 	if err != nil {
-		log.Error("Failed delete tr_autoinvest_registration: " + err.Error())
+		// log.Error("Failed delete tr_autoinvest_registration: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed delete data")
 	}
 
@@ -817,23 +816,23 @@ func AdminDetailTrAutoInvest(c echo.Context) error {
 	if autoinvestKey != "" {
 		n, err := strconv.ParseUint(autoinvestKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: autoinvest_key")
+			// log.Error("Wrong input for parameter: autoinvest_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: autoinvest_key", "Wrong input for parameter: autoinvest_key")
 		}
 
 		if len(autoinvestKey) > 11 {
-			log.Error("Wrong input for parameter: autoinvest_key too long")
+			// log.Error("Wrong input for parameter: autoinvest_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: autoinvest_key too long, max 11 character", "Missing required parameter: autoinvest_key too long, max 11 character")
 		}
 	} else {
-		log.Error("Missing required parameter: autoinvest_key")
+		// log.Error("Missing required parameter: autoinvest_key")
 		return lib.CustomError(http.StatusBadRequest, "autoinvest_key can not be blank", "autoinvest_key can not be blank")
 	}
 
 	var invest models.DetailAutoinvestRegistration
 	_, err = models.AdminGetDetailTrAutoinvestRegistration(&invest, autoinvestKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, "failed get data", "failed get data")
 	}
 
@@ -856,28 +855,28 @@ func AdminGenerateTransactionFromTrAutoInvest(c echo.Context) error {
 	if autoinvestKey != "" {
 		n, err := strconv.ParseUint(autoinvestKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: autoinvest_key")
+			// log.Error("Wrong input for parameter: autoinvest_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: autoinvest_key", "Wrong input for parameter: autoinvest_key")
 		}
 
 		if len(autoinvestKey) > 11 {
-			log.Error("Wrong input for parameter: autoinvest_key too long")
+			// log.Error("Wrong input for parameter: autoinvest_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: autoinvest_key too long, max 11 character", "Missing required parameter: autoinvest_key too long, max 11 character")
 		}
 	} else {
-		log.Error("Missing required parameter: autoinvest_key")
+		// log.Error("Missing required parameter: autoinvest_key")
 		return lib.CustomError(http.StatusBadRequest, "autoinvest_key can not be blank", "autoinvest_key can not be blank")
 	}
 
 	var invest models.DetailAutoinvestRegistration
 	_, err = models.AdminGetDetailTrAutoinvestRegistration(&invest, autoinvestKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, "failed get data", "failed get data")
 	}
 
 	if invest.SubSuspendFlag != nil && *invest.SubSuspendFlag == uint8(1) {
-		log.Error("Account Customer Product not allowed subscription")
+		// log.Error("Account Customer Product not allowed subscription")
 		return lib.CustomError(http.StatusBadRequest, "Account Customer Product Not Allowed Subscription", "Account Customer Product Not Allowed Subscription")
 	}
 
@@ -886,12 +885,12 @@ func AdminGenerateTransactionFromTrAutoInvest(c echo.Context) error {
 	var product models.MsProduct
 	status, err = models.GetMsProduct(&product, productKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 	}
 
 	if product.FlagSubscription != uint8(1) {
-		log.Error("Product not allowed subscription")
+		// log.Error("Product not allowed subscription")
 		return lib.CustomError(http.StatusBadRequest, "Product Not Allowed Subscription", "Product Not Allowed Subscription")
 	}
 
@@ -905,7 +904,7 @@ func AdminGenerateTransactionFromTrAutoInvest(c echo.Context) error {
 	transRemarks := c.FormValue("trans_remarks")
 	if transRemarks != "" {
 		if len(transRemarks) > 140 {
-			log.Error("Wrong input for parameter: trans_remarks too long")
+			// log.Error("Wrong input for parameter: trans_remarks too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_remarks too long, max 140 character", "Missing required parameter: trans_remarks too long, max 140 character")
 		}
 	}
@@ -967,7 +966,7 @@ func AdminGenerateTransactionFromTrAutoInvest(c echo.Context) error {
 		paramsCreateAccAgent["rec_status"] = "1"
 		status, err, acaKey = models.CreateTrAccountAgent(paramsCreateAccAgent)
 		if err != nil {
-			log.Error("Failed create account agent data: " + err.Error())
+			// log.Error("Failed create account agent data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -992,7 +991,7 @@ func AdminGenerateTransactionFromTrAutoInvest(c echo.Context) error {
 	status, err = models.GetAllMsHoliday(&holiday, paramHoliday)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -1077,7 +1076,7 @@ func AdminGenerateTransactionFromTrAutoInvest(c echo.Context) error {
 	//create tr_transaction
 	status, err, transactionID := models.CreateTrTransaction(paramsTrans)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -1094,7 +1093,7 @@ func AdminGenerateTransactionFromTrAutoInvest(c echo.Context) error {
 	paramCustomerBank["orderType"] = "DESC"
 	status, err = models.GetAllMsCustomerBankAccount(&customerBankDB, paramCustomerBank)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		paramsTransactionBankAccount["cust_bankacc_key"] = "1"
 	} else {
 		bankAccKeySource = strconv.FormatUint(customerBankDB[0].BankAccountKey, 10)
@@ -1105,7 +1104,7 @@ func AdminGenerateTransactionFromTrAutoInvest(c echo.Context) error {
 	paramsTransactionBankAccount["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 	status, err = models.CreateTrTransactionBankAccount(paramsTransactionBankAccount)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 	//create tr_transaction_settlement
 	settlementParams := make(map[string]string)
@@ -1129,7 +1128,7 @@ func AdminGenerateTransactionFromTrAutoInvest(c echo.Context) error {
 
 	_, err, _ = models.CreateTrTransactionSettlement(settlementParams)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 
 	// update tr_autoinvest_registration
@@ -1141,7 +1140,7 @@ func AdminGenerateTransactionFromTrAutoInvest(c echo.Context) error {
 	params["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 	_, err = models.UpdateTrAutoinvestRegistration(params)
 	if err != nil {
-		log.Error("Failed update tr_autoinvest_registration: " + err.Error())
+		// log.Error("Failed update tr_autoinvest_registration: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed update data")
 	}
 
@@ -1157,7 +1156,7 @@ func AdminGenerateTransactionFromTrAutoInvest(c echo.Context) error {
 
 	_, err = models.CreateTrAutoinvestExecution(paramsAutoExe)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 
 	//create message
@@ -1196,9 +1195,9 @@ func AdminGenerateTransactionFromTrAutoInvest(c echo.Context) error {
 
 	status, err = models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error("Error create user message")
+		// log.Error("Error create user message")
 	} else {
-		log.Error("Sukses insert user message")
+		// log.Error("Sukses insert user message")
 	}
 	lib.CreateNotifCustomerFromAdminByCustomerId(customerKey, subject, body, "TRANSACTION")
 
@@ -1240,7 +1239,7 @@ func mailSubscriptionAutoInvest(params map[string]string) error {
 	var customer models.MsCustomer
 	_, err = models.GetMsCustomer(&customer, params["customer_key"])
 	if err != nil {
-		log.Error("Failed send mail: " + err.Error())
+		// log.Error("Failed send mail: " + err.Error())
 		return err
 	}
 	mailParam["Name"] = customer.FullName
@@ -1261,13 +1260,13 @@ func mailSubscriptionAutoInvest(params map[string]string) error {
 
 	t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 	if err != nil {
-		log.Error("Failed send mail: " + err.Error())
+		// log.Error("Failed send mail: " + err.Error())
 		return err
 	}
 
 	var tpl bytes.Buffer
 	if err := t.Execute(&tpl, mailParam); err != nil {
-		log.Error("Failed send mail: " + err.Error())
+		// log.Error("Failed send mail: " + err.Error())
 		return err
 	}
 
@@ -1281,7 +1280,7 @@ func mailSubscriptionAutoInvest(params map[string]string) error {
 
 	err = lib.SendEmail(mailer)
 	if err != nil {
-		log.Error("Failed send mail: " + err.Error())
+		// log.Error("Failed send mail: " + err.Error())
 		return err
 	}
 
@@ -1295,9 +1294,9 @@ func mailSubscriptionAutoInvest(params map[string]string) error {
 
 	// err = dialer.DialAndSend(mailer)
 	// if err != nil {
-	// 	log.Error("Failed send mail: " + err.Error())
+	// 	// log.Error("Failed send mail: " + err.Error())
 	// 	return err
 	// }
-	log.Info("Email sent")
+	// log.Info("Email sent")
 	return nil
 }

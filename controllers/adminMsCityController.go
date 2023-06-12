@@ -11,7 +11,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetMsCityList(c echo.Context) error {
@@ -21,7 +20,7 @@ func GetMsCityList(c echo.Context) error {
 	params := make(map[string]string)
 	field := c.Param("field")
 	if field == "" {
-		log.Error("Missing required parameters")
+		// log.Error("Missing required parameters")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameters", "Missing required parameters")
 	}
 	keyStr := c.Param("key")
@@ -37,11 +36,11 @@ func GetMsCityList(c echo.Context) error {
 	var cityDB []models.MsCity
 	status, err = models.GetAllMsCity(&cityDB, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(cityDB) < 1 {
-		log.Error("Data not found")
+		// log.Error("Data not found")
 		return lib.CustomError(http.StatusNotFound, "Data not found", "Data not found")
 	}
 	var responseData []models.MsCityList
@@ -86,7 +85,7 @@ func AdminGetListMsCity(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -102,7 +101,7 @@ func AdminGetListMsCity(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -118,7 +117,7 @@ func AdminGetListMsCity(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -152,7 +151,7 @@ func AdminGetListMsCity(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -182,11 +181,11 @@ func AdminGetListMsCity(c echo.Context) error {
 	status, err = models.AdminGetListCity(&city, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(city) < 1 {
-		log.Error("City not found")
+		// log.Error("City not found")
 		return lib.CustomError(http.StatusNotFound, "City not found", "City not found")
 	}
 
@@ -195,7 +194,7 @@ func AdminGetListMsCity(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetCity(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -226,7 +225,7 @@ func AdminDeleteMsCity(c echo.Context) error {
 	keyStr := c.FormValue("city_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: city_key")
+		// log.Error("Missing required parameter: city_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: city_key", "Missing required parameter: city_key")
 	}
 
@@ -238,7 +237,7 @@ func AdminDeleteMsCity(c echo.Context) error {
 
 	_, err = models.UpdateMsCity(params)
 	if err != nil {
-		log.Error("Error delete ms_city")
+		// log.Error("Error delete ms_city")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -262,7 +261,7 @@ func GetCityLevel(c echo.Context) error {
 	var lookupDB []models.GenLookup
 	status, err = models.GetAllGenLookup(&lookupDB, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -293,12 +292,12 @@ func AdminCreateMsCity(c echo.Context) error {
 
 	countryKey := c.FormValue("country_key")
 	if countryKey == "" {
-		log.Error("Missing required parameter: country_key")
+		// log.Error("Missing required parameter: country_key")
 		return lib.CustomError(http.StatusBadRequest, "country_key can not be blank", "country_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(countryKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: country_key")
+			// log.Error("Wrong input for parameter: country_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: country_key", "Wrong input for parameter: country_key")
 		}
 		params["country_key"] = countryKey
@@ -306,12 +305,12 @@ func AdminCreateMsCity(c echo.Context) error {
 
 	cityLevel := c.FormValue("city_level")
 	if cityLevel == "" {
-		log.Error("Missing required parameter: city_level")
+		// log.Error("Missing required parameter: city_level")
 		return lib.CustomError(http.StatusBadRequest, "city_level can not be blank", "city_level can not be blank")
 	} else {
 		n, err := strconv.ParseUint(cityLevel, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: city_level")
+			// log.Error("Wrong input for parameter: city_level")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: city_level", "Wrong input for parameter: city_level")
 		}
 		params["city_level"] = cityLevel
@@ -325,69 +324,69 @@ func AdminCreateMsCity(c echo.Context) error {
 
 	} else if cityLevel == "2" {
 		if regionArea == "" {
-			log.Error("Missing required parameter: region_area")
+			// log.Error("Missing required parameter: region_area")
 			return lib.CustomError(http.StatusBadRequest, "region_area can not be blank", "region_area can not be blank")
 		} else {
 			n, err := strconv.ParseUint(cityLevel, 10, 64)
 			if err != nil || n == 0 {
-				log.Error("Wrong input for parameter: region_area")
+				// log.Error("Wrong input for parameter: region_area")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: region_area", "Wrong input for parameter: region_area")
 			}
 		}
 		params["parent_key"] = regionArea
 	} else if cityLevel == "3" {
 		if regionArea == "" {
-			log.Error("Missing required parameter: region_area")
+			// log.Error("Missing required parameter: region_area")
 			return lib.CustomError(http.StatusBadRequest, "region_area can not be blank", "region_area can not be blank")
 		} else {
 			n, err := strconv.ParseUint(cityLevel, 10, 64)
 			if err != nil || n == 0 {
-				log.Error("Wrong input for parameter: region_area")
+				// log.Error("Wrong input for parameter: region_area")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: region_area", "Wrong input for parameter: region_area")
 			}
 		}
 
 		if province == "" {
-			log.Error("Missing required parameter: province")
+			// log.Error("Missing required parameter: province")
 			return lib.CustomError(http.StatusBadRequest, "province can not be blank", "province can not be blank")
 		} else {
 			n, err := strconv.ParseUint(cityLevel, 10, 64)
 			if err != nil || n == 0 {
-				log.Error("Wrong input for parameter: province")
+				// log.Error("Wrong input for parameter: province")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: province", "Wrong input for parameter: province")
 			}
 		}
 		params["parent_key"] = province
 	} else if cityLevel == "4" {
 		if regionArea == "" {
-			log.Error("Missing required parameter: region_area")
+			// log.Error("Missing required parameter: region_area")
 			return lib.CustomError(http.StatusBadRequest, "region_area can not be blank", "region_area can not be blank")
 		} else {
 			n, err := strconv.ParseUint(cityLevel, 10, 64)
 			if err != nil || n == 0 {
-				log.Error("Wrong input for parameter: region_area")
+				// log.Error("Wrong input for parameter: region_area")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: region_area", "Wrong input for parameter: region_area")
 			}
 		}
 
 		if province == "" {
-			log.Error("Missing required parameter: province")
+			// log.Error("Missing required parameter: province")
 			return lib.CustomError(http.StatusBadRequest, "province can not be blank", "province can not be blank")
 		} else {
 			n, err := strconv.ParseUint(cityLevel, 10, 64)
 			if err != nil || n == 0 {
-				log.Error("Wrong input for parameter: province")
+				// log.Error("Wrong input for parameter: province")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: province", "Wrong input for parameter: province")
 			}
 		}
 
 		if kabKodya == "" {
-			log.Error("Missing required parameter: kab_kodya")
+			// log.Error("Missing required parameter: kab_kodya")
 			return lib.CustomError(http.StatusBadRequest, "kab_kodya can not be blank", "kab_kodya can not be blank")
 		} else {
 			n, err := strconv.ParseUint(cityLevel, 10, 64)
 			if err != nil || n == 0 {
-				log.Error("Wrong input for parameter: kab_kodya")
+				// log.Error("Wrong input for parameter: kab_kodya")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: kab_kodya", "Wrong input for parameter: kab_kodya")
 			}
 		}
@@ -396,18 +395,18 @@ func AdminCreateMsCity(c echo.Context) error {
 
 	cityCode := c.FormValue("city_code")
 	if cityCode == "" {
-		log.Error("Missing required parameter: city_code")
+		// log.Error("Missing required parameter: city_code")
 		return lib.CustomError(http.StatusBadRequest, "city_code can not be blank", "city_code can not be blank")
 	} else {
 		//validate unique city_code
 		var countData models.CountData
 		status, err = models.CountMsCityValidateUnique(&countData, "city_code", cityCode, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: city_code")
+			// log.Error("Missing required parameter: city_code")
 			return lib.CustomError(http.StatusBadRequest, "city_code already used", "city_code already used")
 		}
 		params["city_code"] = cityCode
@@ -415,7 +414,7 @@ func AdminCreateMsCity(c echo.Context) error {
 
 	cityName := c.FormValue("city_name")
 	if cityName == "" {
-		log.Error("Missing required parameter: city_name")
+		// log.Error("Missing required parameter: city_name")
 		return lib.CustomError(http.StatusBadRequest, "city_name can not be blank", "city_name can not be blank")
 	} else {
 		params["city_name"] = cityName
@@ -430,7 +429,7 @@ func AdminCreateMsCity(c echo.Context) error {
 	if recOrder != "" {
 		_, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -443,7 +442,7 @@ func AdminCreateMsCity(c echo.Context) error {
 
 	status, err = models.CreateMsCity(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -466,23 +465,23 @@ func AdminUpdateMsCity(c echo.Context) error {
 	if cityKey != "" {
 		n, err := strconv.ParseUint(cityKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: city_key")
+			// log.Error("Wrong input for parameter: city_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: city_key", "Wrong input for parameter: city_key")
 		}
 		params["city_key"] = cityKey
 	} else {
-		log.Error("Missing required parameter: city_key")
+		// log.Error("Missing required parameter: city_key")
 		return lib.CustomError(http.StatusBadRequest, "city_key can not be blank", "city_key can not be blank")
 	}
 
 	countryKey := c.FormValue("country_key")
 	if countryKey == "" {
-		log.Error("Missing required parameter: country_key")
+		// log.Error("Missing required parameter: country_key")
 		return lib.CustomError(http.StatusBadRequest, "country_key can not be blank", "country_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(countryKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: country_key")
+			// log.Error("Wrong input for parameter: country_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: country_key", "Wrong input for parameter: country_key")
 		}
 		params["country_key"] = countryKey
@@ -490,12 +489,12 @@ func AdminUpdateMsCity(c echo.Context) error {
 
 	cityLevel := c.FormValue("city_level")
 	if cityLevel == "" {
-		log.Error("Missing required parameter: city_level")
+		// log.Error("Missing required parameter: city_level")
 		return lib.CustomError(http.StatusBadRequest, "city_level can not be blank", "city_level can not be blank")
 	} else {
 		n, err := strconv.ParseUint(cityLevel, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: city_level")
+			// log.Error("Wrong input for parameter: city_level")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: city_level", "Wrong input for parameter: city_level")
 		}
 		params["city_level"] = cityLevel
@@ -509,69 +508,69 @@ func AdminUpdateMsCity(c echo.Context) error {
 
 	} else if cityLevel == "2" {
 		if regionArea == "" {
-			log.Error("Missing required parameter: region_area")
+			// log.Error("Missing required parameter: region_area")
 			return lib.CustomError(http.StatusBadRequest, "region_area can not be blank", "region_area can not be blank")
 		} else {
 			n, err := strconv.ParseUint(cityLevel, 10, 64)
 			if err != nil || n == 0 {
-				log.Error("Wrong input for parameter: region_area")
+				// log.Error("Wrong input for parameter: region_area")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: region_area", "Wrong input for parameter: region_area")
 			}
 		}
 		params["parent_key"] = regionArea
 	} else if cityLevel == "3" {
 		if regionArea == "" {
-			log.Error("Missing required parameter: region_area")
+			// log.Error("Missing required parameter: region_area")
 			return lib.CustomError(http.StatusBadRequest, "region_area can not be blank", "region_area can not be blank")
 		} else {
 			n, err := strconv.ParseUint(cityLevel, 10, 64)
 			if err != nil || n == 0 {
-				log.Error("Wrong input for parameter: region_area")
+				// log.Error("Wrong input for parameter: region_area")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: region_area", "Wrong input for parameter: region_area")
 			}
 		}
 
 		if province == "" {
-			log.Error("Missing required parameter: province")
+			// log.Error("Missing required parameter: province")
 			return lib.CustomError(http.StatusBadRequest, "province can not be blank", "province can not be blank")
 		} else {
 			n, err := strconv.ParseUint(cityLevel, 10, 64)
 			if err != nil || n == 0 {
-				log.Error("Wrong input for parameter: province")
+				// log.Error("Wrong input for parameter: province")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: province", "Wrong input for parameter: province")
 			}
 		}
 		params["parent_key"] = province
 	} else if cityLevel == "4" {
 		if regionArea == "" {
-			log.Error("Missing required parameter: region_area")
+			// log.Error("Missing required parameter: region_area")
 			return lib.CustomError(http.StatusBadRequest, "region_area can not be blank", "region_area can not be blank")
 		} else {
 			n, err := strconv.ParseUint(cityLevel, 10, 64)
 			if err != nil || n == 0 {
-				log.Error("Wrong input for parameter: region_area")
+				// log.Error("Wrong input for parameter: region_area")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: region_area", "Wrong input for parameter: region_area")
 			}
 		}
 
 		if province == "" {
-			log.Error("Missing required parameter: province")
+			// log.Error("Missing required parameter: province")
 			return lib.CustomError(http.StatusBadRequest, "province can not be blank", "province can not be blank")
 		} else {
 			n, err := strconv.ParseUint(cityLevel, 10, 64)
 			if err != nil || n == 0 {
-				log.Error("Wrong input for parameter: province")
+				// log.Error("Wrong input for parameter: province")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: province", "Wrong input for parameter: province")
 			}
 		}
 
 		if kabKodya == "" {
-			log.Error("Missing required parameter: kab_kodya")
+			// log.Error("Missing required parameter: kab_kodya")
 			return lib.CustomError(http.StatusBadRequest, "kab_kodya can not be blank", "kab_kodya can not be blank")
 		} else {
 			n, err := strconv.ParseUint(cityLevel, 10, 64)
 			if err != nil || n == 0 {
-				log.Error("Wrong input for parameter: kab_kodya")
+				// log.Error("Wrong input for parameter: kab_kodya")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: kab_kodya", "Wrong input for parameter: kab_kodya")
 			}
 		}
@@ -580,18 +579,18 @@ func AdminUpdateMsCity(c echo.Context) error {
 
 	cityCode := c.FormValue("city_code")
 	if cityCode == "" {
-		log.Error("Missing required parameter: city_code")
+		// log.Error("Missing required parameter: city_code")
 		return lib.CustomError(http.StatusBadRequest, "city_code can not be blank", "city_code can not be blank")
 	} else {
 		//validate unique city_code
 		var countData models.CountData
 		status, err = models.CountMsCityValidateUnique(&countData, "city_code", cityCode, cityKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: city_code")
+			// log.Error("Missing required parameter: city_code")
 			return lib.CustomError(http.StatusBadRequest, "city_code already used", "city_code already used")
 		}
 		params["city_code"] = cityCode
@@ -599,7 +598,7 @@ func AdminUpdateMsCity(c echo.Context) error {
 
 	cityName := c.FormValue("city_name")
 	if cityName == "" {
-		log.Error("Missing required parameter: city_name")
+		// log.Error("Missing required parameter: city_name")
 		return lib.CustomError(http.StatusBadRequest, "city_name can not be blank", "city_name can not be blank")
 	} else {
 		params["city_name"] = cityName
@@ -614,7 +613,7 @@ func AdminUpdateMsCity(c echo.Context) error {
 	if recOrder != "" {
 		_, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -627,7 +626,7 @@ func AdminUpdateMsCity(c echo.Context) error {
 
 	status, err = models.UpdateMsCity(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -645,24 +644,24 @@ func AdminDetailMsCity(c echo.Context) error {
 
 	cityKey := c.Param("city_key")
 	if cityKey == "" {
-		log.Error("Missing required parameter: city_key")
+		// log.Error("Missing required parameter: city_key")
 		return lib.CustomError(http.StatusBadRequest, "city_key can not be blank", "city_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(cityKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: city_key")
+			// log.Error("Wrong input for parameter: city_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: city_key", "Wrong input for parameter: city_key")
 		}
 	}
 	var city models.MsCity
 	_, err = models.GetMsCity(&city, cityKey)
 	if err != nil {
-		log.Error("City not found")
+		// log.Error("City not found")
 		return lib.CustomError(http.StatusBadRequest, "City not found", "City not found")
 	}
 
 	if city.CityLevel == uint64(0) || city.CityLevel > uint64(4) {
-		log.Error("City not found")
+		// log.Error("City not found")
 		return lib.CustomError(http.StatusBadRequest, "City not found", "City not found")
 	}
 
@@ -697,7 +696,7 @@ func AdminDetailMsCity(c echo.Context) error {
 			var regionArea models.MsCity
 			_, err = models.GetMsCity(&regionArea, strconv.FormatUint(*city.ParentKey, 10))
 			if err != nil {
-				log.Error("City (Region Area) not found")
+				// log.Error("City (Region Area) not found")
 				return lib.CustomError(http.StatusBadRequest, "City (Region Area) not found", "City (Region Area) not found")
 			}
 
@@ -713,7 +712,7 @@ func AdminDetailMsCity(c echo.Context) error {
 			var province models.MsCity
 			_, err = models.GetMsCity(&province, strconv.FormatUint(*city.ParentKey, 10))
 			if err != nil {
-				log.Error("City (Province) not found")
+				// log.Error("City (Province) not found")
 				return lib.CustomError(http.StatusBadRequest, "City (Province) not found", "City (Province) not found")
 			}
 
@@ -723,7 +722,7 @@ func AdminDetailMsCity(c echo.Context) error {
 				var regionArea models.MsCity
 				_, err = models.GetMsCity(&regionArea, strconv.FormatUint(*province.ParentKey, 10))
 				if err != nil {
-					log.Error("City (Region Area) not found")
+					// log.Error("City (Region Area) not found")
 					return lib.CustomError(http.StatusBadRequest, "City (Region Area) not found", "City (Region Area) not found")
 				}
 
@@ -750,7 +749,7 @@ func GetCityParent(c echo.Context) error {
 	var city []models.ListParent
 	status, err = models.AdminGetListParent(&city)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 

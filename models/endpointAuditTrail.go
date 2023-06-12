@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 )
@@ -21,17 +20,17 @@ func CreateEndpointAuditTrail(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil

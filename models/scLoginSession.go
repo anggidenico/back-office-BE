@@ -5,15 +5,13 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type ScLoginSessionInfo struct {
 	SessionID          string  `json:"session_id"`
 	Email              *string `json:"email,omitempty"`
 	Expired            *string `json:"expired,omitempty"`
-	MustChangePassword bool    `json:"must_change_password"`
+	// MustChangePassword bool    `json:"must_change_password"`
 }
 
 type ScLoginSession struct {
@@ -92,10 +90,10 @@ func GetAllScLoginSession(c *[]ScLoginSession, limit uint64, offset uint64, para
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -104,10 +102,10 @@ func GetAllScLoginSession(c *[]ScLoginSession, limit uint64, offset uint64, para
 
 func GetScLoginSession(c *ScLoginSession, key string) (int, error) {
 	query := `SELECT sc_login_session.* WHERE sc_login_session.user_login_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusNotFound, err
 	}
 
@@ -129,17 +127,17 @@ func CreateScLoginSession(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -176,11 +174,11 @@ func UpdateScLoginSession(params map[string]string) (int, error) {
 	}
 
 	query += " WHERE user_login_key = " + params["user_login_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -192,7 +190,7 @@ func UpdateScLoginSession(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil

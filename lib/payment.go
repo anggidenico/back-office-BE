@@ -14,8 +14,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type FMNotif struct {
@@ -42,7 +40,7 @@ func SpinGenerateSignature(trNumber, name string) string {
 		trNumber + `||` + name
 	encryptedByte := sha256.Sum256([]byte(str))
 	signature := hex.EncodeToString(encryptedByte[:])
-	log.Info("signature :", signature)
+	// log.Info("signature :", signature)
 	return signature
 }
 
@@ -66,7 +64,7 @@ func Spin(trNumber string, name string, params map[string]string) (int, string, 
 	spinUrl := spin[name]
 	req, err := http.NewRequest(spinUrl["method"], spinUrl["url"], payload)
 	if err != nil {
-		log.Error("Error1", err.Error())
+		// log.Error("Error1", err.Error())
 		return http.StatusBadGateway, "", err
 	}
 	req.Header.Add("Content-Type", "application/json")
@@ -74,28 +72,28 @@ func Spin(trNumber string, name string, params map[string]string) (int, string, 
 	req.Header.Add("auth-partner", config.Partner)
 	req.Header.Add("auth-signature", signature)
 
-	log.Info(FormatRequest(req))
+	// log.Info(FormatRequest(req))
 
 	res, err := http.DefaultClient.Do(req)
-	log.Info(res.StatusCode)
+	// log.Info(res.StatusCode)
 	// if res.StatusCode != 200 {
-	// 	log.Error("Error : ", res.StatusCode)
+	// 	// log.Error("Error : ", res.StatusCode)
 	// 	return res.StatusCode, "", err
 	// }
 	if err != nil {
-		log.Error("Error2", err.Error())
+		// log.Error("Error2", err.Error())
 		return http.StatusBadGateway, "", err
 	}
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Error("Error3", err.Error())
+		// log.Error("Error3", err.Error())
 		return http.StatusBadGateway, "", err
 	}
-	log.Info(string(body))
+	// log.Info(string(body))
 	// var sec map[string]interface{}
 	// if err = json.Unmarshal(body, &sec); err != nil {
-	// 	log.Error("Error4", err.Error())
+	// 	// log.Error("Error4", err.Error())
 	// 	return err.Error()
 	// }
 
@@ -153,17 +151,17 @@ func FMPostPaymentData(params map[string]string) (int, map[string]string, error)
 		params["phone"] + params["order_id"] + params["no_reference"] + params["amount"] + params["currency"] +
 		params["item_details"] + params["datetime_request"] + params["payment_method"] + params["time_limit"] +
 		params["notif_url"] + params["thanks_url"] + config.SecretKey
-	log.Info(paramsJoin)
+	// log.Info(paramsJoin)
 	paramsJoinByte := []byte(paramsJoin)
 	signatureMD5 := md5.Sum(paramsJoinByte)
 	signatureSHA1 := sha1.Sum([]byte(fmt.Sprintf("%x", signatureMD5)))
 	params["signature"] = fmt.Sprintf("%x", signatureSHA1)
-	log.Info(params["signature"])
+	// log.Info(params["signature"])
 	jsonString, err := json.Marshal(params)
 	payload := strings.NewReader(string(jsonString))
 	req, err := http.NewRequest("POST", config.FMUrl, payload)
 	if err != nil {
-		log.Error("Error1", err.Error())
+		// log.Error("Error1", err.Error())
 		return http.StatusBadGateway, nil, err
 	}
 	req.Header.Add("Content-Type", "application/json")
@@ -173,19 +171,19 @@ func FMPostPaymentData(params map[string]string) (int, map[string]string, error)
 	var sec map[string]interface{}
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		log.Error("ERROR POST PAYMENT : ", err.Error())
+		// log.Error("ERROR POST PAYMENT : ", err.Error())
 		return http.StatusBadGateway, nil, err
 	}
-	log.Println("RES : ", res)
+	// log.Println("RES : ", res)
 	paramLog["status"] = strconv.FormatUint(uint64(res.StatusCode), 10)
 	if res.StatusCode != http.StatusOK {
 		body, err := ioutil.ReadAll(res.Body)
 		paramLog["response"] = string(body)
-		log.Error("Error2", err)
+		// log.Error("Error2", err)
 		_, err = models.CreateEndpoint3rdPartyLog(paramLog)
 		if err != nil {
-			log.Error("Error create log endpoint flash mobile")
-			log.Error(err.Error())
+			// log.Error("Error create log endpoint flash mobile")
+			// log.Error(err.Error())
 		}
 
 		return http.StatusBadGateway, nil, err
@@ -196,20 +194,20 @@ func FMPostPaymentData(params map[string]string) (int, map[string]string, error)
 			paramLog["response"] = err.Error()
 			_, err = models.CreateEndpoint3rdPartyLog(paramLog)
 			if err != nil {
-				log.Error("Error create log endpoint flash mobile")
-				log.Error(err.Error())
+				// log.Error("Error create log endpoint flash mobile")
+				// log.Error(err.Error())
 			}
-			log.Error("Error3", err.Error())
+			// log.Error("Error3", err.Error())
 			return http.StatusBadGateway, nil, err
 		}
 		paramLog["response"] = string(body)
 		_, err = models.CreateEndpoint3rdPartyLog(paramLog)
 		if err != nil {
-			log.Error("Error create log endpoint flash mobile")
-			log.Error(err.Error())
+			// log.Error("Error create log endpoint flash mobile")
+			// log.Error(err.Error())
 		}
 		if err = json.Unmarshal(body, &sec); err != nil {
-			log.Error("Error4", err.Error())
+			// log.Error("Error4", err.Error())
 			return http.StatusBadGateway, nil, err
 		}
 	}

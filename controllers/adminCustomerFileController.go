@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func CustomerUpdateFile(c echo.Context) error {
@@ -21,14 +20,14 @@ func CustomerUpdateFile(c echo.Context) error {
 
 	customer_key := c.FormValue("customer_key")
 	if customer_key == "" {
-		log.Println("customer_key required")
+		// log.Println("customer_key required")
 		return lib.CustomError(http.StatusBadRequest, "customer_key required", "customer_key required")
 	}
 
 	var userData models.ScUserLogin
 	_, err := models.GetScUserLoginByCustomerKey(&userData, customer_key)
 	if err != nil {
-		log.Println("customer not found")
+		// log.Println("customer not found")
 		return lib.CustomError(http.StatusBadRequest, "customer not found", "customer not found")
 	}
 
@@ -50,13 +49,13 @@ func CustomerUpdateFile(c echo.Context) error {
 				}
 			} else {
 				if fileNotes == "" {
-					log.Println("file_notes_" + strconv.FormatUint(uint64(i), 10) + " required")
+					// log.Println("file_notes_" + strconv.FormatUint(uint64(i), 10) + " required")
 					return lib.CustomError(http.StatusBadRequest, "file_notes_"+strconv.FormatUint(uint64(i), 10)+" required", "Missing required parameter: file_notes_"+strconv.FormatUint(uint64(i), 10)+" required")
 				}
 				if fileKey != "" { //update
 					if file != nil {
 						if err != nil {
-							log.Println("file_upload_" + strconv.FormatUint(uint64(i), 10) + " : " + err.Error())
+							// log.Println("file_upload_" + strconv.FormatUint(uint64(i), 10) + " : " + err.Error())
 							return lib.CustomError(http.StatusBadRequest, err.Error(), "Missing required parameter: file_upload_"+strconv.FormatUint(uint64(i), 10))
 						}
 						updateIndex = append(updateIndex, strconv.FormatUint(uint64(i), 10))
@@ -66,7 +65,7 @@ func CustomerUpdateFile(c echo.Context) error {
 				} else { //create
 					if file != nil {
 						if err != nil {
-							log.Println("file_upload_" + strconv.FormatUint(uint64(i), 10) + " required")
+							// log.Println("file_upload_" + strconv.FormatUint(uint64(i), 10) + " required")
 							return lib.CustomError(http.StatusBadRequest, err.Error(), "Missing required parameter: file_upload_"+strconv.FormatUint(uint64(i), 10))
 						}
 						createIndex = append(createIndex, strconv.FormatUint(uint64(i), 10))
@@ -79,7 +78,7 @@ func CustomerUpdateFile(c echo.Context) error {
 	dateLayout := "2006-01-02 15:04:05"
 	err = os.MkdirAll(config.BasePathImage+"/images/user/"+strconv.FormatUint(userData.UserLoginKey, 10)+"/ms_file", 0755)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadGateway, err.Error(), err.Error())
 	} else {
 		for i := 1; i <= maxCountFile; i++ {
@@ -94,7 +93,7 @@ func CustomerUpdateFile(c echo.Context) error {
 				_, foundCreate := lib.Find(createIndex, strconv.FormatUint(uint64(i), 10))
 
 				if foundDelete {
-					log.Println("del")
+					// log.Println("del")
 					//update ms_file -> delete
 					deleteFile := make(map[string]string)
 					deleteFile["file_key"] = fileKey
@@ -105,11 +104,11 @@ func CustomerUpdateFile(c echo.Context) error {
 
 					_, err = models.UpdateMsFile(deleteFile)
 					if err != nil {
-						log.Error("Error update personal data delete")
+						// log.Error("Error update personal data delete")
 						return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 					}
 				} else if foundUpdate {
-					log.Println("upd")
+					// log.Println("upd")
 					//update ms_file -> update
 					updateFile := make(map[string]string)
 					updateFile["file_key"] = fileKey
@@ -131,18 +130,18 @@ func CustomerUpdateFile(c echo.Context) error {
 
 						err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+strconv.FormatUint(userData.UserLoginKey, 10)+"/ms_file/"+filename+extension)
 						if err != nil {
-							log.Println(err)
+							// log.Println(err)
 							return lib.CustomError(http.StatusInternalServerError)
 						}
 					}
 
 					_, err = models.UpdateMsFile(updateFile)
 					if err != nil {
-						log.Error("Error update ms_file")
+						// log.Error("Error update ms_file")
 						return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data ms_file")
 					}
 				} else if foundCreate {
-					log.Println("cre")
+					// log.Println("cre")
 					//create
 					//update ms_file -> update
 					createFile := make(map[string]string)
@@ -167,14 +166,14 @@ func CustomerUpdateFile(c echo.Context) error {
 
 						err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+strconv.FormatUint(userData.UserLoginKey, 10)+"/ms_file/"+filename+extension)
 						if err != nil {
-							log.Println(err)
+							// log.Println(err)
 							return lib.CustomError(http.StatusInternalServerError)
 						}
 					}
 
 					_, err, _ = models.CreateMsFile(createFile)
 					if err != nil {
-						log.Error("Error create ms_file")
+						// log.Error("Error create ms_file")
 						return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed create data ms_file")
 					}
 				}
@@ -216,18 +215,18 @@ func AdminGetDetailCustomerDocument(c echo.Context) error {
 	if customerKeyStr != "" {
 		customerKey, err := strconv.ParseUint(customerKeyStr, 10, 64)
 		if err != nil || customerKey == 0 {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
 	var userData models.ScUserLogin
 	_, err := models.GetScUserLoginByCustomerKey(&userData, customerKeyStr)
 	if err != nil {
-		log.Println("customer not found")
+		// log.Println("customer not found")
 		return lib.CustomError(http.StatusBadRequest, "customer not found", "customer not found")
 	}
 
@@ -239,7 +238,7 @@ func AdminGetDetailCustomerDocument(c echo.Context) error {
 	var customer models.CustomerIndividuStatusSuspend
 	_, err = models.AdminGetDetailCustomerStatusSuspend(&customer, params)
 	if err != nil {
-		log.Error("Error get data ms_customer")
+		// log.Error("Error get data ms_customer")
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 	}
 

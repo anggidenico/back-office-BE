@@ -4,8 +4,6 @@ import (
 	_ "database/sql"
 	"mf-bo-api/db"
 	"net/http"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type OaCustomerPipeline struct {
@@ -62,10 +60,10 @@ type OaCustomerPipeline struct {
 func GetOaCustomerPipeline(c *OaCustomerPipeline, key string, field string) (int, error) {
 	query := `SELECT oa_customer_pipeline.* FROM oa_customer_pipeline 
 	WHERE oa_customer_pipeline.rec_status = 1 AND oa_customer_pipeline.` + field + ` = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusNotFound, err
 	}
 
@@ -87,17 +85,17 @@ func CreateOaCustomerPipeline(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil

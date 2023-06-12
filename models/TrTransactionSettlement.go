@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type TrTransactionSettlement struct {
@@ -97,10 +96,10 @@ func GetAllTrTransactionSettlement(c *[]TrTransactionSettlement, params map[stri
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -115,10 +114,10 @@ func GetTrTransactionSettlementIn(c *[]TrTransactionSettlement, value []string, 
 	query := query2 + " WHERE tr_transaction_settlement." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -128,10 +127,10 @@ func GetTrTransactionSettlementIn(c *[]TrTransactionSettlement, value []string, 
 func GetTrTransactionSettlement(c *TrTransactionSettlement, field string, key string) (int, error) {
 	query := `SELECT tr_transaction_settlement.* FROM tr_transaction_settlement WHERE 
 	tr_transaction_settlement.rec_status = "1" AND tr_transaction_settlement.` + field + ` = "` + key + `"`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -159,18 +158,18 @@ func CreateTrTransactionSettlement(params map[string]string) (int, error, string
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -193,11 +192,11 @@ func UpdateTrTransactionSettlement(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE settlement_key = " + params["settlement_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -209,7 +208,7 @@ func UpdateTrTransactionSettlement(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -231,11 +230,11 @@ func UpdateTrTransactionSettlementByKeyIn(params map[string]string, valueIn []st
 	inQuery := strings.Join(valueIn, ",")
 	query += " WHERE tr_transaction_settlement." + fieldIn + " IN(" + inQuery + ")"
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -247,7 +246,7 @@ func UpdateTrTransactionSettlementByKeyIn(params map[string]string, valueIn []st
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -267,11 +266,11 @@ func UpdateTrTransactionSettlementExpired(params map[string]string, value []stri
 		i++
 	}
 	query += " WHERE settlement_key IN(" + inQuery + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -283,7 +282,7 @@ func UpdateTrTransactionSettlementExpired(params map[string]string, value []stri
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -302,11 +301,11 @@ func UpdateTrTransactionSettlementByField(params map[string]string, value string
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -318,7 +317,7 @@ func UpdateTrTransactionSettlementByField(params map[string]string, value string
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil

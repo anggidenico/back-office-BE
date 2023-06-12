@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MsAgent struct {
@@ -88,10 +86,10 @@ func GetAllMsAgent(c *[]MsAgent, limit uint64, offset uint64, params map[string]
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -106,10 +104,10 @@ func GetMsAgentIn(c *[]MsAgent, value []string, field string) (int, error) {
 	query := query2 + " WHERE ms_agent.rec_status = 1 AND ms_agent." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Info(err)
+		// log.Info(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -118,10 +116,10 @@ func GetMsAgentIn(c *[]MsAgent, value []string, field string) (int, error) {
 
 func GetMsAgent(c *MsAgent, key string) (int, error) {
 	query := `SELECT ms_agent.* FROM ms_agent WHERE ms_agent.rec_status = 1 AND ms_agent.agent_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Info(err)
+		// log.Info(err)
 		return http.StatusNotFound, err
 	}
 
@@ -130,10 +128,10 @@ func GetMsAgent(c *MsAgent, key string) (int, error) {
 
 func GetMsAgentByField(c *MsAgent, value string, field string) (int, error) {
 	query := `SELECT ms_agent.* FROM ms_agent WHERE ms_agent.rec_status = 1 AND ms_agent.` + field + ` = ` + value
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Info(err)
+		// log.Info(err)
 		return http.StatusNotFound, err
 	}
 
@@ -145,10 +143,10 @@ func GetMsAgentDropdown(c *[]MsAgentDropdown) (int, error) {
 				agent_key, 
  				CONCAT(agent_code, " - ", agent_name) AS agent_name 
 			FROM ms_agent WHERE ms_agent.rec_status = 1`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Info(err)
+		// log.Info(err)
 		return http.StatusNotFound, err
 	}
 
@@ -233,10 +231,10 @@ func AdminGetListAgent(c *[]ListAgentAdmin, limit uint64, offset uint64, params 
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -284,10 +282,10 @@ func CountAdminGetListAgent(c *CountData, params map[string]string, searchLike s
 			WHERE a.rec_status = 1 ` + condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -310,11 +308,11 @@ func UpdateMsAgent(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE agent_key = " + params["agent_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -322,7 +320,7 @@ func UpdateMsAgent(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -344,17 +342,17 @@ func CreateMsAgent(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	ret, err := tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -372,10 +370,10 @@ func CountMsAgentValidateUnique(c *CountData, field string, value string, key st
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -421,10 +419,10 @@ func AdminGetDetailAgent(c *MsAgentBranchDetail, key string) (int, error) {
 			WHERE a.rec_status = 1 AND a.agent_key = '` + key + `'`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -488,13 +486,13 @@ func AdminGetListAgentCustomer(c *[]AgentCustomerDetailList, searchLike string, 
 
 	query += ` ORDER BY t1.agent_key ASC` + limitOffset
 
-	// log.Println("==========  ==========>>>",query)
+	// // log.Println("==========  ==========>>>",query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
-	log.Println("========== QUERY GET SEMUA AGENT DAN NAMA CUSTOMER ==========>>>", query)
+	// log.Println("========== QUERY GET SEMUA AGENT DAN NAMA CUSTOMER ==========>>>", query)
 	return http.StatusOK, nil
 }
 
@@ -526,10 +524,10 @@ func CountAdminGetListAgentCustomer(c *CountData, searchLike string, searchType 
 	// query += ` GROUP BY b.customer_key ORDER BY a.agent_key ASC`
 
 	// Main query
-	log.Println("========== QUERY GET JUMLAH HALAMAN ==========>>>", query)
+	// log.Println("========== QUERY GET JUMLAH HALAMAN ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -557,15 +555,15 @@ func AdminAddAgentCustomer(agentKey string, customerKey string, effectiveDate st
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	tx.Exec(query)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
-	log.Println("========== QUERY ADD AGENT CUSTOMER ==========>>>", query)
+	// log.Println("========== QUERY ADD AGENT CUSTOMER ==========>>>", query)
 	return http.StatusOK, nil
 }

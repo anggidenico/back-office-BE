@@ -11,14 +11,13 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func DownloadTransactionFormatSinvest(c echo.Context) error {
 	errorAuth := initAuthFundAdmin()
 	zero := decimal.NewFromInt(0)
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	decimal.MarshalJSONWithoutQuotes = true
@@ -31,7 +30,7 @@ func DownloadTransactionFormatSinvest(c echo.Context) error {
 	//date
 	postnavdate := c.QueryParam("nav_date")
 	if postnavdate == "" {
-		log.Error("Missing required parameter: nav_date")
+		// log.Error("Missing required parameter: nav_date")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date", "Missing required parameter: nav_date")
 	}
 
@@ -50,7 +49,7 @@ func DownloadTransactionFormatSinvest(c echo.Context) error {
 	status, err = models.GetAllTransactionByParamAndValueIn(&transSubRed, config.LimitQuery, offset, true, params, transTypeKeySubRed, "trans_type_key")
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -59,13 +58,13 @@ func DownloadTransactionFormatSinvest(c echo.Context) error {
 	status, err = models.GetAllTransactionByParamAndValueIn(&transSwitch, config.LimitQuery, offset, true, params, transTypeKeySwitch, "trans_type_key")
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
 
 	if (len(transSubRed)) == 0 && (len(transSwitch)) == 0 {
-		log.Error("transaction not found")
+		// log.Error("transaction not found")
 		return lib.CustomError(http.StatusNotFound, "Transaction not found", "Transaction not found")
 	}
 
@@ -117,7 +116,7 @@ func DownloadTransactionFormatSinvest(c echo.Context) error {
 		status, err = models.GetMsProductIn(&productList, productIds, "product_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -134,7 +133,7 @@ func DownloadTransactionFormatSinvest(c echo.Context) error {
 		status, err = models.GetTrAccountIn(&accountList, customerIds, "customer_key", &groupBy)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -150,7 +149,7 @@ func DownloadTransactionFormatSinvest(c echo.Context) error {
 		status, err = models.GetTransactionBankAccountInfoCustomerIn(&bankTrans, customerIds)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -166,7 +165,7 @@ func DownloadTransactionFormatSinvest(c echo.Context) error {
 		status, err = models.GetDataParentTransactionSwitch(&parentTransaction, parentIds)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -434,7 +433,7 @@ func DownloadTransactionFormatSinvest(c echo.Context) error {
 
 			_, err = models.UpdateTrTransaction(paramsUpdate)
 			if err != nil {
-				log.Error("Error update Transaction")
+				// log.Error("Error update Transaction")
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 			}
 		}
@@ -521,8 +520,8 @@ func CheckTransactionBatch(transKey string) string {
 
 			_, err, lastID := models.CreateTrTransactionBacth(paramsBatch)
 			if err != nil {
-				log.Error(err.Error())
-				log.Error("Error create batch")
+				// log.Error(err.Error())
+				// log.Error("Error create batch")
 			}
 
 			transBatchKet = lastID

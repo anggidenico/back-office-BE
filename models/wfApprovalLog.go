@@ -3,8 +3,6 @@ package models
 import (
 	"mf-bo-api/db"
 	"net/http"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type WfApprovalLog struct {
@@ -51,17 +49,17 @@ func CreateWfApprovalLog(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -79,10 +77,10 @@ func GetLastUserApproveStatusApproved(c *LastUserApproveStatusApproved, transact
 			AND l.rec_status = 1 AND l.rec_approval_status = "6" ORDER BY l.approval_log_key DESC LIMIT 1`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

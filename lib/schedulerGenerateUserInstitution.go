@@ -11,7 +11,6 @@ import (
 	"text/template"
 	"time"
 
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
@@ -105,7 +104,7 @@ func GenerateUserInstitution() {
 						fmt.Println("error update institution user")
 					}
 				} else {
-					log.Println("fffffffff")
+					// log.Println("fffffffff")
 					fmt.Println("error save user_login")
 				}
 			}
@@ -168,7 +167,7 @@ func sendEmail(email string, token string) error {
 
 	t, err = t.ParseFiles(config.BasePath + "/mail/index-email-activation-web.html")
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		fmt.Println("======FAILED SEND EMAIL TO " + email + "============")
 		return err
 	}
@@ -178,7 +177,7 @@ func sendEmail(email string, token string) error {
 		Url     string
 		FileUrl string
 	}{Url: config.BaseUrl + "/verify-email-user?token=" + token, FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-		log.Println(err)
+		// log.Println(err)
 		fmt.Println("======FAILED SEND EMAIL TO " + email + "============")
 		return err
 	}
@@ -193,7 +192,7 @@ func sendEmail(email string, token string) error {
 
 	err = SendEmail(mailer)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		fmt.Println("======FAILED SEND EMAIL TO " + email + "============")
 		return err
 	}
@@ -207,7 +206,7 @@ func sendEmail(email string, token string) error {
 
 	// err = dialer.DialAndSend(mailer)
 	// if err != nil {
-	// 	log.Error(err)
+	// 	// log.Error(err)
 	// 	fmt.Println("======FAILED SEND EMAIL TO " + email + "============")
 	// 	return err
 	// }

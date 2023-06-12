@@ -4,8 +4,6 @@ import (
 	_ "database/sql"
 	"mf-bo-api/db"
 	"net/http"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type OaPersonalDocuments struct {
@@ -42,10 +40,10 @@ func GetOaPersonalDocsRequest(c *[]OaPersonalDocsDetail, oaReqKey string) (int, 
 	AND ty.lkp_group_key = 105`
 
 	// Main query
-	log.Println("========== query cek personal data ==========", query)
+	// log.Println("========== query cek personal data ==========", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

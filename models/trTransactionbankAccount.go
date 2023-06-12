@@ -5,8 +5,6 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type TrTransactionBankAccount struct {
@@ -56,17 +54,17 @@ func CreateTrTransactionBankAccount(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -85,11 +83,11 @@ func UpdateTrTransactionBankAccount(params map[string]string, value string, fiel
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -101,7 +99,7 @@ func UpdateTrTransactionBankAccount(params map[string]string, value string, fiel
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -113,10 +111,10 @@ func GetTrTransactionBankAccountByField(c *TrTransactionBankAccount, value strin
 			  tr_transaction_bank_account 
 			  where tr_transaction_bank_account.rec_status = 1 and tr_transaction_bank_account.` + field + ` = ` + value + ` limit 1`
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -138,10 +136,10 @@ func GetTrTransactionBankAccountIn(c *[]TransactionPoductBankAccount, value []st
 	WHERE t.transaction_key IN(` + inQuery + `)`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

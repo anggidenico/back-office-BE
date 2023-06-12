@@ -5,8 +5,6 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MmMailMaster struct {
@@ -53,10 +51,10 @@ func GetMmMailMaster(c *MmMailMaster, field string, key string) (int, error) {
 	query := `SELECT mm_mail_master.* FROM mm_mail_master 
 	WHERE mm_mail_master.rec_status = '1' 
 	AND mm_mail_master.` + field + ` = "` + key + `"`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -78,18 +76,18 @@ func CreateMmMailMaster(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -112,11 +110,11 @@ func UpdateMmMailMaster(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE mail_master_key = " + params["mail_master_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -124,7 +122,7 @@ func UpdateMmMailMaster(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -142,10 +140,10 @@ func CountMmMailMasterValidateUnique(c *CountData, field string, value string, k
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -222,10 +220,10 @@ func AdminGetListMmMailMaster(c *[]ListMmMailMaster, limit uint64, offset uint64
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -269,10 +267,10 @@ func CountAdminGetMmMailMaster(c *CountData, params map[string]string, searchLik
 			WHERE m.rec_status = 1` + condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

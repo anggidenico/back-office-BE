@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type OaInstitutionSharesHolder struct {
@@ -59,10 +58,10 @@ type OaInstitutionSharesHolderDetail struct {
 func GetOaInstitutionSharesHolder(c *OaInstitutionSharesHolder, key string, field string) (int, error) {
 	query := `SELECT oa_institution_shares_holder.* FROM oa_institution_shares_holder 
 	WHERE oa_institution_shares_holder.rec_status = 1 AND oa_institution_shares_holder.` + field + ` = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusNotFound, err
 	}
 
@@ -84,18 +83,18 @@ func CreateOaInstitutionSharesHolder(params map[string]string) (int, error, stri
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -121,10 +120,10 @@ func GetOaInstitutionSharesHolderRequest(c *[]OaInstitutionSharesHolderDetail, o
 			WHERE sh.rec_status = "1" AND sh.oa_request_key = "` + oaReqKey + `"`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -147,11 +146,11 @@ func UpdateOaInstitutionSharesHolder(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE inst_shares_holder_key = " + params["inst_shares_holder_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -163,7 +162,7 @@ func UpdateOaInstitutionSharesHolder(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -188,11 +187,11 @@ func DeleteOaInstitutionSharesHolder(params map[string]string, sharesKey []strin
 	} else {
 		query += " WHERE rec_status = 1 AND oa_request_key = '" + requestKey + "'"
 	}
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -204,7 +203,7 @@ func DeleteOaInstitutionSharesHolder(params map[string]string, sharesKey []strin
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil

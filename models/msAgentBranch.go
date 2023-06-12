@@ -4,8 +4,6 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MsAgentBranch struct {
@@ -55,10 +53,10 @@ func GetMsAgentLastBranch(c *[]MsAgentLastBranch, branchKey string) (int, error)
 			WHERE mab.rec_status = 1 AND a.rec_status = 1 
 			AND t2.eff_date = mab.eff_date AND mab.branch_key = '` + branchKey + `'  
 			ORDER BY mab.agent_branch_key ASC`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -109,10 +107,10 @@ func GetAllMsAgentBranch(c *[]MsAgentBranch, limit uint64, offset uint64, params
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -131,11 +129,11 @@ func UpdateDeleteBranchAgent(params map[string]string, field string, val string)
 		i++
 	}
 	query += " WHERE " + field + " = '" + val + "' AND rec_status = '1'"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -143,7 +141,7 @@ func UpdateDeleteBranchAgent(params map[string]string, field string, val string)
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -165,18 +163,18 @@ func CreateMsAgentBranch(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -187,10 +185,10 @@ func GetLastBranchAgent(c *MsAgentBranch, agentKey string) (int, error) {
 			FROM ms_agent_branch
 			WHERE agent_key = "` + agentKey + `" AND rec_status = 1
 			AND eff_date <= NOW() ORDER BY eff_date DESC LIMIT 1`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 

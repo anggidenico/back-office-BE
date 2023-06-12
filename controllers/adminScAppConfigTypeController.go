@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func AdminGetListDropdownScAppConfigType(c echo.Context) error {
@@ -19,11 +18,11 @@ func AdminGetListDropdownScAppConfigType(c echo.Context) error {
 	status, err = models.AdminGetListDropdownScAppConfigType(&configType)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(configType) < 1 {
-		log.Error("Config Type not found")
+		// log.Error("Config Type not found")
 		return lib.CustomError(http.StatusNotFound, "Config Type not found", "Config Type not found")
 	}
 

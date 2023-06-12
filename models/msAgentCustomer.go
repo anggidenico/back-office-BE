@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 )
@@ -37,10 +36,10 @@ func GetLastAgentCustomer(c *MsAgentCustomer, customerKey string) (int, error) {
 			   ON t1.agent_customer_key = t2.agent_customer_key`
 	query := query2 + " WHERE t1.customer_key =" + customerKey
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -62,17 +61,17 @@ func CreateMsAgentCustomer(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -101,10 +100,10 @@ func GetCustomerLastAgent(c *CustomerAgent, customerKey string) (int, error) {
 			INNER JOIN ms_agent as a on a.agent_key = t1.agent_key`
 	query := query2 + " WHERE t1.customer_key =" + customerKey
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

@@ -16,13 +16,12 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func DownloadOaRequestFormatSinvest(c echo.Context) error {
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -32,7 +31,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 	// var limit uint64
 	re, err := regexp.Compile(`[^a-zA-Z0-9 ]+`)
 	if err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
 	}
 	items := []string{"oa_request_key", "oa_request_type", "oa_entry_start", "oa_entry_end", "oa_status", "rec_order", "rec_status", "oa_risk_level"}
 
@@ -47,7 +46,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -65,11 +64,11 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 	var oaRequestDB []models.OaRequest
 	status, err = models.GetAllOaRequestDoTransaction(&oaRequestDB, config.LimitQuery, offset, true, params, oaStatusIn, "oa_status")
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(oaRequestDB) < 1 {
-		log.Error("oa not found")
+		// log.Error("oa not found")
 		return lib.CustomError(http.StatusNotFound, "Oa Request not found", "Oa Request not found")
 	}
 
@@ -99,7 +98,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 	if len(oaRequestIds) > 0 {
 		status, err = models.GetOaPersonalDataIn(&oaPersonalData, oaRequestIds, "oa_request_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -188,7 +187,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 		status, err = models.GetGenLookupIn(&lookupOaReq, oaRequestLookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -204,7 +203,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 		status, err = models.GetOaPostalAddressIn(&oaPstalAddressList, postalAddressIds, "postal_address_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -232,7 +231,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 		status, err = models.GetMsCityIn(&cityList, oaCityIds, "city_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -250,7 +249,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 	status, err = models.GetMsCountryIn(&countryList, nasionalityIds, "country_key")
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -265,7 +264,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 		status, err = models.GetMsCustomerIn(&customer, customerIds, "customer_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -280,11 +279,11 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 	var scApp models.ScAppConfig
 	status, err = models.GetScAppConfigByCode(&scApp, "LAST_CLIENT_CODE")
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data LAST_CLIENT_CODE")
 	}
 
-	log.Println("last = " + *scApp.AppConfigValue)
+	// log.Println("last = " + *scApp.AppConfigValue)
 
 	last, _ := strconv.ParseUint(*scApp.AppConfigValue, 10, 64)
 	if last == 0 {
@@ -449,16 +448,16 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 					if a.AddressLine1 != nil {
 						aa := strings.ReplaceAll(*a.AddressLine1, ",", "")
 						ktpAddress := aa
-						// log.Printf("%q", ktpAddress)
+						// // log.Printf("%q", ktpAddress)
 						data.KTPAddress = ktpAddress
 					}
 					if a.KabupatenKey != nil {
-						// log.Infoln("========== KABUPATEN KEY: ========== ", a.KabupatenKey)
+						// // log.Infoln("========== KABUPATEN KEY: ========== ", a.KabupatenKey)
 						if c, ok := cityData[*a.KabupatenKey]; ok {
 							if c.CityCode != "" {
 								aa := strings.ReplaceAll(c.CityCode, ".", "")
 								data.KTPCityCode = aa
-								log.Println("=============== KTP CITY CODE =================>> ", aa)
+								// log.Println("=============== KTP CITY CODE =================>> ", aa)
 							}
 						}
 					}
@@ -496,12 +495,12 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 								aa := strings.ReplaceAll(c.CityCode, ".", "")
 								data.DomicileCityCode = aa
 								data.CorrespondenceCityCode = aa
-								log.Println("=============== DOMISILI CITY CODE =================>> ", aa)
+								// log.Println("=============== DOMISILI CITY CODE =================>> ", aa)
 							}
 
 							data.DomicileCityName = re.ReplaceAllString(c.CityName, "")
 							data.CorrespondenceCityName = re.ReplaceAllString(c.CityName, "")
-							log.Println("=============== CITY NAME =================>> ", data.DomicileCityName)
+							// log.Println("=============== CITY NAME =================>> ", data.DomicileCityName)
 
 						}
 					}
@@ -587,7 +586,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 				paramsCustomer["customer_key"] = strCustomerKey
 				_, err = models.UpdateMsCustomer(paramsCustomer)
 				if err != nil {
-					log.Error("Error update oa request")
+					// log.Error("Error update oa request")
 					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 				}
 				lastValue = paramsCustomer["client_code"]
@@ -686,7 +685,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 		paramsConfig["rec_modified_by"] = strKeyLogin
 		_, err = models.UpdateMsCustomerByConfigCode(paramsConfig, "LAST_CLIENT_CODE")
 		if err != nil {
-			log.Error("Error update App Config")
+			// log.Error("Error update App Config")
 			return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 		}
 	}
@@ -704,7 +703,7 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 
 		_, err = models.UpdateOaRequestByKeyIn(paramsUpdate, oaRequestIds, "oa_request_key")
 		if err != nil {
-			log.Error("Error update oa request")
+			// log.Error("Error update oa request")
 			return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 		}
 	}
@@ -722,14 +721,14 @@ func UploadOaRequestFormatSinvest(c echo.Context) error {
 
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	var err error
 
 	err = os.MkdirAll(config.BasePath+"/oa_upload/sinvest/", 0755)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	} else {
 		var file *multipart.FileHeader
 		file, err = c.FormFile("file")
@@ -739,7 +738,7 @@ func UploadOaRequestFormatSinvest(c echo.Context) error {
 			}
 			// Get file extension
 			extension := filepath.Ext(file.Filename)
-			log.Println(extension)
+			// log.Println(extension)
 			roles := []string{".txt", ".TXT"}
 			_, found := lib.Find(roles, extension)
 			if !found {
@@ -748,20 +747,20 @@ func UploadOaRequestFormatSinvest(c echo.Context) error {
 			// Generate filename
 			var filename string
 			filename = lib.RandStringBytesMaskImprSrc(20)
-			log.Println("Generate filename:", filename+extension)
+			// log.Println("Generate filename:", filename+extension)
 			// Upload txt and move to proper directory
 			err = lib.UploadImage(file, config.BasePath+"/oa_upload/sinvest/"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 
 			fileTxt, err := os.Open(config.BasePath + "/oa_upload/sinvest/" + filename + extension)
 
 			if err != nil {
-				log.Println("failed to open txt")
-				log.Println(err)
-				// log.Fatalf("failed to open")
+				// log.Println("failed to open txt")
+				// log.Println(err)
+				// // log.Fatalf("failed to open")
 			}
 
 			scanner := bufio.NewScanner(fileTxt)
@@ -792,7 +791,7 @@ func UploadOaRequestFormatSinvest(c echo.Context) error {
 					var customer models.MsCustomer
 					_, err := models.GetMsCustomerByClientCode(&customer, clientCode)
 					if err != nil {
-						log.Error("get customer error : client_code = " + clientCode + ". Error : " + err.Error())
+						// log.Error("get customer error : client_code = " + clientCode + ". Error : " + err.Error())
 						continue
 					}
 
@@ -809,7 +808,7 @@ func UploadOaRequestFormatSinvest(c echo.Context) error {
 					params["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 					_, err = models.UpdateMsCustomer(params)
 					if err != nil {
-						log.Error("Error update sid_no ms_customer")
+						// log.Error("Error update sid_no ms_customer")
 						continue
 					}
 
@@ -821,7 +820,7 @@ func UploadOaRequestFormatSinvest(c echo.Context) error {
 					paramsTrAccount["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 					_, err = models.UpdateTrAccountUploadSinvest(paramsTrAccount, "customer_key", strCusKey)
 					if err != nil {
-						log.Error("Error update ifua_no, ifua_name tr_account")
+						// log.Error("Error update ifua_no, ifua_name tr_account")
 						continue
 					}
 				}
@@ -835,7 +834,7 @@ func UploadOaRequestFormatSinvest(c echo.Context) error {
 				paramsOa["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 				_, err := models.UpdateOaRequestByFieldIn(paramsOa, customerIds, "customer_key")
 				if err != nil {
-					log.Error("Error update oa_status in oa_request : " + err.Error())
+					// log.Error("Error update oa_status in oa_request : " + err.Error())
 				}
 			}
 		}

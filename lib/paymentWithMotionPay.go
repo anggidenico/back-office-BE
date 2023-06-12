@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func CreateOrder(transactionKey string,
@@ -59,7 +58,7 @@ func CreateOrder(transactionKey string,
 	response["message_action"] = dataBody["message_action"].(string)
 	response["message_desc"] = dataBody["message_desc"].(string)
 	if err == nil && status == http.StatusOK {
-		log.Println(err)
+		// log.Println(err)
 		messageData := dataBody["message_data"].(map[string]interface{})
 		orderId = messageData["order_id"].(string)
 		status, err, resss := CreateOtp(orderId, phoneNumber)
@@ -151,7 +150,7 @@ func requestPaymentMotionPay(
 	payload := strings.NewReader(string(jsonString))
 	req, err := http.NewRequest(requestMethod, url, payload)
 	if err != nil {
-		log.Error("Error1", err.Error())
+		// log.Error("Error1", err.Error())
 		return http.StatusBadGateway, "", err
 	}
 	req.Header.Add("auth-merchant", config.MERCHANT_ID_MP_PAYMENT)
@@ -164,17 +163,17 @@ func requestPaymentMotionPay(
 	paramLog["body"] = string(jsonString)
 
 	res, err := http.DefaultClient.Do(req)
-	log.Info(res.StatusCode)
+	// log.Info(res.StatusCode)
 	paramLog["status"] = strconv.FormatUint(uint64(res.StatusCode), 10)
 
 	if res.StatusCode != http.StatusOK {
 		bodyRes, err := ioutil.ReadAll(res.Body)
 		paramLog["response"] = string(bodyRes)
-		log.Error("Error2", err)
+		// log.Error("Error2", err)
 		_, err = models.CreateEndpoint3rdPartyLog(paramLog)
 		if err != nil {
-			log.Error("Error create log endpoint motion pay")
-			log.Error(err.Error())
+			// log.Error("Error create log endpoint motion pay")
+			// log.Error(err.Error())
 		}
 
 		return res.StatusCode, string(bodyRes), err
@@ -185,17 +184,17 @@ func requestPaymentMotionPay(
 			paramLog["response"] = err.Error()
 			_, err = models.CreateEndpoint3rdPartyLog(paramLog)
 			if err != nil {
-				log.Error("Error create log endpoint motion pay")
-				log.Error(err.Error())
+				// log.Error("Error create log endpoint motion pay")
+				// log.Error(err.Error())
 			}
-			log.Error("Error3", err.Error())
+			// log.Error("Error3", err.Error())
 			return http.StatusBadGateway, string(body), err
 		}
 		paramLog["response"] = string(body)
 		_, err = models.CreateEndpoint3rdPartyLog(paramLog)
 		if err != nil {
-			log.Error("Error create log endpoint motion pay")
-			log.Error(err.Error())
+			// log.Error("Error create log endpoint motion pay")
+			// log.Error(err.Error())
 		}
 
 		return http.StatusOK, string(body), nil

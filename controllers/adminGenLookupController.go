@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func AdminGetListLookup(c echo.Context) error {
@@ -27,7 +26,7 @@ func AdminGetListLookup(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -43,7 +42,7 @@ func AdminGetListLookup(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -59,7 +58,7 @@ func AdminGetListLookup(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -85,7 +84,7 @@ func AdminGetListLookup(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -105,11 +104,11 @@ func AdminGetListLookup(c echo.Context) error {
 	status, err = models.AdminGetLookup(&lookup, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(lookup) < 1 {
-		log.Error("Lookup not found")
+		// log.Error("Lookup not found")
 		return lib.CustomError(http.StatusNotFound, "Lookup not found", "Lookup not found")
 	}
 
@@ -118,7 +117,7 @@ func AdminGetListLookup(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetLookup(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -149,7 +148,7 @@ func AdminDeleteLookup(c echo.Context) error {
 	keyStr := c.FormValue("lookup_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: lookup_key")
+		// log.Error("Missing required parameter: lookup_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: lookup_key", "Missing required parameter: lookup_key")
 	}
 
@@ -161,7 +160,7 @@ func AdminDeleteLookup(c echo.Context) error {
 
 	_, err = models.UpdateLookup(params)
 	if err != nil {
-		log.Error("Error delete gen_lookup")
+		// log.Error("Error delete gen_lookup")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -181,12 +180,12 @@ func AdminCreateLookup(c echo.Context) error {
 
 	lkpGroupKey := c.FormValue("lkp_group_key")
 	if lkpGroupKey == "" {
-		log.Error("Missing required parameter: lkp_group_key")
+		// log.Error("Missing required parameter: lkp_group_key")
 		return lib.CustomError(http.StatusBadRequest, "lkp_group_key can not be blank", "lkp_group_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(lkpGroupKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: lkp_group_key")
+			// log.Error("Wrong input for parameter: lkp_group_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: lkp_group_key", "Wrong input for parameter: lkp_group_key")
 		}
 		params["lkp_group_key"] = lkpGroupKey
@@ -194,7 +193,7 @@ func AdminCreateLookup(c echo.Context) error {
 
 	lkpCode := c.FormValue("lkp_code")
 	if lkpCode == "" {
-		log.Error("Missing required parameter: lkp_code")
+		// log.Error("Missing required parameter: lkp_code")
 		return lib.CustomError(http.StatusBadRequest, "lkp_code can not be blank", "lkp_code can not be blank")
 	} else {
 		params["lkp_code"] = lkpCode
@@ -202,7 +201,7 @@ func AdminCreateLookup(c echo.Context) error {
 
 	lkpName := c.FormValue("lkp_name")
 	if lkpName == "" {
-		log.Error("Missing required parameter: lkp_name")
+		// log.Error("Missing required parameter: lkp_name")
 		return lib.CustomError(http.StatusBadRequest, "lkp_name can not be blank", "lkp_name can not be blank")
 	} else {
 		params["lkp_name"] = lkpName
@@ -217,7 +216,7 @@ func AdminCreateLookup(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -230,7 +229,7 @@ func AdminCreateLookup(c echo.Context) error {
 
 	status, err = models.CreateLookup(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -251,18 +250,18 @@ func AdminUpdateLookup(c echo.Context) error {
 
 	lookupKey := c.FormValue("lookup_key")
 	if lookupKey == "" {
-		log.Error("Missing required parameter: lookup_key")
+		// log.Error("Missing required parameter: lookup_key")
 		return lib.CustomError(http.StatusBadRequest, "lookup_key can not be blank", "lookup_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(lookupKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: lookup_key")
+			// log.Error("Wrong input for parameter: lookup_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: lookup_key", "Wrong input for parameter: lookup_key")
 		}
 		var lookup models.GenLookup
 		status, err = models.GetLookup(&lookup, lookupKey)
 		if err != nil {
-			log.Error("Lookup not found")
+			// log.Error("Lookup not found")
 			return lib.CustomError(http.StatusBadRequest, "Lookup not found", "Lookup not found")
 		}
 		params["lookup_key"] = lookupKey
@@ -270,12 +269,12 @@ func AdminUpdateLookup(c echo.Context) error {
 
 	lkpGroupKey := c.FormValue("lkp_group_key")
 	if lkpGroupKey == "" {
-		log.Error("Missing required parameter: lkp_group_key")
+		// log.Error("Missing required parameter: lkp_group_key")
 		return lib.CustomError(http.StatusBadRequest, "lkp_group_key can not be blank", "lkp_group_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(lkpGroupKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: lkp_group_key")
+			// log.Error("Wrong input for parameter: lkp_group_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: lkp_group_key", "Wrong input for parameter: lkp_group_key")
 		}
 		params["lkp_group_key"] = lkpGroupKey
@@ -283,7 +282,7 @@ func AdminUpdateLookup(c echo.Context) error {
 
 	lkpCode := c.FormValue("lkp_code")
 	if lkpCode == "" {
-		log.Error("Missing required parameter: lkp_code")
+		// log.Error("Missing required parameter: lkp_code")
 		return lib.CustomError(http.StatusBadRequest, "lkp_code can not be blank", "lkp_code can not be blank")
 	} else {
 		params["lkp_code"] = lkpCode
@@ -291,7 +290,7 @@ func AdminUpdateLookup(c echo.Context) error {
 
 	lkpName := c.FormValue("lkp_name")
 	if lkpName == "" {
-		log.Error("Missing required parameter: lkp_name")
+		// log.Error("Missing required parameter: lkp_name")
 		return lib.CustomError(http.StatusBadRequest, "lkp_name can not be blank", "lkp_name can not be blank")
 	} else {
 		params["lkp_name"] = lkpName
@@ -306,7 +305,7 @@ func AdminUpdateLookup(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -319,7 +318,7 @@ func AdminUpdateLookup(c echo.Context) error {
 
 	status, err = models.UpdateLookup(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -337,12 +336,12 @@ func AdminDetailLookup(c echo.Context) error {
 
 	lookupKey := c.Param("lookup_key")
 	if lookupKey == "" {
-		log.Error("Missing required parameter: lookup_key")
+		// log.Error("Missing required parameter: lookup_key")
 		return lib.CustomError(http.StatusBadRequest, "lookup_key can not be blank", "lookup_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(lookupKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: lookup_key")
+			// log.Error("Wrong input for parameter: lookup_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: lookup_key", "Wrong input for parameter: lookup_key")
 		}
 	}
@@ -350,7 +349,7 @@ func AdminDetailLookup(c echo.Context) error {
 	var lookup models.GenLookup
 	_, err = models.GetLookup(&lookup, lookupKey)
 	if err != nil {
-		log.Error("Lookup not found")
+		// log.Error("Lookup not found")
 		return lib.CustomError(http.StatusBadRequest, "Lookup not found", "Lookup not found")
 	}
 

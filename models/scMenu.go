@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type ScMenu struct {
@@ -128,10 +126,10 @@ func AdminGetListMenuRole(c *[]ListMenuRoleManagement, roleKey string, isParent 
 	query += " ORDER BY menu.app_module_key ASC"
 
 	// Main query
-	log.Println("========== AdminGetListMenuRole ==========>>>", query)
+	// log.Println("========== AdminGetListMenuRole ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -148,10 +146,10 @@ func AdminGetParentMenuListRoleLogin(c *[]ListParentMenuRoleUser, value []string
 			 FROM sc_menu WHERE menu_key IN(` + inQuery + `) ORDER BY menu_key ASC`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -170,10 +168,10 @@ func AdminGetMenuListRoleLogin(c *[]ListMenuRoleUser, roleKey string) (int, erro
 			GROUP BY au.menu_key ORDER BY m.rec_order`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -284,10 +282,10 @@ func AdminGetListMenu(c *[]ListMenuAdmin, limit uint64, offset uint64, params ma
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -346,10 +344,10 @@ func CountAdminGetListMenu(c *CountData, params map[string]string, searchLike st
 			WHERE dat.parent_rec_status = 1`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -372,11 +370,11 @@ func UpdateScMenu(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE menu_key = " + params["menu_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -384,7 +382,7 @@ func UpdateScMenu(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -406,18 +404,18 @@ func CreateScMenu(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("========== CreateScMenu ==========>>>", query)
+	// log.Println("========== CreateScMenu ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -434,10 +432,10 @@ func CountScMenuValidateUnique(c *CountData, field string, value string, key str
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -446,10 +444,10 @@ func CountScMenuValidateUnique(c *CountData, field string, value string, key str
 
 func GetScMenu(c *ScMenu, key string) (int, error) {
 	query := `SELECT sc_menu.* FROM sc_menu WHERE sc_menu.rec_status = 1 AND sc_menu.menu_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 

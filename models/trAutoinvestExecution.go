@@ -3,8 +3,6 @@ package models
 import (
 	"mf-bo-api/db"
 	"net/http"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type TrAutoinvestExecution struct {
@@ -39,10 +37,10 @@ func GetTrAutoinvestExecution(c *TrAutoinvestExecution, key string) (int, error)
 	FROM tr_autoinvest_registration 
 	WHERE tr_autoinvest_registration.rec_status = "1" 
 	AND tr_autoinvest_registration.autoinvest_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -85,10 +83,10 @@ func GetAllTrAutoinvestExecution(c *[]TrAutoinvestExecution, params map[string]s
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -110,17 +108,17 @@ func CreateTrAutoinvestExecution(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil

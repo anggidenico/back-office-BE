@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type GenLookupInfo struct {
@@ -91,10 +89,10 @@ func GetAllGenLookup(c *[]GenLookup, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -109,10 +107,10 @@ func GetGenLookupIn(c *[]GenLookup, value []string, field string) (int, error) {
 	query := query2 + " WHERE gen_lookup." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -121,10 +119,10 @@ func GetGenLookupIn(c *[]GenLookup, value []string, field string) (int, error) {
 
 func GetGenLookup(c *GenLookup, key string) (int, error) {
 	query := `SELECT gen_lookup.* FROM gen_lookup WHERE gen_lookup.lookup_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -200,10 +198,10 @@ func AdminGetLookup(c *[]ListLookup, limit uint64, offset uint64, params map[str
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -246,10 +244,10 @@ func CountAdminGetLookup(c *CountData, params map[string]string, searchLike stri
 			WHERE g.rec_status = 1 ` + condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -272,11 +270,11 @@ func UpdateLookup(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE lookup_key = " + params["lookup_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -284,7 +282,7 @@ func UpdateLookup(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -306,18 +304,18 @@ func CreateLookup(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -325,10 +323,10 @@ func CreateLookup(params map[string]string) (int, error) {
 
 func GetLookup(c *GenLookup, key string) (int, error) {
 	query := `SELECT * FROM gen_lookup WHERE rec_status = 1 AND lookup_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
@@ -77,10 +76,10 @@ func GetDataParentTransactionSwitch(c *[]DataTransactionParent, value []string) 
 	query := query2 + " WHERE tr.transaction_key IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

@@ -3,8 +3,6 @@ package models
 import (
 	"mf-bo-api/db"
 	"net/http"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type ListMenuTypeDropdown struct {
@@ -19,10 +17,10 @@ func AdminGetListMenuTypeDropdown(c *[]ListMenuTypeDropdown) (int, error) {
 			FROM sc_menu_type
 			WHERE rec_status = 1 ORDER BY rec_order ASC`
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

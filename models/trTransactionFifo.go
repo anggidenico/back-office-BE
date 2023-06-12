@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 
@@ -55,17 +54,17 @@ func CreateTrTransactionFifo(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -84,11 +83,11 @@ func UpdateTrTransactionFifo(params map[string]string, value string, field strin
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	// log.Println("==========  ==========>>>", query)
+	// // log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		// log.Error(err)
+		// // log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -100,7 +99,7 @@ func UpdateTrTransactionFifo(params map[string]string, value string, field strin
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		// log.Error(err)
+		// // log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil

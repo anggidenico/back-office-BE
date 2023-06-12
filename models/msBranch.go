@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MsBranch struct {
@@ -54,10 +52,10 @@ func GetMsBranchIn(c *[]MsBranch, value []string, field string) (int, error) {
 	query := query2 + " WHERE ms_branch.rec_status = 1 AND ms_branch." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -66,10 +64,10 @@ func GetMsBranchIn(c *[]MsBranch, value []string, field string) (int, error) {
 
 func GetMsBranch(c *MsBranch, key string) (int, error) {
 	query := `SELECT ms_branch.* FROM ms_branch WHERE ms_branch.rec_status = 1 AND ms_branch.branch_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -81,10 +79,10 @@ func GetMsBranchDropdown(c *[]MsBranchDropdown) (int, error) {
 				branch_key, 
  				CONCAT(branch_code, " - ", branch_name) AS branch_name 
 			FROM ms_branch WHERE ms_branch.rec_status = 1`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -165,10 +163,10 @@ func AdminGetListMsBranch(c *[]ListMsBranch, limit uint64, offset uint64, params
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -214,10 +212,10 @@ func CountAdminGetListMsBranch(c *CountData, params map[string]string, searchLik
 			WHERE b.rec_status = 1 ` + condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -240,11 +238,11 @@ func UpdateMsBranch(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE branch_key = " + params["branch_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -252,7 +250,7 @@ func UpdateMsBranch(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -274,18 +272,18 @@ func CreateMsBranch(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -302,10 +300,10 @@ func CountMsBranchValidateUnique(c *CountData, field string, value string, key s
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

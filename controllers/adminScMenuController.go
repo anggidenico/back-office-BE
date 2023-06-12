@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetListMenuLogin(c echo.Context) error {
@@ -22,7 +21,7 @@ func GetListMenuLogin(c echo.Context) error {
 	var listMenuRoleUser []models.ListMenuRoleUser
 	_, err = models.AdminGetMenuListRoleLogin(&listMenuRoleUser, strconv.FormatUint(lib.Profile.RoleKey, 10))
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 	}
 
@@ -40,7 +39,7 @@ func GetListMenuLogin(c echo.Context) error {
 		_, err = models.AdminGetParentMenuListRoleLogin(&listParentMenuRoleUser, menuParentIds)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 			}
 		}
@@ -111,7 +110,7 @@ func AdminGetListMenu(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -127,7 +126,7 @@ func AdminGetListMenu(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -143,7 +142,7 @@ func AdminGetListMenu(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -163,7 +162,7 @@ func AdminGetListMenu(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -187,11 +186,11 @@ func AdminGetListMenu(c echo.Context) error {
 	status, err = models.AdminGetListMenu(&menu, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(menu) < 1 {
-		log.Error("Menu not found")
+		// log.Error("Menu not found")
 		return lib.CustomError(http.StatusNotFound, "Menu not found", "Menu not found")
 	}
 
@@ -200,7 +199,7 @@ func AdminGetListMenu(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetListMenu(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -231,7 +230,7 @@ func AdminDeleteMenu(c echo.Context) error {
 	keyStr := c.FormValue("menu_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: menu_key")
+		// log.Error("Missing required parameter: menu_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: menu_key", "Missing required parameter: menu_key")
 	}
 
@@ -243,7 +242,7 @@ func AdminDeleteMenu(c echo.Context) error {
 
 	_, err = models.UpdateScMenu(params)
 	if err != nil {
-		log.Error("Error delete sc_menu")
+		// log.Error("Error delete sc_menu")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -265,7 +264,7 @@ func AdminCreateMenu(c echo.Context) error {
 	if menuParent != "" {
 		n, err := strconv.ParseUint(menuParent, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: menu_parent")
+			// log.Error("Wrong input for parameter: menu_parent")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: menu_parent", "Wrong input for parameter: menu_parent")
 		}
 		params["menu_parent"] = menuParent
@@ -274,12 +273,12 @@ func AdminCreateMenu(c echo.Context) error {
 
 	appModuleKey := c.FormValue("app_module_key")
 	if appModuleKey == "" {
-		log.Error("Missing required parameter: app_module_key")
+		// log.Error("Missing required parameter: app_module_key")
 		return lib.CustomError(http.StatusBadRequest, "app_module_key can not be blank", "app_module_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(appModuleKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: app_module_key")
+			// log.Error("Wrong input for parameter: app_module_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: app_module_key", "Wrong input for parameter: app_module_key")
 		}
 		params["app_module_key"] = appModuleKey
@@ -287,18 +286,18 @@ func AdminCreateMenu(c echo.Context) error {
 
 	menuCode := c.FormValue("menu_code")
 	if menuCode == "" {
-		log.Error("Missing required parameter: menu_code")
+		// log.Error("Missing required parameter: menu_code")
 		return lib.CustomError(http.StatusBadRequest, "menu_code can not be blank", "menu_code can not be blank")
 	} else {
 		//validate unique menu_code
 		var countData models.CountData
 		status, err = models.CountScMenuValidateUnique(&countData, "menu_code", menuCode, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: menu_code")
+			// log.Error("Missing required parameter: menu_code")
 			return lib.CustomError(http.StatusBadRequest, "menu_code already used", "menu_code already used")
 		}
 		params["menu_code"] = menuCode
@@ -306,18 +305,18 @@ func AdminCreateMenu(c echo.Context) error {
 
 	menuName := c.FormValue("menu_name")
 	if menuName == "" {
-		log.Error("Missing required parameter: menu_name")
+		// log.Error("Missing required parameter: menu_name")
 		return lib.CustomError(http.StatusBadRequest, "menu_name can not be blank", "menu_name can not be blank")
 	} else {
 		//validate unique menu_name
 		var countData models.CountData
 		status, err = models.CountScMenuValidateUnique(&countData, "menu_name", menuName, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: menu_name")
+			// log.Error("Missing required parameter: menu_name")
 			return lib.CustomError(http.StatusBadRequest, "menu_name already used", "menu_name already used")
 		}
 		params["menu_name"] = menuName
@@ -335,12 +334,12 @@ func AdminCreateMenu(c echo.Context) error {
 
 	menuTypeKey := c.FormValue("menu_type_key")
 	if menuTypeKey == "" {
-		log.Error("Missing required parameter: menu_type_key")
+		// log.Error("Missing required parameter: menu_type_key")
 		return lib.CustomError(http.StatusBadRequest, "menu_type_key can not be blank", "menu_type_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(menuTypeKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: menu_type_key")
+			// log.Error("Wrong input for parameter: menu_type_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: menu_type_key", "Wrong input for parameter: menu_type_key")
 		}
 		params["menu_type_key"] = menuTypeKey
@@ -356,7 +355,7 @@ func AdminCreateMenu(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -374,7 +373,7 @@ func AdminCreateMenu(c echo.Context) error {
 
 	status, err = models.CreateScMenu(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -395,18 +394,18 @@ func AdminUpdateMenu(c echo.Context) error {
 
 	menuKey := c.FormValue("menu_key")
 	if menuKey == "" {
-		log.Error("Missing required parameter: menu_key")
+		// log.Error("Missing required parameter: menu_key")
 		return lib.CustomError(http.StatusBadRequest, "menu_key can not be blank", "menu_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(menuKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: menu_key")
+			// log.Error("Wrong input for parameter: menu_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: menu_key", "Wrong input for parameter: menu_key")
 		}
 		var menu models.ScMenu
 		status, err = models.GetScMenu(&menu, menuKey)
 		if err != nil {
-			log.Error("Menu not found")
+			// log.Error("Menu not found")
 			return lib.CustomError(http.StatusBadRequest, "Menu not found", "Menu not found")
 		}
 		params["menu_key"] = menuKey
@@ -416,7 +415,7 @@ func AdminUpdateMenu(c echo.Context) error {
 	if menuParent != "" {
 		n, err := strconv.ParseUint(menuParent, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: menu_parent")
+			// log.Error("Wrong input for parameter: menu_parent")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: menu_parent", "Wrong input for parameter: menu_parent")
 		}
 		params["menu_parent"] = menuParent
@@ -427,12 +426,12 @@ func AdminUpdateMenu(c echo.Context) error {
 
 	appModuleKey := c.FormValue("app_module_key")
 	if appModuleKey == "" {
-		log.Error("Missing required parameter: app_module_key")
+		// log.Error("Missing required parameter: app_module_key")
 		return lib.CustomError(http.StatusBadRequest, "app_module_key can not be blank", "app_module_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(appModuleKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: app_module_key")
+			// log.Error("Wrong input for parameter: app_module_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: app_module_key", "Wrong input for parameter: app_module_key")
 		}
 		params["app_module_key"] = appModuleKey
@@ -440,18 +439,18 @@ func AdminUpdateMenu(c echo.Context) error {
 
 	menuCode := c.FormValue("menu_code")
 	if menuCode == "" {
-		log.Error("Missing required parameter: menu_code")
+		// log.Error("Missing required parameter: menu_code")
 		return lib.CustomError(http.StatusBadRequest, "menu_code can not be blank", "menu_code can not be blank")
 	} else {
 		//validate unique menu_code
 		var countData models.CountData
 		status, err = models.CountScMenuValidateUnique(&countData, "menu_code", menuCode, menuKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: menu_code")
+			// log.Error("Missing required parameter: menu_code")
 			return lib.CustomError(http.StatusBadRequest, "menu_code already used", "menu_code already used")
 		}
 		params["menu_code"] = menuCode
@@ -459,18 +458,18 @@ func AdminUpdateMenu(c echo.Context) error {
 
 	menuName := c.FormValue("menu_name")
 	if menuName == "" {
-		log.Error("Missing required parameter: menu_name")
+		// log.Error("Missing required parameter: menu_name")
 		return lib.CustomError(http.StatusBadRequest, "menu_name can not be blank", "menu_name can not be blank")
 	} else {
 		//validate unique menu_name
 		var countData models.CountData
 		status, err = models.CountScMenuValidateUnique(&countData, "menu_name", menuName, menuKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: menu_name")
+			// log.Error("Missing required parameter: menu_name")
 			return lib.CustomError(http.StatusBadRequest, "menu_name already used", "menu_name already used")
 		}
 		params["menu_name"] = menuName
@@ -488,12 +487,12 @@ func AdminUpdateMenu(c echo.Context) error {
 
 	menuTypeKey := c.FormValue("menu_type_key")
 	if menuTypeKey == "" {
-		log.Error("Missing required parameter: menu_type_key")
+		// log.Error("Missing required parameter: menu_type_key")
 		return lib.CustomError(http.StatusBadRequest, "menu_type_key can not be blank", "menu_type_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(menuTypeKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: menu_type_key")
+			// log.Error("Wrong input for parameter: menu_type_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: menu_type_key", "Wrong input for parameter: menu_type_key")
 		}
 		params["menu_type_key"] = menuTypeKey
@@ -509,7 +508,7 @@ func AdminUpdateMenu(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -527,7 +526,7 @@ func AdminUpdateMenu(c echo.Context) error {
 
 	status, err = models.UpdateScMenu(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -545,19 +544,19 @@ func AdminDetailMenu(c echo.Context) error {
 
 	menuKey := c.Param("menu_key")
 	if menuKey == "" {
-		log.Error("Missing required parameter: menu_key")
+		// log.Error("Missing required parameter: menu_key")
 		return lib.CustomError(http.StatusBadRequest, "menu_key can not be blank", "menu_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(menuKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: menu_key")
+			// log.Error("Wrong input for parameter: menu_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: menu_key", "Wrong input for parameter: menu_key")
 		}
 	}
 	var menu models.ScMenu
 	_, err = models.GetScMenu(&menu, menuKey)
 	if err != nil {
-		log.Error("Menu not found")
+		// log.Error("Menu not found")
 		return lib.CustomError(http.StatusBadRequest, "Menu not found", "Menu not found")
 	}
 

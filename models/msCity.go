@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MsCityList struct {
@@ -81,10 +79,10 @@ func GetAllMsCity(c *[]MsCity, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -99,10 +97,10 @@ func GetMsCityIn(c *[]MsCity, value []string, field string) (int, error) {
 	query := query2 + " WHERE ms_city." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("========== QUERY GET MS CITY IN ==========>>>", query)
+	// log.Println("========== QUERY GET MS CITY IN ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -111,10 +109,10 @@ func GetMsCityIn(c *[]MsCity, value []string, field string) (int, error) {
 
 func GetMsCity(c *MsCity, key string) (int, error) {
 	query := `SELECT ms_city.* FROM ms_city WHERE ms_city.rec_status = '1' AND ms_city.city_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -125,10 +123,10 @@ func GetMsCityByParent(c *MsCity, key string) (int, error) {
 	query := `SELECT * 
 			FROM ms_city 
 			WHERE city_key = (SELECT parent_key FROM ms_city WHERE city_key = '` + key + `')`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -212,10 +210,10 @@ func AdminGetListCity(c *[]ListCity, limit uint64, offset uint64, params map[str
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -262,10 +260,10 @@ func CountAdminGetCity(c *CountData, params map[string]string, searchLike string
 			WHERE c.rec_status = 1 AND c.city_level IN (1,2,3,4)` + condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -287,17 +285,17 @@ func CreateMsCity(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -319,11 +317,11 @@ func UpdateMsCity(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE city_key = " + params["city_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -331,7 +329,7 @@ func UpdateMsCity(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -349,10 +347,10 @@ func CountMsCityValidateUnique(c *CountData, field string, value string, key str
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -377,10 +375,10 @@ func AdminGetListParent(c *[]ListParent) (int, error) {
 			ORDER BY city_level ASC`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

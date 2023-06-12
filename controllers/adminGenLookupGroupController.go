@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func AdminGetListDropdownLookupGroup(c echo.Context) error {
@@ -19,11 +18,11 @@ func AdminGetListDropdownLookupGroup(c echo.Context) error {
 	status, err = models.AdminGetListDropdownLookupGroup(&lookupgroup)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(lookupgroup) < 1 {
-		log.Error("Lookup Group Type not found")
+		// log.Error("Lookup Group Type not found")
 		return lib.CustomError(http.StatusNotFound, "Lookup Group Type not found", "Lookup Group Type not found")
 	}
 

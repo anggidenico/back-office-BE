@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type OaRiskProfile struct {
@@ -60,17 +59,17 @@ func CreateOaRiskProfile(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -91,10 +90,10 @@ func AdminGetOaRiskProfile(c *[]AdminOaRiskProfile, oaRequestKey string) (int, e
 			WHERE oa.rec_status = 1 AND oa.oa_request_key =  ` + oaRequestKey
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -103,10 +102,10 @@ func AdminGetOaRiskProfile(c *[]AdminOaRiskProfile, oaRequestKey string) (int, e
 
 func GetOaRiskProfile(c *OaRiskProfile, key string, field string) (int, error) {
 	query := "SELECT oa_risk_profile.* FROM oa_risk_profile	WHERE oa_risk_profile.rec_status = 1 AND oa_risk_profile." + field + " = " + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -124,10 +123,10 @@ func GetRiskProfilCustomer(c *RiskProfilCustomer, customerKey string) (int, erro
 			INNER JOIN oa_risk_profile AS r ON o.oa_request_key = r.oa_request_key 
 			WHERE o.customer_key = '` + customerKey + `' AND o.rec_order IS NOT NULL AND o.rec_status = 1 
 			ORDER BY o.rec_order DESC LIMIT 1`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -149,10 +148,10 @@ func CheckStatusRiskProfilNewOA(c *StatusRiskProfil, userLoginKey string) (int, 
 			WHERE u.rec_status = 1 AND o.rec_status = 1 AND o.oa_request_type = '127' AND u.user_login_key = '` + userLoginKey + `'`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -174,11 +173,11 @@ func UpdateOaRiskProfile(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE oa_risk_profile_key = " + params["oa_risk_profile_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -190,7 +189,7 @@ func UpdateOaRiskProfile(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil

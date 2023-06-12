@@ -15,7 +15,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetTransactionSubscription(c echo.Context) error {
@@ -51,7 +50,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -67,7 +66,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -83,7 +82,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -103,7 +102,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -117,7 +116,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 		if err == nil && productKeyCek > 0 {
 			params["product_key"] = productKey
 		} else {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 		}
 	}
@@ -128,7 +127,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 		if err == nil && transstatuskeyCek > 0 {
 			params["trans_status_key"] = transstatuskey
 		} else {
-			log.Error("Wrong input for parameter: trans_status_key")
+			// log.Error("Wrong input for parameter: trans_status_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_status_key", "Missing required parameter: trans_status_key")
 		}
 	}
@@ -139,7 +138,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 		if err == nil && transSourceCek > 0 {
 			params["trans_source"] = transSource
 		} else {
-			log.Error("Wrong input for parameter: trans_source")
+			// log.Error("Wrong input for parameter: trans_source")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_source", "Missing required parameter: trans_source")
 		}
 	}
@@ -153,12 +152,12 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 	var userCategory uint64
 	userCategory = 3
 	if lib.Profile.UserCategoryKey == userCategory {
-		log.Println(lib.Profile)
+		// log.Println(lib.Profile)
 		if lib.Profile.BranchKey != nil {
 			strBranchKey := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 			params["c.openacc_branch_key"] = strBranchKey
 		} else {
-			log.Error("User Branch haven't Branch")
+			// log.Error("User Branch haven't Branch")
 			return lib.CustomError(http.StatusBadRequest, "Wrong User Branch haven't Branch", "Wrong User Branch haven't Branch")
 		}
 	}
@@ -168,11 +167,11 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 	status, err = models.AdminGetAllTrTransaction(&trTransaction, limit, offset, noLimit, params, trType, "trans_type_key", true, strconv.FormatUint(lib.Profile.UserID, 10))
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(trTransaction) < 1 {
-		log.Error("transaction not found")
+		// log.Error("transaction not found")
 		return lib.CustomError(http.StatusNotFound, "Transaction not found", "Transaction not found")
 	}
 
@@ -223,7 +222,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 	if len(branchIds) > 0 {
 		status, err = models.GetMsBranchIn(&msBranch, branchIds, "branch_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -237,7 +236,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 	if len(agentIds) > 0 {
 		status, err = models.GetMsAgentIn(&msAgent, agentIds, "agent_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -251,7 +250,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 	if len(customerIds) > 0 {
 		status, err = models.GetMsCustomerIn(&msCustomer, customerIds, "customer_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -265,7 +264,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 	if len(customerIds) > 0 {
 		status, err = models.GetScUserLoginIn(&userLogin, customerIds, "customer_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -280,7 +279,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 		status, err = models.GetMsProductIn(&msProduct, productIds, "product_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -296,7 +295,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 		status, err = models.GetMsTransactionTypeIn(&transactionType, transTypeIds, "trans_type_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -312,7 +311,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 		status, err = models.GetMsTransactionStatusIn(&trTransactionStatus, transStatusIds, "trans_status_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -328,7 +327,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 		status, err = models.GetTrTransactionConfirmationIn(&transConf, transactionIds, "transaction_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get TC data")
 			}
 		}
@@ -344,7 +343,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 		status, err = models.GetGenLookupIn(&lookupOaReq, lookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 			}
 		}
 	}
@@ -434,7 +433,7 @@ func getListAdminTransaction(c echo.Context, trType []string) error {
 	if limit > 0 {
 		status, err = models.AdminGetCountTrTransaction(&countData, params, trType, "trans_type_key", strconv.FormatUint(lib.Profile.UserID, 10))
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -465,31 +464,31 @@ func CreateTransactionSubscription(c echo.Context) error {
 
 	branchkey := c.FormValue("branch_key")
 	if branchkey == "" {
-		log.Error("Missing required parameter: branch_key")
+		// log.Error("Missing required parameter: branch_key")
 		return lib.CustomError(http.StatusBadRequest, "branch_key can not be blank", "branch_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(branchkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 	}
 
 	agentkey := c.FormValue("agent_key")
 	if agentkey == "" {
-		log.Error("Missing required parameter: agent_key")
+		// log.Error("Missing required parameter: agent_key")
 		return lib.CustomError(http.StatusBadRequest, "agent_key can not be blank", "agent_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(agentkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_key")
+			// log.Error("Wrong input for parameter: agent_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_key", "Wrong input for parameter: agent_key")
 		}
 	}
 
 	navdate := c.FormValue("nav_date")
 	if navdate == "" {
-		log.Error("Missing required parameter: nav_date")
+		// log.Error("Missing required parameter: nav_date")
 		return lib.CustomError(http.StatusBadRequest, "nav_date can not be blank", "nav_date can not be blank")
 	} else {
 		paramHoliday := make(map[string]string)
@@ -499,12 +498,12 @@ func CreateTransactionSubscription(c echo.Context) error {
 		status, err = models.GetAllMsHoliday(&holiday, paramHoliday)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
 		if len(holiday) > 0 {
-			log.Error("nav_date is Bursa Holiday")
+			// log.Error("nav_date is Bursa Holiday")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date is Bursa Holiday", "Missing required parameter: nav_date is Bursa Holiday")
 		}
 
@@ -515,7 +514,7 @@ func CreateTransactionSubscription(c echo.Context) error {
 		w = time.Date(w.Year(), w.Month(), w.Day(), 0, 0, 0, 0, time.UTC)
 		cek := lib.IsWeekend(w)
 		if cek {
-			log.Error("nav_date is Weekend")
+			// log.Error("nav_date is Weekend")
 			return lib.CustomError(http.StatusBadRequest, "nav_date is Weekend", "nav_date is Weekend")
 		}
 	}
@@ -527,20 +526,20 @@ func CreateTransactionSubscription(c echo.Context) error {
 		if err == nil && customerKey > 0 {
 			status, err = models.GetMsCustomer(&cus, customerKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Customer tidak ditemukan")
 			}
 			if cus.CifSuspendFlag == uint8(1) {
-				log.Error("Customer Suspended")
+				// log.Error("Customer Suspended")
 				return lib.CustomError(http.StatusBadRequest, "Customer Suspended", "Customer Suspended")
 			}
 			params["customer_key"] = customerKeyStr
 		} else {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
@@ -552,15 +551,15 @@ func CreateTransactionSubscription(c echo.Context) error {
 			params["product_key"] = productKeyStr
 			status, err = models.GetMsProduct(&product, productKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 			}
 		} else {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_key", "Wrong input for parameter: product_key")
 		}
 	} else {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
@@ -568,20 +567,20 @@ func CreateTransactionSubscription(c echo.Context) error {
 	if transAmountStr != "" {
 		value, err := decimal.NewFromString(transAmountStr)
 		if err != nil {
-			log.Error("Wrong input for parameter: trans_amount")
+			// log.Error("Wrong input for parameter: trans_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_amount", "Wrong input for parameter: trans_amount")
 		}
 		if value.Cmp(product.MinSubAmount) == -1 {
-			log.Error("sub amount < minimum sub")
+			// log.Error("sub amount < minimum sub")
 			return lib.CustomError(http.StatusBadRequest, "sub amount < minum sub", "Minumum subscription untuk product ini adalah: "+product.MinSubAmount.String())
 		}
 		if transAmountStr == "0" {
-			log.Error("Wrong input for parameter: trans_amount")
+			// log.Error("Wrong input for parameter: trans_amount")
 			return lib.CustomError(http.StatusBadRequest, "trans_amount harus lebih dari 0", "trans_amount harus lebih dari 0")
 		}
 		params["trans_amount"] = transAmountStr
 	} else {
-		log.Error("Missing required parameter: trans_amount")
+		// log.Error("Missing required parameter: trans_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_amount", "Missing required parameter: trans_amount")
 	}
 
@@ -591,11 +590,11 @@ func CreateTransactionSubscription(c echo.Context) error {
 		if err == nil && transCalcMethodKey > 0 {
 			params["trans_calc_method"] = transCalcMethod
 		} else {
-			log.Error("Missing required parameter: trans_calc_method")
+			// log.Error("Missing required parameter: trans_calc_method")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_calc_method", "Missing required parameter: trans_calc_method")
 		}
 	} else {
-		log.Error("Missing required parameter: trans_calc_method")
+		// log.Error("Missing required parameter: trans_calc_method")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_calc_method", "Missing required parameter: trans_calc_method")
 	}
 
@@ -603,12 +602,12 @@ func CreateTransactionSubscription(c echo.Context) error {
 	if transFeePercentStr != "" {
 		_, err := decimal.NewFromString(transFeePercentStr)
 		if err != nil {
-			log.Error("Wrong input for parameter: trans_fee_percent")
+			// log.Error("Wrong input for parameter: trans_fee_percent")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_fee_percent", "Wrong input for parameter: trans_fee_percent")
 		}
 		params["trans_fee_percent"] = transFeePercentStr
 	} else {
-		log.Error("Missing required parameter: trans_fee_percent")
+		// log.Error("Missing required parameter: trans_fee_percent")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_fee_percent", "Missing required parameter: trans_fee_percent")
 	}
 
@@ -616,12 +615,12 @@ func CreateTransactionSubscription(c echo.Context) error {
 	if transFeeAmountStr != "" {
 		_, err := decimal.NewFromString(transFeeAmountStr)
 		if err != nil {
-			log.Error("Wrong input for parameter: trans_fee_amount")
+			// log.Error("Wrong input for parameter: trans_fee_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_fee_amount", "Wrong input for parameter: trans_fee_amount")
 		}
 		params["trans_fee_amount"] = transFeeAmountStr
 	} else {
-		log.Error("Missing required parameter: trans_fee_amount")
+		// log.Error("Missing required parameter: trans_fee_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_fee_amount", "Missing required parameter: trans_fee_amount")
 	}
 
@@ -629,12 +628,12 @@ func CreateTransactionSubscription(c echo.Context) error {
 	if chargesFeeAmountStr != "" {
 		_, err := decimal.NewFromString(chargesFeeAmountStr)
 		if err != nil {
-			log.Error("Wrong input for parameter: charges_fee_amount")
+			// log.Error("Wrong input for parameter: charges_fee_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: charges_fee_amount", "Wrong input for parameter: charges_fee_amount")
 		}
 		params["charges_fee_amount"] = chargesFeeAmountStr
 	} else {
-		log.Error("Missing required parameter: charges_fee_amount")
+		// log.Error("Missing required parameter: charges_fee_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: charges_fee_amount", "Missing required parameter: charges_fee_amount")
 	}
 
@@ -642,12 +641,12 @@ func CreateTransactionSubscription(c echo.Context) error {
 	if servicesFeeAmountStr != "" {
 		_, err := decimal.NewFromString(servicesFeeAmountStr)
 		if err != nil {
-			log.Error("Wrong input for parameter: services_fee_amount")
+			// log.Error("Wrong input for parameter: services_fee_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: services_fee_amount", "Wrong input for parameter: services_fee_amount")
 		}
 		params["services_fee_amount"] = servicesFeeAmountStr
 	} else {
-		log.Error("Missing required parameter: services_fee_amount")
+		// log.Error("Missing required parameter: services_fee_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: services_fee_amount", "Missing required parameter: services_fee_amount")
 	}
 
@@ -655,12 +654,12 @@ func CreateTransactionSubscription(c echo.Context) error {
 	if totalAmountStr != "" {
 		_, err := strconv.ParseFloat(totalAmountStr, 64)
 		if err != nil {
-			log.Error("Wrong input for parameter: total_amount")
+			// log.Error("Wrong input for parameter: total_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: total_amount", "Wrong input for parameter: total_amount")
 		}
 		params["total_amount"] = totalAmountStr
 	} else {
-		log.Error("Missing required parameter: total_amount")
+		// log.Error("Missing required parameter: total_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: total_amount", "Missing required parameter: total_amount")
 	}
 
@@ -685,11 +684,11 @@ func CreateTransactionSubscription(c echo.Context) error {
 		if err == nil && paymentKey > 0 {
 			params["payment_method"] = paymentStr
 		} else {
-			log.Error("Missing required parameter: payment_method")
+			// log.Error("Missing required parameter: payment_method")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: payment_method", "Missing required parameter: payment_method")
 		}
 	} else {
-		log.Error("Missing required parameter: payment_method")
+		// log.Error("Missing required parameter: payment_method")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: payment_method", "Missing required parameter: payment_method")
 	}
 
@@ -697,11 +696,11 @@ func CreateTransactionSubscription(c echo.Context) error {
 	if bankStr != "" {
 		bankKey, err := strconv.ParseUint(bankStr, 10, 64)
 		if err != nil || bankKey == 0 {
-			log.Error("Missing required parameter: bank_transaction")
+			// log.Error("Missing required parameter: bank_transaction")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_transaction", "Missing required parameter: bank_transaction")
 		}
 	} else {
-		log.Error("Missing required parameter: bank_transaction")
+		// log.Error("Missing required parameter: bank_transaction")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_transaction", "Missing required parameter: bank_transaction")
 	}
 
@@ -723,7 +722,7 @@ func CreateTransactionSubscription(c echo.Context) error {
 		params["flag_newsub"] = "0"
 		accKey = strconv.FormatUint(trAccountDB[0].AccKey, 10)
 		if trAccountDB[0].SubSuspendFlag != nil && *trAccountDB[0].SubSuspendFlag == 1 {
-			log.Error("Account suspended to this product")
+			// log.Error("Account suspended to this product")
 			return lib.CustomError(http.StatusBadRequest, "Account suspended to this product", "Account suspended to this product")
 		}
 	} else {
@@ -733,7 +732,7 @@ func CreateTransactionSubscription(c echo.Context) error {
 		paramsAcc["rec_created_by"] = strIDUserLogin
 		status, err, accKey = models.CreateTrAccount(paramsAcc)
 		if err != nil {
-			log.Error("Failed create account product data: " + err.Error())
+			// log.Error("Failed create account product data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -759,7 +758,7 @@ func CreateTransactionSubscription(c echo.Context) error {
 		paramsCreateAccAgent["rec_status"] = "1"
 		status, err, acaKey = models.CreateTrAccountAgent(paramsCreateAccAgent)
 		if err != nil {
-			log.Error("Failed create account agent data: " + err.Error())
+			// log.Error("Failed create account agent data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -803,7 +802,7 @@ func CreateTransactionSubscription(c echo.Context) error {
 	if file != nil {
 		err = os.MkdirAll(config.BasePathImage+"/images/user/"+strconv.FormatUint(userData.UserLoginKey, 10)+"/transfer", 0755)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		} else {
 			// Get file extension
 			extension := filepath.Ext(file.Filename)
@@ -811,7 +810,7 @@ func CreateTransactionSubscription(c echo.Context) error {
 			var filename string
 			for {
 				filename = lib.RandStringBytesMaskImprSrc(20)
-				log.Println("Generate filename:", filename)
+				// log.Println("Generate filename:", filename)
 				var trans []models.TrTransaction
 				getParams := make(map[string]string)
 				getParams["rec_image1"] = filename + extension
@@ -823,7 +822,7 @@ func CreateTransactionSubscription(c echo.Context) error {
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+strconv.FormatUint(userData.UserLoginKey, 10)+"/transfer/"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			params["rec_image1"] = filename + extension
@@ -853,7 +852,7 @@ func CreateTransactionSubscription(c echo.Context) error {
 		paramsPromoUsed["rec_created_by"] = strIDUserLogin
 		_, err := models.CreateTrPromoUsed(paramsPromoUsed)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 	}
 
@@ -871,7 +870,7 @@ func CreateTransactionSubscription(c echo.Context) error {
 	paramCustomerBank["orderType"] = "DESC"
 	status, err = models.GetAllMsCustomerBankAccount(&customerBankDB, paramCustomerBank)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		paramsBankTransaction["cust_bankacc_key"] = "1"
 	} else {
 		paramsBankTransaction["cust_bankacc_key"] = strconv.FormatUint(customerBankDB[0].CustBankaccKey, 10)
@@ -880,7 +879,7 @@ func CreateTransactionSubscription(c echo.Context) error {
 	paramsBankTransaction["rec_created_by"] = strIDUserLogin
 	status, err = models.CreateTrTransactionBankAccount(paramsBankTransaction)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 
 	//create to tr_transaction_settlement
@@ -902,7 +901,7 @@ func CreateTransactionSubscription(c echo.Context) error {
 
 	_, err, _ = models.CreateTrTransactionSettlement(settlementParams)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 
 	//create message
@@ -937,9 +936,9 @@ func CreateTransactionSubscription(c echo.Context) error {
 
 	status, err = models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error("Error create user message")
+		// log.Error("Error create user message")
 	} else {
-		log.Error("Sukses insert user message")
+		// log.Error("Sukses insert user message")
 	}
 	lib.CreateNotifCustomerFromAdminByCustomerId(customerKeyStr, subject, body, "TRANSACTION")
 
@@ -966,19 +965,19 @@ func GetTopupData(c echo.Context) error {
 		if err == nil && customerKey > 0 {
 			status, err = models.GetMsCustomer(&cus, customerKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Customer tidak ditemukan")
 			}
 			if cus.CifSuspendFlag == uint8(1) {
-				log.Error("Customer Suspended")
+				// log.Error("Customer Suspended")
 				return lib.CustomError(http.StatusBadRequest, "Customer Suspended", "Customer Suspended")
 			}
 		} else {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
@@ -988,12 +987,12 @@ func GetTopupData(c echo.Context) error {
 	var userCategory uint64
 	userCategory = 3
 	if lib.Profile.UserCategoryKey == userCategory {
-		log.Println(lib.Profile)
+		// log.Println(lib.Profile)
 		if lib.Profile.BranchKey != nil {
 			strBranchKey := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 			params["c.openacc_branch_key"] = strBranchKey
 		} else {
-			log.Error("User Branch haven't Branch")
+			// log.Error("User Branch haven't Branch")
 			return lib.CustomError(http.StatusBadRequest, "Wrong User Branch haven't Branch", "Wrong User Branch haven't Branch")
 		}
 	}
@@ -1003,11 +1002,11 @@ func GetTopupData(c echo.Context) error {
 	var customerList []models.CustomerDropdown
 	status, err = models.GetCustomerDropdown(&customerList, params, paramsLike)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(customerList) < 1 {
-		log.Error("Customer not found")
+		// log.Error("Customer not found")
 		return lib.CustomError(http.StatusNotFound, "Customer not found", "Customer not found")
 	}
 
@@ -1025,7 +1024,7 @@ func GetTopupData(c echo.Context) error {
 	var trAccountDB []models.TrAccount
 	status, err = models.GetAllTrAccount(&trAccountDB, paramsAcc)
 	if len(trAccountDB) > 0 {
-		log.Error("Account suspended to this product")
+		// log.Error("Account suspended to this product")
 		return lib.CustomError(http.StatusNotFound, "Account suspended to this product", "Account suspended to this product")
 	}
 
@@ -1035,15 +1034,15 @@ func GetTopupData(c echo.Context) error {
 		if err == nil && productKey > 0 {
 			status, err = models.AdminGetProductSubscriptionByProductKey(&product, productKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 			}
 		} else {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_key", "Wrong input for parameter: product_key")
 		}
 	} else {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
@@ -1058,7 +1057,7 @@ func GetTopupData(c echo.Context) error {
 	var branchData models.MsBranchDropdown
 	status, err = models.GetMsBranch(&branch, branch_key)
 	if err != nil {
-		log.Error("Branch not found")
+		// log.Error("Branch not found")
 		return lib.CustomError(http.StatusNotFound, "Branch not found", "Branch not found")
 	} else {
 		branchData.BranchKey = branch.BranchKey
@@ -1076,7 +1075,7 @@ func GetTopupData(c echo.Context) error {
 	var agentData models.MsAgentDropdown
 	status, err = models.GetMsAgent(&agent, agent_key)
 	if err != nil {
-		log.Error("Agent not found")
+		// log.Error("Agent not found")
 		return lib.CustomError(http.StatusNotFound, "Agent not found", "Agent not found")
 	} else {
 		agentData.AgentKey = agent.AgentKey
@@ -1128,29 +1127,29 @@ func DeleteTransactionAdmin(c echo.Context) error {
 	keyStr := c.FormValue("key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: key")
+		// log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
 	var transaction models.TrTransaction
 	_, err = models.GetTrTransaction(&transaction, keyStr)
 	if err != nil {
-		log.Error("Transaction not found")
+		// log.Error("Transaction not found")
 		return lib.CustomError(http.StatusBadRequest, "Transaction not found", "Transaction not found")
 	}
 
 	if transaction.TransStatusKey != uint64(2) { //cek sudah diproses belum
-		log.Error("Transaction in process, can't delete data.")
+		// log.Error("Transaction in process, can't delete data.")
 		return lib.CustomError(http.StatusBadRequest, "Transaction in process, can't delete data.", "Transaction in process, can't delete data.")
 	}
 
 	if transaction.TransSource != nil {
 		if *transaction.TransSource != uint64(141) { //cek transaction hanya manual transaksi oleh admin
-			log.Error("Can't delete data.")
+			// log.Error("Can't delete data.")
 			return lib.CustomError(http.StatusBadRequest, "Can't delete data.", "Can't delete data.")
 		}
 	} else {
-		log.Error("Can't delete data.")
+		// log.Error("Can't delete data.")
 		return lib.CustomError(http.StatusBadRequest, "Can't delete data.", "Can't delete data.")
 	}
 
@@ -1162,7 +1161,7 @@ func DeleteTransactionAdmin(c echo.Context) error {
 
 	_, err = models.UpdateTrTransaction(params)
 	if err != nil {
-		log.Error("Error update tr transaction")
+		// log.Error("Error update tr transaction")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -1189,7 +1188,7 @@ func GetCustomerBankAccountRedemption(c echo.Context) error {
 	var customerBankAccountInfo []models.MsCustomerBankAccountInfo
 	status, err = models.GetAllMsCustomerBankAccountTransaction(&customerBankAccountInfo, keyStr)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		if err != sql.ErrNoRows {
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		} else {
@@ -1214,24 +1213,24 @@ func CreateTransactionRedemption(c echo.Context) error {
 
 	branchkey := c.FormValue("branch_key")
 	if branchkey == "" {
-		log.Error("Missing required parameter: branch_key")
+		// log.Error("Missing required parameter: branch_key")
 		return lib.CustomError(http.StatusBadRequest, "branch_key can not be blank", "branch_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(branchkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 	}
 
 	agentkey := c.FormValue("agent_key")
 	if agentkey == "" {
-		log.Error("Missing required parameter: agent_key")
+		// log.Error("Missing required parameter: agent_key")
 		return lib.CustomError(http.StatusBadRequest, "agent_key can not be blank", "agent_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(agentkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_key")
+			// log.Error("Wrong input for parameter: agent_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_key", "Wrong input for parameter: agent_key")
 		}
 	}
@@ -1243,20 +1242,20 @@ func CreateTransactionRedemption(c echo.Context) error {
 		if err == nil && customerKey > 0 {
 			status, err = models.GetMsCustomer(&cus, customerKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Customer tidak ditemukan")
 			}
 			if cus.CifSuspendFlag == uint8(1) {
-				log.Error("Customer Suspended")
+				// log.Error("Customer Suspended")
 				return lib.CustomError(http.StatusBadRequest, "Customer Suspended", "Customer Suspended")
 			}
 			params["customer_key"] = customerKeyStr
 		} else {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
@@ -1268,27 +1267,27 @@ func CreateTransactionRedemption(c echo.Context) error {
 			params["product_key"] = productKeyStr
 			status, err = models.GetMsProduct(&product, productKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 			}
 		} else {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_key", "Wrong input for parameter: product_key")
 		}
 	} else {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
 	transAmountStr := c.FormValue("trans_amount")
 	if transAmountStr == "" {
-		log.Error("Missing required parameter: trans_amount")
+		// log.Error("Missing required parameter: trans_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_amount", "Missing required parameter: trans_amount")
 	}
 
 	transUnitStr := c.FormValue("trans_unit")
 	if transUnitStr == "" {
-		log.Error("Missing required parameter: trans_unit")
+		// log.Error("Missing required parameter: trans_unit")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_unit", "Missing required parameter: trans_unit")
 	}
 
@@ -1298,13 +1297,13 @@ func CreateTransactionRedemption(c echo.Context) error {
 	status, err = models.CheckProductAllowRedmOrSwitching(&productNotAllow, customerKeyStr, productIds)
 	if err != nil {
 		if err.Error() != sql.ErrNoRows.Error() {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data.")
 		}
 	}
 
 	if len(productNotAllow) > 0 {
-		log.Error("Tidak dapat melakukan redemption. Sedang ada proses untuk produk ini.")
+		// log.Error("Tidak dapat melakukan redemption. Sedang ada proses untuk produk ini.")
 		return lib.CustomError(http.StatusBadRequest, "Tidak dapat melakukan redemption. Sedang ada proses untuk produk ini.", "Tidak dapat melakukan redemption. Sedang ada proses untuk produk ini.")
 	}
 
@@ -1312,11 +1311,11 @@ func CreateTransactionRedemption(c echo.Context) error {
 	var balance models.SumBalanceUnit
 	status, err = models.GetBalanceUnitByCustomerAndProduct(&balance, customerKeyStr, productKeyStr)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 	} else {
 		if balance.Unit.Cmp(zero) == -1 {
-			log.Error("Balance Unit 0")
+			// log.Error("Balance Unit 0")
 			return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 		}
 	}
@@ -1325,7 +1324,7 @@ func CreateTransactionRedemption(c echo.Context) error {
 	var navDB []models.TrNav
 	status, err = models.GetLastNavIn(&navDB, productIds)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -1338,20 +1337,20 @@ func CreateTransactionRedemption(c echo.Context) error {
 			params["trans_amount"] = "0"
 			value, err := decimal.NewFromString(transUnitStr)
 			if err != nil {
-				log.Error("Wrong input for parameter: trans_unit")
+				// log.Error("Wrong input for parameter: trans_unit")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_unit", "Wrong input for parameter: trans_unit")
 			}
 			if value.Cmp(zero) == 0 {
-				log.Error("trans_unit harus lebih besar dari 0")
+				// log.Error("trans_unit harus lebih besar dari 0")
 				return lib.CustomError(http.StatusBadRequest, "trans_unit harus lebih besar dari 0", "trans_unit harus lebih besar dari 0")
 			}
 			if value.Cmp(product.MinRedUnit) == -1 {
-				log.Error("red unit < minimum red unit ")
+				// log.Error("red unit < minimum red unit ")
 				return lib.CustomError(http.StatusBadRequest, "red unit < minimum red unit", "Minumum redemption unit untuk product ini adalah: "+product.MinRedUnit.String())
 			}
 
 			if value.Cmp(unitTersedia) == 1 {
-				log.Error("red unit > unit tersedia")
+				// log.Error("red unit > unit tersedia")
 				return lib.CustomError(http.StatusBadRequest, "red unit > unit tersedia", "Redemption unit tidak boleh lebih besar dari unit tersedia. Unit tersedia saat ini adalah: "+balance.Unit.String())
 			}
 
@@ -1361,20 +1360,20 @@ func CreateTransactionRedemption(c echo.Context) error {
 			params["trans_amount"] = "0"
 			value, err := decimal.NewFromString(transUnitStr)
 			if err != nil {
-				log.Error("Wrong input for parameter: trans_unit")
+				// log.Error("Wrong input for parameter: trans_unit")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_unit", "Wrong input for parameter: trans_unit")
 			}
 			if value.Cmp(zero) == 0 {
-				log.Error("trans_unit harus lebih besar dari 0")
+				// log.Error("trans_unit harus lebih besar dari 0")
 				return lib.CustomError(http.StatusBadRequest, "trans_unit harus lebih besar dari 0", "trans_unit harus lebih besar dari 0")
 			}
 			if value.Cmp(product.MinRedUnit) == -1 {
-				log.Error("red unit < minimum red unit ")
+				// log.Error("red unit < minimum red unit ")
 				return lib.CustomError(http.StatusBadRequest, "red unit < minum red unit", "Minumum redemption unit untuk product ini adalah: "+product.MinRedUnit.String())
 			}
 
 			if value.Cmp(unitTersedia) == 1 {
-				log.Error("red unit > unit tersedia")
+				// log.Error("red unit > unit tersedia")
 				return lib.CustomError(http.StatusBadRequest, "red unit > unit tersedia", "Redemption unit tidak boleh lebih besar dari unit tersedia. Unit tersedia saat ini adalah: "+balance.Unit.String())
 			}
 
@@ -1382,7 +1381,7 @@ func CreateTransactionRedemption(c echo.Context) error {
 			minSisa := product.MinUnitAfterRed.Truncate(2)
 
 			if sisaUnitAfterRed != zero && sisaUnitAfterRed.Cmp(minSisa) == -1 {
-				log.Error("Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All")
+				// log.Error("Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All")
 				return lib.CustomError(http.StatusBadRequest, "Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All. Sisa unit harus minimal : "+minSisa.String(), "Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All. Sisa unit harus minimal : "+minSisa.String())
 			}
 
@@ -1392,19 +1391,19 @@ func CreateTransactionRedemption(c echo.Context) error {
 			params["trans_unit"] = "0"
 			value, err := decimal.NewFromString(transAmountStr)
 			if err != nil {
-				log.Error("Wrong input for parameter: trans_amount")
+				// log.Error("Wrong input for parameter: trans_amount")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_amount", "Wrong input for parameter: trans_amount")
 			}
 			if value.Cmp(zero) == 0 {
-				log.Error("trans_amount harus lebih besar dari 0")
+				// log.Error("trans_amount harus lebih besar dari 0")
 				return lib.CustomError(http.StatusBadRequest, "trans_amount harus lebih besar dari 0", "trans_amount harus lebih besar dari 0")
 			}
 			if value.Cmp(product.MinRedAmount) == -1 {
-				log.Error("red amount < minimum red amount ")
+				// log.Error("red amount < minimum red amount ")
 				return lib.CustomError(http.StatusBadRequest, "red amount < minum red amount", "Minumum redemption amount untuk product ini adalah: "+product.MinRedAmount.String())
 			}
 			if value.Cmp(nominalTersedia) == 1 {
-				log.Error("red nominal > nominal tersedia")
+				// log.Error("red nominal > nominal tersedia")
 				return lib.CustomError(http.StatusBadRequest, "red amount > nominal amount tersedia", "Redemption amount tidak boleh lebih besar dari amount tersedia. Amount tersedia saat ini adalah: "+nominalTersedia.String())
 			}
 
@@ -1413,18 +1412,18 @@ func CreateTransactionRedemption(c echo.Context) error {
 			minSisa := product.MinUnitAfterRed.Truncate(2)
 
 			if sisaUnitAfterRed != zero && sisaUnitAfterRed.Cmp(minSisa) == -1 {
-				log.Error("Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All")
+				// log.Error("Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All")
 				return lib.CustomError(http.StatusBadRequest, "Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All. Sisa unit harus minimal : "+minSisa.String(), "Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All. Sisa unit harus minimal : "+minSisa.String())
 			}
 
 			params["trans_amount"] = transAmountStr
 			params["total_amount"] = transAmountStr
 		} else {
-			log.Error("Missing required parameter: metode_perhitungan")
+			// log.Error("Missing required parameter: metode_perhitungan")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: metode_perhitungan", "Missing required parameter: metode_perhitungan")
 		}
 	} else {
-		log.Error("Missing required parameter: metode_perhitungan")
+		// log.Error("Missing required parameter: metode_perhitungan")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: metode_perhitungan", "Missing required parameter: metode_perhitungan")
 	}
 
@@ -1432,11 +1431,11 @@ func CreateTransactionRedemption(c echo.Context) error {
 	if bankStr != "" {
 		bankKey, err := strconv.ParseUint(bankStr, 10, 64)
 		if err != nil || bankKey == 0 {
-			log.Error("Missing required parameter: bank_redemption")
+			// log.Error("Missing required parameter: bank_redemption")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_redemption", "Missing required parameter: bank_redemption")
 		}
 	} else {
-		log.Error("Missing required parameter: bank_redemption")
+		// log.Error("Missing required parameter: bank_redemption")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_redemption", "Missing required parameter: bank_redemption")
 	}
 
@@ -1457,7 +1456,7 @@ func CreateTransactionRedemption(c echo.Context) error {
 	if len(trAccountDB) > 0 {
 		accKey = strconv.FormatUint(trAccountDB[0].AccKey, 10)
 		if trAccountDB[0].RedSuspendFlag != nil && *trAccountDB[0].RedSuspendFlag == 1 {
-			log.Error("Account suspended")
+			// log.Error("Account suspended")
 			return lib.CustomError(http.StatusBadRequest, "Account suspended", "Account suspended")
 		}
 	} else {
@@ -1466,7 +1465,7 @@ func CreateTransactionRedemption(c echo.Context) error {
 		paramsAcc["rec_created_by"] = strIDUserLogin
 		status, err, accKey = models.CreateTrAccount(paramsAcc)
 		if err != nil {
-			log.Error("Failed create account product data: " + err.Error())
+			// log.Error("Failed create account product data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -1535,7 +1534,7 @@ func CreateTransactionRedemption(c echo.Context) error {
 	var productBankDB []models.MsProductBankAccount
 	status, err = models.GetAllMsProductBankAccount(&productBankDB, paramsProBankAcc)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		paramsBankTransaction["prod_bankacc_key"] = "1"
 	} else {
 		paramsBankTransaction["prod_bankacc_key"] = strconv.FormatUint(productBankDB[0].ProdBankaccKey, 10)
@@ -1544,7 +1543,7 @@ func CreateTransactionRedemption(c echo.Context) error {
 	paramsBankTransaction["rec_created_by"] = strIDUserLogin
 	status, err = models.CreateTrTransactionBankAccount(paramsBankTransaction)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 
 	//create message
@@ -1572,9 +1571,9 @@ func CreateTransactionRedemption(c echo.Context) error {
 
 	status, err = models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error("Error create user message")
+		// log.Error("Error create user message")
 	} else {
-		log.Error("Sukses insert user message")
+		// log.Error("Sukses insert user message")
 	}
 
 	//create push notif
@@ -1600,24 +1599,24 @@ func CreateTransactionSwitching(c echo.Context) error {
 
 	branchkey := c.FormValue("branch_key")
 	if branchkey == "" {
-		log.Error("Missing required parameter: branch_key")
+		// log.Error("Missing required parameter: branch_key")
 		return lib.CustomError(http.StatusBadRequest, "branch_key can not be blank", "branch_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(branchkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 	}
 
 	agentkey := c.FormValue("agent_key")
 	if agentkey == "" {
-		log.Error("Missing required parameter: agent_key")
+		// log.Error("Missing required parameter: agent_key")
 		return lib.CustomError(http.StatusBadRequest, "agent_key can not be blank", "agent_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(agentkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_key")
+			// log.Error("Wrong input for parameter: agent_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_key", "Wrong input for parameter: agent_key")
 		}
 	}
@@ -1629,21 +1628,21 @@ func CreateTransactionSwitching(c echo.Context) error {
 		if err == nil && customerKey > 0 {
 			status, err = models.GetMsCustomer(&cus, customerKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Customer tidak ditemukan")
 			}
 			if cus.CifSuspendFlag == uint8(1) {
-				log.Error("Customer Suspended")
+				// log.Error("Customer Suspended")
 				return lib.CustomError(http.StatusBadRequest, "Customer Suspended", "Customer Suspended")
 			}
 			params["customer_key"] = customerKeyStr
 			paramsSwIn["customer_key"] = customerKeyStr
 		} else {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
@@ -1655,27 +1654,27 @@ func CreateTransactionSwitching(c echo.Context) error {
 			params["product_key"] = productKeyStr
 			status, err = models.GetMsProduct(&product, productKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 			}
 		} else {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_key", "Wrong input for parameter: product_key")
 		}
 	} else {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
 	transAmountStr := c.FormValue("trans_amount")
 	if transAmountStr == "" {
-		log.Error("Missing required parameter: trans_amount")
+		// log.Error("Missing required parameter: trans_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_amount", "Missing required parameter: trans_amount")
 	}
 
 	transUnitStr := c.FormValue("trans_unit")
 	if transUnitStr == "" {
-		log.Error("Missing required parameter: trans_unit")
+		// log.Error("Missing required parameter: trans_unit")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_unit", "Missing required parameter: trans_unit")
 	}
 
@@ -1685,13 +1684,13 @@ func CreateTransactionSwitching(c echo.Context) error {
 	status, err = models.CheckProductAllowRedmOrSwitching(&productNotAllow, customerKeyStr, productIds)
 	if err != nil {
 		if err.Error() != sql.ErrNoRows.Error() {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data.")
 		}
 	}
 
 	if len(productNotAllow) > 0 {
-		log.Error("Tidak dapat melakukan switching. Sedang ada proses untuk produk ini.")
+		// log.Error("Tidak dapat melakukan switching. Sedang ada proses untuk produk ini.")
 		return lib.CustomError(http.StatusBadRequest, "Tidak dapat melakukan switching. Sedang ada proses untuk produk ini.", "Tidak dapat melakukan switching. Sedang ada proses untuk produk ini.")
 	}
 
@@ -1702,17 +1701,17 @@ func CreateTransactionSwitching(c echo.Context) error {
 		if err == nil && productToKey > 0 {
 			paramsSwIn["product_key"] = productToKeyStr
 		} else {
-			log.Error("Wrong input for parameter: product_to")
+			// log.Error("Wrong input for parameter: product_to")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_to", "Wrong input for parameter: product_to")
 		}
 	} else {
-		log.Error("Missing required parameter: product_to")
+		// log.Error("Missing required parameter: product_to")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_to", "Missing required parameter: product_to")
 	}
 
 	status, err = models.GetMsProduct(&productTo, productToKeyStr)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Product Tujuan tidak ditemukan")
 	}
 
@@ -1720,11 +1719,11 @@ func CreateTransactionSwitching(c echo.Context) error {
 	var balance models.SumBalanceUnit
 	status, err = models.GetBalanceUnitByCustomerAndProduct(&balance, customerKeyStr, productKeyStr)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 	} else {
 		if balance.Unit.Cmp(zero) == -1 {
-			log.Error("Balance Unit 0")
+			// log.Error("Balance Unit 0")
 			return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 		}
 	}
@@ -1734,7 +1733,7 @@ func CreateTransactionSwitching(c echo.Context) error {
 	var navDB []models.TrNav
 	status, err = models.GetLastNavIn(&navDB, productIds)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	nominalTersedia := balance.Unit.Mul(navDB[0].NavValue).Truncate(0)
@@ -1747,26 +1746,26 @@ func CreateTransactionSwitching(c echo.Context) error {
 			params["trans_amount"] = "0"
 			value, err := decimal.NewFromString(transUnitStr)
 			if err != nil {
-				log.Error("Wrong input for parameter: trans_unit")
+				// log.Error("Wrong input for parameter: trans_unit")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_unit", "Wrong input for parameter: trans_unit")
 			}
 			if value.Cmp(zero) == 0 {
-				log.Error("trans_unit harus lebih besar dari 0")
+				// log.Error("trans_unit harus lebih besar dari 0")
 				return lib.CustomError(http.StatusBadRequest, "trans_unit harus lebih besar dari 0", "trans_unit harus lebih besar dari 0")
 			}
 			if value.Cmp(product.MinRedUnit) == -1 {
-				log.Error("switching unit < minimum switching unit ")
+				// log.Error("switching unit < minimum switching unit ")
 				return lib.CustomError(http.StatusBadRequest, "switching unit < minum switching unit", "Minumum Switching unit untuk product ini adalah: "+product.MinRedUnit.String())
 			}
 
 			if value.Cmp(unitTersedia) == 1 {
-				log.Error("switching unit > unit tersedia")
+				// log.Error("switching unit > unit tersedia")
 				return lib.CustomError(http.StatusBadRequest, "switching unit > unit tersedia", "Switching unit tidak boleh lebih besar dari unit tersedia. Unit tersedia saat ini adalah: "+balance.Unit.String())
 			}
 
 			valueSwitchToAmount := value.Mul(navDB[0].NavValue).Truncate(0)
 			if valueSwitchToAmount.Cmp(productTo.MinSubAmount) == -1 {
-				log.Error("Min. Product Switch In Amount < Switching unit * Last NAB")
+				// log.Error("Min. Product Switch In Amount < Switching unit * Last NAB")
 				return lib.CustomError(http.StatusBadRequest, "Min. Product Switch In Amount < Switching unit * Last NAB", "Min. Product Switch In Amount < Switching unit * Last NAB. Min SProduct Switch In Amount : "+productTo.MinSubAmount.String())
 			}
 
@@ -1776,20 +1775,20 @@ func CreateTransactionSwitching(c echo.Context) error {
 			params["trans_amount"] = "0"
 			value, err := decimal.NewFromString(transUnitStr)
 			if err != nil {
-				log.Error("Wrong input for parameter: trans_unit")
+				// log.Error("Wrong input for parameter: trans_unit")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_unit", "Wrong input for parameter: trans_unit")
 			}
 			if value.Cmp(zero) == 0 {
-				log.Error("trans_unit harus lebih besar dari 0")
+				// log.Error("trans_unit harus lebih besar dari 0")
 				return lib.CustomError(http.StatusBadRequest, "trans_unit harus lebih besar dari 0", "trans_unit harus lebih besar dari 0")
 			}
 			if value.Cmp(product.MinRedUnit) == -1 {
-				log.Error("switching unit < minimum switching unit ")
+				// log.Error("switching unit < minimum switching unit ")
 				return lib.CustomError(http.StatusBadRequest, "switching unit < minum switching unit", "Minumum switching unit untuk product ini adalah: "+product.MinRedUnit.String())
 			}
 
 			if value.Cmp(unitTersedia) == 1 {
-				log.Error("switching unit > unit tersedia")
+				// log.Error("switching unit > unit tersedia")
 				return lib.CustomError(http.StatusBadRequest, "switching unit > unit tersedia", "Switching unit tidak boleh lebih besar dari unit tersedia. Unit tersedia saat ini adalah: "+balance.Unit.String())
 			}
 
@@ -1797,13 +1796,13 @@ func CreateTransactionSwitching(c echo.Context) error {
 			minSisa := product.MinUnitAfterRed.Truncate(2)
 
 			if sisaUnitAfterRed != zero && sisaUnitAfterRed.Cmp(minSisa) == -1 {
-				log.Error("Sisa unit setelah switching kurang dari minimal unit, Silakan switch All")
+				// log.Error("Sisa unit setelah switching kurang dari minimal unit, Silakan switch All")
 				return lib.CustomError(http.StatusBadRequest, "Sisa unit setelah switching kurang dari minimal unit, Silakan switching All. Sisa unit harus minimal : "+minSisa.String(), "Sisa unit setelah switching kurang dari minimal unit, Silakan switching All. Sisa unit harus minimal : "+minSisa.String())
 			}
 
 			valueSwitchToAmount := value.Mul(navDB[0].NavValue).Truncate(0)
 			if valueSwitchToAmount.Cmp(productTo.MinSubAmount) == -1 {
-				log.Error("Min. Product Switch In Amount < Switching unit * Last NAB")
+				// log.Error("Min. Product Switch In Amount < Switching unit * Last NAB")
 				return lib.CustomError(http.StatusBadRequest, "Min. Product Switch In Amount < Switching unit * Last NAB", "Min. Product Switch In Amount < Switching unit * Last NAB. Min SProduct Switch In Amount : "+productTo.MinSubAmount.String())
 			}
 
@@ -1813,19 +1812,19 @@ func CreateTransactionSwitching(c echo.Context) error {
 			params["trans_unit"] = "0"
 			value, err := decimal.NewFromString(transAmountStr)
 			if err != nil {
-				log.Error("Wrong input for parameter: trans_amount")
+				// log.Error("Wrong input for parameter: trans_amount")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_amount", "Wrong input for parameter: trans_amount")
 			}
 			if value.Cmp(zero) == 0 {
-				log.Error("trans_amount harus lebih besar dari 0")
+				// log.Error("trans_amount harus lebih besar dari 0")
 				return lib.CustomError(http.StatusBadRequest, "trans_amount harus lebih besar dari 0", "trans_amount harus lebih besar dari 0")
 			}
 			if value.Cmp(product.MinRedAmount) == -1 {
-				log.Error("switching amount < minimum switching amount ")
+				// log.Error("switching amount < minimum switching amount ")
 				return lib.CustomError(http.StatusBadRequest, "switching amount < minum switching amount", "Minumum switching amount untuk product ini adalah: "+product.MinRedAmount.String())
 			}
 			if value.Cmp(nominalTersedia) == 1 {
-				log.Error("red nominal > nominal tersedia")
+				// log.Error("red nominal > nominal tersedia")
 				return lib.CustomError(http.StatusBadRequest, "switching amount > nominal amount tersedia", "Switching amount tidak boleh lebih besar dari amount tersedia. Amount tersedia saat ini adalah: "+nominalTersedia.String())
 			}
 
@@ -1834,24 +1833,24 @@ func CreateTransactionSwitching(c echo.Context) error {
 			minSisa := product.MinUnitAfterRed.Truncate(2)
 
 			if sisaUnitAfterRed != zero && sisaUnitAfterRed.Cmp(minSisa) == -1 {
-				log.Error("Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All")
+				// log.Error("Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All")
 				return lib.CustomError(http.StatusBadRequest, "Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All. Sisa unit harus minimal : "+minSisa.String(), "Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All. Sisa unit harus minimal : "+minSisa.String())
 			}
 
 			valueSwitchToAmount := value.Truncate(0)
 			if valueSwitchToAmount.Cmp(productTo.MinSubAmount) == -1 {
-				log.Error("Min. Product Switch In Amount < Switching unit * Last NAB")
+				// log.Error("Min. Product Switch In Amount < Switching unit * Last NAB")
 				return lib.CustomError(http.StatusBadRequest, "Min. Product Switch In Amount < Switching unit * Last NAB", "Min. Product Switch In Amount < Switching unit * Last NAB. Min SProduct Switch In Amount : "+productTo.MinSubAmount.String())
 			}
 
 			params["trans_amount"] = transAmountStr
 			params["total_amount"] = transAmountStr
 		} else {
-			log.Error("Missing required parameter: metode_perhitungan")
+			// log.Error("Missing required parameter: metode_perhitungan")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: metode_perhitungan", "Missing required parameter: metode_perhitungan")
 		}
 	} else {
-		log.Error("Missing required parameter: metode_perhitungan")
+		// log.Error("Missing required parameter: metode_perhitungan")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: metode_perhitungan", "Missing required parameter: metode_perhitungan")
 	}
 
@@ -1861,7 +1860,7 @@ func CreateTransactionSwitching(c echo.Context) error {
 	var navProductToDB []models.TrNav
 	status, err = models.GetLastNavIn(&navProductToDB, productToIds)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -1870,19 +1869,19 @@ func CreateTransactionSwitching(c echo.Context) error {
 		minSubNewProd := productTo.MinSubAmount.Truncate(0)
 		value, err := decimal.NewFromString(transAmountStr)
 		if err != nil {
-			log.Error("Wrong input for parameter: trans_amount")
+			// log.Error("Wrong input for parameter: trans_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_amount", "Wrong input for parameter: trans_amount")
 		}
 		jumlahSub := value.Truncate(0)
 
 		if jumlahSub.Cmp(minSubNewProd) == -1 {
-			log.Error("switching nominal < minimal switching product tujuan")
+			// log.Error("switching nominal < minimal switching product tujuan")
 			return lib.CustomError(http.StatusBadRequest, "switching nominal < minimal switching product tujuan", "Switching amount tidak boleh kurang dari minimal switching product tujuan. Product tujuan memiliki minimal switching : "+productTo.MinSubAmount.String())
 		}
 	} else { //unit penyertaan/unit all
 		value, err := decimal.NewFromString(transUnitStr)
 		if err != nil {
-			log.Error("Wrong input for parameter: trans_unit")
+			// log.Error("Wrong input for parameter: trans_unit")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_unit", "Wrong input for parameter: trans_unit")
 		}
 
@@ -1890,7 +1889,7 @@ func CreateTransactionSwitching(c echo.Context) error {
 		jumlahSubNominal := value.Mul(navDB[0].NavValue)
 
 		if jumlahSubNominal.Cmp(minSubNewProd) == -1 {
-			log.Error("switching nominal < minimal switching product tujuan")
+			// log.Error("switching nominal < minimal switching product tujuan")
 			return lib.CustomError(http.StatusBadRequest, "switching nominal < minimal switching product tujuan", "Switching amount tidak boleh kurang dari minimal switching product baru. Product tujuan memiliki minimal switching : "+productTo.MinSubAmount.String())
 		}
 
@@ -1915,7 +1914,7 @@ func CreateTransactionSwitching(c echo.Context) error {
 	if len(trAccountDB) > 0 {
 		accKey = strconv.FormatUint(trAccountDB[0].AccKey, 10)
 		if trAccountDB[0].RedSuspendFlag != nil && *trAccountDB[0].RedSuspendFlag == 1 {
-			log.Error("Product Asal suspended")
+			// log.Error("Product Asal suspended")
 			return lib.CustomError(status, "Product Asal suspended", "Product Asal suspended")
 		}
 	} else {
@@ -1924,7 +1923,7 @@ func CreateTransactionSwitching(c echo.Context) error {
 		paramsAcc["rec_created_by"] = strIDUserLogin
 		status, err, accKey = models.CreateTrAccount(paramsAcc)
 		if err != nil {
-			log.Error("Failed create account product data: " + err.Error())
+			// log.Error("Failed create account product data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -1997,7 +1996,7 @@ func CreateTransactionSwitching(c echo.Context) error {
 	if len(trAccountNewDB) > 0 {
 		accNewKey = strconv.FormatUint(trAccountNewDB[0].AccKey, 10)
 		if trAccountNewDB[0].SubSuspendFlag != nil && *trAccountNewDB[0].SubSuspendFlag == 1 {
-			log.Error("Product Tujuan suspended")
+			// log.Error("Product Tujuan suspended")
 			return lib.CustomError(status, "Product Tujuan suspended", "Product Tujuan suspended")
 		}
 	} else {
@@ -2006,7 +2005,7 @@ func CreateTransactionSwitching(c echo.Context) error {
 		paramsNewProdAcc["rec_created_by"] = strIDUserLogin
 		status, err, accNewKey = models.CreateTrAccount(paramsNewProdAcc)
 		if err != nil {
-			log.Error("Failed create account product data: " + err.Error())
+			// log.Error("Failed create account product data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -2070,9 +2069,9 @@ func CreateTransactionSwitching(c echo.Context) error {
 
 	status, err = models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error("Error create user message")
+		// log.Error("Error create user message")
 	} else {
-		log.Error("Sukses insert user message")
+		// log.Error("Sukses insert user message")
 	}
 
 	//create push notif
@@ -2097,12 +2096,12 @@ func UpdateTransactionSubscription(c echo.Context) error {
 
 	transactionKey := c.FormValue("transaction_key")
 	if transactionKey == "" {
-		log.Error("Missing required parameter: transaction_key")
+		// log.Error("Missing required parameter: transaction_key")
 		return lib.CustomError(http.StatusBadRequest, "transaction_key can not be blank", "transaction_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(transactionKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: transaction_key")
+			// log.Error("Wrong input for parameter: transaction_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: transaction_key", "Wrong input for parameter: transaction_key")
 		}
 	}
@@ -2110,11 +2109,11 @@ func UpdateTransactionSubscription(c echo.Context) error {
 	var trans models.TrTransaction
 	status, err = models.GetTrTransaction(&trans, transactionKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Transaksi tidak ditemukan")
 	} else {
 		if trans.TransStatusKey != uint64(1) {
-			log.Error("Trans Ststus Key bukan correction")
+			// log.Error("Trans Ststus Key bukan correction")
 			return lib.CustomError(http.StatusBadRequest, "Transaksi tidak ditemukan", "Transaksi tidak ditemukan")
 		}
 		if trans.RecCreatedBy != nil {
@@ -2123,7 +2122,7 @@ func UpdateTransactionSubscription(c echo.Context) error {
 			if err == nil {
 				if usr.UserCategoryKey != uint64(1) {
 					if *trans.RecCreatedBy != strconv.FormatUint(lib.Profile.UserID, 10) {
-						log.Error("User Transaksi tidak sama dengan user akses update")
+						// log.Error("User Transaksi tidak sama dengan user akses update")
 						return lib.CustomError(http.StatusBadRequest, "User Not Allowed to access this page", "User Not Allowed to access this page")
 					}
 				}
@@ -2134,31 +2133,31 @@ func UpdateTransactionSubscription(c echo.Context) error {
 
 	branchkey := c.FormValue("branch_key")
 	if branchkey == "" {
-		log.Error("Missing required parameter: branch_key")
+		// log.Error("Missing required parameter: branch_key")
 		return lib.CustomError(http.StatusBadRequest, "branch_key can not be blank", "branch_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(branchkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 	}
 
 	agentkey := c.FormValue("agent_key")
 	if agentkey == "" {
-		log.Error("Missing required parameter: agent_key")
+		// log.Error("Missing required parameter: agent_key")
 		return lib.CustomError(http.StatusBadRequest, "agent_key can not be blank", "agent_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(agentkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_key")
+			// log.Error("Wrong input for parameter: agent_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_key", "Wrong input for parameter: agent_key")
 		}
 	}
 
 	navdate := c.FormValue("nav_date")
 	if navdate == "" {
-		log.Error("Missing required parameter: nav_date")
+		// log.Error("Missing required parameter: nav_date")
 		return lib.CustomError(http.StatusBadRequest, "nav_date can not be blank", "nav_date can not be blank")
 	} else {
 		paramHoliday := make(map[string]string)
@@ -2168,12 +2167,12 @@ func UpdateTransactionSubscription(c echo.Context) error {
 		status, err = models.GetAllMsHoliday(&holiday, paramHoliday)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
 		if len(holiday) > 0 {
-			log.Error("nav_date is Bursa Holiday")
+			// log.Error("nav_date is Bursa Holiday")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date is Bursa Holiday", "Missing required parameter: nav_date is Bursa Holiday")
 		}
 
@@ -2184,7 +2183,7 @@ func UpdateTransactionSubscription(c echo.Context) error {
 		w = time.Date(w.Year(), w.Month(), w.Day(), 0, 0, 0, 0, time.UTC)
 		cek := lib.IsWeekend(w)
 		if cek {
-			log.Error("nav_date is Weekend")
+			// log.Error("nav_date is Weekend")
 			return lib.CustomError(http.StatusBadRequest, "nav_date is Weekend", "nav_date is Weekend")
 		}
 	}
@@ -2196,20 +2195,20 @@ func UpdateTransactionSubscription(c echo.Context) error {
 		if err == nil && customerKey > 0 {
 			status, err = models.GetMsCustomer(&cus, customerKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Customer tidak ditemukan")
 			}
 			if cus.CifSuspendFlag == uint8(1) {
-				log.Error("Customer Suspended")
+				// log.Error("Customer Suspended")
 				return lib.CustomError(http.StatusBadRequest, "Customer Suspended", "Customer Suspended")
 			}
 			params["customer_key"] = customerKeyStr
 		} else {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
@@ -2221,15 +2220,15 @@ func UpdateTransactionSubscription(c echo.Context) error {
 			params["product_key"] = productKeyStr
 			status, err = models.GetMsProduct(&product, productKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 			}
 		} else {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_key", "Wrong input for parameter: product_key")
 		}
 	} else {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
@@ -2237,20 +2236,20 @@ func UpdateTransactionSubscription(c echo.Context) error {
 	if transAmountStr != "" {
 		value, err := decimal.NewFromString(transAmountStr)
 		if err != nil {
-			log.Error("Wrong input for parameter: trans_amount")
+			// log.Error("Wrong input for parameter: trans_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_amount", "Wrong input for parameter: trans_amount")
 		}
 		if value.Cmp(product.MinSubAmount) == -1 {
-			log.Error("sub amount < minimum sub")
+			// log.Error("sub amount < minimum sub")
 			return lib.CustomError(http.StatusBadRequest, "sub amount < minum sub", "Minumum subscription untuk product ini adalah: "+product.MinSubAmount.String())
 		}
 		if transAmountStr == "0" {
-			log.Error("Wrong input for parameter: trans_amount")
+			// log.Error("Wrong input for parameter: trans_amount")
 			return lib.CustomError(http.StatusBadRequest, "trans_amount harus lebih dari 0", "trans_amount harus lebih dari 0")
 		}
 		params["trans_amount"] = transAmountStr
 	} else {
-		log.Error("Missing required parameter: trans_amount")
+		// log.Error("Missing required parameter: trans_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_amount", "Missing required parameter: trans_amount")
 	}
 
@@ -2260,11 +2259,11 @@ func UpdateTransactionSubscription(c echo.Context) error {
 		if err == nil && transCalcMethodKey > 0 {
 			params["trans_calc_method"] = transCalcMethod
 		} else {
-			log.Error("Missing required parameter: trans_calc_method")
+			// log.Error("Missing required parameter: trans_calc_method")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_calc_method", "Missing required parameter: trans_calc_method")
 		}
 	} else {
-		log.Error("Missing required parameter: trans_calc_method")
+		// log.Error("Missing required parameter: trans_calc_method")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_calc_method", "Missing required parameter: trans_calc_method")
 	}
 
@@ -2272,12 +2271,12 @@ func UpdateTransactionSubscription(c echo.Context) error {
 	if transFeePercentStr != "" {
 		_, err := decimal.NewFromString(transFeePercentStr)
 		if err != nil {
-			log.Error("Wrong input for parameter: trans_fee_percent")
+			// log.Error("Wrong input for parameter: trans_fee_percent")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_fee_percent", "Wrong input for parameter: trans_fee_percent")
 		}
 		params["trans_fee_percent"] = transFeePercentStr
 	} else {
-		log.Error("Missing required parameter: trans_fee_percent")
+		// log.Error("Missing required parameter: trans_fee_percent")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_fee_percent", "Missing required parameter: trans_fee_percent")
 	}
 
@@ -2285,12 +2284,12 @@ func UpdateTransactionSubscription(c echo.Context) error {
 	if transFeeAmountStr != "" {
 		_, err := decimal.NewFromString(transFeeAmountStr)
 		if err != nil {
-			log.Error("Wrong input for parameter: trans_fee_amount")
+			// log.Error("Wrong input for parameter: trans_fee_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_fee_amount", "Wrong input for parameter: trans_fee_amount")
 		}
 		params["trans_fee_amount"] = transFeeAmountStr
 	} else {
-		log.Error("Missing required parameter: trans_fee_amount")
+		// log.Error("Missing required parameter: trans_fee_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_fee_amount", "Missing required parameter: trans_fee_amount")
 	}
 
@@ -2298,12 +2297,12 @@ func UpdateTransactionSubscription(c echo.Context) error {
 	if chargesFeeAmountStr != "" {
 		_, err := decimal.NewFromString(chargesFeeAmountStr)
 		if err != nil {
-			log.Error("Wrong input for parameter: charges_fee_amount")
+			// log.Error("Wrong input for parameter: charges_fee_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: charges_fee_amount", "Wrong input for parameter: charges_fee_amount")
 		}
 		params["charges_fee_amount"] = chargesFeeAmountStr
 	} else {
-		log.Error("Missing required parameter: charges_fee_amount")
+		// log.Error("Missing required parameter: charges_fee_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: charges_fee_amount", "Missing required parameter: charges_fee_amount")
 	}
 
@@ -2311,12 +2310,12 @@ func UpdateTransactionSubscription(c echo.Context) error {
 	if servicesFeeAmountStr != "" {
 		_, err := decimal.NewFromString(servicesFeeAmountStr)
 		if err != nil {
-			log.Error("Wrong input for parameter: services_fee_amount")
+			// log.Error("Wrong input for parameter: services_fee_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: services_fee_amount", "Wrong input for parameter: services_fee_amount")
 		}
 		params["services_fee_amount"] = servicesFeeAmountStr
 	} else {
-		log.Error("Missing required parameter: services_fee_amount")
+		// log.Error("Missing required parameter: services_fee_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: services_fee_amount", "Missing required parameter: services_fee_amount")
 	}
 
@@ -2324,12 +2323,12 @@ func UpdateTransactionSubscription(c echo.Context) error {
 	if totalAmountStr != "" {
 		_, err := strconv.ParseFloat(totalAmountStr, 64)
 		if err != nil {
-			log.Error("Wrong input for parameter: total_amount")
+			// log.Error("Wrong input for parameter: total_amount")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: total_amount", "Wrong input for parameter: total_amount")
 		}
 		params["total_amount"] = totalAmountStr
 	} else {
-		log.Error("Missing required parameter: total_amount")
+		// log.Error("Missing required parameter: total_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: total_amount", "Missing required parameter: total_amount")
 	}
 
@@ -2354,11 +2353,11 @@ func UpdateTransactionSubscription(c echo.Context) error {
 		if err == nil && paymentKey > 0 {
 			params["payment_method"] = paymentStr
 		} else {
-			log.Error("Missing required parameter: payment_method")
+			// log.Error("Missing required parameter: payment_method")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: payment_method", "Missing required parameter: payment_method")
 		}
 	} else {
-		log.Error("Missing required parameter: payment_method")
+		// log.Error("Missing required parameter: payment_method")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: payment_method", "Missing required parameter: payment_method")
 	}
 
@@ -2366,12 +2365,23 @@ func UpdateTransactionSubscription(c echo.Context) error {
 	if bankStr != "" {
 		bankKey, err := strconv.ParseUint(bankStr, 10, 64)
 		if err != nil || bankKey == 0 {
-			log.Error("Missing required parameter: bank_transaction")
+			// log.Error("Missing required parameter: bank_transaction")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_transaction", "Missing required parameter: bank_transaction")
 		}
 	} else {
-		log.Error("Missing required parameter: bank_transaction")
+		// log.Error("Missing required parameter: bank_transaction")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_transaction", "Missing required parameter: bank_transaction")
+	}
+
+	custBankAccKeystr := c.FormValue("cust_bankacc_key")
+	if custBankAccKeystr != "" {
+		custBankAccKey, err := strconv.ParseUint(custBankAccKeystr, 10, 64)
+		if err != nil || custBankAccKey == 0 {
+			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: cust_bankacc_key", "Missing required parameter: cust_bankacc_key")
+		}
+	} else {
+		// log.Error("Missing required parameter: bank_transaction")
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: cust_bankacc_key", "Missing required parameter: cust_bankacc_key")
 	}
 
 	transRemark := c.FormValue("trans_remarks")
@@ -2392,7 +2402,7 @@ func UpdateTransactionSubscription(c echo.Context) error {
 		params["flag_newsub"] = "0"
 		accKey = strconv.FormatUint(trAccountDB[0].AccKey, 10)
 		if trAccountDB[0].SubSuspendFlag != nil && *trAccountDB[0].SubSuspendFlag == 1 {
-			log.Error("Account suspended to this product")
+			// log.Error("Account suspended to this product")
 			return lib.CustomError(http.StatusBadRequest, "Account suspended to this product", "Account suspended to this product")
 		}
 	} else {
@@ -2402,7 +2412,7 @@ func UpdateTransactionSubscription(c echo.Context) error {
 		paramsAcc["rec_created_by"] = strIDUserLogin
 		status, err, accKey = models.CreateTrAccount(paramsAcc)
 		if err != nil {
-			log.Error("Failed create account product data: " + err.Error())
+			// log.Error("Failed create account product data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -2428,7 +2438,7 @@ func UpdateTransactionSubscription(c echo.Context) error {
 		paramsCreateAccAgent["rec_status"] = "1"
 		status, err, acaKey = models.CreateTrAccountAgent(paramsCreateAccAgent)
 		if err != nil {
-			log.Error("Failed create account agent data: " + err.Error())
+			// log.Error("Failed create account agent data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -2467,7 +2477,7 @@ func UpdateTransactionSubscription(c echo.Context) error {
 	if file != nil {
 		err = os.MkdirAll(config.BasePathImage+"/images/user/"+strconv.FormatUint(userData.UserLoginKey, 10)+"/transfer", 0755)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		} else {
 			// Get file extension
 			extension := filepath.Ext(file.Filename)
@@ -2475,7 +2485,7 @@ func UpdateTransactionSubscription(c echo.Context) error {
 			var filename string
 			for {
 				filename = lib.RandStringBytesMaskImprSrc(20)
-				log.Println("Generate filename:", filename)
+				// log.Println("Generate filename:", filename)
 				var trans []models.TrTransaction
 				getParams := make(map[string]string)
 				getParams["rec_image1"] = filename + extension
@@ -2487,7 +2497,7 @@ func UpdateTransactionSubscription(c echo.Context) error {
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+strconv.FormatUint(userData.UserLoginKey, 10)+"/transfer/"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			params["rec_image1"] = filename + extension
@@ -2520,8 +2530,8 @@ func UpdateTransactionSubscription(c echo.Context) error {
 			paramsPromoUsed["rec_modified_by"] = strIDUserLogin
 			_, err := models.UpdateTrPromoUsed(paramsPromoUsed)
 			if err != nil {
-				log.Error("Error update promo")
-				log.Error(err.Error())
+				// log.Error("Error update promo")
+				// log.Error(err.Error())
 			}
 		} else {
 			paramsPromoUsed := make(map[string]string)
@@ -2536,8 +2546,8 @@ func UpdateTransactionSubscription(c echo.Context) error {
 			paramsPromoUsed["rec_created_by"] = strIDUserLogin
 			_, err := models.CreateTrPromoUsed(paramsPromoUsed)
 			if err != nil {
-				log.Error("Error create promo")
-				log.Error(err.Error())
+				// log.Error("Error create promo")
+				// log.Error(err.Error())
 			}
 		}
 	}
@@ -2546,27 +2556,28 @@ func UpdateTransactionSubscription(c echo.Context) error {
 	paramsBankTransaction := make(map[string]string)
 	paramsBankTransaction["transaction_key"] = transactionKey
 	paramsBankTransaction["prod_bankacc_key"] = bankStr
+	paramsBankTransaction["cust_bankacc_key"] = custBankAccKeystr
 
-	var customerBankDB []models.MsCustomerBankAccount
-	paramCustomerBank := make(map[string]string)
-	paramCustomerBank["customer_key"] = customerKeyStr
-	paramCustomerBank["flag_priority"] = "1"
-	paramCustomerBank["orderBy"] = "cust_bankacc_key"
-	paramCustomerBank["orderType"] = "DESC"
-	status, err = models.GetAllMsCustomerBankAccount(&customerBankDB, paramCustomerBank)
-	if err != nil {
-		log.Error(err.Error())
-		paramsBankTransaction["cust_bankacc_key"] = "1"
-	} else {
-		paramsBankTransaction["cust_bankacc_key"] = strconv.FormatUint(customerBankDB[0].CustBankaccKey, 10)
-	}
+	// var customerBankDB []models.MsCustomerBankAccount
+	// paramCustomerBank := make(map[string]string)
+	// paramCustomerBank["customer_key"] = customerKeyStr
+	// paramCustomerBank["flag_priority"] = "1"
+	// paramCustomerBank["orderBy"] = "cust_bankacc_key"
+	// paramCustomerBank["orderType"] = "DESC"
+	// status, err = models.GetAllMsCustomerBankAccount(&customerBankDB, paramCustomerBank)
+	// if err != nil {
+	// 	// log.Error(err.Error())
+	// 	paramsBankTransaction["cust_bankacc_key"] = "1"
+	// } else {
+	// 	paramsBankTransaction["cust_bankacc_key"] = strconv.FormatUint(customerBankDB[0].CustBankaccKey, 10)
+	// }
 
 	paramsBankTransaction["rec_modified_date"] = time.Now().Format(dateLayout)
 	paramsBankTransaction["rec_modified_by"] = strIDUserLogin
 	status, err = models.UpdateTrTransactionBankAccount(paramsBankTransaction, transactionKey, "transaction_key")
 	if err != nil {
-		log.Error("Error update TrTransactionBankAccount")
-		log.Error(err.Error())
+		// log.Error("Error update TrTransactionBankAccount")
+		// log.Error(err.Error())
 	}
 
 	//update to tr_transaction_settlement
@@ -2588,8 +2599,8 @@ func UpdateTransactionSubscription(c echo.Context) error {
 
 	_, err = models.UpdateTrTransactionSettlementByField(settlementParams, transactionKey, "transaction_key")
 	if err != nil {
-		log.Error("Error update TrTransactionSettlement")
-		log.Error(err.Error())
+		// log.Error("Error update TrTransactionSettlement")
+		// log.Error(err.Error())
 	}
 
 	//send email to other CS
@@ -2611,12 +2622,12 @@ func UpdateTransactionRedemption(c echo.Context) error {
 
 	transactionKey := c.FormValue("transaction_key")
 	if transactionKey == "" {
-		log.Error("Missing required parameter: transaction_key")
+		// log.Error("Missing required parameter: transaction_key")
 		return lib.CustomError(http.StatusBadRequest, "transaction_key can not be blank", "transaction_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(transactionKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: transaction_key")
+			// log.Error("Wrong input for parameter: transaction_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: transaction_key", "Wrong input for parameter: transaction_key")
 		}
 	}
@@ -2624,11 +2635,11 @@ func UpdateTransactionRedemption(c echo.Context) error {
 	var trans models.TrTransaction
 	status, err = models.GetTrTransaction(&trans, transactionKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Transaksi tidak ditemukan")
 	} else {
 		if trans.TransStatusKey != uint64(1) {
-			log.Error("Trans Ststus Key bukan correction")
+			// log.Error("Trans Ststus Key bukan correction")
 			return lib.CustomError(http.StatusBadRequest, "Transaksi tidak ditemukan", "Transaksi tidak ditemukan")
 		}
 		if trans.RecCreatedBy != nil {
@@ -2637,7 +2648,7 @@ func UpdateTransactionRedemption(c echo.Context) error {
 			if err == nil {
 				if usr.UserCategoryKey != uint64(1) {
 					if *trans.RecCreatedBy != strconv.FormatUint(lib.Profile.UserID, 10) {
-						log.Error("User Transaksi tidak sama dengan user akses update")
+						// log.Error("User Transaksi tidak sama dengan user akses update")
 						return lib.CustomError(http.StatusBadRequest, "User Not Allowed to access this page", "User Not Allowed to access this page")
 					}
 				}
@@ -2648,24 +2659,24 @@ func UpdateTransactionRedemption(c echo.Context) error {
 
 	branchkey := c.FormValue("branch_key")
 	if branchkey == "" {
-		log.Error("Missing required parameter: branch_key")
+		// log.Error("Missing required parameter: branch_key")
 		return lib.CustomError(http.StatusBadRequest, "branch_key can not be blank", "branch_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(branchkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 	}
 
 	agentkey := c.FormValue("agent_key")
 	if agentkey == "" {
-		log.Error("Missing required parameter: agent_key")
+		// log.Error("Missing required parameter: agent_key")
 		return lib.CustomError(http.StatusBadRequest, "agent_key can not be blank", "agent_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(agentkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_key")
+			// log.Error("Wrong input for parameter: agent_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_key", "Wrong input for parameter: agent_key")
 		}
 	}
@@ -2677,20 +2688,20 @@ func UpdateTransactionRedemption(c echo.Context) error {
 		if err == nil && customerKey > 0 {
 			status, err = models.GetMsCustomer(&cus, customerKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Customer tidak ditemukan")
 			}
 			if cus.CifSuspendFlag == uint8(1) {
-				log.Error("Customer Suspended")
+				// log.Error("Customer Suspended")
 				return lib.CustomError(http.StatusBadRequest, "Customer Suspended", "Customer Suspended")
 			}
 			params["customer_key"] = customerKeyStr
 		} else {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
@@ -2702,27 +2713,27 @@ func UpdateTransactionRedemption(c echo.Context) error {
 			params["product_key"] = productKeyStr
 			status, err = models.GetMsProduct(&product, productKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 			}
 		} else {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_key", "Wrong input for parameter: product_key")
 		}
 	} else {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
 	transAmountStr := c.FormValue("trans_amount")
 	if transAmountStr == "" {
-		log.Error("Missing required parameter: trans_amount")
+		// log.Error("Missing required parameter: trans_amount")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_amount", "Missing required parameter: trans_amount")
 	}
 
 	transUnitStr := c.FormValue("trans_unit")
 	if transUnitStr == "" {
-		log.Error("Missing required parameter: trans_unit")
+		// log.Error("Missing required parameter: trans_unit")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_unit", "Missing required parameter: trans_unit")
 	}
 
@@ -2732,13 +2743,13 @@ func UpdateTransactionRedemption(c echo.Context) error {
 	status, err = models.CheckProductAllowRedmOrSwitchingInUpdate(&productNotAllow, customerKeyStr, productIds, transactionKey)
 	if err != nil {
 		if err.Error() != sql.ErrNoRows.Error() {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data.")
 		}
 	}
 
 	if len(productNotAllow) > 0 {
-		log.Error("Tidak dapat melakukan redemption. Sedang ada proses untuk produk ini.")
+		// log.Error("Tidak dapat melakukan redemption. Sedang ada proses untuk produk ini.")
 		return lib.CustomError(http.StatusBadRequest, "Tidak dapat melakukan redemption. Sedang ada proses untuk produk ini.", "Tidak dapat melakukan redemption. Sedang ada proses untuk produk ini.")
 	}
 
@@ -2746,11 +2757,11 @@ func UpdateTransactionRedemption(c echo.Context) error {
 	var balance models.SumBalanceUnit
 	status, err = models.GetBalanceUnitByCustomerAndProduct(&balance, customerKeyStr, productKeyStr)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 	} else {
 		if balance.Unit.Cmp(zero) == -1 {
-			log.Error("Balance Unit 0")
+			// log.Error("Balance Unit 0")
 			return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 		}
 	}
@@ -2759,7 +2770,7 @@ func UpdateTransactionRedemption(c echo.Context) error {
 	var navDB []models.TrNav
 	status, err = models.GetLastNavIn(&navDB, productIds)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -2772,20 +2783,20 @@ func UpdateTransactionRedemption(c echo.Context) error {
 			params["trans_amount"] = "0"
 			value, err := decimal.NewFromString(transUnitStr)
 			if err != nil {
-				log.Error("Wrong input for parameter: trans_unit")
+				// log.Error("Wrong input for parameter: trans_unit")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_unit", "Wrong input for parameter: trans_unit")
 			}
 			if value.Cmp(zero) == 0 {
-				log.Error("trans_unit harus lebih besar dari 0")
+				// log.Error("trans_unit harus lebih besar dari 0")
 				return lib.CustomError(http.StatusBadRequest, "trans_unit harus lebih besar dari 0", "trans_unit harus lebih besar dari 0")
 			}
 			if value.Cmp(product.MinRedUnit) == -1 {
-				log.Error("red unit < minimum red unit ")
+				// log.Error("red unit < minimum red unit ")
 				return lib.CustomError(http.StatusBadRequest, "red unit < minimum red unit", "Minumum redemption unit untuk product ini adalah: "+product.MinRedUnit.String())
 			}
 
 			if value.Cmp(unitTersedia) == 1 {
-				log.Error("red unit > unit tersedia")
+				// log.Error("red unit > unit tersedia")
 				return lib.CustomError(http.StatusBadRequest, "red unit > unit tersedia", "Redemption unit tidak boleh lebih besar dari unit tersedia. Unit tersedia saat ini adalah: "+balance.Unit.String())
 			}
 
@@ -2795,20 +2806,20 @@ func UpdateTransactionRedemption(c echo.Context) error {
 			params["trans_amount"] = "0"
 			value, err := decimal.NewFromString(transUnitStr)
 			if err != nil {
-				log.Error("Wrong input for parameter: trans_unit")
+				// log.Error("Wrong input for parameter: trans_unit")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_unit", "Wrong input for parameter: trans_unit")
 			}
 			if value.Cmp(zero) == 0 {
-				log.Error("trans_unit harus lebih besar dari 0")
+				// log.Error("trans_unit harus lebih besar dari 0")
 				return lib.CustomError(http.StatusBadRequest, "trans_unit harus lebih besar dari 0", "trans_unit harus lebih besar dari 0")
 			}
 			if value.Cmp(product.MinRedUnit) == -1 {
-				log.Error("red unit < minimum red unit ")
+				// log.Error("red unit < minimum red unit ")
 				return lib.CustomError(http.StatusBadRequest, "red unit < minum red unit", "Minumum redemption unit untuk product ini adalah: "+product.MinRedUnit.String())
 			}
 
 			if value.Cmp(unitTersedia) == 1 {
-				log.Error("red unit > unit tersedia")
+				// log.Error("red unit > unit tersedia")
 				return lib.CustomError(http.StatusBadRequest, "red unit > unit tersedia", "Redemption unit tidak boleh lebih besar dari unit tersedia. Unit tersedia saat ini adalah: "+balance.Unit.String())
 			}
 
@@ -2816,7 +2827,7 @@ func UpdateTransactionRedemption(c echo.Context) error {
 			minSisa := product.MinUnitAfterRed.Truncate(2)
 
 			if sisaUnitAfterRed != zero && sisaUnitAfterRed.Cmp(minSisa) == -1 {
-				log.Error("Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All")
+				// log.Error("Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All")
 				return lib.CustomError(http.StatusBadRequest, "Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All. Sisa unit harus minimal : "+minSisa.String(), "Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All. Sisa unit harus minimal : "+minSisa.String())
 			}
 
@@ -2826,19 +2837,19 @@ func UpdateTransactionRedemption(c echo.Context) error {
 			params["trans_unit"] = "0"
 			value, err := decimal.NewFromString(transAmountStr)
 			if err != nil {
-				log.Error("Wrong input for parameter: trans_amount")
+				// log.Error("Wrong input for parameter: trans_amount")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_amount", "Wrong input for parameter: trans_amount")
 			}
 			if value.Cmp(zero) == 0 {
-				log.Error("trans_amount harus lebih besar dari 0")
+				// log.Error("trans_amount harus lebih besar dari 0")
 				return lib.CustomError(http.StatusBadRequest, "trans_amount harus lebih besar dari 0", "trans_amount harus lebih besar dari 0")
 			}
 			if value.Cmp(product.MinRedAmount) == -1 {
-				log.Error("red amount < minimum red amount ")
+				// log.Error("red amount < minimum red amount ")
 				return lib.CustomError(http.StatusBadRequest, "red amount < minum red amount", "Minumum redemption amount untuk product ini adalah: "+product.MinRedAmount.String())
 			}
 			if value.Cmp(nominalTersedia) == 1 {
-				log.Error("red nominal > nominal tersedia")
+				// log.Error("red nominal > nominal tersedia")
 				return lib.CustomError(http.StatusBadRequest, "red amount > nominal amount tersedia", "Redemption amount tidak boleh lebih besar dari amount tersedia. Amount tersedia saat ini adalah: "+nominalTersedia.String())
 			}
 
@@ -2847,18 +2858,18 @@ func UpdateTransactionRedemption(c echo.Context) error {
 			minSisa := product.MinUnitAfterRed.Truncate(2)
 
 			if sisaUnitAfterRed != zero && sisaUnitAfterRed.Cmp(minSisa) == -1 {
-				log.Error("Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All")
+				// log.Error("Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All")
 				return lib.CustomError(http.StatusBadRequest, "Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All. Sisa unit harus minimal : "+minSisa.String(), "Sisa unit setelah redemption kurang dari minimal unit, Silakan redemption All. Sisa unit harus minimal : "+minSisa.String())
 			}
 
 			params["trans_amount"] = transAmountStr
 			params["total_amount"] = transAmountStr
 		} else {
-			log.Error("Missing required parameter: metode_perhitungan")
+			// log.Error("Missing required parameter: metode_perhitungan")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: metode_perhitungan", "Missing required parameter: metode_perhitungan")
 		}
 	} else {
-		log.Error("Missing required parameter: metode_perhitungan")
+		// log.Error("Missing required parameter: metode_perhitungan")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: metode_perhitungan", "Missing required parameter: metode_perhitungan")
 	}
 
@@ -2866,11 +2877,11 @@ func UpdateTransactionRedemption(c echo.Context) error {
 	if bankStr != "" {
 		bankKey, err := strconv.ParseUint(bankStr, 10, 64)
 		if err != nil || bankKey == 0 {
-			log.Error("Missing required parameter: bank_redemption")
+			// log.Error("Missing required parameter: bank_redemption")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_redemption", "Missing required parameter: bank_redemption")
 		}
 	} else {
-		log.Error("Missing required parameter: bank_redemption")
+		// log.Error("Missing required parameter: bank_redemption")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_redemption", "Missing required parameter: bank_redemption")
 	}
 
@@ -2891,7 +2902,7 @@ func UpdateTransactionRedemption(c echo.Context) error {
 	if len(trAccountDB) > 0 {
 		accKey = strconv.FormatUint(trAccountDB[0].AccKey, 10)
 		if trAccountDB[0].RedSuspendFlag != nil && *trAccountDB[0].RedSuspendFlag == 1 {
-			log.Error("Account suspended")
+			// log.Error("Account suspended")
 			return lib.CustomError(http.StatusBadRequest, "Account suspended", "Account suspended")
 		}
 	} else {
@@ -2900,7 +2911,7 @@ func UpdateTransactionRedemption(c echo.Context) error {
 		paramsAcc["rec_created_by"] = strIDUserLogin
 		status, err, accKey = models.CreateTrAccount(paramsAcc)
 		if err != nil {
-			log.Error("Failed create account product data: " + err.Error())
+			// log.Error("Failed create account product data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -2954,7 +2965,7 @@ func UpdateTransactionRedemption(c echo.Context) error {
 	var productBankDB []models.MsProductBankAccount
 	status, err = models.GetAllMsProductBankAccount(&productBankDB, paramsProBankAcc)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		paramsBankTransaction["prod_bankacc_key"] = "1"
 	} else {
 		paramsBankTransaction["prod_bankacc_key"] = strconv.FormatUint(productBankDB[0].ProdBankaccKey, 10)
@@ -2963,8 +2974,8 @@ func UpdateTransactionRedemption(c echo.Context) error {
 	paramsBankTransaction["rec_modified_by"] = strIDUserLogin
 	status, err = models.UpdateTrTransactionBankAccount(paramsBankTransaction, transactionKey, "transaction_key")
 	if err != nil {
-		log.Error("Error update TrTransactionBankAccount")
-		log.Error(err.Error())
+		// log.Error("Error update TrTransactionBankAccount")
+		// log.Error(err.Error())
 	}
 
 	//send email to BO role 11 & Sales
@@ -2993,7 +3004,7 @@ func GetListAdminTransactionCorrection(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -3009,7 +3020,7 @@ func GetListAdminTransactionCorrection(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -3025,7 +3036,7 @@ func GetListAdminTransactionCorrection(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -3045,7 +3056,7 @@ func GetListAdminTransactionCorrection(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -3057,7 +3068,7 @@ func GetListAdminTransactionCorrection(c echo.Context) error {
 	if productKey != "" {
 		productKeyCek, err := strconv.ParseUint(productKey, 10, 64)
 		if err != nil || productKeyCek <= 0 {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 		}
 	}
@@ -3068,7 +3079,7 @@ func GetListAdminTransactionCorrection(c echo.Context) error {
 		if err == nil && transSourceCek > 0 {
 			params["t.trans_source"] = transSource
 		} else {
-			log.Error("Wrong input for parameter: trans_source")
+			// log.Error("Wrong input for parameter: trans_source")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_source", "Missing required parameter: trans_source")
 		}
 	}
@@ -3082,12 +3093,12 @@ func GetListAdminTransactionCorrection(c echo.Context) error {
 	var userCategory uint64
 	userCategory = 3
 	if lib.Profile.UserCategoryKey == userCategory {
-		log.Println(lib.Profile)
+		// log.Println(lib.Profile)
 		if lib.Profile.BranchKey != nil {
 			strBranchKey := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 			params["t.branch_key"] = strBranchKey
 		} else {
-			log.Error("User Branch haven't Branch")
+			// log.Error("User Branch haven't Branch")
 			return lib.CustomError(http.StatusBadRequest, "Wrong User Branch haven't Branch", "Wrong User Branch haven't Branch")
 		}
 	}
@@ -3097,11 +3108,11 @@ func GetListAdminTransactionCorrection(c echo.Context) error {
 	status, err = models.AdminGetListTransactionCorrection(&trTransaction, limit, offset, params, noLimit, productKey, strconv.FormatUint(lib.Profile.UserID, 10))
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(trTransaction) < 1 {
-		log.Error("transaction not found")
+		// log.Error("transaction not found")
 		return lib.CustomError(http.StatusNotFound, "Transaction not found", "Transaction not found")
 	}
 	var countData models.CountData
@@ -3109,7 +3120,7 @@ func GetListAdminTransactionCorrection(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetListTransactionCorrection(&countData, params, productKey, strconv.FormatUint(lib.Profile.UserID, 10))
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {

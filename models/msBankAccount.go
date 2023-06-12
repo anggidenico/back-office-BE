@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MsBankAccount struct {
@@ -54,18 +52,18 @@ func CreateMsBankAccount(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -77,10 +75,10 @@ func GetMsBankAccountIn(c *[]MsBankAccount, value []string, field string) (int, 
 	query := "SELECT ms_bank_account.* FROM ms_bank_account WHERE ms_bank_account." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -108,10 +106,10 @@ INNER JOIN ms_bank AS b ON a.bank_key = b.bank_key`
 	query := query2 + " WHERE a." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -120,10 +118,10 @@ INNER JOIN ms_bank AS b ON a.bank_key = b.bank_key`
 
 func GetBankAccount(c *MsBankAccount, key string) (int, error) {
 	query := `SELECT ms_bank_account.* FROM ms_bank_account WHERE ms_bank_account.bank_account_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -146,11 +144,11 @@ func UpdateMsBankAccount(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE bank_account_key = " + params["bank_account_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -162,7 +160,7 @@ func UpdateMsBankAccount(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -179,10 +177,10 @@ func UpdateMsBankAccount(params map[string]string) (int, error) {
 // func GetCustBankAccount(c *MsCustomerBankAccount, key string) (int, error) {
 // 	query := `SELECT cust_bankacc_key, customer_key, bank_account_key, flag_priority, bank_account_name
 // 	FROM ms_customer_bank_account WHERE ms_customer_bank_account.cust_bankacc_key = ` + key
-// 	log.Println("==========  ==========>>>",query)
+// 	// log.Println("==========  ==========>>>",query)
 // 	err := db.Db.Get(c, query)
 // 	if err != nil {
-// 		log.Println(err)
+// 		// log.Println(err)
 // 		return http.StatusNotFound, err
 // 	}
 

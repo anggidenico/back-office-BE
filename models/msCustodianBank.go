@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MsCustodianBankInfo struct {
@@ -56,10 +54,10 @@ type MsCustodianBank struct {
 func GetMsCustodianBank(c *MsCustodianBank, key string) (int, error) {
 	query := `SELECT ms_custodian_bank.* FROM ms_custodian_bank WHERE ms_custodian_bank.rec_status = '1' 
 	AND ms_custodian_bank.custodian_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusNotFound, err
 	}
 
@@ -75,10 +73,10 @@ func GetMsCustodianBankIn(c *[]MsCustodianBank, value []string, field string) (i
 	query := query2 + " AND ms_custodian_bank." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -131,10 +129,10 @@ func AdminGetListMsCustodianBank(c *[]MsCustodianBank, limit uint64, offset uint
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -222,10 +220,10 @@ func AdminGetListCustodianBank(c *[]ListCustodianBankAdmin, limit uint64, offset
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -268,10 +266,10 @@ func CountAdminGetListCustodianBank(c *CountData, params map[string]string, sear
 			WHERE rec_status = 1 ` + condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -294,11 +292,11 @@ func UpdateMsCustodianBank(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE custodian_key = " + params["custodian_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -306,7 +304,7 @@ func UpdateMsCustodianBank(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -328,17 +326,17 @@ func CreateMsCustodianBank(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -355,10 +353,10 @@ func CountMsCustodianBankValidateUnique(c *CountData, field string, value string
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

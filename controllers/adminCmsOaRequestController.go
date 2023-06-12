@@ -16,7 +16,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
@@ -45,7 +44,7 @@ func initAuthFundAdmin() error {
 	roleKeyFundAdmin = 13
 
 	if lib.Profile.RoleKey != roleKeyFundAdmin {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	return nil
@@ -96,7 +95,7 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 
 	errorAuth := initAuthCsKyc()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -121,7 +120,7 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -137,7 +136,7 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -153,7 +152,7 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -173,7 +172,7 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -195,11 +194,11 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 	var oaRequestDB []models.OaRequest
 	status, err = models.GetAllOaRequestIndividu(&oaRequestDB, limit, offset, noLimit, params, strconv.FormatUint(lib.Profile.UserID, 10))
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(oaRequestDB) < 1 {
-		log.Error("oa not found")
+		// log.Error("oa not found")
 		return lib.CustomError(http.StatusNotFound, "Oa Request not found", "Oa Request not found")
 	}
 
@@ -249,7 +248,7 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 		status, err = models.GetScUserLoginIn(&userappr, userApprovalIds, "user_login_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -265,7 +264,7 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 	if len(lookupIds) > 0 {
 		status, err = models.GetGenLookupIn(&genLookup, lookupIds, "lookup_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -279,7 +278,7 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 	if len(branchIds) > 0 {
 		status, err = models.GetMsBranchIn(&branchs, branchIds, "branch_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -293,7 +292,7 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 	if len(agentIds) > 0 {
 		status, err = models.GetMsAgentIn(&agents, agentIds, "agent_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -307,7 +306,7 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 	if len(oaRequestIds) > 0 {
 		status, err = models.GetOaPersonalDataIn(&oaPersonalData, oaRequestIds, "oa_request_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -383,7 +382,7 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 	if limit > 0 {
 		status, err = models.GetCountOaRequestIndividu(&countData, params, strconv.FormatUint(lib.Profile.UserID, 10))
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -427,10 +426,10 @@ func GetLastHistoryOaRequestData(c echo.Context) error {
 	var lastKeyStr string
 
 	if oareq.OaRequestType == nil {
-		log.Error("OA Request Type Null")
+		// log.Error("OA Request Type Null")
 		return lib.CustomError(http.StatusBadRequest)
 	} else if *oareq.OaRequestType == 127 { //NEW error tidak ada history
-		log.Error("OA Request Type NEW harusnya UPDATE")
+		// log.Error("OA Request Type NEW harusnya UPDATE")
 		return lib.CustomError(http.StatusBadRequest)
 	} else if *oareq.OaRequestType == 128 {
 		if oareq.CustomerKey == nil { //Error jika belum jadi customer
@@ -455,7 +454,7 @@ func GetLastHistoryOaRequestData(c echo.Context) error {
 func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 	errorAuth := initAuthCsKycFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	var err error
@@ -481,7 +480,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 	var roleKeyFundAdmin uint64
 	roleKeyFundAdmin = 13
 
-	log.Println(lib.Profile.RoleKey)
+	// log.Println(lib.Profile.RoleKey)
 
 	strOaKey := strconv.FormatUint(*oareq.Oastatus, 10)
 
@@ -489,7 +488,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 		if isHistory == false {
 			oaStatusCs := strconv.FormatUint(uint64(258), 10)
 			if strOaKey != oaStatusCs {
-				log.Error("User Autorizer")
+				// log.Error("User Autorizer")
 				return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 			}
 		}
@@ -499,7 +498,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 		if isHistory == false {
 			oaStatusKyc := strconv.FormatUint(uint64(259), 10)
 			if strOaKey != oaStatusKyc {
-				log.Error("User Autorizer")
+				// log.Error("User Autorizer")
 				return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 			}
 		}
@@ -510,7 +509,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 			oaStatusFundAdmin1 := strconv.FormatUint(uint64(260), 10)
 			oaStatusFundAdmin2 := strconv.FormatUint(uint64(261), 10)
 			if (strOaKey != oaStatusFundAdmin1) && (strOaKey != oaStatusFundAdmin2) {
-				log.Error("User Autorizer")
+				// log.Error("User Autorizer")
 				return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 			}
 		}
@@ -553,7 +552,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 		status, err = models.GetGenLookupIn(&lookupOaReq, oaRequestLookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -726,7 +725,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 			status, err = models.GetGenLookupIn(&lookupPersonData, personalDataLookupIds, "lookup_key")
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -768,7 +767,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 		status, err = models.GetMsCountry(&country, strCountry)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error("Error Personal Data not Found")
+				// log.Error("Error Personal Data not Found")
 				return lib.CustomError(status, err.Error(), "Personal data not found")
 			}
 		} else {
@@ -843,7 +842,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 			status, err = models.GetOaPostalAddressIn(&oaPstalAddressList, postalAddressIds, "postal_address_key")
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -877,7 +876,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 						status, err = models.GetMsCityIn(&cityList, cityIds, "city_key")
 						if err != nil {
 							if err != sql.ErrNoRows {
-								log.Error(err.Error())
+								// log.Error(err.Error())
 								return lib.CustomError(status, err.Error(), "Failed get data")
 							}
 						}
@@ -901,7 +900,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 					var city models.MsCity
 					_, err = models.GetMsCityByParent(&city, strconv.FormatUint(*p.KabupatenKey, 10))
 					if err != nil {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 					} else {
 						responseData.IDcardAddress.Provinsi = &city.CityName
 					}
@@ -929,7 +928,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 						status, err = models.GetMsCityIn(&cityList, cityIds, "city_key")
 						if err != nil {
 							if err != sql.ErrNoRows {
-								log.Error(err.Error())
+								// log.Error(err.Error())
 								return lib.CustomError(status, err.Error(), "Failed get data")
 							}
 						}
@@ -952,7 +951,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 					var city models.MsCity
 					_, err = models.GetMsCityByParent(&city, strconv.FormatUint(*p.KabupatenKey, 10))
 					if err != nil {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 					} else {
 						responseData.DomicileAddress.Provinsi = &city.CityName
 					}
@@ -980,7 +979,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 						status, err = models.GetMsCityIn(&cityList, cityIds, "city_key")
 						if err != nil {
 							if err != sql.ErrNoRows {
-								log.Error(err.Error())
+								// log.Error(err.Error())
 								return lib.CustomError(status, err.Error(), "Failed get data")
 							}
 						}
@@ -1043,7 +1042,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 		status, err = models.AdminGetOaRiskProfile(&oaRiskProfile, strKey)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -1054,7 +1053,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 		status, err = models.AdminGetOaRiskProfileQuizByOaRequestKey(&oaRiskProfileQuiz, strKey)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -1069,7 +1068,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 			status, err = models.GetCmsQuizOptionsIn(&optionDB, questionIDs, "quiz_question_key")
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -1143,7 +1142,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 			status, err = models.GetMsCustomer(&customer, strCustomerKey)
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -1168,7 +1167,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 				status, err = models.GetGenLookup(&fatca, strLookKey)
 				if err != nil {
 					if err != sql.ErrNoRows {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 						return lib.CustomError(status, err.Error(), "Failed get data")
 					}
 				}
@@ -1181,7 +1180,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 				status, err = models.GetMsCountry(&country, strCountryKey)
 				if err != nil {
 					if err != sql.ErrNoRows {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 						return lib.CustomError(status, err.Error(), "Failed get data")
 					}
 				}
@@ -1215,7 +1214,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 		var branch models.MsBranch
 		status, err = models.GetMsBranch(&branch, branch_key)
 		if err == nil {
-			log.Println(branch.BranchKey)
+			// log.Println(branch.BranchKey)
 			var b models.MsBranchDropdown
 			b.BranchKey = branch.BranchKey
 			b.BranchName = branch.BranchName
@@ -1326,7 +1325,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 func UpdateStatusApprovalCS(c echo.Context) error {
 	errorAuth := initAuthCs()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	var err error
@@ -1336,18 +1335,18 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 
 	oastatus := c.FormValue("oa_status") //259 = approve --------- 258 = reject
 	if oastatus == "" {
-		log.Error("Missing required parameter: oa_status")
+		// log.Error("Missing required parameter: oa_status")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 	n, err := strconv.ParseUint(oastatus, 10, 64)
 	if err == nil && n > 0 {
 		if (oastatus != "259") && (oastatus != "258") {
-			log.Error("Wrong input for parameter: oa_status must 259/258")
+			// log.Error("Wrong input for parameter: oa_status must 259/258")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_status", "Wrong input for parameter: oa_status")
 		}
 		params["oa_status"] = oastatus
 	} else {
-		log.Error("Wrong input for parameter: oa_status")
+		// log.Error("Wrong input for parameter: oa_status")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_status", "Wrong input for parameter: oa_status")
 	}
 
@@ -1359,7 +1358,7 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 
 	if oastatus != "259" { //jika reject
 		if check1notes == "" {
-			log.Error("Missing required parameter notes: Notes tidak boleh kosong")
+			// log.Error("Missing required parameter notes: Notes tidak boleh kosong")
 			return lib.CustomError(http.StatusBadRequest, "Notes tidak boleh kosong", "Notes tidak boleh kosong")
 		}
 		params["rec_status"] = "0"
@@ -1372,14 +1371,14 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 
 	oarequestkey := c.FormValue("oa_request_key")
 	if oarequestkey == "" {
-		log.Error("Missing required parameter: oa_request_key")
+		// log.Error("Missing required parameter: oa_request_key")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 	n, err = strconv.ParseUint(oarequestkey, 10, 64)
 	if err == nil && n > 0 {
 		params["oa_request_key"] = oarequestkey
 	} else {
-		log.Error("Wrong input for parameter: oa_request_key")
+		// log.Error("Wrong input for parameter: oa_request_key")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_request_key", "Wrong input for parameter: oa_request_key")
 	}
 
@@ -1398,23 +1397,23 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 
 	oaStatusCs := strconv.FormatUint(uint64(258), 10)
 	if strOaKey != oaStatusCs {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
 	_, err = models.UpdateOaRequest(params)
 	if err != nil {
-		log.Error("Error update oa request")
+		// log.Error("Error update oa request")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
-	log.Info("Success update approved CS")
+	// log.Info("Success update approved CS")
 
 	var oapersonal models.OaPersonalData
 	strKeyOa := strconv.FormatUint(oareq.OaRequestKey, 10)
 	status, err = models.GetOaPersonalDataByOaRequestKey(&oapersonal, strKeyOa)
 	if err != nil {
-		log.Error("Error Personal Data not Found")
+		// log.Error("Error Personal Data not Found")
 		return lib.CustomError(status, err.Error(), "Personal data not found")
 	}
 
@@ -1431,7 +1430,7 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 
 		_, err = models.UpdateOaPersonalData(paramsPersonalDataDelete)
 		if err != nil {
-			log.Error("Error update personal data delete")
+			// log.Error("Error update personal data delete")
 			return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 		}
 
@@ -1447,7 +1446,7 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 
 			_, err = models.UpdateScUserLogin(paramsScUserLogin)
 			if err != nil {
-				log.Error("Error update user data")
+				// log.Error("Error update user data")
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 			}
 		}
@@ -1489,7 +1488,7 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 
 		status, err = models.CreateScUserMessage(paramsUserMessage)
 		if err != nil {
-			log.Error("Error create user message")
+			// log.Error("Error create user message")
 		}
 		//Sent Email Reject ke customer
 		SentEmailRejectOaPengkinianToCustomer(oareq, oapersonal, check1notes)
@@ -1507,7 +1506,7 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 func UpdateStatusApprovalCompliance(c echo.Context) error {
 	errorAuth := initAuthKyc()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	var err error
@@ -1517,20 +1516,20 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 
 	oastatus := c.FormValue("oa_status") //260 = app --- 258 = reject
 	if oastatus == "" {
-		log.Error("Missing required parameter: oa_status")
+		// log.Error("Missing required parameter: oa_status")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 	n, err := strconv.ParseUint(oastatus, 10, 64)
 	if err == nil && n > 0 {
 		if (oastatus != "260") && (oastatus != "258") {
-			log.Error("Wrong input for parameter: oa_status must 260/258")
+			// log.Error("Wrong input for parameter: oa_status must 260/258")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_status", "Wrong input for parameter: oa_status")
 		}
 		if oastatus == "260" {
 			params["oa_status"] = oastatus
 		}
 	} else {
-		log.Error("Wrong input for parameter: oa_status")
+		// log.Error("Wrong input for parameter: oa_status")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_status", "Wrong input for parameter: oa_status")
 	}
 
@@ -1542,7 +1541,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 
 	if oastatus != "260" { //jika reject
 		if check2notes == "" {
-			log.Error("Missing required parameter notes: Notes tidak boleh kosong")
+			// log.Error("Missing required parameter notes: Notes tidak boleh kosong")
 			return lib.CustomError(http.StatusBadRequest, "Notes tidak boleh kosong", "Notes tidak boleh kosong")
 		}
 		params["rec_status"] = "0"
@@ -1552,27 +1551,27 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 
 	oarequestkey := c.FormValue("oa_request_key")
 	if oarequestkey == "" {
-		log.Error("Missing required parameter: oa_request_key")
+		// log.Error("Missing required parameter: oa_request_key")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 	n, err = strconv.ParseUint(oarequestkey, 10, 64)
 	if err == nil && n > 0 {
 		params["oa_request_key"] = oarequestkey
 	} else {
-		log.Error("Wrong input for parameter: oa_request_key")
+		// log.Error("Wrong input for parameter: oa_request_key")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_request_key", "Wrong input for parameter: oa_request_key")
 	}
 
 	oarisklevel := c.FormValue("oa_risk_level")
 	if oarisklevel == "" {
-		log.Error("Missing required parameter: oa_risk_level")
+		// log.Error("Missing required parameter: oa_risk_level")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 	n, err = strconv.ParseUint(oarisklevel, 10, 64)
 	if err == nil && n > 0 {
 		params["oa_risk_level"] = oarisklevel
 	} else {
-		log.Error("Wrong input for parameter: oa_risk_level")
+		// log.Error("Wrong input for parameter: oa_risk_level")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_risk_level", "Wrong input for parameter: oa_risk_level")
 	}
 
@@ -1599,7 +1598,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 
 	oaStatusKyc := strconv.FormatUint(uint64(259), 10)
 	if strOaKey != oaStatusKyc {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -1626,17 +1625,17 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 	_, err = models.UpdateOaRequest(params)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Error update oa request")
+		// log.Error("Error update oa request")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
-	log.Info("Success update approved Compliance Transaction")
+	// log.Info("Success update approved Compliance Transaction")
 
 	var oapersonal models.OaPersonalData
 	strKeyOa := strconv.FormatUint(oareq.OaRequestKey, 10)
 	status, err = models.GetOaPersonalDataByOaRequestKey(&oapersonal, strKeyOa)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Error Personal Data not Found")
+		// log.Error("Error Personal Data not Found")
 		return lib.CustomError(status, err.Error(), "Personal data not found")
 	}
 
@@ -1737,18 +1736,18 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			}
 
 			status, err, requestID := models.CreateMsCustomer(paramsCustomer)
-			log.Println("========== PARAMETER  INSERT CUSTOMER ==========>>>", paramsCustomer)
+			// log.Println("========== PARAMETER  INSERT CUSTOMER ==========>>>", paramsCustomer)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error create customer", err.Error())
+				// log.Error("Error create customer", err.Error())
 				return lib.CustomError(status, err.Error(), "failed input data")
 			} else {
-				log.Println("========== BERHASIL CREATE KE MS CUSTOMER ========== ")
+				// log.Println("========== BERHASIL CREATE KE MS CUSTOMER ========== ")
 			}
 			request, err := strconv.ParseUint(requestID, 10, 64)
 			if request == 0 {
 				tx.Rollback()
-				log.Error("Failed create customer")
+				// log.Error("Failed create customer")
 				return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 			}
 
@@ -1759,13 +1758,13 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			paramOaUpdate["oa_request_key"] = oarequestkey
 
 			_, err = models.UpdateOaRequest(paramOaUpdate)
-			log.Println("========== PARAMETER UPDATE OA REQUEST ==========>>>", paramOaUpdate)
+			// log.Println("========== PARAMETER UPDATE OA REQUEST ==========>>>", paramOaUpdate)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error update oa request", err.Error())
+				// log.Error("Error update oa request", err.Error())
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 			} else {
-				log.Println("========== BERHASIL UPDATE OA REQUEST ========== ")
+				// log.Println("========== BERHASIL UPDATE OA REQUEST ========== ")
 			}
 
 			//create user message
@@ -1796,7 +1795,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			status, err = models.CreateScUserMessage(paramsUserMessage)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error create user message", err.Error())
+				// log.Error("Error create user message", err.Error())
 				return lib.CustomError(status, err.Error(), "failed input data")
 			}
 			lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
@@ -1810,13 +1809,13 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			strUserLoginKeyOa := strconv.FormatUint(*oareq.UserLoginKey, 10)
 			paramsUserLogin["user_login_key"] = strUserLoginKeyOa
 			_, err = models.UpdateScUserLogin(paramsUserLogin)
-			log.Println("========== PARAMETER UPDATE SC USER LOGIN ==========>>>", paramsUserLogin)
+			// log.Println("========== PARAMETER UPDATE SC USER LOGIN ==========>>>", paramsUserLogin)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error update oa request", err.Error())
+				// log.Error("Error update oa request", err.Error())
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 			} else {
-				log.Println("========== BERHASIL INSERT CUSTOMER_KEY KE OA_REQUEST ==========")
+				// log.Println("========== BERHASIL INSERT CUSTOMER_KEY KE OA_REQUEST ==========")
 			}
 
 			//create agent customer
@@ -1840,13 +1839,13 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			status, err = models.CreateMsAgentCustomer(paramsAgentCustomer)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error create agent customer")
+				// log.Error("Error create agent customer")
 				return lib.CustomError(status, err.Error(), "failed input data")
 			}
 
 			tx.Commit()
 
-			// log.Info("Success create customer")
+			// // log.Info("Success create customer")
 
 			//send email to customer
 			var userData models.ScUserLogin
@@ -1886,7 +1885,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			status, err = models.CreateScUserMessage(paramsUserMessage)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error create user message")
+				// log.Error("Error create user message")
 				return lib.CustomError(status, err.Error(), "failed input data")
 			}
 			lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
@@ -1903,7 +1902,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 
 			_, err = models.UpdateScUserLogin(paramsScUserLogin)
 			if err != nil {
-				log.Error("Error update user data")
+				// log.Error("Error update user data")
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 			}
 
@@ -1918,13 +1917,13 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 		deleteParam["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 		_, err = models.UpdateDataByField(deleteParam, "customer_key", customerKey)
 		if err != nil {
-			log.Error("Error delete all ms_customer_bank_account")
+			// log.Error("Error delete all ms_customer_bank_account")
 		}
 		//create all ms_customer_bank_account by oa_req_key
 		var accBank []models.OaRequestByField
 		status, err = models.GetOaRequestBankByField(&accBank, "oa_request_key", strconv.FormatUint(oareq.OaRequestKey, 10))
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 		if len(accBank) > 0 {
 			var bindVarMsBank []interface{}
@@ -1941,7 +1940,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			}
 			_, err = models.CreateMultipleMsCustomerBankkAccount(bindVarMsBank)
 			if err != nil {
-				log.Error("========== FAILED CREATE MS CUSTOMER BANK ACCOUNT ==========" + err.Error())
+				// log.Error("========== FAILED CREATE MS CUSTOMER BANK ACCOUNT ==========" + err.Error())
 				return lib.CustomError(status, err.Error(), "failed input data")
 			}
 		}
@@ -1981,7 +1980,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 		status, err = models.CreateScUserMessage(paramsUserMessage)
 		if err != nil {
 			tx.Rollback()
-			log.Error("Error create user message")
+			// log.Error("Error create user message")
 		}
 		lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
 
@@ -1997,7 +1996,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 		_, err = models.UpdateOaPersonalData(paramsPersonalDataDelete)
 		if err != nil {
 			tx.Rollback()
-			log.Error("Error update personal data delete")
+			// log.Error("Error update personal data delete")
 			return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 		}
 
@@ -2012,13 +2011,13 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			_, err = models.UpdateScUserLogin(paramsScUserLogin)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error update user login delete")
+				// log.Error("Error update user login delete")
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 			}
 
 			_, err = models.UpdateScUserLogin(paramsScUserLogin)
 			if err != nil {
-				log.Error("Error update user data")
+				// log.Error("Error update user data")
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 			}
 		}
@@ -2041,7 +2040,7 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -2058,7 +2057,7 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -2074,7 +2073,7 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -2090,7 +2089,7 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -2110,7 +2109,7 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -2128,11 +2127,11 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 	var oaRequestDB []models.OaRequest
 	status, err = models.GetAllOaRequestDoTransaction(&oaRequestDB, limit, offset, noLimit, params, oaStatusIn, "oa_status")
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(oaRequestDB) < 1 {
-		log.Error("oa not found")
+		// log.Error("oa not found")
 		return lib.CustomError(http.StatusNotFound, "Oa Request not found", "Oa Request not found")
 	}
 
@@ -2182,7 +2181,7 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 		status, err = models.GetScUserLoginIn(&userappr, userApprovalIds, "user_login_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -2198,7 +2197,7 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 	if len(lookupIds) > 0 {
 		status, err = models.GetGenLookupIn(&genLookup, lookupIds, "lookup_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2212,7 +2211,7 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 	if len(oaRequestIds) > 0 {
 		status, err = models.GetOaPersonalDataIn(&oaPersonalData, oaRequestIds, "oa_request_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2226,7 +2225,7 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 	if len(branchIds) > 0 {
 		status, err = models.GetMsBranchIn(&branchs, branchIds, "branch_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2240,7 +2239,7 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 	if len(agentIds) > 0 {
 		status, err = models.GetMsAgentIn(&agents, agentIds, "agent_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2316,7 +2315,7 @@ func GetOaRequestListDoTransaction(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.GetCountOaRequestDoTransaction(&countData, params, oaStatusIn, "oa_status")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -2345,7 +2344,7 @@ func sendEmailApproveOa(fullName string, email string) {
 
 	t, err := t.ParseFiles(config.BasePath + "/mail/email-sukses-verifikasi.html")
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	var tpl bytes.Buffer
@@ -2356,7 +2355,7 @@ func sendEmailApproveOa(fullName string, email string) {
 		}{
 			Name:    fullName,
 			FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	result := tpl.String()
@@ -2369,9 +2368,9 @@ func sendEmailApproveOa(fullName string, email string) {
 
 	err = lib.SendEmail(mailer)
 	if err != nil {
-		log.Error("Failed send mail: " + err.Error())
+		// log.Error("Failed send mail: " + err.Error())
 	} else {
-		log.Info("Email sent")
+		// log.Info("Email sent")
 	}
 	// dialer := gomail.NewDialer(
 	// 	config.EmailSMTPHost,
@@ -2383,7 +2382,7 @@ func sendEmailApproveOa(fullName string, email string) {
 
 	// err = dialer.DialAndSend(mailer)
 	// if err != nil {
-	// 	log.Error(err)
+	// 	// log.Error(err)
 	// }
 }
 
@@ -2408,7 +2407,7 @@ func GetDetailPengkinianProfileRisikoLastHistory(c echo.Context) error {
 	var lastKeyStr string
 
 	if oareq.OaRequestType == nil {
-		log.Error("OA Request Type Null")
+		// log.Error("OA Request Type Null")
 		return lib.CustomError(http.StatusBadRequest)
 	} else {
 		if oareq.CustomerKey == nil { //Error jika belum jadi customer
@@ -2449,7 +2448,7 @@ func ResultOaProfileRisiko(keyStr string, c echo.Context, isHistory bool) error 
 	if isHistory == false {
 		strRequestType := strconv.FormatUint(*oareq.OaRequestType, 10)
 		if strRequestType != "128" { //Pengkinian Risk Profile
-			log.Error("Data tidak ditemukan. Data bukan pengkinian Risk Profile")
+			// log.Error("Data tidak ditemukan. Data bukan pengkinian Risk Profile")
 			return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 		}
 	}
@@ -2461,7 +2460,7 @@ func ResultOaProfileRisiko(keyStr string, c echo.Context, isHistory bool) error 
 	var roleKeyFundAdmin uint64
 	roleKeyFundAdmin = 13
 
-	log.Println(lib.Profile.RoleKey)
+	// log.Println(lib.Profile.RoleKey)
 
 	strOaKey := strconv.FormatUint(*oareq.Oastatus, 10)
 
@@ -2469,7 +2468,7 @@ func ResultOaProfileRisiko(keyStr string, c echo.Context, isHistory bool) error 
 		if isHistory == false {
 			oaStatusCs := strconv.FormatUint(uint64(258), 10)
 			if strOaKey != oaStatusCs {
-				log.Error("User Autorizer")
+				// log.Error("User Autorizer")
 				return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 			}
 		}
@@ -2479,7 +2478,7 @@ func ResultOaProfileRisiko(keyStr string, c echo.Context, isHistory bool) error 
 		if isHistory == false {
 			oaStatusKyc := strconv.FormatUint(uint64(259), 10)
 			if strOaKey != oaStatusKyc {
-				log.Error("User Autorizer")
+				// log.Error("User Autorizer")
 				return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 			}
 		}
@@ -2490,7 +2489,7 @@ func ResultOaProfileRisiko(keyStr string, c echo.Context, isHistory bool) error 
 			oaStatusFundAdmin1 := strconv.FormatUint(uint64(260), 10)
 			oaStatusFundAdmin2 := strconv.FormatUint(uint64(261), 10)
 			if (strOaKey != oaStatusFundAdmin1) && (strOaKey != oaStatusFundAdmin2) {
-				log.Error("User Autorizer")
+				// log.Error("User Autorizer")
 				return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 			}
 		}
@@ -2532,7 +2531,7 @@ func ResultOaProfileRisiko(keyStr string, c echo.Context, isHistory bool) error 
 		status, err = models.GetGenLookupIn(&lookupOaReq, oaRequestLookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -2610,7 +2609,7 @@ func ResultOaProfileRisiko(keyStr string, c echo.Context, isHistory bool) error 
 			status, err = models.GetGenLookupIn(&lookupPersonData, personalDataLookupIds, "lookup_key")
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -2647,7 +2646,7 @@ func ResultOaProfileRisiko(keyStr string, c echo.Context, isHistory bool) error 
 		status, err = models.GetMsCountry(&country, strCountry)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error("Error Personal Data not Found")
+				// log.Error("Error Personal Data not Found")
 				return lib.CustomError(status, err.Error(), "Personal data not found")
 			}
 		} else {
@@ -2664,7 +2663,7 @@ func ResultOaProfileRisiko(keyStr string, c echo.Context, isHistory bool) error 
 		status, err = models.AdminGetOaRiskProfile(&oaRiskProfile, strKey)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -2675,7 +2674,7 @@ func ResultOaProfileRisiko(keyStr string, c echo.Context, isHistory bool) error 
 		status, err = models.AdminGetOaRiskProfileQuizByOaRequestKey(&oaRiskProfileQuiz, strKey)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -2690,7 +2689,7 @@ func ResultOaProfileRisiko(keyStr string, c echo.Context, isHistory bool) error 
 			status, err = models.GetCmsQuizOptionsIn(&optionDB, questionIDs, "quiz_question_key")
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -2767,7 +2766,7 @@ func ResultOaProfileRisiko(keyStr string, c echo.Context, isHistory bool) error 
 		var branch models.MsBranch
 		status, err = models.GetMsBranch(&branch, branch_key)
 		if err == nil {
-			log.Println(branch.BranchKey)
+			// log.Println(branch.BranchKey)
 			var b models.MsBranchDropdown
 			b.BranchKey = branch.BranchKey
 			b.BranchName = branch.BranchName
@@ -2821,18 +2820,18 @@ func GetDetailPengkinianPersonalDataLastHistory(c echo.Context) error {
 	var lastKeyStr string
 
 	if oareq.OaRequestType == nil {
-		log.Error("OA Request Type Null")
+		// log.Error("OA Request Type Null")
 		return lib.CustomError(http.StatusBadRequest)
 	} else {
 		if oareq.CustomerKey == nil { //Error jika belum jadi customer
-			log.Println("Customer Null")
+			// log.Println("Customer Null")
 			return lib.CustomError(http.StatusBadRequest)
 		}
 		var lastHistoryOareq models.OaRequestKeyLastHistory
 		customerKey := strconv.FormatUint(*oareq.CustomerKey, 10)
 		status, err := models.AdminGetLastHistoryOaRequest(&lastHistoryOareq, customerKey, keyStr)
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 			return lib.CustomError(status)
 		}
 		lastKeyStr = strconv.FormatUint(lastHistoryOareq.OaRequestKey, 10)
@@ -2867,7 +2866,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 	var roleKeyFundAdmin uint64
 	roleKeyFundAdmin = 13
 
-	log.Println(lib.Profile.RoleKey)
+	// log.Println(lib.Profile.RoleKey)
 
 	strOaKey := strconv.FormatUint(*oareq.Oastatus, 10)
 
@@ -2875,7 +2874,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 		if isHistory == false {
 			oaStatusCs := strconv.FormatUint(uint64(258), 10)
 			if strOaKey != oaStatusCs {
-				log.Error("User Autorizer")
+				// log.Error("User Autorizer")
 				return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 			}
 		}
@@ -2885,7 +2884,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 		if isHistory == false {
 			oaStatusKyc := strconv.FormatUint(uint64(259), 10)
 			if strOaKey != oaStatusKyc {
-				log.Error("User Autorizer")
+				// log.Error("User Autorizer")
 				return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 			}
 		}
@@ -2896,7 +2895,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 			oaStatusFundAdmin1 := strconv.FormatUint(uint64(260), 10)
 			oaStatusFundAdmin2 := strconv.FormatUint(uint64(261), 10)
 			if (strOaKey != oaStatusFundAdmin1) && (strOaKey != oaStatusFundAdmin2) {
-				log.Error("User Autorizer")
+				// log.Error("User Autorizer")
 				return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 			}
 		}
@@ -2938,7 +2937,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 		status, err = models.GetGenLookupIn(&lookupOaReq, oaRequestLookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -3111,7 +3110,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 			status, err = models.GetGenLookupIn(&lookupPersonData, personalDataLookupIds, "lookup_key")
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -3153,7 +3152,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 		status, err = models.GetMsCountry(&country, strCountry)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error("Error Personal Data not Found")
+				// log.Error("Error Personal Data not Found")
 				return lib.CustomError(status, err.Error(), "Personal data not found")
 			}
 		} else {
@@ -3228,7 +3227,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 			status, err = models.GetOaPostalAddressIn(&oaPstalAddressList, postalAddressIds, "postal_address_key")
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -3262,7 +3261,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 						status, err = models.GetMsCityIn(&cityList, cityIds, "city_key")
 						if err != nil {
 							if err != sql.ErrNoRows {
-								log.Error(err.Error())
+								// log.Error(err.Error())
 								return lib.CustomError(status, err.Error(), "Failed get data")
 							}
 						}
@@ -3286,7 +3285,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 					var city models.MsCity
 					_, err = models.GetMsCityByParent(&city, strconv.FormatUint(*p.KabupatenKey, 10))
 					if err != nil {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 					} else {
 						responseData.IDcardAddress.Provinsi = &city.CityName
 					}
@@ -3314,7 +3313,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 						status, err = models.GetMsCityIn(&cityList, cityIds, "city_key")
 						if err != nil {
 							if err != sql.ErrNoRows {
-								log.Error(err.Error())
+								// log.Error(err.Error())
 								return lib.CustomError(status, err.Error(), "Failed get data")
 							}
 						}
@@ -3337,7 +3336,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 					var city models.MsCity
 					_, err = models.GetMsCityByParent(&city, strconv.FormatUint(*p.KabupatenKey, 10))
 					if err != nil {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 					} else {
 						responseData.DomicileAddress.Provinsi = &city.CityName
 					}
@@ -3365,7 +3364,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 						status, err = models.GetMsCityIn(&cityList, cityIds, "city_key")
 						if err != nil {
 							if err != sql.ErrNoRows {
-								log.Error(err.Error())
+								// log.Error(err.Error())
 								return lib.CustomError(status, err.Error(), "Failed get data")
 							}
 						}
@@ -3431,7 +3430,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 			status, err = models.GetMsCustomer(&customer, strCustomerKey)
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -3456,7 +3455,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 				status, err = models.GetGenLookup(&fatca, strLookKey)
 				if err != nil {
 					if err != sql.ErrNoRows {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 						return lib.CustomError(status, err.Error(), "Failed get data")
 					}
 				}
@@ -3469,7 +3468,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 				status, err = models.GetMsCountry(&country, strCountryKey)
 				if err != nil {
 					if err != sql.ErrNoRows {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 						return lib.CustomError(status, err.Error(), "Failed get data")
 					}
 				}
@@ -3506,7 +3505,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 		var branch models.MsBranch
 		status, err = models.GetMsBranch(&branch, branch_key)
 		if err == nil {
-			log.Println(branch.BranchKey)
+			// log.Println(branch.BranchKey)
 			var b models.MsBranchDropdown
 			b.BranchKey = branch.BranchKey
 			b.BranchName = branch.BranchName
@@ -3661,21 +3660,21 @@ func SentEmailOaPengkinianToBackOffice(
 	var userLogin []models.ScUserLogin
 	_, err = models.GetAllScUserLogin(&userLogin, 0, 0, paramsScLogin, true)
 	if err != nil {
-		log.Error("User BO tidak ditemukan")
-		log.Error(err)
+		// log.Error("User BO tidak ditemukan")
+		// log.Error(err)
 	} else {
 		t := template.New(mailTemp)
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 		if err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 		} else {
 			for _, scLogin := range userLogin {
 				strUserCat := strconv.FormatUint(scLogin.UserCategoryKey, 10)
 				if (strUserCat == "2") || (strUserCat == "3") {
 					var tpl bytes.Buffer
 					if err := t.Execute(&tpl, mailParam); err != nil {
-						log.Error("Failed send mail: " + err.Error())
+						// log.Error("Failed send mail: " + err.Error())
 					} else {
 						result := tpl.String()
 
@@ -3687,8 +3686,8 @@ func SentEmailOaPengkinianToBackOffice(
 
 						err = lib.SendEmail(mailer)
 						if err != nil {
-							log.Error("Failed send mail to: " + scLogin.UloginEmail)
-							log.Error("Failed send mail: " + err.Error())
+							// log.Error("Failed send mail to: " + scLogin.UloginEmail)
+							// log.Error("Failed send mail: " + err.Error())
 						}
 
 						// dialer := gomail.NewDialer(
@@ -3701,8 +3700,8 @@ func SentEmailOaPengkinianToBackOffice(
 
 						// err = dialer.DialAndSend(mailer)
 						// if err != nil {
-						// 	log.Error("Failed send mail to: " + scLogin.UloginEmail)
-						// 	log.Error("Failed send mail: " + err.Error())
+						// 	// log.Error("Failed send mail to: " + scLogin.UloginEmail)
+						// 	// log.Error("Failed send mail: " + err.Error())
 						// }
 					}
 				}
@@ -3754,18 +3753,18 @@ func SentEmailOaPengkinianToSales(
 	var agent models.MsAgent
 	_, err = models.GetMsAgent(&agent, agentKey)
 	if err != nil {
-		log.Error("Agent not found")
+		// log.Error("Agent not found")
 	} else {
 		if agent.AgentEmail != nil {
 			t := template.New(mailTemp)
 
 			t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 			if err != nil {
-				log.Error("Failed send mail to sales: " + err.Error())
+				// log.Error("Failed send mail to sales: " + err.Error())
 			} else {
 				var tpl bytes.Buffer
 				if err := t.Execute(&tpl, mailParam); err != nil {
-					log.Error("Failed send mail to sales: " + err.Error())
+					// log.Error("Failed send mail to sales: " + err.Error())
 				} else {
 					result := tpl.String()
 
@@ -3777,8 +3776,8 @@ func SentEmailOaPengkinianToSales(
 
 					err = lib.SendEmail(mailer)
 					if err != nil {
-						log.Error("Failed send mail to sales : " + *agent.AgentEmail)
-						log.Error("Failed send mail: " + err.Error())
+						// log.Error("Failed send mail to sales : " + *agent.AgentEmail)
+						// log.Error("Failed send mail: " + err.Error())
 					}
 
 					// dialer := gomail.NewDialer(
@@ -3791,13 +3790,13 @@ func SentEmailOaPengkinianToSales(
 
 					// err = dialer.DialAndSend(mailer)
 					// if err != nil {
-					// 	log.Error("Failed send mail to sales : " + *agent.AgentEmail)
-					// 	log.Error("Failed send mail: " + err.Error())
+					// 	// log.Error("Failed send mail to sales : " + *agent.AgentEmail)
+					// 	// log.Error("Failed send mail: " + err.Error())
 					// }
 				}
 			}
 		} else {
-			log.Error("Agent tidak punya email")
+			// log.Error("Agent tidak punya email")
 		}
 	}
 }
@@ -3834,21 +3833,21 @@ func SentEmailRejectOaPengkinianToCustomer(
 	var userLogin models.ScUserLogin
 	_, err = models.GetScUserKey(&userLogin, strconv.FormatUint(*oaRequest.UserLoginKey, 10))
 	if err != nil {
-		log.Error("User tidak ditemukan")
-		log.Error(err)
+		// log.Error("User tidak ditemukan")
+		// log.Error(err)
 		return
 	} else {
-		log.Println("User Ada")
+		// log.Println("User Ada")
 		t := template.New(mailTemp)
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 		if err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 		} else {
-			log.Println("File Template Ada")
+			// log.Println("File Template Ada")
 			var tpl bytes.Buffer
 			if err := t.Execute(&tpl, mailParam); err != nil {
-				log.Error("Failed send mail: " + err.Error())
+				// log.Error("Failed send mail: " + err.Error())
 			} else {
 				result := tpl.String()
 
@@ -3860,10 +3859,10 @@ func SentEmailRejectOaPengkinianToCustomer(
 
 				err = lib.SendEmail(mailer)
 				if err != nil {
-					log.Error("Failed send mail to: " + userLogin.UloginEmail)
-					log.Error("Failed send mail: " + err.Error())
+					// log.Error("Failed send mail to: " + userLogin.UloginEmail)
+					// log.Error("Failed send mail: " + err.Error())
 				} else {
-					log.Println("Sukses kirim email: " + userLogin.UloginEmail)
+					// log.Println("Sukses kirim email: " + userLogin.UloginEmail)
 				}
 
 				// dialer := gomail.NewDialer(
@@ -3876,10 +3875,10 @@ func SentEmailRejectOaPengkinianToCustomer(
 
 				// err = dialer.DialAndSend(mailer)
 				// if err != nil {
-				// 	log.Error("Failed send mail to: " + userLogin.UloginEmail)
-				// 	log.Error("Failed send mail: " + err.Error())
+				// 	// log.Error("Failed send mail to: " + userLogin.UloginEmail)
+				// 	// log.Error("Failed send mail: " + err.Error())
 				// } else {
-				// 	log.Println("Sukses kirim email: " + userLogin.UloginEmail)
+				// 	// log.Println("Sukses kirim email: " + userLogin.UloginEmail)
 				// }
 			}
 		}

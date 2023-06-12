@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 )
@@ -22,10 +21,10 @@ func GetNurturingCategoryTime(c *NurturingCategoryTime, key string) (int, error)
 			FROM nurturing_category_time 
 			WHERE nurturing_category_time.rec_status = 1 
 			AND cms_post.post_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.DbDashboard.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -62,7 +61,7 @@ func GetAllNurturingCategoryTime(c *[]NurturingCategoryTime, params map[string]s
 	// Main query
 	err := db.DbDashboard.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

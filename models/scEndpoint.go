@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
@@ -47,10 +46,10 @@ func GetScEndpointIn(c *[]ScEndpoint, value []string, field string) (int, error)
 	query := query2 + " WHERE sc_endpoint.rec_status = 1 AND sc_endpoint." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -66,10 +65,10 @@ func AdminGetEndpointNewInUpdateRole(c *[]ScEndpoint, roleKey string, menuIds []
 			  WHERE ep.rec_status = 1 AND ep.menu_key IN(` + inQuery + `)`
 
 	// Main query
-	log.Println("========== ADMIN GET ENDPOINT NEW IN UPDATE ROLE ========== ", query)
+	// log.Println("========== ADMIN GET ENDPOINT NEW IN UPDATE ROLE ========== ", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -90,10 +89,10 @@ func CheckAllowedEndpoint(c *CountData, roleKey string, endpoint string) (int, e
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

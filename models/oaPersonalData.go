@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type UserProfile struct {
@@ -139,10 +137,10 @@ func GetAllOaPersonalData(c *[]OaPersonalData, limit uint64, offset uint64, para
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -151,10 +149,10 @@ func GetAllOaPersonalData(c *[]OaPersonalData, limit uint64, offset uint64, para
 
 func GetOaPersonalData(c *OaPersonalData, key string, field string) (int, error) {
 	query := "SELECT oa_personal_data.* FROM oa_personal_data WHERE oa_personal_data." + field + " = " + key
-	log.Info("===== GET OA PERSONAL DATA =====>>>", query)
+	// log.Info("===== GET OA PERSONAL DATA =====>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusNotFound, err
 	}
 
@@ -176,17 +174,17 @@ func CreateOaPersonalData(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	ret, err := tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -198,10 +196,10 @@ func GetOaPersonalDataByOaRequestKey(c *OaPersonalData, key string) (int, error)
 			FROM oa_personal_data 
 			WHERE oa_personal_data.oa_request_key = ` + key +
 		` order by oa_personal_data.personal_data_key DESC LIMIT 1`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -216,10 +214,10 @@ func GetOaPersonalDataIn(c *[]OaPersonalData, value []string, field string) (int
 	query := query2 + " WHERE oa_personal_data." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -242,10 +240,10 @@ func ValidateUniquePersonalData(c *CountData, field string, value string, custom
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -268,11 +266,11 @@ func UpdateOaPersonalData(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE personal_data_key = " + params["personal_data_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -280,7 +278,7 @@ func UpdateOaPersonalData(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -297,10 +295,10 @@ func GetFullName(c *FullNameData, userLoginKey string) (int, error) {
 	INNER JOIN oa_request AS o ON op.oa_request_key = o.oa_request_key
 	INNER JOIN sc_user_login AS u ON u.user_login_key = o.user_login_key 
 	WHERE u.user_login_key = "` + userLoginKey + `" ORDER BY o.oa_request_key DESC LIMIT 1`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusNotFound, err
 	}
 
@@ -323,11 +321,11 @@ func UpdateOaPersonalDataByKeyIn(params map[string]string, valueIn []string, fie
 	inQuery := strings.Join(valueIn, ",")
 	query += " WHERE oa_personal_data." + fieldIn + " IN(" + inQuery + ")"
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -339,7 +337,7 @@ func UpdateOaPersonalDataByKeyIn(params map[string]string, valueIn []string, fie
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -351,12 +349,12 @@ func UpdateRecStatusOaPersonalDocs(oareqkey string, doctype string, names string
 	query += "WHERE oa_request_key = " + oareqkey + " AND indi_document_type = " + doctype + " AND rec_status = 1 ORDER BY indi_docs_key DESC LIMIT 1"
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	tx.Exec(query)
 	tx.Commit()
-	log.Println("========== QUERY SET REC STATUS OA PERSONAL DOCS ==========>>>", query)
+	// log.Println("========== QUERY SET REC STATUS OA PERSONAL DOCS ==========>>>", query)
 	return http.StatusOK, nil
 }
 
@@ -375,21 +373,21 @@ func CreateOaDocsIndividu(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Info("========== query insert oa personal docs ==========>>>", query)
+	// log.Info("========== query insert oa personal docs ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	tx.Exec(query)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	// lastID, _ := ret.LastInsertId()
-	// log.Println(lastID)
+	// // log.Println(lastID)
 	return http.StatusOK, nil
 }
 
@@ -399,12 +397,12 @@ func UpdateDocPropertiesOaPersonalDocs(oareqkey string, docnames string, docrema
 	query += "WHERE oa_request_key = " + oareqkey + " AND indi_document_type = " + doctype + " AND rec_status = 1"
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	tx.Exec(query)
 	tx.Commit()
-	log.Println("========== QUERY UPDATE DOC_NAME and DOC_REMARKS PERSONAL DOCS ==========>>>", query)
+	// log.Println("========== QUERY UPDATE DOC_NAME and DOC_REMARKS PERSONAL DOCS ==========>>>", query)
 	return http.StatusOK, nil
 }
 
@@ -418,10 +416,10 @@ func UdfOtherValueQuery(c *UdfOtherValueStruct, rowKey uint64, uikey string) (in
 	FROM udf_value uv
 	WHERE uv.udf_info_key = ` + uikey + ` AND uv.row_data_key = ` + row_key
 
-	log.Info("========= QUERY UDF OTHER VALUES ========== >>>", query)
+	// log.Info("========= QUERY UDF OTHER VALUES ========== >>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusNotFound, err
 	}
 

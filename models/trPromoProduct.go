@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
@@ -56,17 +55,17 @@ func CreateTrPromoProduct(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -85,11 +84,11 @@ func UpdateTrPromoProductByField(params map[string]string, field string, value s
 		i++
 	}
 	query += " WHERE " + field + " = '" + value + "'"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -101,7 +100,7 @@ func UpdateTrPromoProductByField(params map[string]string, field string, value s
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -123,10 +122,10 @@ func AdminGetPromoProductInNotIn(c *[]TrPromoProduct, valueIn []string, fieldIn 
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -147,11 +146,11 @@ func UpdateTrPromoProductByFieldIn(params map[string]string, field string, value
 		i++
 	}
 	query += " WHERE " + field + " IN(" + inQuery + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -163,7 +162,7 @@ func UpdateTrPromoProductByFieldIn(params map[string]string, field string, value
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -182,10 +181,10 @@ func AdminGetPromoProductByPromoKey(c *[]TrPromoProductData, promoKey string) (i
 			AND a.promo_key = '` + promoKey + `'`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -216,7 +215,7 @@ func CreateMultiplePromoProduct(params []interface{}) (int, error) {
 	query = db.Db.Rebind(query)
 	_, err = db.Db.Query(query, args...)
 	if err != nil {
-		log.Println(err.Error())
+		// log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil

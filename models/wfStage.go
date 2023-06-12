@@ -3,8 +3,6 @@ package models
 import (
 	"mf-bo-api/db"
 	"net/http"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type WfStage struct {
@@ -70,10 +68,10 @@ func GetAllWfStage(c *[]WfPath, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

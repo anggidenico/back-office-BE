@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type AccountStatementCustomerProduct struct {
@@ -80,10 +79,10 @@ func AdminGetAllAccountStatementCustomerProduct(c *[]AccountStatementCustomerPro
 			ORDER BY t.product_key, t.nav_date ASC`
 
 	// Main query
-	log.Println("========== QUERY GET ALL ACCOUNT STATEMENT CUSTOMER PRODUCT ==========", query)
+	// log.Println("========== QUERY GET ALL ACCOUNT STATEMENT CUSTOMER PRODUCT ==========", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -162,10 +161,10 @@ func AdminGetAllAccountStatementCustomerAgent(c *[]AccountStatementCustomerAgent
 			ORDER BY t.product_key, t.nav_date, ag.agent_key ASC`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

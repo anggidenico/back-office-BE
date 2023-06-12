@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type MsProductFeeInfo struct {
@@ -130,10 +129,10 @@ func GetAllMsProductFee(c *[]MsProductFee, params map[string]string) (int, error
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -209,10 +208,10 @@ func AdminGetAllMsProductFee(c *[]AdminListMsProductFee, limit uint64, offset ui
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -262,10 +261,10 @@ func AdminCountDataGetAllMsProductFee(c *CountData, params map[string]string, se
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -274,10 +273,10 @@ func AdminCountDataGetAllMsProductFee(c *CountData, params map[string]string, se
 
 func GetMsProductFee(c *MsProductFee, key string) (int, error) {
 	query := `SELECT ms_product_fee.* FROM ms_product_fee WHERE ms_product_fee.rec_status = 1 AND ms_product_fee.fee_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -300,11 +299,11 @@ func UpdateMsProductFee(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE fee_key = " + params["fee_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -316,7 +315,7 @@ func UpdateMsProductFee(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -337,18 +336,18 @@ func CreateMsProductFee(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -369,10 +368,10 @@ func GetProductFeeValueSubscription(c *ProductFeeValueSubscription, productKey s
 			WHERE pf.rec_status = 1 AND pf.fee_type = 183 AND pf.product_key = "` + productKey + `" LIMIT 1`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

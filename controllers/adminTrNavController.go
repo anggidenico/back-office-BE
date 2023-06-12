@@ -13,7 +13,6 @@ import (
 	"github.com/labstack/echo"
 	"github.com/leekchan/accounting"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetListTrNavAdmin(c echo.Context) error {
@@ -24,7 +23,7 @@ func GetListTrNavAdmin(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -36,7 +35,7 @@ func GetListTrNavAdmin(c echo.Context) error {
 		if err == nil && productKeyCek > 0 {
 			params["product_key"] = productKey
 		} else {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 		}
 	}
@@ -47,7 +46,7 @@ func GetListTrNavAdmin(c echo.Context) error {
 	}
 
 	if (productKey == "") && (navdate == "") {
-		log.Error("Wrong input for parameter: product_key atau nav_date harus salah satu diisi")
+		// log.Error("Wrong input for parameter: product_key atau nav_date harus salah satu diisi")
 		return lib.CustomError(http.StatusBadRequest, "Mohon input Produk atau Nav Date", "Mohon input Produk atau Nav Date")
 	}
 
@@ -61,7 +60,7 @@ func GetListTrNavAdmin(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -77,7 +76,7 @@ func GetListTrNavAdmin(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -93,7 +92,7 @@ func GetListTrNavAdmin(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -112,7 +111,7 @@ func GetListTrNavAdmin(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -128,12 +127,12 @@ func GetListTrNavAdmin(c echo.Context) error {
 
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
 	if len(trNav) < 1 {
-		log.Error("nav not found")
+		// log.Error("nav not found")
 		return lib.CustomError(http.StatusNotFound, "Nav not found", "Nav not found")
 	}
 
@@ -157,7 +156,7 @@ func GetListTrNavAdmin(c echo.Context) error {
 		status, err = models.GetGenLookupIn(&lookup, genLookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -174,7 +173,7 @@ func GetListTrNavAdmin(c echo.Context) error {
 		status, err = models.GetMsProductIn(&msProduct, productIds, "product_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -222,7 +221,7 @@ func GetListTrNavAdmin(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.GetAllTrNavCount(&countData, params)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -252,14 +251,14 @@ func GetNavDetailAdmin(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
 	keyStr := c.Param("key")
 	key, err := strconv.ParseUint(keyStr, 10, 64)
 	if err == nil && key == 0 {
-		log.Error("Wrong input for parameter: nav_key")
+		// log.Error("Wrong input for parameter: nav_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
@@ -286,7 +285,7 @@ func GetNavDetailAdmin(c echo.Context) error {
 		status, err = models.GetGenLookupIn(&lookupProduct, lookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -362,7 +361,7 @@ func DeleteNavAdmin(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -370,7 +369,7 @@ func DeleteNavAdmin(c echo.Context) error {
 
 	navKey := c.FormValue("nav_key")
 	if navKey == "" {
-		log.Error("Missing required parameter: nav_key")
+		// log.Error("Missing required parameter: nav_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_key", "Missing required parameter: nav_key")
 	}
 
@@ -378,7 +377,7 @@ func DeleteNavAdmin(c echo.Context) error {
 	if err == nil && navKeyCek > 0 {
 		params["nav_key"] = navKey
 	} else {
-		log.Error("Wrong input for parameter: nav_key")
+		// log.Error("Wrong input for parameter: nav_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_key", "Missing required parameter: nav_key")
 	}
 
@@ -395,7 +394,7 @@ func DeleteNavAdmin(c echo.Context) error {
 
 	status, err := models.UpdateTrNav(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -414,7 +413,7 @@ func CreateAdminTrNav(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -423,7 +422,7 @@ func CreateAdminTrNav(c echo.Context) error {
 	//product_key
 	productkey := c.FormValue("product_key")
 	if productkey == "" {
-		log.Error("Missing required parameter: product_key cann't be blank")
+		// log.Error("Missing required parameter: product_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key cann't be blank", "Missing required parameter: product_key cann't be blank")
 	}
 
@@ -431,14 +430,14 @@ func CreateAdminTrNav(c echo.Context) error {
 	if err == nil && sub > 0 {
 		params["product_key"] = productkey
 	} else {
-		log.Error("Wrong input for parameter: product_key number")
+		// log.Error("Wrong input for parameter: product_key number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key must number", "Missing required parameter: product_key number")
 	}
 
 	//nav_date
 	navdate := c.FormValue("nav_date")
 	if navdate == "" {
-		log.Error("Missing required parameter: nav_date cann't be blank")
+		// log.Error("Missing required parameter: nav_date cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date cann't be blank", "Missing required parameter: nav_date cann't be blank")
 	}
 	params["nav_date"] = navdate + " 00:00:00"
@@ -448,50 +447,50 @@ func CreateAdminTrNav(c echo.Context) error {
 	var trNav models.TrNav
 	_, err = models.GetNavByProductKeyAndNavDate(&trNav, productkey, navdate)
 	if err == nil {
-		log.Error("Missing required parameter: Data nav dengan product dan nav date tersebut sudah ada.")
+		// log.Error("Missing required parameter: Data nav dengan product dan nav date tersebut sudah ada.")
 		return lib.CustomError(http.StatusBadRequest, "Data nav dengan product dan nav date tersebut sudah ada.", "Data nav dengan product dan nav date tersebut sudah ada.")
 	}
 
 	//nav_value
 	navvalue := c.FormValue("nav_value")
 	if navvalue == "" {
-		log.Error("Missing required parameter: nav_value cann't be blank")
+		// log.Error("Missing required parameter: nav_value cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_value cann't be blank", "Missing required parameter: nav_value cann't be blank")
 	}
 	navvalueFloat, err := strconv.ParseFloat(navvalue, 64)
 	if err == nil {
 		if navvalueFloat < 0 {
-			log.Error("Wrong input for parameter: nav_value cann't negatif")
+			// log.Error("Wrong input for parameter: nav_value cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_value must cann't negatif", "Missing required parameter: nav_value cann't negatif")
 		}
 		params["nav_value"] = navvalue
 	} else {
-		log.Error("Wrong input for parameter: nav_value number")
+		// log.Error("Wrong input for parameter: nav_value number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_value must number", "Missing required parameter: nav_value number")
 	}
 
 	//original_value
 	originalvalue := c.FormValue("original_value")
 	if originalvalue == "" {
-		log.Error("Missing required parameter: original_value cann't be blank")
+		// log.Error("Missing required parameter: original_value cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: original_value cann't be blank", "Missing required parameter: original_value cann't be blank")
 	}
 	originalvalueFloat, err := strconv.ParseFloat(originalvalue, 64)
 	if err == nil {
 		if originalvalueFloat < 0 {
-			log.Error("Wrong input for parameter: original_value cann't negatif")
+			// log.Error("Wrong input for parameter: original_value cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: original_value must cann't negatif", "Missing required parameter: original_value cann't negatif")
 		}
 		params["original_value"] = originalvalue
 	} else {
-		log.Error("Wrong input for parameter: original_value number")
+		// log.Error("Wrong input for parameter: original_value number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: original_value must number", "Missing required parameter: original_value number")
 	}
 
 	//nav_status
 	navstatus := c.FormValue("nav_status")
 	if navstatus == "" {
-		log.Error("Missing required parameter: nav_status cann't be blank")
+		// log.Error("Missing required parameter: nav_status cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_status cann't be blank", "Missing required parameter: nav_status cann't be blank")
 	}
 
@@ -499,50 +498,50 @@ func CreateAdminTrNav(c echo.Context) error {
 	if err == nil && sub > 0 {
 		params["nav_status"] = navstatus
 	} else {
-		log.Error("Wrong input for parameter: nav_status number")
+		// log.Error("Wrong input for parameter: nav_status number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_status must number", "Missing required parameter: nav_status number")
 	}
 
 	//prod_aum_total
 	prodaumtotal := c.FormValue("prod_aum_total")
 	if prodaumtotal == "" {
-		log.Error("Missing required parameter: prod_aum_total cann't be blank")
+		// log.Error("Missing required parameter: prod_aum_total cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_aum_total cann't be blank", "Missing required parameter: prod_aum_total cann't be blank")
 	}
 	prodaumtotalFloat, err := strconv.ParseFloat(prodaumtotal, 64)
 	if err == nil {
 		if prodaumtotalFloat < 0 {
-			log.Error("Wrong input for parameter: prod_aum_total cann't negatif")
+			// log.Error("Wrong input for parameter: prod_aum_total cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_aum_total must cann't negatif", "Missing required parameter: prod_aum_total cann't negatif")
 		}
 		params["prod_aum_total"] = prodaumtotal
 	} else {
-		log.Error("Wrong input for parameter: prod_aum_total number")
+		// log.Error("Wrong input for parameter: prod_aum_total number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_aum_total must number", "Missing required parameter: prod_aum_total number")
 	}
 
 	//prod_unit_total
 	produnittotal := c.FormValue("prod_unit_total")
 	if produnittotal == "" {
-		log.Error("Missing required parameter: prod_unit_total cann't be blank")
+		// log.Error("Missing required parameter: prod_unit_total cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_unit_total cann't be blank", "Missing required parameter: prod_unit_total cann't be blank")
 	}
 	produnittotalFloat, err := strconv.ParseFloat(produnittotal, 64)
 	if err == nil {
 		if produnittotalFloat < 0 {
-			log.Error("Wrong input for parameter: prod_unit_total cann't negatif")
+			// log.Error("Wrong input for parameter: prod_unit_total cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_unit_total must cann't negatif", "Missing required parameter: prod_unit_total cann't negatif")
 		}
 		params["prod_unit_total"] = produnittotal
 	} else {
-		log.Error("Wrong input for parameter: prod_unit_total number")
+		// log.Error("Wrong input for parameter: prod_unit_total number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_unit_total must number", "Missing required parameter: prod_unit_total number")
 	}
 
 	//publish_mode
 	publishmode := c.FormValue("publish_mode")
 	if publishmode == "" {
-		log.Error("Missing required parameter: publish_mode cann't be blank")
+		// log.Error("Missing required parameter: publish_mode cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: publish_mode cann't be blank", "Missing required parameter: publish_mode cann't be blank")
 	}
 
@@ -550,7 +549,7 @@ func CreateAdminTrNav(c echo.Context) error {
 	if err == nil && sub > 0 {
 		params["publish_mode"] = publishmode
 	} else {
-		log.Error("Wrong input for parameter: publish_mode number")
+		// log.Error("Wrong input for parameter: publish_mode number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: publish_mode must number", "Missing required parameter: publish_mode number")
 	}
 
@@ -562,7 +561,7 @@ func CreateAdminTrNav(c echo.Context) error {
 
 	status, err = models.CreateTrNav(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -581,7 +580,7 @@ func UpdateAdminTrNav(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -589,7 +588,7 @@ func UpdateAdminTrNav(c echo.Context) error {
 
 	navKey := c.FormValue("nav_key")
 	if navKey == "" {
-		log.Error("Missing required parameter: nav_key")
+		// log.Error("Missing required parameter: nav_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_key", "Missing required parameter: nav_key")
 	}
 
@@ -597,7 +596,7 @@ func UpdateAdminTrNav(c echo.Context) error {
 	if err == nil && navKeyCek > 0 {
 		params["nav_key"] = navKey
 	} else {
-		log.Error("Wrong input for parameter: nav_key")
+		// log.Error("Wrong input for parameter: nav_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_key", "Missing required parameter: nav_key")
 	}
 
@@ -610,7 +609,7 @@ func UpdateAdminTrNav(c echo.Context) error {
 	//product_key
 	productkey := c.FormValue("product_key")
 	if productkey == "" {
-		log.Error("Missing required parameter: product_key cann't be blank")
+		// log.Error("Missing required parameter: product_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key cann't be blank", "Missing required parameter: product_key cann't be blank")
 	}
 
@@ -618,14 +617,14 @@ func UpdateAdminTrNav(c echo.Context) error {
 	if err == nil && sub > 0 {
 		params["product_key"] = productkey
 	} else {
-		log.Error("Wrong input for parameter: product_key number")
+		// log.Error("Wrong input for parameter: product_key number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key must number", "Missing required parameter: product_key number")
 	}
 
 	//nav_date
 	navdate := c.FormValue("nav_date")
 	if navdate == "" {
-		log.Error("Missing required parameter: nav_date cann't be blank")
+		// log.Error("Missing required parameter: nav_date cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date cann't be blank", "Missing required parameter: nav_date cann't be blank")
 	}
 	params["nav_date"] = navdate + " 00:00:00"
@@ -634,50 +633,50 @@ func UpdateAdminTrNav(c echo.Context) error {
 	var trNavCheck models.TrNav
 	_, err = models.GetNavByProductKeyAndNavDateExcept(&trNavCheck, productkey, navdate, navKey)
 	if err == nil {
-		log.Error("Missing required parameter: Data nav dengan product dan nav date tersebut sudah ada.")
+		// log.Error("Missing required parameter: Data nav dengan product dan nav date tersebut sudah ada.")
 		return lib.CustomError(http.StatusBadRequest, "Data nav dengan product dan nav date tersebut sudah ada.", "Data nav dengan product dan nav date tersebut sudah ada.")
 	}
 
 	//nav_value
 	navvalue := c.FormValue("nav_value")
 	if navvalue == "" {
-		log.Error("Missing required parameter: nav_value cann't be blank")
+		// log.Error("Missing required parameter: nav_value cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_value cann't be blank", "Missing required parameter: nav_value cann't be blank")
 	}
 	navvalueFloat, err := strconv.ParseFloat(navvalue, 64)
 	if err == nil {
 		if navvalueFloat < 0 {
-			log.Error("Wrong input for parameter: nav_value cann't negatif")
+			// log.Error("Wrong input for parameter: nav_value cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_value must cann't negatif", "Missing required parameter: nav_value cann't negatif")
 		}
 		params["nav_value"] = navvalue
 	} else {
-		log.Error("Wrong input for parameter: nav_value number")
+		// log.Error("Wrong input for parameter: nav_value number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_value must number", "Missing required parameter: nav_value number")
 	}
 
 	//original_value
 	originalvalue := c.FormValue("original_value")
 	if originalvalue == "" {
-		log.Error("Missing required parameter: original_value cann't be blank")
+		// log.Error("Missing required parameter: original_value cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: original_value cann't be blank", "Missing required parameter: original_value cann't be blank")
 	}
 	originalvalueFloat, err := strconv.ParseFloat(originalvalue, 64)
 	if err == nil {
 		if originalvalueFloat < 0 {
-			log.Error("Wrong input for parameter: original_value cann't negatif")
+			// log.Error("Wrong input for parameter: original_value cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: original_value must cann't negatif", "Missing required parameter: original_value cann't negatif")
 		}
 		params["original_value"] = originalvalue
 	} else {
-		log.Error("Wrong input for parameter: original_value number")
+		// log.Error("Wrong input for parameter: original_value number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: original_value must number", "Missing required parameter: original_value number")
 	}
 
 	//nav_status
 	navstatus := c.FormValue("nav_status")
 	if navstatus == "" {
-		log.Error("Missing required parameter: nav_status cann't be blank")
+		// log.Error("Missing required parameter: nav_status cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_status cann't be blank", "Missing required parameter: nav_status cann't be blank")
 	}
 
@@ -685,50 +684,50 @@ func UpdateAdminTrNav(c echo.Context) error {
 	if err == nil && sub > 0 {
 		params["nav_status"] = navstatus
 	} else {
-		log.Error("Wrong input for parameter: nav_status number")
+		// log.Error("Wrong input for parameter: nav_status number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_status must number", "Missing required parameter: nav_status number")
 	}
 
 	//prod_aum_total
 	prodaumtotal := c.FormValue("prod_aum_total")
 	if prodaumtotal == "" {
-		log.Error("Missing required parameter: prod_aum_total cann't be blank")
+		// log.Error("Missing required parameter: prod_aum_total cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_aum_total cann't be blank", "Missing required parameter: prod_aum_total cann't be blank")
 	}
 	prodaumtotalFloat, err := strconv.ParseFloat(prodaumtotal, 64)
 	if err == nil {
 		if prodaumtotalFloat < 0 {
-			log.Error("Wrong input for parameter: prod_aum_total cann't negatif")
+			// log.Error("Wrong input for parameter: prod_aum_total cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_aum_total must cann't negatif", "Missing required parameter: prod_aum_total cann't negatif")
 		}
 		params["prod_aum_total"] = prodaumtotal
 	} else {
-		log.Error("Wrong input for parameter: prod_aum_total number")
+		// log.Error("Wrong input for parameter: prod_aum_total number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_aum_total must number", "Missing required parameter: prod_aum_total number")
 	}
 
 	//prod_unit_total
 	produnittotal := c.FormValue("prod_unit_total")
 	if produnittotal == "" {
-		log.Error("Missing required parameter: prod_unit_total cann't be blank")
+		// log.Error("Missing required parameter: prod_unit_total cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_unit_total cann't be blank", "Missing required parameter: prod_unit_total cann't be blank")
 	}
 	produnittotalFloat, err := strconv.ParseFloat(produnittotal, 64)
 	if err == nil {
 		if produnittotalFloat < 0 {
-			log.Error("Wrong input for parameter: prod_unit_total cann't negatif")
+			// log.Error("Wrong input for parameter: prod_unit_total cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_unit_total must cann't negatif", "Missing required parameter: prod_unit_total cann't negatif")
 		}
 		params["prod_unit_total"] = produnittotal
 	} else {
-		log.Error("Wrong input for parameter: prod_unit_total number")
+		// log.Error("Wrong input for parameter: prod_unit_total number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_unit_total must number", "Missing required parameter: prod_unit_total number")
 	}
 
 	//publish_mode
 	publishmode := c.FormValue("publish_mode")
 	if publishmode == "" {
-		log.Error("Missing required parameter: publish_mode cann't be blank")
+		// log.Error("Missing required parameter: publish_mode cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: publish_mode cann't be blank", "Missing required parameter: publish_mode cann't be blank")
 	}
 
@@ -736,7 +735,7 @@ func UpdateAdminTrNav(c echo.Context) error {
 	if err == nil && sub > 0 {
 		params["publish_mode"] = publishmode
 	} else {
-		log.Error("Wrong input for parameter: publish_mode number")
+		// log.Error("Wrong input for parameter: publish_mode number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: publish_mode must number", "Missing required parameter: publish_mode number")
 	}
 
@@ -746,7 +745,7 @@ func UpdateAdminTrNav(c echo.Context) error {
 
 	status, err = models.UpdateTrNav(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 

@@ -12,7 +12,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetListAgentDropdown(c echo.Context) error {
@@ -25,11 +24,11 @@ func GetListAgentDropdown(c echo.Context) error {
 	status, err = models.GetMsAgentDropdown(&msAgent)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(msAgent) < 1 {
-		log.Error("Agent not found")
+		// log.Error("Agent not found")
 		return lib.CustomError(http.StatusNotFound, "Agent not found", "Agent not found")
 	}
 
@@ -58,11 +57,11 @@ func GetListAgentLastBranch(c echo.Context) error {
 	status, err = models.GetMsAgentLastBranch(&agent, keyStr)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(agent) < 1 {
-		log.Error("Agent not found")
+		// log.Error("Agent not found")
 		return lib.CustomError(http.StatusNotFound, "Agent not found", "Agent not found")
 	}
 
@@ -89,7 +88,7 @@ func AdminGetListMsAgent(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -105,7 +104,7 @@ func AdminGetListMsAgent(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -121,7 +120,7 @@ func AdminGetListMsAgent(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -156,7 +155,7 @@ func AdminGetListMsAgent(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -175,11 +174,11 @@ func AdminGetListMsAgent(c echo.Context) error {
 	status, err = models.AdminGetListAgent(&agent, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(agent) < 1 {
-		log.Error("Agent not found")
+		// log.Error("Agent not found")
 		return lib.CustomError(http.StatusNotFound, "Agent not found", "Agent not found")
 	}
 
@@ -188,7 +187,7 @@ func AdminGetListMsAgent(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetListAgent(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -219,7 +218,7 @@ func AdminDeleteMsAgent(c echo.Context) error {
 	keyStr := c.FormValue("agent_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: agent_key")
+		// log.Error("Missing required parameter: agent_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: agent_key", "Missing required parameter: agent_key")
 	}
 
@@ -231,7 +230,7 @@ func AdminDeleteMsAgent(c echo.Context) error {
 
 	_, err = models.UpdateMsAgent(params)
 	if err != nil {
-		log.Error("Error delete ms_branch")
+		// log.Error("Error delete ms_branch")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -243,7 +242,7 @@ func AdminDeleteMsAgent(c echo.Context) error {
 
 	_, err = models.UpdateDeleteBranchAgent(paramsAgentBranch, "agent_key", keyStr)
 	if err != nil {
-		log.Error("Error delete ms_agent_branch")
+		// log.Error("Error delete ms_agent_branch")
 	}
 
 	var response lib.Response
@@ -264,33 +263,33 @@ func AdminCreateMsAgent(c echo.Context) error {
 	if branchKey != "" {
 		n, err := strconv.ParseUint(branchKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 	} else {
-		log.Error("Missing required parameter: branch_key")
+		// log.Error("Missing required parameter: branch_key")
 		return lib.CustomError(http.StatusBadRequest, "branch_key can not be blank", "branch_key can not be blank")
 	}
 
 	agentId := c.FormValue("agent_id")
 	if agentId == "" {
-		log.Error("Missing required parameter: agent_id")
+		// log.Error("Missing required parameter: agent_id")
 		return lib.CustomError(http.StatusBadRequest, "agent_id can not be blank", "agent_id can not be blank")
 	} else {
 		n, err := strconv.ParseUint(agentId, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_id")
+			// log.Error("Wrong input for parameter: agent_id")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_id", "Wrong input for parameter: agent_id")
 		}
 		//validate unique agent_id
 		var countData models.CountData
 		status, err = models.CountMsAgentValidateUnique(&countData, "agent_id", agentId, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: agent_id")
+			// log.Error("Missing required parameter: agent_id")
 			return lib.CustomError(http.StatusBadRequest, "agent_id already used", "agent_id already used")
 		}
 		params["agent_id"] = agentId
@@ -298,18 +297,18 @@ func AdminCreateMsAgent(c echo.Context) error {
 
 	agentCode := c.FormValue("agent_code")
 	if agentCode == "" {
-		log.Error("Missing required parameter: agent_code")
+		// log.Error("Missing required parameter: agent_code")
 		return lib.CustomError(http.StatusBadRequest, "agent_code can not be blank", "agent_code can not be blank")
 	} else {
 		//validate unique agent_code
 		var countData models.CountData
 		status, err = models.CountMsAgentValidateUnique(&countData, "agent_code", agentCode, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: agent_code")
+			// log.Error("Missing required parameter: agent_code")
 			return lib.CustomError(http.StatusBadRequest, "agent_code already used", "agent_code already used")
 		}
 		params["agent_code"] = agentCode
@@ -317,18 +316,18 @@ func AdminCreateMsAgent(c echo.Context) error {
 
 	agentName := c.FormValue("agent_name")
 	if agentName == "" {
-		log.Error("Missing required parameter: agent_name")
+		// log.Error("Missing required parameter: agent_name")
 		return lib.CustomError(http.StatusBadRequest, "agent_name can not be blank", "agent_name can not be blank")
 	} else {
 		//validate unique agent_name
 		var countData models.CountData
 		status, err = models.CountMsAgentValidateUnique(&countData, "agent_name", agentName, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: agent_name")
+			// log.Error("Missing required parameter: agent_name")
 			return lib.CustomError(http.StatusBadRequest, "agent_name already used", "agent_name already used")
 		}
 		params["agent_name"] = agentName
@@ -336,7 +335,7 @@ func AdminCreateMsAgent(c echo.Context) error {
 
 	agentEmail := c.FormValue("agent_email")
 	if agentEmail == "" {
-		log.Error("Missing required parameter: agent_email")
+		// log.Error("Missing required parameter: agent_email")
 		return lib.CustomError(http.StatusBadRequest, "agent_email can not be blank", "agent_email can not be blank")
 	} else {
 		params["agent_email"] = agentEmail
@@ -351,7 +350,7 @@ func AdminCreateMsAgent(c echo.Context) error {
 	if agentCategory != "" {
 		n, err := strconv.ParseUint(agentCategory, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_category")
+			// log.Error("Wrong input for parameter: agent_category")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_category", "Wrong input for parameter: agent_category")
 		}
 		params["agent_category"] = agentCategory
@@ -361,7 +360,7 @@ func AdminCreateMsAgent(c echo.Context) error {
 	if agentChannel != "" {
 		n, err := strconv.ParseUint(agentChannel, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_channel")
+			// log.Error("Wrong input for parameter: agent_channel")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_channel", "Wrong input for parameter: agent_channel")
 		}
 		params["agent_channel"] = agentChannel
@@ -381,7 +380,7 @@ func AdminCreateMsAgent(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -394,7 +393,7 @@ func AdminCreateMsAgent(c echo.Context) error {
 
 	status, err, lastID := models.CreateMsAgent(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -410,7 +409,7 @@ func AdminCreateMsAgent(c echo.Context) error {
 	paramsAgentBranch["remarks"] = remarks
 	status, err = models.CreateMsAgentBranch(paramsAgentBranch)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -433,12 +432,12 @@ func AdminUpdateMsAgent(c echo.Context) error {
 	if agentKey != "" {
 		n, err := strconv.ParseUint(agentKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_key")
+			// log.Error("Wrong input for parameter: agent_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_key", "Wrong input for parameter: agent_key")
 		}
 		params["agent_key"] = agentKey
 	} else {
-		log.Error("Missing required parameter: agent_key")
+		// log.Error("Missing required parameter: agent_key")
 		return lib.CustomError(http.StatusBadRequest, "agent_key can not be blank", "agent_key can not be blank")
 	}
 
@@ -446,33 +445,33 @@ func AdminUpdateMsAgent(c echo.Context) error {
 	if branchKey != "" {
 		n, err := strconv.ParseUint(branchKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 	} else {
-		log.Error("Missing required parameter: branch_key")
+		// log.Error("Missing required parameter: branch_key")
 		return lib.CustomError(http.StatusBadRequest, "branch_key can not be blank", "branch_key can not be blank")
 	}
 
 	agentId := c.FormValue("agent_id")
 	if agentId == "" {
-		log.Error("Missing required parameter: agent_id")
+		// log.Error("Missing required parameter: agent_id")
 		return lib.CustomError(http.StatusBadRequest, "agent_id can not be blank", "agent_id can not be blank")
 	} else {
 		n, err := strconv.ParseUint(agentId, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_id")
+			// log.Error("Wrong input for parameter: agent_id")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_id", "Wrong input for parameter: agent_id")
 		}
 		//validate unique agent_id
 		var countData models.CountData
 		status, err = models.CountMsAgentValidateUnique(&countData, "agent_id", agentId, agentKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: agent_id")
+			// log.Error("Missing required parameter: agent_id")
 			return lib.CustomError(http.StatusBadRequest, "agent_id already used", "agent_id already used")
 		}
 		params["agent_id"] = agentId
@@ -480,18 +479,18 @@ func AdminUpdateMsAgent(c echo.Context) error {
 
 	agentCode := c.FormValue("agent_code")
 	if agentCode == "" {
-		log.Error("Missing required parameter: agent_code")
+		// log.Error("Missing required parameter: agent_code")
 		return lib.CustomError(http.StatusBadRequest, "agent_code can not be blank", "agent_code can not be blank")
 	} else {
 		//validate unique agent_code
 		var countData models.CountData
 		status, err = models.CountMsAgentValidateUnique(&countData, "agent_code", agentCode, agentKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: agent_code")
+			// log.Error("Missing required parameter: agent_code")
 			return lib.CustomError(http.StatusBadRequest, "agent_code already used", "agent_code already used")
 		}
 		params["agent_code"] = agentCode
@@ -499,18 +498,18 @@ func AdminUpdateMsAgent(c echo.Context) error {
 
 	agentName := c.FormValue("agent_name")
 	if agentName == "" {
-		log.Error("Missing required parameter: agent_name")
+		// log.Error("Missing required parameter: agent_name")
 		return lib.CustomError(http.StatusBadRequest, "agent_name can not be blank", "agent_name can not be blank")
 	} else {
 		//validate unique agent_name
 		var countData models.CountData
 		status, err = models.CountMsAgentValidateUnique(&countData, "agent_name", agentName, agentKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: agent_name")
+			// log.Error("Missing required parameter: agent_name")
 			return lib.CustomError(http.StatusBadRequest, "agent_name already used", "agent_name already used")
 		}
 		params["agent_name"] = agentName
@@ -518,7 +517,7 @@ func AdminUpdateMsAgent(c echo.Context) error {
 
 	agentEmail := c.FormValue("agent_email")
 	if agentEmail == "" {
-		log.Error("Missing required parameter: agent_email")
+		// log.Error("Missing required parameter: agent_email")
 		return lib.CustomError(http.StatusBadRequest, "agent_email can not be blank", "agent_email can not be blank")
 	} else {
 		params["agent_email"] = agentEmail
@@ -533,7 +532,7 @@ func AdminUpdateMsAgent(c echo.Context) error {
 	if agentCategory != "" {
 		n, err := strconv.ParseUint(agentCategory, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_category")
+			// log.Error("Wrong input for parameter: agent_category")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_category", "Wrong input for parameter: agent_category")
 		}
 		params["agent_category"] = agentCategory
@@ -543,7 +542,7 @@ func AdminUpdateMsAgent(c echo.Context) error {
 	if agentChannel != "" {
 		n, err := strconv.ParseUint(agentChannel, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_channel")
+			// log.Error("Wrong input for parameter: agent_channel")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_channel", "Wrong input for parameter: agent_channel")
 		}
 		params["agent_channel"] = agentChannel
@@ -563,7 +562,7 @@ func AdminUpdateMsAgent(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -576,7 +575,7 @@ func AdminUpdateMsAgent(c echo.Context) error {
 
 	status, err = models.UpdateMsAgent(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -592,7 +591,7 @@ func AdminUpdateMsAgent(c echo.Context) error {
 	status, err = models.GetAllMsAgentBranch(&msAgentBranch, 10, 10, paramsGet, true)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(msAgentBranch) < 1 {
@@ -604,7 +603,7 @@ func AdminUpdateMsAgent(c echo.Context) error {
 
 		_, err = models.UpdateDeleteBranchAgent(paramsDeleteAgentBranch, "agent_key", agentKey)
 		if err != nil {
-			log.Error("Error delete ms_agent_branch")
+			// log.Error("Error delete ms_agent_branch")
 		}
 
 		paramsAgentBranch := make(map[string]string)
@@ -617,7 +616,7 @@ func AdminUpdateMsAgent(c echo.Context) error {
 		paramsAgentBranch["remarks"] = remarks
 		status, err = models.CreateMsAgentBranch(paramsAgentBranch)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed input data")
 		}
 	}
@@ -636,12 +635,12 @@ func AdminDetailMsAgent(c echo.Context) error {
 
 	agentKey := c.Param("agent_key")
 	if agentKey == "" {
-		log.Error("Missing required parameter: agent_key")
+		// log.Error("Missing required parameter: agent_key")
 		return lib.CustomError(http.StatusBadRequest, "agent_key can not be blank", "agent_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(agentKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_key")
+			// log.Error("Wrong input for parameter: agent_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_key", "Wrong input for parameter: agent_key")
 		}
 	}
@@ -649,7 +648,7 @@ func AdminDetailMsAgent(c echo.Context) error {
 	var branch models.MsAgentBranchDetail
 	_, err = models.AdminGetDetailAgent(&branch, agentKey)
 	if err != nil {
-		log.Error("Agent not found")
+		// log.Error("Agent not found")
 		return lib.CustomError(http.StatusBadRequest, "Agent not found", "Agent not found")
 	}
 
@@ -668,7 +667,7 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 	var err error
 	var status int
 	var paramsToResponse []interface{}
-	timeNow := time.Now().Format(lib.DATEFORMATONLY)
+	timeNow := lib.TIMENOW_DATEONLYFORMAT
 	var total_aum decimal.Decimal
 
 	//Get parameter limit
@@ -681,7 +680,7 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -698,7 +697,7 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -714,7 +713,7 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -735,11 +734,11 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 	status, err = models.AdminGetListAgentCustomer(&agent_cust, searchLike, searchType, eff_date, limit, offset, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(agent_cust) < 1 {
-		log.Error("Agent and Customer data not found")
+		// log.Error("Agent and Customer data not found")
 		return lib.CustomError(http.StatusNotFound, "Agent and Customer data not found", "Agent and Customer data not found")
 	}
 
@@ -770,7 +769,7 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 			// GET TR_ACCOUNT_AGENT KEY
 			accKey = strconv.FormatUint(trAccountDB[0].AccKey, 10)
 			if trAccountDB[0].SubSuspendFlag != nil && *trAccountDB[0].SubSuspendFlag == 1 {
-				log.Error("Account suspended")
+				// log.Error("Account suspended")
 				return lib.CustomError(status, "Account suspended ", "Account suspended ")
 			}
 
@@ -778,18 +777,18 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 			paramsAccAgent := make(map[string]string)
 			paramsAccAgent["acc_key"] = accKey
 			paramsAccAgent["rec_status"] = "1"
-			var acaKey string
+			// var acaKey string
 			var accountAgentDB []models.TrAccountAgent
 			status, err = models.GetAllTrAccountAgent(&accountAgentDB, paramsAccAgent)
 			if len(accountAgentDB) > 0 {
-				acaKey = strconv.FormatUint(accountAgentDB[0].AcaKey, 10)
+				// acaKey = strconv.FormatUint(accountAgentDB[0].AcaKey, 10)
 			}
-			log.Println(acaKey)
+			// Println(acaKey)
 			// GET BALANCE AMOUNT
 			var bal models.AumBalanceUnitStruct
 			_, err = models.AumBalanceQuery(&bal, accKey, timeNow)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 			}
 			balance_unit := bal.BalanceUnit
 
@@ -799,7 +798,7 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 				prodKey := strconv.FormatUint(dt.ProductKey, 10)
 				_, err = models.AumNavValueQuery(&navVal, prodKey, timeNow)
 				if err != nil {
-					log.Println(err)
+					// log.Println(err)
 				}
 				navValues := navVal.NavValue
 				// SUM THE AUM
@@ -809,7 +808,7 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 
 			paramsToAppend["aum"] = total_aum.Truncate(2)
 		}
-		log.Println(accKey)
+		// log.Println(accKey)
 
 		paramsToResponse = append(paramsToResponse, paramsToAppend)
 	}
@@ -819,7 +818,7 @@ func AdminGetListMsAgentCustomer(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetListAgentCustomer(&countData, searchLike, searchType)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -859,8 +858,8 @@ func AdminAgentCustomerMovement(c echo.Context) error {
 		var dataAgentCustSlice []interface{}
 		err := json.Unmarshal([]byte(dataAgentCust), &dataAgentCustSlice)
 		if err != nil {
-			log.Error(err.Error())
-			log.Error("Missing required parameter: data")
+			// log.Error(err.Error())
+			// log.Error("Missing required parameter: data")
 			return lib.CustomError(http.StatusBadRequest, err.Error(), "Wrong input for parameter: bank_account")
 		}
 
@@ -878,7 +877,7 @@ func AdminAgentCustomerMovement(c echo.Context) error {
 
 				status, err := models.AdminAddAgentCustomer(dataToAppend["agent_key"], dataToAppend["customer_key"], dataToAppend["effective_date"], rec_created_date, rec_created_by)
 				if err != nil {
-					log.Error("Failed insert to ms_agent_customer: " + err.Error())
+					// log.Error("Failed insert to ms_agent_customer: " + err.Error())
 					return lib.CustomError(status, err.Error(), "failed input data agent customer movement")
 				}
 				paramsToResponse = append(paramsToResponse, dataToAppend)

@@ -13,7 +13,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
@@ -24,7 +23,7 @@ func GetCmsQuiz(c echo.Context) error {
 	typeKeyStr := c.QueryParam("type_key")
 	typeKey, _ := strconv.ParseUint(typeKeyStr, 10, 64)
 	if typeKey == 0 {
-		log.Error("Type should be number")
+		// log.Error("Type should be number")
 		return lib.CustomError(http.StatusBadRequest, "Type should be number", "Type should be number")
 	}
 	params := make(map[string]string)
@@ -36,11 +35,11 @@ func GetCmsQuiz(c echo.Context) error {
 	var headerDB []models.CmsQuizHeader
 	status, err = models.GetAllCmsQuizHeader(&headerDB, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(headerDB) < 1 {
-		log.Error("Quiz not found")
+		// log.Error("Quiz not found")
 		return lib.CustomError(http.StatusNotFound, "Quiz not found", "Quiz not found")
 	}
 	header := headerDB[0]
@@ -52,11 +51,11 @@ func GetCmsQuiz(c echo.Context) error {
 	var questionDB []models.CmsQuizQuestion
 	status, err = models.GetAllCmsQuizQuestion(&questionDB, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(questionDB) < 1 {
-		log.Error("Data not found")
+		// log.Error("Data not found")
 		return lib.CustomError(http.StatusNotFound, "Data not found", "Data not found")
 	}
 
@@ -67,11 +66,11 @@ func GetCmsQuiz(c echo.Context) error {
 	var optionDB []models.CmsQuizOptions
 	status, err = models.GetCmsQuizOptionsIn(&optionDB, questionIDs, "quiz_question_key")
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(optionDB) < 1 {
-		log.Error("Data not found")
+		// log.Error("Data not found")
 		return lib.CustomError(http.StatusNotFound, "Data not found", "Data not found")
 	}
 
@@ -157,13 +156,13 @@ func PostQuizAnswer(c echo.Context) error {
 	var oaRequest models.OaRequest
 	status, err = models.GetOaRequest(&oaRequest, requestKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get request data")
 	}
 	var personalData models.OaPersonalData
 	status, err = models.GetOaPersonalData(&personalData, requestKey, "oa_request_key")
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get oa data")
 	}
 
@@ -190,7 +189,7 @@ func PostQuizAnswer(c echo.Context) error {
 	scoreStr := strconv.FormatUint(score, 10)
 	status, err = models.GetMsRiskProfileScore(&riskProfile, scoreStr)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data risk profile")
 	}
 
@@ -202,13 +201,13 @@ func PostQuizAnswer(c echo.Context) error {
 
 	status, err = models.CreateOaRiskProfile(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
 	status, err = models.CreateMultipleOaRiskProfileQuiz(bindVar)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -218,7 +217,7 @@ func PostQuizAnswer(c echo.Context) error {
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/index-registration.html")
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		var tpl bytes.Buffer
@@ -226,7 +225,7 @@ func PostQuizAnswer(c echo.Context) error {
 			Name    string
 			FileUrl string
 		}{Name: personalData.FullName, FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		result := tpl.String()
@@ -239,9 +238,9 @@ func PostQuizAnswer(c echo.Context) error {
 
 		err = lib.SendEmail(mailer)
 		if err != nil {
-			log.Error("Failed send email: ", err)
+			// log.Error("Failed send email: ", err)
 		} else {
-			log.Info("Email sent")
+			// log.Info("Email sent")
 		}
 		// dialer := gomail.NewDialer(
 		// 	config.EmailSMTPHost,
@@ -253,10 +252,10 @@ func PostQuizAnswer(c echo.Context) error {
 
 		// err = dialer.DialAndSend(mailer)
 		// if err != nil {
-		// 	log.Error("Failed send email: ", err)
+		// 	// log.Error("Failed send email: ", err)
 		// 	// return lib.CustomError(http.StatusInternalServerError, err.Error(), "Error send email")
 		// } else {
-		// 	log.Info("Email sent")
+		// 	// log.Info("Email sent")
 		// }
 
 		//sent email to all CS & Sales
@@ -267,7 +266,7 @@ func PostQuizAnswer(c echo.Context) error {
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/index-pengkinian.html")
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		var tpl bytes.Buffer
@@ -275,7 +274,7 @@ func PostQuizAnswer(c echo.Context) error {
 			Name    string
 			FileUrl string
 		}{Name: personalData.FullName, FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		result := tpl.String()
@@ -288,9 +287,9 @@ func PostQuizAnswer(c echo.Context) error {
 
 		err = lib.SendEmail(mailer)
 		if err != nil {
-			log.Error("Failed send email: ", err)
+			// log.Error("Failed send email: ", err)
 		} else {
-			log.Info("Email sent")
+			// log.Info("Email sent")
 		}
 		// dialer := gomail.NewDialer(
 		// 	config.EmailSMTPHost,
@@ -302,10 +301,10 @@ func PostQuizAnswer(c echo.Context) error {
 
 		// err = dialer.DialAndSend(mailer)
 		// if err != nil {
-		// 	log.Error("Failed send email: ", err)
+		// 	// log.Error("Failed send email: ", err)
 		// 	// return lib.CustomError(http.StatusInternalServerError, err.Error(), "Error send email")
 		// } else {
-		// 	log.Info("Email sent")
+		// 	// log.Info("Email sent")
 		// }
 
 		//sent email to all CS & Sales
@@ -355,9 +354,9 @@ func PostQuizAnswer(c echo.Context) error {
 
 	status, err = models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error("Error create user message")
+		// log.Error("Error create user message")
 	} else {
-		log.Error("Sukses insert user message")
+		// log.Error("Sukses insert user message")
 	}
 	lib.CreateNotifCustomerFromAdminByUserLoginKey(strIDUserLogin, subject, body, "TRANSACTION")
 
@@ -383,7 +382,7 @@ func GetQuizAnswer(c echo.Context) error {
 	var status int
 
 	if lib.Profile.CustomerKey == nil || *lib.Profile.CustomerKey == 0 {
-		log.Error("No customer found")
+		// log.Error("No customer found")
 		return lib.CustomError(http.StatusBadRequest, "No customer found", "No customer found, please open account first")
 	}
 	var requestDB []models.OaRequest
@@ -393,7 +392,7 @@ func GetQuizAnswer(c echo.Context) error {
 	paramRequest["orderType"] = "DESC"
 	_, err = models.GetAllOaRequest(&requestDB, 1, 0, false, paramRequest)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	request := requestDB[0]
@@ -404,21 +403,21 @@ func GetQuizAnswer(c echo.Context) error {
 	paramQuiz["orderType"] = "DESC"
 	_, err = models.GetAllOaRiskProfileQuiz(&quizDB, 100, 0, paramQuiz, true)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
 	var risk models.OaRiskProfile
 	_, err = models.GetOaRiskProfile(&risk, strconv.FormatUint(request.OaRequestKey, 10), "oa_request_key")
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
 	var riskProfile models.MsRiskProfile
 	_, err = models.GetMsRiskProfile(&riskProfile, strconv.FormatUint(risk.RiskProfileKey, 10))
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 

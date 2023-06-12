@@ -12,7 +12,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func initAuthHoIt() error {
@@ -20,7 +19,7 @@ func initAuthHoIt() error {
 	roleKeyHoIt = 15
 
 	if lib.Profile.RoleKey != roleKeyHoIt {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	return nil
@@ -34,7 +33,7 @@ func GetListProductAdmin(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -48,7 +47,7 @@ func GetListProductAdmin(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -64,7 +63,7 @@ func GetListProductAdmin(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -80,7 +79,7 @@ func GetListProductAdmin(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -100,7 +99,7 @@ func GetListProductAdmin(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -130,11 +129,11 @@ func GetListProductAdmin(c echo.Context) error {
 	status, err = models.AdminGetAllMsProductWithLike(&msProduct, limit, offset, params, paramsLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(msProduct) < 1 {
-		log.Error("product not found")
+		// log.Error("product not found")
 		return lib.CustomError(http.StatusNotFound, "Product not found", "Product not found")
 	}
 
@@ -175,7 +174,7 @@ func GetListProductAdmin(c echo.Context) error {
 	if len(currencyIds) > 0 {
 		status, err = models.GetMsCurrencyIn(&msCurrency, currencyIds, "currency_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -189,7 +188,7 @@ func GetListProductAdmin(c echo.Context) error {
 	if len(productCategoryIds) > 0 {
 		status, err = models.GetMsProductCategoryIn(&msProductCategory, productCategoryIds, "product_category_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -203,7 +202,7 @@ func GetListProductAdmin(c echo.Context) error {
 	if len(productTypeIds) > 0 {
 		status, err = models.GetMsProductTypeIn(&msProductType, productTypeIds, "product_type_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -218,7 +217,7 @@ func GetListProductAdmin(c echo.Context) error {
 		status, err = models.GetGenLookupIn(&lookup, genLookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -234,7 +233,7 @@ func GetListProductAdmin(c echo.Context) error {
 	if len(custodianIds) > 0 {
 		status, err = models.GetMsCustodianBankIn(&msCustoBank, custodianIds, "custodian_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -342,7 +341,7 @@ func GetListProductAdmin(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.AdminGetCountMsProductWithLike(&countData, params, paramsLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -372,7 +371,7 @@ func GetProductDetailAdmin(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -409,7 +408,7 @@ func GetProductDetailAdmin(c echo.Context) error {
 		status, err = models.GetGenLookupIn(&lookupProduct, lookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -677,7 +676,7 @@ func DeleteProductAdmin(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -685,7 +684,7 @@ func DeleteProductAdmin(c echo.Context) error {
 
 	productKey := c.FormValue("product_key")
 	if productKey == "" {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
@@ -693,14 +692,14 @@ func DeleteProductAdmin(c echo.Context) error {
 	if err == nil && productKeyCek > 0 {
 		params["product_key"] = productKey
 	} else {
-		log.Error("Wrong input for parameter: product_key")
+		// log.Error("Wrong input for parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
 	var product models.MsProduct
 	status, err := models.GetMsProduct(&product, productKey)
 	if err != nil {
-		log.Error("Product not found")
+		// log.Error("Product not found")
 		return lib.CustomError(status)
 	}
 
@@ -711,7 +710,7 @@ func DeleteProductAdmin(c echo.Context) error {
 
 	status, err = models.UpdateMsProduct(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -730,7 +729,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -741,7 +740,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 	//product_code
 	productcode := c.FormValue("product_code")
 	if productcode == "" {
-		log.Error("Missing required parameter: product_code cann't be blank")
+		// log.Error("Missing required parameter: product_code cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_code cann't be blank", "Missing required parameter: product_code cann't be blank")
 	}
 	params["product_code"] = productcode
@@ -753,11 +752,11 @@ func CreateAdminMsProduct(c echo.Context) error {
 	var countDataExisting models.CountData
 	status, err = models.AdminGetValidateUniqueDataInsertUpdate(&countDataExisting, paramsProdukCode, paramsCheckValidateAnd, nil)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataExisting.CountData) > 0 {
-		log.Error("Missing required parameter: product_code already existing, use other product_code")
+		// log.Error("Missing required parameter: product_code already existing, use other product_code")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_code already existing, use other product_code", "Missing required parameter: product_code already existing, use other product_code")
 	}
 
@@ -767,7 +766,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 	//product_name
 	productname := c.FormValue("product_name")
 	if productname == "" {
-		log.Error("Missing required parameter: product_name cann't be blank")
+		// log.Error("Missing required parameter: product_name cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_name cann't be blank", "Missing required parameter: product_name cann't be blank")
 	}
 	params["product_name"] = productname
@@ -778,18 +777,18 @@ func CreateAdminMsProduct(c echo.Context) error {
 
 	status, err = models.AdminGetValidateUniqueDataInsertUpdate(&countDataExisting, paramsProductName, paramsCheckValidateAnd, nil)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataExisting.CountData) > 0 {
-		log.Error("Missing required parameter: product_name already existing, use other product_name")
+		// log.Error("Missing required parameter: product_name already existing, use other product_name")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_name already existing, use other product_name", "Missing required parameter: product_name already existing, use other product_name")
 	}
 
 	//product_name_alt
 	productnamealt := c.FormValue("product_name_alt")
 	if productnamealt == "" {
-		log.Error("Missing required parameter: product_name_alt cann't be blank")
+		// log.Error("Missing required parameter: product_name_alt cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_name_alt cann't be blank", "Missing required parameter: product_name_alt cann't be blank")
 	}
 	params["product_name_alt"] = productnamealt
@@ -801,7 +800,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["currency_key"] = currencykey
 		} else {
-			log.Error("Wrong input for parameter: currency_key number")
+			// log.Error("Wrong input for parameter: currency_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: currency_key must number", "Missing required parameter: currency_key number")
 		}
 	}
@@ -813,7 +812,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["product_category_key"] = productcategorykey
 		} else {
-			log.Error("Wrong input for parameter: product_category_key number")
+			// log.Error("Wrong input for parameter: product_category_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_category_key must number", "Missing required parameter: product_category_key number")
 		}
 	}
@@ -825,7 +824,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["product_type_key"] = producttypekey
 		} else {
-			log.Error("Wrong input for parameter: product_type_key number")
+			// log.Error("Wrong input for parameter: product_type_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_type_key must number", "Missing required parameter: product_type_key number")
 		}
 	}
@@ -837,7 +836,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["fund_type_key"] = fundtypekey
 		} else {
-			log.Error("Wrong input for parameter: fund_type_key number")
+			// log.Error("Wrong input for parameter: fund_type_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fund_type_key must number", "Missing required parameter: fund_type_key number")
 		}
 	}
@@ -849,7 +848,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["fund_structure_key"] = fundstructurekey
 		} else {
-			log.Error("Wrong input for parameter: fund_structure_key number")
+			// log.Error("Wrong input for parameter: fund_structure_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fund_structure_key must number", "Missing required parameter: fund_structure_key number")
 		}
 	}
@@ -861,7 +860,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["risk_profile_key"] = riskprofilekey
 		} else {
-			log.Error("Wrong input for parameter: risk_profile_key number")
+			// log.Error("Wrong input for parameter: risk_profile_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: risk_profile_key must number", "Missing required parameter: risk_profile_key number")
 		}
 	}
@@ -885,7 +884,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["product_phase"] = productphase
 		} else {
-			log.Error("Wrong input for parameter: product_phase number")
+			// log.Error("Wrong input for parameter: product_phase number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_phase must number", "Missing required parameter: product_phase number")
 		}
 	}
@@ -897,7 +896,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["nav_valuation_type"] = navvaluationtype
 		} else {
-			log.Error("Wrong input for parameter: nav_valuation_type number")
+			// log.Error("Wrong input for parameter: nav_valuation_type number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_valuation_type must number", "Missing required parameter: nav_valuation_type number")
 		}
 	}
@@ -907,7 +906,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 	if prospectuslink != "" {
 		length := len(prospectuslink)
 		if length > 255 {
-			log.Error("Wrong input for parameter: prospectus_link number")
+			// log.Error("Wrong input for parameter: prospectus_link number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prospectus_link too long, max 255 character", "Missing required parameter: prospectus_link too long, max 255 character")
 		}
 		params["prospectus_link"] = prospectuslink
@@ -936,11 +935,11 @@ func CreateAdminMsProduct(c echo.Context) error {
 
 		status, err = models.AdminGetValidateUniqueDataInsertUpdate(&countDataExisting, paramsIsinCode, paramsCheckValidateAnd, nil)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countDataExisting.CountData) > 0 {
-			log.Error("Missing required parameter: isin_code already existing, use other isin_code")
+			// log.Error("Missing required parameter: isin_code already existing, use other isin_code")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: isin_code already existing, use other isin_code", "Missing required parameter: isin_code already existing, use other isin_code")
 		}
 	}
@@ -951,7 +950,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 	if flagsyariah != "" {
 		flagsyariahBool, err = strconv.ParseBool(flagsyariah)
 		if err != nil {
-			log.Error("flag_syariah parameter should be true/false")
+			// log.Error("flag_syariah parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "flag_syariah parameter should be true/false", "flag_syariah parameter should be true/false")
 		}
 		if flagsyariahBool == true {
@@ -960,169 +959,169 @@ func CreateAdminMsProduct(c echo.Context) error {
 			params["flag_syariah"] = "0"
 		}
 	} else {
-		log.Error("flag_syariah parameter should be true/false")
+		// log.Error("flag_syariah parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_syariah parameter should be true/false", "flag_syariah parameter should be true/false")
 	}
 
 	//max_sub_fee
 	maxsubfee := c.FormValue("max_sub_fee")
 	if maxsubfee == "" {
-		log.Error("Missing required parameter: max_sub_fee cann't be blank")
+		// log.Error("Missing required parameter: max_sub_fee cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_sub_fee cann't be blank", "Missing required parameter: max_sub_fee cann't be blank")
 	}
 	maxsubfeeFloat, err := strconv.ParseFloat(maxsubfee, 64)
 	if err == nil {
 		if maxsubfeeFloat < 0 {
-			log.Error("Wrong input for parameter: max_sub_fee cann't negatif")
+			// log.Error("Wrong input for parameter: max_sub_fee cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_sub_fee must cann't negatif", "Missing required parameter: max_sub_fee cann't negatif")
 		}
 		params["max_sub_fee"] = maxsubfee
 	} else {
-		log.Error("Wrong input for parameter: max_sub_fee number")
+		// log.Error("Wrong input for parameter: max_sub_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_sub_fee must number", "Missing required parameter: max_sub_fee number")
 	}
 
 	//max_red_fee
 	maxredfee := c.FormValue("max_red_fee")
 	if maxredfee == "" {
-		log.Error("Missing required parameter: max_red_fee cann't be blank")
+		// log.Error("Missing required parameter: max_red_fee cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_red_fee cann't be blank", "Missing required parameter: max_red_fee cann't be blank")
 	}
 	maxredfeeFloat, err := strconv.ParseFloat(maxredfee, 64)
 	if err == nil {
 		if maxredfeeFloat < 0 {
-			log.Error("Wrong input for parameter: max_red_fee cann't negatif")
+			// log.Error("Wrong input for parameter: max_red_fee cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_red_fee must cann't negatif", "Missing required parameter: max_red_fee cann't negatif")
 		}
 		params["max_red_fee"] = maxredfee
 	} else {
-		log.Error("Wrong input for parameter: max_red_fee number")
+		// log.Error("Wrong input for parameter: max_red_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_red_fee must number", "Missing required parameter: max_red_fee number")
 	}
 
 	//max_swi_fee
 	maxswifee := c.FormValue("max_swi_fee")
 	if maxswifee == "" {
-		log.Error("Missing required parameter: max_swi_fee cann't be blank")
+		// log.Error("Missing required parameter: max_swi_fee cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_swi_fee cann't be blank", "Missing required parameter: max_swi_fee cann't be blank")
 	}
 	maxswifeeFloat, err := strconv.ParseFloat(maxswifee, 64)
 	if err == nil {
 		if maxswifeeFloat < 0 {
-			log.Error("Wrong input for parameter: max_swi_fee cann't negatif")
+			// log.Error("Wrong input for parameter: max_swi_fee cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_swi_fee must cann't negatif", "Missing required parameter: max_swi_fee cann't negatif")
 		}
 		params["max_swi_fee"] = maxswifee
 	} else {
-		log.Error("Wrong input for parameter: max_swi_fee number")
+		// log.Error("Wrong input for parameter: max_swi_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_swi_fee must number", "Missing required parameter: max_swi_fee number")
 	}
 
 	//min_sub_amount
 	minsubamount := c.FormValue("min_sub_amount")
 	if minsubamount == "" {
-		log.Error("Missing required parameter: min_sub_amount cann't be blank")
+		// log.Error("Missing required parameter: min_sub_amount cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_sub_amount cann't be blank", "Missing required parameter: min_sub_amount cann't be blank")
 	}
 	minsubamountFloat, err := strconv.ParseFloat(minsubamount, 64)
 	if err == nil {
 		if minsubamountFloat < 0 {
-			log.Error("Wrong input for parameter: min_sub_amount cann't negatif")
+			// log.Error("Wrong input for parameter: min_sub_amount cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_sub_amount must cann't negatif", "Missing required parameter: min_sub_amount cann't negatif")
 		}
 		params["min_sub_amount"] = minsubamount
 	} else {
-		log.Error("Wrong input for parameter: min_sub_amount number")
+		// log.Error("Wrong input for parameter: min_sub_amount number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_sub_amount must number", "Missing required parameter: min_sub_amount number")
 	}
 
 	//min_red_amount
 	minredamount := c.FormValue("min_red_amount")
 	if minredamount == "" {
-		log.Error("Missing required parameter: min_red_amount cann't be blank")
+		// log.Error("Missing required parameter: min_red_amount cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_red_amount cann't be blank", "Missing required parameter: min_red_amount cann't be blank")
 	}
 	minredamountFloat, err := strconv.ParseFloat(minredamount, 64)
 	if err == nil {
 		if minredamountFloat < 0 {
-			log.Error("Wrong input for parameter: min_red_amount cann't negatif")
+			// log.Error("Wrong input for parameter: min_red_amount cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_red_amount must cann't negatif", "Missing required parameter: min_red_amount cann't negatif")
 		}
 		params["min_red_amount"] = minredamount
 	} else {
-		log.Error("Wrong input for parameter: min_red_amount number")
+		// log.Error("Wrong input for parameter: min_red_amount number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_red_amount must number", "Missing required parameter: min_red_amount number")
 	}
 
 	//min_red_unit
 	minredunit := c.FormValue("min_red_unit")
 	if minredunit == "" {
-		log.Error("Missing required parameter: min_red_unit cann't be blank")
+		// log.Error("Missing required parameter: min_red_unit cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_red_unit cann't be blank", "Missing required parameter: min_red_unit cann't be blank")
 	}
 	minredunitFloat, err := strconv.ParseFloat(minredunit, 64)
 	if err == nil {
 		if minredunitFloat < 0 {
-			log.Error("Wrong input for parameter: min_red_unit cann't negatif")
+			// log.Error("Wrong input for parameter: min_red_unit cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_red_unit must cann't negatif", "Missing required parameter: min_red_unit cann't negatif")
 		}
 		params["min_red_unit"] = minredunit
 	} else {
-		log.Error("Wrong input for parameter: min_red_unit number")
+		// log.Error("Wrong input for parameter: min_red_unit number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_red_unit must number", "Missing required parameter: min_red_unit number")
 	}
 
 	//min_unit_after_red
 	minunitafterred := c.FormValue("min_unit_after_red")
 	if minunitafterred == "" {
-		log.Error("Missing required parameter: min_unit_after_red cann't be blank")
+		// log.Error("Missing required parameter: min_unit_after_red cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_unit_after_red cann't be blank", "Missing required parameter: min_unit_after_red cann't be blank")
 	}
 	minunitafterredFloat, err := strconv.ParseFloat(minunitafterred, 64)
 	if err == nil {
 		if minunitafterredFloat < 0 {
-			log.Error("Wrong input for parameter: min_unit_after_red cann't negatif")
+			// log.Error("Wrong input for parameter: min_unit_after_red cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_unit_after_red must cann't negatif", "Missing required parameter: min_unit_after_red cann't negatif")
 		}
 		params["min_unit_after_red"] = minunitafterred
 	} else {
-		log.Error("Wrong input for parameter: min_unit_after_red number")
+		// log.Error("Wrong input for parameter: min_unit_after_red number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_unit_after_red must number", "Missing required parameter: min_unit_after_red number")
 	}
 
 	//management_fee
 	managementfee := c.FormValue("management_fee")
 	if managementfee == "" {
-		log.Error("Missing required parameter: management_fee cann't be blank")
+		// log.Error("Missing required parameter: management_fee cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: management_fee cann't be blank", "Missing required parameter: management_fee cann't be blank")
 	}
 	managementfeeFloat, err := strconv.ParseFloat(managementfee, 64)
 	if err == nil {
 		if managementfeeFloat < 0 {
-			log.Error("Wrong input for parameter: management_fee cann't negatif")
+			// log.Error("Wrong input for parameter: management_fee cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: management_fee must cann't negatif", "Missing required parameter: management_fee cann't negatif")
 		}
 		params["management_fee"] = managementfee
 	} else {
-		log.Error("Wrong input for parameter: management_fee number")
+		// log.Error("Wrong input for parameter: management_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: management_fee must number", "Missing required parameter: management_fee number")
 	}
 
 	//custodian_fee
 	custodianfee := c.FormValue("custodian_fee")
 	if custodianfee == "" {
-		log.Error("Missing required parameter: custodian_fee cann't be blank")
+		// log.Error("Missing required parameter: custodian_fee cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: custodian_fee cann't be blank", "Missing required parameter: custodian_fee cann't be blank")
 	}
 	custodianfeeFloat, err := strconv.ParseFloat(custodianfee, 64)
 	if err == nil {
 		if custodianfeeFloat < 0 {
-			log.Error("Wrong input for parameter: custodian_fee cann't negatif")
+			// log.Error("Wrong input for parameter: custodian_fee cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: custodian_fee must cann't negatif", "Missing required parameter: custodian_fee cann't negatif")
 		}
 		params["custodian_fee"] = custodianfee
 	} else {
-		log.Error("Wrong input for parameter: custodian_fee number")
+		// log.Error("Wrong input for parameter: custodian_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: custodian_fee must number", "Missing required parameter: custodian_fee number")
 	}
 
@@ -1133,7 +1132,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["custodian_key"] = custodiankey
 		} else {
-			log.Error("Wrong input for parameter: custodian_key number")
+			// log.Error("Wrong input for parameter: custodian_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: custodian_key must number", "Missing required parameter: custodian_key number")
 		}
 	}
@@ -1141,36 +1140,36 @@ func CreateAdminMsProduct(c echo.Context) error {
 	//ojk_fee
 	ojkfee := c.FormValue("ojk_fee")
 	if ojkfee == "" {
-		log.Error("Missing required parameter: ojk_fee cann't be blank")
+		// log.Error("Missing required parameter: ojk_fee cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ojk_fee cann't be blank", "Missing required parameter: ojk_fee cann't be blank")
 	}
 	ojkfeeFloat, err := strconv.ParseFloat(ojkfee, 64)
 	if err == nil {
 		if ojkfeeFloat < 0 {
-			log.Error("Wrong input for parameter: ojk_fee cann't negatif")
+			// log.Error("Wrong input for parameter: ojk_fee cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ojk_fee must cann't negatif", "Missing required parameter: ojk_fee cann't negatif")
 		}
 		params["ojk_fee"] = ojkfee
 	} else {
-		log.Error("Wrong input for parameter: ojk_fee number")
+		// log.Error("Wrong input for parameter: ojk_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ojk_fee must number", "Missing required parameter: ojk_fee number")
 	}
 
 	//product_fee_amount
 	productfeeamount := c.FormValue("product_fee_amount")
 	if productfeeamount == "" {
-		log.Error("Missing required parameter: product_fee_amount cann't be blank")
+		// log.Error("Missing required parameter: product_fee_amount cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_fee_amount cann't be blank", "Missing required parameter: product_fee_amount cann't be blank")
 	}
 	productfeeamountFloat, err := strconv.ParseFloat(productfeeamount, 64)
 	if err == nil {
 		if productfeeamountFloat < 0 {
-			log.Error("Wrong input for parameter: product_fee_amount cann't negatif")
+			// log.Error("Wrong input for parameter: product_fee_amount cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_fee_amount must cann't negatif", "Missing required parameter: product_fee_amount cann't negatif")
 		}
 		params["product_fee_amount"] = productfeeamount
 	} else {
-		log.Error("Wrong input for parameter: product_fee_amount number")
+		// log.Error("Wrong input for parameter: product_fee_amount number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_fee_amount must number", "Missing required parameter: product_fee_amount number")
 	}
 
@@ -1180,7 +1179,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 	if overwritetransactflag != "" {
 		overwritetransactflagBool, err = strconv.ParseBool(overwritetransactflag)
 		if err != nil {
-			log.Error("overwrite_transact_flag parameter should be true/false")
+			// log.Error("overwrite_transact_flag parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "overwrite_transact_flag parameter should be true/false", "overwrite_transact_flag parameter should be true/false")
 		}
 		if overwritetransactflagBool == true {
@@ -1189,7 +1188,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 			params["overwrite_transact_flag"] = "0"
 		}
 	} else {
-		log.Error("overwrite_transact_flag parameter should be true/false")
+		// log.Error("overwrite_transact_flag parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "overwrite_transact_flag parameter should be true/false", "overwrite_transact_flag parameter should be true/false")
 	}
 
@@ -1199,7 +1198,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 	if overwritefeeflag != "" {
 		overwritefeeflagBool, err = strconv.ParseBool(overwritefeeflag)
 		if err != nil {
-			log.Error("overwrite_fee_flag parameter should be true/false")
+			// log.Error("overwrite_fee_flag parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "overwrite_fee_flag parameter should be true/false", "overwrite_fee_flag parameter should be true/false")
 		}
 		if overwritefeeflagBool == true {
@@ -1208,25 +1207,25 @@ func CreateAdminMsProduct(c echo.Context) error {
 			params["overwrite_fee_flag"] = "0"
 		}
 	} else {
-		log.Error("overwrite_fee_flag parameter should be true/false")
+		// log.Error("overwrite_fee_flag parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "overwrite_fee_flag parameter should be true/false", "overwrite_fee_flag parameter should be true/false")
 	}
 
 	//other_fee_amount
 	otherfeeamount := c.FormValue("other_fee_amount")
 	if otherfeeamount == "" {
-		log.Error("Missing required parameter: other_fee_amount cann't be blank")
+		// log.Error("Missing required parameter: other_fee_amount cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: other_fee_amount cann't be blank", "Missing required parameter: other_fee_amount cann't be blank")
 	}
 	otherfeeamountFloat, err := strconv.ParseFloat(otherfeeamount, 64)
 	if err == nil {
 		if otherfeeamountFloat < 0 {
-			log.Error("Wrong input for parameter: other_fee_amount cann't negatif")
+			// log.Error("Wrong input for parameter: other_fee_amount cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: other_fee_amount must cann't negatif", "Missing required parameter: other_fee_amount cann't negatif")
 		}
 		params["other_fee_amount"] = otherfeeamount
 	} else {
-		log.Error("Wrong input for parameter: other_fee_amount number")
+		// log.Error("Wrong input for parameter: other_fee_amount number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: other_fee_amount must number", "Missing required parameter: other_fee_amount number")
 	}
 
@@ -1237,7 +1236,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 		if err == nil {
 			params["settlement_period"] = settlementperiod
 		} else {
-			log.Error("Wrong input for parameter: settlement_period number")
+			// log.Error("Wrong input for parameter: settlement_period number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: settlement_period must number", "Missing required parameter: settlement_period number")
 		}
 	}
@@ -1253,11 +1252,11 @@ func CreateAdminMsProduct(c echo.Context) error {
 
 		status, err = models.AdminGetValidateUniqueDataInsertUpdate(&countDataExisting, paramsSinvest, paramsCheckValidateAnd, nil)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countDataExisting.CountData) > 0 {
-			log.Error("Missing required parameter: sinvest_fund_code already existing, use other sinvest_fund_code")
+			// log.Error("Missing required parameter: sinvest_fund_code already existing, use other sinvest_fund_code")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: sinvest_fund_code already existing, use other sinvest_fund_code", "Missing required parameter: sinvest_fund_code already existing, use other sinvest_fund_code")
 		}
 	}
@@ -1268,7 +1267,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 	if flagenabled != "" {
 		flagenabledBool, err = strconv.ParseBool(flagenabled)
 		if err != nil {
-			log.Error("flag_enabled parameter should be true/false")
+			// log.Error("flag_enabled parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "flag_enabled parameter should be true/false", "flag_enabled parameter should be true/false")
 		}
 		if flagenabledBool == true {
@@ -1277,7 +1276,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 			params["flag_enabled"] = "0"
 		}
 	} else {
-		log.Error("flag_enabled parameter should be true/false")
+		// log.Error("flag_enabled parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_enabled parameter should be true/false", "flag_enabled parameter should be true/false")
 	}
 
@@ -1287,7 +1286,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 	if flagsubscription != "" {
 		flagsubscriptionBool, err = strconv.ParseBool(flagsubscription)
 		if err != nil {
-			log.Error("flag_subscription parameter should be true/false")
+			// log.Error("flag_subscription parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "flag_subscription parameter should be true/false", "flag_subscription parameter should be true/false")
 		}
 		if flagsubscriptionBool == true {
@@ -1296,7 +1295,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 			params["flag_subscription"] = "0"
 		}
 	} else {
-		log.Error("flag_subscription parameter should be true/false")
+		// log.Error("flag_subscription parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_subscription parameter should be true/false", "flag_subscription parameter should be true/false")
 	}
 
@@ -1306,7 +1305,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 	if flagredemption != "" {
 		flagredemptionBool, err = strconv.ParseBool(flagredemption)
 		if err != nil {
-			log.Error("flag_redemption parameter should be true/false")
+			// log.Error("flag_redemption parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "flag_redemption parameter should be true/false", "flag_redemption parameter should be true/false")
 		}
 		if flagredemptionBool == true {
@@ -1315,7 +1314,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 			params["flag_redemption"] = "0"
 		}
 	} else {
-		log.Error("flag_redemption parameter should be true/false")
+		// log.Error("flag_redemption parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_redemption parameter should be true/false", "flag_redemption parameter should be true/false")
 	}
 
@@ -1325,7 +1324,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 	if flagswitchout != "" {
 		flagswitchoutBool, err = strconv.ParseBool(flagswitchout)
 		if err != nil {
-			log.Error("flag_switch_out parameter should be true/false")
+			// log.Error("flag_switch_out parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "flag_switch_out parameter should be true/false", "flag_switch_out parameter should be true/false")
 		}
 		if flagswitchoutBool == true {
@@ -1334,7 +1333,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 			params["flag_switch_out"] = "0"
 		}
 	} else {
-		log.Error("flag_switch_out parameter should be true/false")
+		// log.Error("flag_switch_out parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_switch_out parameter should be true/false", "flag_switch_out parameter should be true/false")
 	}
 
@@ -1344,7 +1343,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 	if flagswitchin != "" {
 		flagswitchinBool, err = strconv.ParseBool(flagswitchin)
 		if err != nil {
-			log.Error("flag_switch_in parameter should be true/false")
+			// log.Error("flag_switch_in parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "flag_switch_in parameter should be true/false", "flag_switch_in parameter should be true/false")
 		}
 		if flagswitchinBool == true {
@@ -1353,7 +1352,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 			params["flag_switch_in"] = "0"
 		}
 	} else {
-		log.Error("flag_switch_in parameter should be true/false")
+		// log.Error("flag_switch_in parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_switch_in parameter should be true/false", "flag_switch_in parameter should be true/false")
 	}
 
@@ -1365,7 +1364,7 @@ func CreateAdminMsProduct(c echo.Context) error {
 
 	status, err = models.CreateMsProduct(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -1385,7 +1384,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -1395,33 +1394,33 @@ func UpdateAdminMsProduct(c echo.Context) error {
 
 	productkey := c.FormValue("product_key")
 	if productkey == "" {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 	strproductkey, err := strconv.ParseUint(productkey, 10, 64)
 	if err == nil && strproductkey > 0 {
 		params["product_key"] = productkey
 	} else {
-		log.Error("Wrong input for parameter: product_key")
+		// log.Error("Wrong input for parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
 	var product models.MsProduct
 	status, err = models.GetMsProduct(&product, productkey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
 	if product.RecStatus == 0 {
-		log.Error("Product not found, rec_status = 0")
+		// log.Error("Product not found, rec_status = 0")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
 	//product_code
 	productcode := c.FormValue("product_code")
 	if productcode == "" {
-		log.Error("Missing required parameter: product_code cann't be blank")
+		// log.Error("Missing required parameter: product_code cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_code cann't be blank", "Missing required parameter: product_code cann't be blank")
 	}
 	params["product_code"] = productcode
@@ -1433,11 +1432,11 @@ func UpdateAdminMsProduct(c echo.Context) error {
 	var countDataExisting models.CountData
 	status, err = models.AdminGetValidateUniqueDataInsertUpdate(&countDataExisting, paramsProdukCode, paramsCheckValidateAnd, &productkey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataExisting.CountData) > 0 {
-		log.Error("Missing required parameter: product_code already existing, use other product_code")
+		// log.Error("Missing required parameter: product_code already existing, use other product_code")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_code already existing, use other product_code", "Missing required parameter: product_code already existing, use other product_code")
 	}
 
@@ -1446,7 +1445,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 	//product_name
 	productname := c.FormValue("product_name")
 	if productname == "" {
-		log.Error("Missing required parameter: product_name cann't be blank")
+		// log.Error("Missing required parameter: product_name cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_name cann't be blank", "Missing required parameter: product_name cann't be blank")
 	}
 	params["product_name"] = productname
@@ -1457,18 +1456,18 @@ func UpdateAdminMsProduct(c echo.Context) error {
 
 	status, err = models.AdminGetValidateUniqueDataInsertUpdate(&countDataExisting, paramsProductName, paramsCheckValidateAnd, &productkey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataExisting.CountData) > 0 {
-		log.Error("Missing required parameter: product_name already existing, use other product_name")
+		// log.Error("Missing required parameter: product_name already existing, use other product_name")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_name already existing, use other product_name", "Missing required parameter: product_name already existing, use other product_name")
 	}
 
 	//product_name_alt
 	productnamealt := c.FormValue("product_name_alt")
 	if productnamealt == "" {
-		log.Error("Missing required parameter: product_name_alt cann't be blank")
+		// log.Error("Missing required parameter: product_name_alt cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_name_alt cann't be blank", "Missing required parameter: product_name_alt cann't be blank")
 	}
 	params["product_name_alt"] = productnamealt
@@ -1480,7 +1479,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["currency_key"] = currencykey
 		} else {
-			log.Error("Wrong input for parameter: currency_key number")
+			// log.Error("Wrong input for parameter: currency_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: currency_key must number", "Missing required parameter: currency_key number")
 		}
 	}
@@ -1492,7 +1491,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["product_category_key"] = productcategorykey
 		} else {
-			log.Error("Wrong input for parameter: product_category_key number")
+			// log.Error("Wrong input for parameter: product_category_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_category_key must number", "Missing required parameter: product_category_key number")
 		}
 	}
@@ -1504,7 +1503,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["product_type_key"] = producttypekey
 		} else {
-			log.Error("Wrong input for parameter: product_type_key number")
+			// log.Error("Wrong input for parameter: product_type_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_type_key must number", "Missing required parameter: product_type_key number")
 		}
 	}
@@ -1516,7 +1515,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["fund_type_key"] = fundtypekey
 		} else {
-			log.Error("Wrong input for parameter: fund_type_key number")
+			// log.Error("Wrong input for parameter: fund_type_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fund_type_key must number", "Missing required parameter: fund_type_key number")
 		}
 	}
@@ -1528,7 +1527,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["fund_structure_key"] = fundstructurekey
 		} else {
-			log.Error("Wrong input for parameter: fund_structure_key number")
+			// log.Error("Wrong input for parameter: fund_structure_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fund_structure_key must number", "Missing required parameter: fund_structure_key number")
 		}
 	}
@@ -1540,7 +1539,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["risk_profile_key"] = riskprofilekey
 		} else {
-			log.Error("Wrong input for parameter: risk_profile_key number")
+			// log.Error("Wrong input for parameter: risk_profile_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: risk_profile_key must number", "Missing required parameter: risk_profile_key number")
 		}
 	}
@@ -1564,7 +1563,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["product_phase"] = productphase
 		} else {
-			log.Error("Wrong input for parameter: product_phase number")
+			// log.Error("Wrong input for parameter: product_phase number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_phase must number", "Missing required parameter: product_phase number")
 		}
 	}
@@ -1576,7 +1575,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["nav_valuation_type"] = navvaluationtype
 		} else {
-			log.Error("Wrong input for parameter: nav_valuation_type number")
+			// log.Error("Wrong input for parameter: nav_valuation_type number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_valuation_type must number", "Missing required parameter: nav_valuation_type number")
 		}
 	}
@@ -1586,7 +1585,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 	if prospectuslink != "" {
 		length := len(prospectuslink)
 		if length > 255 {
-			log.Error("Wrong input for parameter: prospectus_link number")
+			// log.Error("Wrong input for parameter: prospectus_link number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prospectus_link too long, max 255 character", "Missing required parameter: prospectus_link too long, max 255 character")
 		}
 		params["prospectus_link"] = prospectuslink
@@ -1615,11 +1614,11 @@ func UpdateAdminMsProduct(c echo.Context) error {
 
 		status, err = models.AdminGetValidateUniqueDataInsertUpdate(&countDataExisting, paramsIsinCode, paramsCheckValidateAnd, &productkey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countDataExisting.CountData) > 0 {
-			log.Error("Missing required parameter: isin_code already existing, use other isin_code")
+			// log.Error("Missing required parameter: isin_code already existing, use other isin_code")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: isin_code already existing, use other isin_code", "Missing required parameter: isin_code already existing, use other isin_code")
 		}
 	}
@@ -1630,7 +1629,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 	if flagsyariah != "" {
 		flagsyariahBool, err = strconv.ParseBool(flagsyariah)
 		if err != nil {
-			log.Error("flag_syariah parameter should be true/false")
+			// log.Error("flag_syariah parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "flag_syariah parameter should be true/false", "flag_syariah parameter should be true/false")
 		}
 		if flagsyariahBool == true {
@@ -1639,169 +1638,169 @@ func UpdateAdminMsProduct(c echo.Context) error {
 			params["flag_syariah"] = "0"
 		}
 	} else {
-		log.Error("flag_syariah parameter should be true/false")
+		// log.Error("flag_syariah parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_syariah parameter should be true/false", "flag_syariah parameter should be true/false")
 	}
 
 	//max_sub_fee
 	maxsubfee := c.FormValue("max_sub_fee")
 	if maxsubfee == "" {
-		log.Error("Missing required parameter: max_sub_fee cann't be blank")
+		// log.Error("Missing required parameter: max_sub_fee cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_sub_fee cann't be blank", "Missing required parameter: max_sub_fee cann't be blank")
 	}
 	maxsubfeeFloat, err := strconv.ParseFloat(maxsubfee, 64)
 	if err == nil {
 		if maxsubfeeFloat < 0 {
-			log.Error("Wrong input for parameter: max_sub_fee cann't negatif")
+			// log.Error("Wrong input for parameter: max_sub_fee cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_sub_fee must cann't negatif", "Missing required parameter: max_sub_fee cann't negatif")
 		}
 		params["max_sub_fee"] = maxsubfee
 	} else {
-		log.Error("Wrong input for parameter: max_sub_fee number")
+		// log.Error("Wrong input for parameter: max_sub_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_sub_fee must number", "Missing required parameter: max_sub_fee number")
 	}
 
 	//max_red_fee
 	maxredfee := c.FormValue("max_red_fee")
 	if maxredfee == "" {
-		log.Error("Missing required parameter: max_red_fee cann't be blank")
+		// log.Error("Missing required parameter: max_red_fee cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_red_fee cann't be blank", "Missing required parameter: max_red_fee cann't be blank")
 	}
 	maxredfeeFloat, err := strconv.ParseFloat(maxredfee, 64)
 	if err == nil {
 		if maxredfeeFloat < 0 {
-			log.Error("Wrong input for parameter: max_red_fee cann't negatif")
+			// log.Error("Wrong input for parameter: max_red_fee cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_red_fee must cann't negatif", "Missing required parameter: max_red_fee cann't negatif")
 		}
 		params["max_red_fee"] = maxredfee
 	} else {
-		log.Error("Wrong input for parameter: max_red_fee number")
+		// log.Error("Wrong input for parameter: max_red_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_red_fee must number", "Missing required parameter: max_red_fee number")
 	}
 
 	//max_swi_fee
 	maxswifee := c.FormValue("max_swi_fee")
 	if maxswifee == "" {
-		log.Error("Missing required parameter: max_swi_fee cann't be blank")
+		// log.Error("Missing required parameter: max_swi_fee cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_swi_fee cann't be blank", "Missing required parameter: max_swi_fee cann't be blank")
 	}
 	maxswifeeFloat, err := strconv.ParseFloat(maxswifee, 64)
 	if err == nil {
 		if maxswifeeFloat < 0 {
-			log.Error("Wrong input for parameter: max_swi_fee cann't negatif")
+			// log.Error("Wrong input for parameter: max_swi_fee cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_swi_fee must cann't negatif", "Missing required parameter: max_swi_fee cann't negatif")
 		}
 		params["max_swi_fee"] = maxswifee
 	} else {
-		log.Error("Wrong input for parameter: max_swi_fee number")
+		// log.Error("Wrong input for parameter: max_swi_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: max_swi_fee must number", "Missing required parameter: max_swi_fee number")
 	}
 
 	//min_sub_amount
 	minsubamount := c.FormValue("min_sub_amount")
 	if minsubamount == "" {
-		log.Error("Missing required parameter: min_sub_amount cann't be blank")
+		// log.Error("Missing required parameter: min_sub_amount cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_sub_amount cann't be blank", "Missing required parameter: min_sub_amount cann't be blank")
 	}
 	minsubamountFloat, err := strconv.ParseFloat(minsubamount, 64)
 	if err == nil {
 		if minsubamountFloat < 0 {
-			log.Error("Wrong input for parameter: min_sub_amount cann't negatif")
+			// log.Error("Wrong input for parameter: min_sub_amount cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_sub_amount must cann't negatif", "Missing required parameter: min_sub_amount cann't negatif")
 		}
 		params["min_sub_amount"] = minsubamount
 	} else {
-		log.Error("Wrong input for parameter: min_sub_amount number")
+		// log.Error("Wrong input for parameter: min_sub_amount number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_sub_amount must number", "Missing required parameter: min_sub_amount number")
 	}
 
 	//min_red_amount
 	minredamount := c.FormValue("min_red_amount")
 	if minredamount == "" {
-		log.Error("Missing required parameter: min_red_amount cann't be blank")
+		// log.Error("Missing required parameter: min_red_amount cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_red_amount cann't be blank", "Missing required parameter: min_red_amount cann't be blank")
 	}
 	minredamountFloat, err := strconv.ParseFloat(minredamount, 64)
 	if err == nil {
 		if minredamountFloat < 0 {
-			log.Error("Wrong input for parameter: min_red_amount cann't negatif")
+			// log.Error("Wrong input for parameter: min_red_amount cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_red_amount must cann't negatif", "Missing required parameter: min_red_amount cann't negatif")
 		}
 		params["min_red_amount"] = minredamount
 	} else {
-		log.Error("Wrong input for parameter: min_red_amount number")
+		// log.Error("Wrong input for parameter: min_red_amount number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_red_amount must number", "Missing required parameter: min_red_amount number")
 	}
 
 	//min_red_unit
 	minredunit := c.FormValue("min_red_unit")
 	if minredunit == "" {
-		log.Error("Missing required parameter: min_red_unit cann't be blank")
+		// log.Error("Missing required parameter: min_red_unit cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_red_unit cann't be blank", "Missing required parameter: min_red_unit cann't be blank")
 	}
 	minredunitFloat, err := strconv.ParseFloat(minredunit, 64)
 	if err == nil {
 		if minredunitFloat < 0 {
-			log.Error("Wrong input for parameter: min_red_unit cann't negatif")
+			// log.Error("Wrong input for parameter: min_red_unit cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_red_unit must cann't negatif", "Missing required parameter: min_red_unit cann't negatif")
 		}
 		params["min_red_unit"] = minredunit
 	} else {
-		log.Error("Wrong input for parameter: min_red_unit number")
+		// log.Error("Wrong input for parameter: min_red_unit number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_red_unit must number", "Missing required parameter: min_red_unit number")
 	}
 
 	//min_unit_after_red
 	minunitafterred := c.FormValue("min_unit_after_red")
 	if minunitafterred == "" {
-		log.Error("Missing required parameter: min_unit_after_red cann't be blank")
+		// log.Error("Missing required parameter: min_unit_after_red cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_unit_after_red cann't be blank", "Missing required parameter: min_unit_after_red cann't be blank")
 	}
 	minunitafterredFloat, err := strconv.ParseFloat(minunitafterred, 64)
 	if err == nil {
 		if minunitafterredFloat < 0 {
-			log.Error("Wrong input for parameter: min_unit_after_red cann't negatif")
+			// log.Error("Wrong input for parameter: min_unit_after_red cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_unit_after_red must cann't negatif", "Missing required parameter: min_unit_after_red cann't negatif")
 		}
 		params["min_unit_after_red"] = minunitafterred
 	} else {
-		log.Error("Wrong input for parameter: min_unit_after_red number")
+		// log.Error("Wrong input for parameter: min_unit_after_red number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_unit_after_red must number", "Missing required parameter: min_unit_after_red number")
 	}
 
 	//management_fee
 	managementfee := c.FormValue("management_fee")
 	if managementfee == "" {
-		log.Error("Missing required parameter: management_fee cann't be blank")
+		// log.Error("Missing required parameter: management_fee cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: management_fee cann't be blank", "Missing required parameter: management_fee cann't be blank")
 	}
 	managementfeeFloat, err := strconv.ParseFloat(managementfee, 64)
 	if err == nil {
 		if managementfeeFloat < 0 {
-			log.Error("Wrong input for parameter: management_fee cann't negatif")
+			// log.Error("Wrong input for parameter: management_fee cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: management_fee must cann't negatif", "Missing required parameter: management_fee cann't negatif")
 		}
 		params["management_fee"] = managementfee
 	} else {
-		log.Error("Wrong input for parameter: management_fee number")
+		// log.Error("Wrong input for parameter: management_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: management_fee must number", "Missing required parameter: management_fee number")
 	}
 
 	//custodian_fee
 	custodianfee := c.FormValue("custodian_fee")
 	if custodianfee == "" {
-		log.Error("Missing required parameter: custodian_fee cann't be blank")
+		// log.Error("Missing required parameter: custodian_fee cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: custodian_fee cann't be blank", "Missing required parameter: custodian_fee cann't be blank")
 	}
 	custodianfeeFloat, err := strconv.ParseFloat(custodianfee, 64)
 	if err == nil {
 		if custodianfeeFloat < 0 {
-			log.Error("Wrong input for parameter: custodian_fee cann't negatif")
+			// log.Error("Wrong input for parameter: custodian_fee cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: custodian_fee must cann't negatif", "Missing required parameter: custodian_fee cann't negatif")
 		}
 		params["custodian_fee"] = custodianfee
 	} else {
-		log.Error("Wrong input for parameter: custodian_fee number")
+		// log.Error("Wrong input for parameter: custodian_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: custodian_fee must number", "Missing required parameter: custodian_fee number")
 	}
 
@@ -1812,7 +1811,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 		if err == nil && sub > 0 {
 			params["custodian_key"] = custodiankey
 		} else {
-			log.Error("Wrong input for parameter: custodian_key number")
+			// log.Error("Wrong input for parameter: custodian_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: custodian_key must number", "Missing required parameter: custodian_key number")
 		}
 	}
@@ -1820,36 +1819,36 @@ func UpdateAdminMsProduct(c echo.Context) error {
 	//ojk_fee
 	ojkfee := c.FormValue("ojk_fee")
 	if ojkfee == "" {
-		log.Error("Missing required parameter: ojk_fee cann't be blank")
+		// log.Error("Missing required parameter: ojk_fee cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ojk_fee cann't be blank", "Missing required parameter: ojk_fee cann't be blank")
 	}
 	ojkfeeFloat, err := strconv.ParseFloat(ojkfee, 64)
 	if err == nil {
 		if ojkfeeFloat < 0 {
-			log.Error("Wrong input for parameter: ojk_fee cann't negatif")
+			// log.Error("Wrong input for parameter: ojk_fee cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ojk_fee must cann't negatif", "Missing required parameter: ojk_fee cann't negatif")
 		}
 		params["ojk_fee"] = ojkfee
 	} else {
-		log.Error("Wrong input for parameter: ojk_fee number")
+		// log.Error("Wrong input for parameter: ojk_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ojk_fee must number", "Missing required parameter: ojk_fee number")
 	}
 
 	//product_fee_amount
 	productfeeamount := c.FormValue("product_fee_amount")
 	if productfeeamount == "" {
-		log.Error("Missing required parameter: product_fee_amount cann't be blank")
+		// log.Error("Missing required parameter: product_fee_amount cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_fee_amount cann't be blank", "Missing required parameter: product_fee_amount cann't be blank")
 	}
 	productfeeamountFloat, err := strconv.ParseFloat(productfeeamount, 64)
 	if err == nil {
 		if productfeeamountFloat < 0 {
-			log.Error("Wrong input for parameter: product_fee_amount cann't negatif")
+			// log.Error("Wrong input for parameter: product_fee_amount cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_fee_amount must cann't negatif", "Missing required parameter: product_fee_amount cann't negatif")
 		}
 		params["product_fee_amount"] = productfeeamount
 	} else {
-		log.Error("Wrong input for parameter: product_fee_amount number")
+		// log.Error("Wrong input for parameter: product_fee_amount number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_fee_amount must number", "Missing required parameter: product_fee_amount number")
 	}
 
@@ -1859,7 +1858,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 	if overwritetransactflag != "" {
 		overwritetransactflagBool, err = strconv.ParseBool(overwritetransactflag)
 		if err != nil {
-			log.Error("overwrite_transact_flag parameter should be true/false")
+			// log.Error("overwrite_transact_flag parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "overwrite_transact_flag parameter should be true/false", "overwrite_transact_flag parameter should be true/false")
 		}
 		if overwritetransactflagBool == true {
@@ -1868,7 +1867,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 			params["overwrite_transact_flag"] = "0"
 		}
 	} else {
-		log.Error("overwrite_transact_flag parameter should be true/false")
+		// log.Error("overwrite_transact_flag parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "overwrite_transact_flag parameter should be true/false", "overwrite_transact_flag parameter should be true/false")
 	}
 
@@ -1878,7 +1877,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 	if overwritefeeflag != "" {
 		overwritefeeflagBool, err = strconv.ParseBool(overwritefeeflag)
 		if err != nil {
-			log.Error("overwrite_fee_flag parameter should be true/false")
+			// log.Error("overwrite_fee_flag parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "overwrite_fee_flag parameter should be true/false", "overwrite_fee_flag parameter should be true/false")
 		}
 		if overwritefeeflagBool == true {
@@ -1887,25 +1886,25 @@ func UpdateAdminMsProduct(c echo.Context) error {
 			params["overwrite_fee_flag"] = "0"
 		}
 	} else {
-		log.Error("overwrite_fee_flag parameter should be true/false")
+		// log.Error("overwrite_fee_flag parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "overwrite_fee_flag parameter should be true/false", "overwrite_fee_flag parameter should be true/false")
 	}
 
 	//other_fee_amount
 	otherfeeamount := c.FormValue("other_fee_amount")
 	if otherfeeamount == "" {
-		log.Error("Missing required parameter: other_fee_amount cann't be blank")
+		// log.Error("Missing required parameter: other_fee_amount cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: other_fee_amount cann't be blank", "Missing required parameter: other_fee_amount cann't be blank")
 	}
 	otherfeeamountFloat, err := strconv.ParseFloat(otherfeeamount, 64)
 	if err == nil {
 		if otherfeeamountFloat < 0 {
-			log.Error("Wrong input for parameter: other_fee_amount cann't negatif")
+			// log.Error("Wrong input for parameter: other_fee_amount cann't negatif")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: other_fee_amount must cann't negatif", "Missing required parameter: other_fee_amount cann't negatif")
 		}
 		params["other_fee_amount"] = otherfeeamount
 	} else {
-		log.Error("Wrong input for parameter: other_fee_amount number")
+		// log.Error("Wrong input for parameter: other_fee_amount number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: other_fee_amount must number", "Missing required parameter: other_fee_amount number")
 	}
 
@@ -1916,7 +1915,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 		if err == nil {
 			params["settlement_period"] = settlementperiod
 		} else {
-			log.Error("Wrong input for parameter: settlement_period number")
+			// log.Error("Wrong input for parameter: settlement_period number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: settlement_period must number", "Missing required parameter: settlement_period number")
 		}
 	}
@@ -1932,11 +1931,11 @@ func UpdateAdminMsProduct(c echo.Context) error {
 
 		status, err = models.AdminGetValidateUniqueDataInsertUpdate(&countDataExisting, paramsSinvest, paramsCheckValidateAnd, &productkey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countDataExisting.CountData) > 0 {
-			log.Error("Missing required parameter: sinvest_fund_code already existing, use other sinvest_fund_code")
+			// log.Error("Missing required parameter: sinvest_fund_code already existing, use other sinvest_fund_code")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: sinvest_fund_code already existing, use other sinvest_fund_code", "Missing required parameter: sinvest_fund_code already existing, use other sinvest_fund_code")
 		}
 	}
@@ -1947,7 +1946,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 	if flagenabled != "" {
 		flagenabledBool, err = strconv.ParseBool(flagenabled)
 		if err != nil {
-			log.Error("flag_enabled parameter should be true/false")
+			// log.Error("flag_enabled parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "flag_enabled parameter should be true/false", "flag_enabled parameter should be true/false")
 		}
 		if flagenabledBool == true {
@@ -1956,7 +1955,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 			params["flag_enabled"] = "0"
 		}
 	} else {
-		log.Error("flag_enabled parameter should be true/false")
+		// log.Error("flag_enabled parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_enabled parameter should be true/false", "flag_enabled parameter should be true/false")
 	}
 
@@ -1966,7 +1965,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 	if flagsubscription != "" {
 		flagsubscriptionBool, err = strconv.ParseBool(flagsubscription)
 		if err != nil {
-			log.Error("flag_subscription parameter should be true/false")
+			// log.Error("flag_subscription parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "flag_subscription parameter should be true/false", "flag_subscription parameter should be true/false")
 		}
 		if flagsubscriptionBool == true {
@@ -1975,7 +1974,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 			params["flag_subscription"] = "0"
 		}
 	} else {
-		log.Error("flag_subscription parameter should be true/false")
+		// log.Error("flag_subscription parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_subscription parameter should be true/false", "flag_subscription parameter should be true/false")
 	}
 
@@ -1985,7 +1984,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 	if flagredemption != "" {
 		flagredemptionBool, err = strconv.ParseBool(flagredemption)
 		if err != nil {
-			log.Error("flag_redemption parameter should be true/false")
+			// log.Error("flag_redemption parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "flag_redemption parameter should be true/false", "flag_redemption parameter should be true/false")
 		}
 		if flagredemptionBool == true {
@@ -1994,7 +1993,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 			params["flag_redemption"] = "0"
 		}
 	} else {
-		log.Error("flag_redemption parameter should be true/false")
+		// log.Error("flag_redemption parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_redemption parameter should be true/false", "flag_redemption parameter should be true/false")
 	}
 
@@ -2004,7 +2003,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 	if flagswitchout != "" {
 		flagswitchoutBool, err = strconv.ParseBool(flagswitchout)
 		if err != nil {
-			log.Error("flag_switch_out parameter should be true/false")
+			// log.Error("flag_switch_out parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "flag_switch_out parameter should be true/false", "flag_switch_out parameter should be true/false")
 		}
 		if flagswitchoutBool == true {
@@ -2013,7 +2012,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 			params["flag_switch_out"] = "0"
 		}
 	} else {
-		log.Error("flag_switch_out parameter should be true/false")
+		// log.Error("flag_switch_out parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_switch_out parameter should be true/false", "flag_switch_out parameter should be true/false")
 	}
 
@@ -2023,7 +2022,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 	if flagswitchin != "" {
 		flagswitchinBool, err = strconv.ParseBool(flagswitchin)
 		if err != nil {
-			log.Error("flag_switch_in parameter should be true/false")
+			// log.Error("flag_switch_in parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "flag_switch_in parameter should be true/false", "flag_switch_in parameter should be true/false")
 		}
 		if flagswitchinBool == true {
@@ -2032,7 +2031,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 			params["flag_switch_in"] = "0"
 		}
 	} else {
-		log.Error("flag_switch_in parameter should be true/false")
+		// log.Error("flag_switch_in parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_switch_in parameter should be true/false", "flag_switch_in parameter should be true/false")
 	}
 
@@ -2044,7 +2043,7 @@ func UpdateAdminMsProduct(c echo.Context) error {
 
 	status, err = models.UpdateMsProduct(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -2073,7 +2072,7 @@ func GetListProductAdminDropdown(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -2089,7 +2088,7 @@ func GetListProductAdminDropdown(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -2105,7 +2104,7 @@ func GetListProductAdminDropdown(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -2125,7 +2124,7 @@ func GetListProductAdminDropdown(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -2142,11 +2141,11 @@ func GetListProductAdminDropdown(c echo.Context) error {
 	status, err = models.AdminGetAllMsProductWithLike(&msProduct, limit, offset, params, paramsLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(msProduct) < 1 {
-		log.Error("product not found")
+		// log.Error("product not found")
 		return lib.CustomError(http.StatusNotFound, "Product not found", "Product not found")
 	}
 
@@ -2177,11 +2176,11 @@ func AdminGetProductSubscription(c echo.Context) error {
 	if fundtype != "" {
 		sub, err := strconv.ParseUint(fundtype, 10, 64)
 		if err != nil || sub == 0 {
-			log.Error("Wrong input for parameter: fund_type_key number")
+			// log.Error("Wrong input for parameter: fund_type_key number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fund_type_key must number", "Missing required parameter: fund_type_key number")
 		}
 	} else {
-		log.Error("Wrong input for parameter: fund_type_key number")
+		// log.Error("Wrong input for parameter: fund_type_key number")
 		return lib.CustomError(http.StatusBadRequest, "fund_type_key required", "fund_type_key required")
 	}
 
@@ -2189,11 +2188,11 @@ func AdminGetProductSubscription(c echo.Context) error {
 	status, err = models.AdminGetProductSubscription(&products, fundtype)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(products) < 1 {
-		log.Error("Product not found")
+		// log.Error("Product not found")
 		return lib.CustomError(http.StatusNotFound, "Product not found", "Product not found")
 	}
 
@@ -2224,7 +2223,7 @@ func GetBankProductSubscription(c echo.Context) error {
 	status, err = models.GetAllMsProductBankAccountTransaction(&bankAccountTransactionInfo, productStr, lookupTransType)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2250,19 +2249,19 @@ func AdminGetProductRedemption(c echo.Context) error {
 		if err == nil && customerKey > 0 {
 			status, err = models.GetMsCustomer(&cus, customerKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Customer tidak ditemukan")
 			}
 			if cus.CifSuspendFlag == uint8(1) {
-				log.Error("Customer Suspended")
+				// log.Error("Customer Suspended")
 				return lib.CustomError(http.StatusBadRequest, "Customer Suspended", "Customer Suspended")
 			}
 		} else {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
@@ -2270,11 +2269,11 @@ func AdminGetProductRedemption(c echo.Context) error {
 	status, err = models.AdminGetProductRedemption(&products, customerKeyStr)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(products) < 1 {
-		log.Error("Product not found")
+		// log.Error("Product not found")
 		return lib.CustomError(http.StatusNotFound, "Product not found", "Product not found")
 	}
 
@@ -2290,7 +2289,7 @@ func AdminGetProductRedemption(c echo.Context) error {
 	if len(acaIds) > 0 {
 		status, err = models.GetSumBalanceUnit(&balances, acaIds)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2355,15 +2354,15 @@ func GetProductDetailTransactionSubscription(c echo.Context) error {
 		if err == nil && productKey > 0 {
 			_, err = models.AdminGetProductSubscriptionByProductKey(&product, productKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Product tidak ditemukan")
 			}
 		} else {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_key", "Wrong input for parameter: product_key")
 		}
 	} else {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
@@ -2408,30 +2407,30 @@ func AdminGetProductSwitchIn(c echo.Context) error {
 		if err == nil && customerKey > 0 {
 			status, err = models.GetMsCustomer(&cus, customerKeyStr)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Customer tidak ditemukan")
 			}
 			if cus.CifSuspendFlag == uint8(1) {
-				log.Error("Customer Suspended")
+				// log.Error("Customer Suspended")
 				return lib.CustomError(http.StatusBadRequest, "Customer Suspended", "Customer Suspended")
 			}
 		} else {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
 	productSwOutKey := c.Param("product_switch_out_key")
 	if productSwOutKey == "" {
-		log.Error("Missing required parameter: product_switch_out_key")
+		// log.Error("Missing required parameter: product_switch_out_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_switch_out_key", "Missing required parameter: product_switch_out_key")
 	} else {
 		prodKey, err := strconv.ParseUint(productSwOutKey, 10, 64)
 		if err != nil || prodKey == 0 {
-			log.Error("Wrong input for parameter: product_switch_out_key")
+			// log.Error("Wrong input for parameter: product_switch_out_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_switch_out_key", "Wrong input for parameter: product_switch_out_key")
 		}
 	}
@@ -2441,7 +2440,7 @@ func AdminGetProductSwitchIn(c echo.Context) error {
 
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2462,7 +2461,7 @@ func AdminGetProductSwitchIn(c echo.Context) error {
 	if len(acaIds) > 0 {
 		status, err = models.GetSumBalanceUnit(&balances, acaIds)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2510,7 +2509,7 @@ func AdminGetProductSwitchIn(c echo.Context) error {
 	status, err = models.AdminGetProductNotInBalanceSwitchIn(&productsElse, productKeyExis)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}

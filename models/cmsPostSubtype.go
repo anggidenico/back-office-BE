@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -87,10 +86,10 @@ func GetAllCmsPostSubtype(c *[]CmsPostSubtype, limit uint64, offset uint64, para
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -99,10 +98,10 @@ func GetAllCmsPostSubtype(c *[]CmsPostSubtype, limit uint64, offset uint64, para
 
 func GetCmsPostSubtype(c *CmsPostSubtype, key string) (int, error) {
 	query := `SELECT cms_post_subtype.* FROM cms_post_subtype WHERE cms_post_subtype.post_subtype_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -117,10 +116,10 @@ func GetPostSubtypeIn(c *[]CmsPostSubtype, value []string, field string) (int, e
 	query := query2 + " WHERE cms_post_subtype." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

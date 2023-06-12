@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetListRoleManagementAdmin(c echo.Context) error {
@@ -22,7 +21,7 @@ func GetListRoleManagementAdmin(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -36,7 +35,7 @@ func GetListRoleManagementAdmin(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -52,7 +51,7 @@ func GetListRoleManagementAdmin(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -68,7 +67,7 @@ func GetListRoleManagementAdmin(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -109,7 +108,7 @@ func GetListRoleManagementAdmin(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -128,7 +127,7 @@ func GetListRoleManagementAdmin(c echo.Context) error {
 	var roleManagement []models.AdminRoleManagement
 	status, err = models.AdminGetAllRoleManagement(&roleManagement, limit, offset, params, noLimit, searchData)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 	}
 
@@ -137,7 +136,7 @@ func GetListRoleManagementAdmin(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.AdminCountDataRoleManagement(&countData, params, searchData)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -167,7 +166,7 @@ func GetListUserByRole(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -181,7 +180,7 @@ func GetListUserByRole(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -197,7 +196,7 @@ func GetListUserByRole(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -213,7 +212,7 @@ func GetListUserByRole(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -233,7 +232,7 @@ func GetListUserByRole(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -251,7 +250,7 @@ func GetListUserByRole(c echo.Context) error {
 			params["role_key"] = roleKey
 			isNew = false
 		} else {
-			log.Error("Wrong input for parameter: role_key")
+			// log.Error("Wrong input for parameter: role_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_key", "Missing required parameter: role_key")
 		}
 	}
@@ -268,7 +267,7 @@ func GetListUserByRole(c echo.Context) error {
 		status, err = models.GetAllScUserLogin(&users, limit, offset, params, noLimit)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 			}
 		}
@@ -285,7 +284,7 @@ func GetListUserByRole(c echo.Context) error {
 		if limit > 0 {
 			status, err = models.GetCountScUserLogin(&countData, params)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 			if int(countData.CountData) < int(limit) {
@@ -314,7 +313,7 @@ func GetDetailRoleManagement(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -327,7 +326,7 @@ func GetDetailRoleManagement(c echo.Context) error {
 	var role models.ScRole
 	_, err = models.GetScRole(&role, keyStr)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusNotFound)
 	}
 
@@ -367,7 +366,7 @@ func GetDetailMenuRoleManagement(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -379,7 +378,7 @@ func GetDetailMenuRoleManagement(c echo.Context) error {
 		if err == nil && sub > 0 {
 			strRoleKey = roleKey
 		} else {
-			log.Error("Wrong input for parameter: role_key")
+			// log.Error("Wrong input for parameter: role_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_key", "Missing required parameter: role_key")
 		}
 	} else {
@@ -389,14 +388,14 @@ func GetDetailMenuRoleManagement(c echo.Context) error {
 	var parentMenu []models.ListMenuRoleManagement
 	_, err = models.AdminGetListMenuRole(&parentMenu, strRoleKey, true)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusNotFound)
 	}
 
 	var childMenu []models.ListMenuRoleManagement
 	_, err = models.AdminGetListMenuRole(&childMenu, strRoleKey, false)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusNotFound)
 	}
 
@@ -447,7 +446,7 @@ func GetListRoleCategory(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -461,7 +460,7 @@ func GetListRoleCategory(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -477,7 +476,7 @@ func GetListRoleCategory(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -493,7 +492,7 @@ func GetListRoleCategory(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -513,7 +512,7 @@ func GetListRoleCategory(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -527,7 +526,7 @@ func GetListRoleCategory(c echo.Context) error {
 	var roleCategory []models.ScRoleCategory
 	_, err = models.GetAllScRoleCategory(&roleCategory, limit, offset, params, noLimit)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 	}
 
@@ -555,7 +554,7 @@ func CreateAdminRoleManagement(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -564,21 +563,21 @@ func CreateAdminRoleManagement(c echo.Context) error {
 	//role_category_key
 	rolecategorykey := c.FormValue("role_category_key")
 	if rolecategorykey == "" {
-		log.Error("Missing required parameter: role_category_key cann't be blank")
+		// log.Error("Missing required parameter: role_category_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_category_key cann't be blank", "Missing required parameter: role_category_key cann't be blank")
 	}
 	strrolecategorykey, err := strconv.ParseUint(rolecategorykey, 10, 64)
 	if err == nil && strrolecategorykey > 0 {
 		params["role_category_key"] = rolecategorykey
 	} else {
-		log.Error("Wrong input for parameter: role_category_key")
+		// log.Error("Wrong input for parameter: role_category_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_category_key", "Missing required parameter: role_category_key")
 	}
 
 	//role_code
 	rolecode := c.FormValue("role_code")
 	if rolecode == "" {
-		log.Error("Wrong input for parameter: role_code")
+		// log.Error("Wrong input for parameter: role_code")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_code", "Missing required parameter: role_code")
 	}
 	params["role_code"] = rolecode
@@ -589,18 +588,18 @@ func CreateAdminRoleManagement(c echo.Context) error {
 	var countDataExisting models.CountData
 	status, err := models.AdminGetValidateUniqueMsRole(&countDataExisting, paramCode, nil)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataExisting.CountData) > 0 {
-		log.Error("Missing required parameter: role_code already existing, use other role_code")
+		// log.Error("Missing required parameter: role_code already existing, use other role_code")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_code already existing, use other role_code", "Missing required parameter: role_code already existing, use other role_code")
 	}
 
 	//role_name
 	rolename := c.FormValue("role_name")
 	if rolename == "" {
-		log.Error("Wrong input for parameter: role_name")
+		// log.Error("Wrong input for parameter: role_name")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_name", "Missing required parameter: role_name")
 	}
 	params["role_name"] = rolename
@@ -610,11 +609,11 @@ func CreateAdminRoleManagement(c echo.Context) error {
 
 	status, err = models.AdminGetValidateUniqueMsRole(&countDataExisting, paramName, nil)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataExisting.CountData) > 0 {
-		log.Error("Missing required parameter: role_name already existing, use other role_name")
+		// log.Error("Missing required parameter: role_name already existing, use other role_name")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_name already existing, use other role_name", "Missing required parameter: role_name already existing, use other role_name")
 	}
 
@@ -630,7 +629,7 @@ func CreateAdminRoleManagement(c echo.Context) error {
 
 	status, err, lastID := models.CreateScRole(params)
 	if err != nil {
-		log.Error("Failed create role data: " + err.Error())
+		// log.Error("Failed create role data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -656,7 +655,7 @@ func CreateAdminRoleManagement(c echo.Context) error {
 		status, err = models.GetScEndpointIn(&scEndpoint, transParamIds, "menu_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 			}
 		}
@@ -675,7 +674,7 @@ func CreateAdminRoleManagement(c echo.Context) error {
 			paramsEpAuth["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 			status, err := models.CreateScEndpointAuth(paramsEpAuth)
 			if err != nil {
-				log.Error("Failed create endpoint auth data: " + err.Error())
+				// log.Error("Failed create endpoint auth data: " + err.Error())
 				return lib.CustomError(status, err.Error(), "failed input data")
 			}
 		}
@@ -695,7 +694,7 @@ func DeleteRoleManagement(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -704,21 +703,21 @@ func DeleteRoleManagement(c echo.Context) error {
 	//role_key
 	rolekey := c.FormValue("key")
 	if rolekey == "" {
-		log.Error("Missing required parameter: key cann't be blank")
+		// log.Error("Missing required parameter: key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key cann't be blank", "Missing required parameter: key cann't be blank")
 	}
 	strrolekey, err := strconv.ParseUint(rolekey, 10, 64)
 	if err == nil && strrolekey > 0 {
 		params["role_key"] = rolekey
 	} else {
-		log.Error("Wrong input for parameter: key")
+		// log.Error("Wrong input for parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
 	var role models.ScRole
 	_, err = models.GetScRole(&role, rolekey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusNotFound)
 	}
 
@@ -730,7 +729,7 @@ func DeleteRoleManagement(c echo.Context) error {
 	//delete role management
 	status, err = models.UpdateScRole(params)
 	if err != nil {
-		log.Error("Failed delete role management : " + err.Error())
+		// log.Error("Failed delete role management : " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed delete role management")
 	}
 
@@ -741,7 +740,7 @@ func DeleteRoleManagement(c echo.Context) error {
 	paramsEndpointAuth["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 	status, err = models.UpdateEndpointAuthByField(paramsEndpointAuth, rolekey, "role_key")
 	if err != nil {
-		log.Error("Failed delete endpoint auth : " + err.Error())
+		// log.Error("Failed delete endpoint auth : " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed delete endpoint auth")
 	}
 
@@ -759,7 +758,7 @@ func UpdateAdminRoleManagement(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -775,28 +774,28 @@ func UpdateAdminRoleManagement(c echo.Context) error {
 	var role models.ScRole
 	_, err = models.GetScRole(&role, keyStr)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusNotFound)
 	}
 
 	//role_category_key
 	rolecategorykey := c.FormValue("role_category_key")
 	if rolecategorykey == "" {
-		log.Error("Missing required parameter: role_category_key cann't be blank")
+		// log.Error("Missing required parameter: role_category_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_category_key cann't be blank", "Missing required parameter: role_category_key cann't be blank")
 	}
 	strrolecategorykey, err := strconv.ParseUint(rolecategorykey, 10, 64)
 	if err == nil && strrolecategorykey > 0 {
 		params["role_category_key"] = rolecategorykey
 	} else {
-		log.Error("Wrong input for parameter: role_category_key")
+		// log.Error("Wrong input for parameter: role_category_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_category_key", "Missing required parameter: role_category_key")
 	}
 
 	//role_code
 	rolecode := c.FormValue("role_code")
 	if rolecode == "" {
-		log.Error("Wrong input for parameter: role_code")
+		// log.Error("Wrong input for parameter: role_code")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_code", "Missing required parameter: role_code")
 	}
 	params["role_code"] = rolecode
@@ -807,18 +806,18 @@ func UpdateAdminRoleManagement(c echo.Context) error {
 	var countDataExisting models.CountData
 	status, err := models.AdminGetValidateUniqueMsRole(&countDataExisting, paramCode, &keyStr)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataExisting.CountData) > 0 {
-		log.Error("Missing required parameter: role_code already existing, use other role_code")
+		// log.Error("Missing required parameter: role_code already existing, use other role_code")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_code already existing, use other role_code", "Missing required parameter: role_code already existing, use other role_code")
 	}
 
 	//role_name
 	rolename := c.FormValue("role_name")
 	if rolename == "" {
-		log.Error("Wrong input for parameter: role_name")
+		// log.Error("Wrong input for parameter: role_name")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_name", "Missing required parameter: role_name")
 	}
 	params["role_name"] = rolename
@@ -828,11 +827,11 @@ func UpdateAdminRoleManagement(c echo.Context) error {
 
 	status, err = models.AdminGetValidateUniqueMsRole(&countDataExisting, paramName, &keyStr)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataExisting.CountData) > 0 {
-		log.Error("Missing required parameter: role_name already existing, use other role_name")
+		// log.Error("Missing required parameter: role_name already existing, use other role_name")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_name already existing, use other role_name", "Missing required parameter: role_name already existing, use other role_name")
 	}
 
@@ -847,7 +846,7 @@ func UpdateAdminRoleManagement(c echo.Context) error {
 
 	status, err = models.UpdateScRole(params)
 	if err != nil {
-		log.Error("Failed update role data: " + err.Error())
+		// log.Error("Failed update role data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed update data")
 	}
 
@@ -874,7 +873,7 @@ func UpdateAdminRoleManagement(c echo.Context) error {
 		status, err = models.AdminGetEndpointNewInUpdateRole(&scEndpoint, keyStr, transParamIds)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 			}
 		}
@@ -892,10 +891,10 @@ func UpdateAdminRoleManagement(c echo.Context) error {
 			varss := time.Now().Format(dateLayout)
 			paramsEpAuth["rec_created_date"] = varss
 			paramsEpAuth["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-			// log.Println("========== LEWAT SINI ========= ")
+			// // log.Println("========== LEWAT SINI ========= ")
 			status, err := models.CreateScEndpointAuth(paramsEpAuth)
 			if err != nil {
-				log.Error("Failed create endpoint auth data: " + err.Error())
+				// log.Error("Failed create endpoint auth data: " + err.Error())
 				return lib.CustomError(status, err.Error(), "failed input data")
 			}
 		}
@@ -905,7 +904,7 @@ func UpdateAdminRoleManagement(c echo.Context) error {
 		status, err = models.AdminGetEndpointAuthUncheckUpdate(&scEndpointAuth, keyStr, transParamIds)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 			}
 		}
@@ -922,7 +921,7 @@ func UpdateAdminRoleManagement(c echo.Context) error {
 
 			status, err = models.UpdateEndpointAuthByField(paramsEpAuthUpdate, strEpAuthKey, "ep_auth_key")
 			if err != nil {
-				log.Error("Failed delete endpoint auth : " + err.Error())
+				// log.Error("Failed delete endpoint auth : " + err.Error())
 			}
 		}
 	} else {
@@ -933,7 +932,7 @@ func UpdateAdminRoleManagement(c echo.Context) error {
 		paramsEndpointAuth["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 		status, err = models.UpdateEndpointAuthByField(paramsEndpointAuth, keyStr, "role_key")
 		if err != nil {
-			log.Error("Failed delete endpoint auth : " + err.Error())
+			// log.Error("Failed delete endpoint auth : " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed delete endpoint auth")
 		}
 	}

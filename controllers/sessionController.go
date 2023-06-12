@@ -29,30 +29,29 @@ import (
 	ua "github.com/mileusna/useragent"
 	uuid "github.com/satori/go.uuid"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
 func Register(c echo.Context) error {
 
-	log.Println(c.Request().Form)
-	log.Println(c.Request().Form.Encode())
+	// log.Println(c.Request().Form)
+	// log.Println(c.Request().Form.Encode())
 	var err error
 	var status int
 	// Check parameters
 	email := c.FormValue("email")
 	if email == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 	password := c.FormValue("password")
 	if password == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 	phone := c.FormValue("phone")
 	if phone == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
@@ -61,16 +60,16 @@ func Register(c echo.Context) error {
 	// Validate email
 	err = checkmail.ValidateFormat(email)
 	if err != nil {
-		log.Error("Email format is not valid")
+		// log.Error("Email format is not valid")
 		return lib.CustomError(http.StatusBadRequest, "Email format is not valid", "Email format is not valid")
 	}
 	// err = checkmail.ValidateHost(email)
 	// if err != nil {
-	// 	log.Error("Email host is not valid")
+	// 	// log.Error("Email host is not valid")
 	// 	return ctx.TextResponse("Email is not valid", fasthttp.StatusBadRequest)
 	// }
 	// if smtpErr, ok := err.(checkmail.SmtpError); ok && err != nil {
-	// 	log.Error("Code: %s, Msg: %s", smtpErr.Code(), smtpErr)
+	// 	// log.Error("Code: %s, Msg: %s", smtpErr.Code(), smtpErr)
 	// 	return ctx.TextResponse("Email is not valid", fasthttp.StatusBadRequest)
 	// }
 	var user []models.ScUserLogin
@@ -79,11 +78,11 @@ func Register(c echo.Context) error {
 	params["rec_status"] = "1"
 	status, err = models.GetAllScUserLogin(&user, 0, 0, params, true)
 	if err != nil {
-		log.Error("Error get email " + email)
+		// log.Error("Error get email " + email)
 		return lib.CustomError(status, err.Error(), "Error get email")
 	}
 	if len(user) > 0 {
-		log.Error("Email " + email + " already registered")
+		// log.Error("Email " + email + " already registered")
 		return lib.CustomError(http.StatusBadRequest, "Email "+email+" already registered", "Data yang kamu masukkan sudah terdaftar.\nSilakan masukkan data lainnya atau hubungi Customer Service - 021 29709696.")
 	}
 	params = make(map[string]string)
@@ -91,18 +90,18 @@ func Register(c echo.Context) error {
 	params["rec_status"] = "1"
 	status, err = models.GetAllScUserLogin(&user, 0, 0, params, true)
 	if err != nil {
-		log.Error("Error get phone number " + phone)
+		// log.Error("Error get phone number " + phone)
 		return lib.CustomError(status, err.Error(), "Error get phone number")
 	}
 	if len(user) > 0 {
-		log.Error("Phone number " + phone + " already registered")
+		// log.Error("Phone number " + phone + " already registered")
 		return lib.CustomError(http.StatusBadRequest, "Phone number "+phone+" already registered", "Data yang kamu masukkan sudah terdaftar.\nSilakan masukkan data lainnya atau hubungi Customer Service - 021 29709696.")
 	}
 
 	// Validate password
 	length, number, upper, special := verifyPassword(password)
 	if length == false || number == false || upper == false || special == false {
-		log.Error("Password does meet the criteria")
+		// log.Error("Password does meet the criteria")
 		return lib.CustomError(http.StatusBadRequest, "Password does meet the criteria", "Your password need at least 8 character length, has lower and upper case letter, has numeric letter, and has special character")
 	}
 
@@ -149,7 +148,7 @@ func Register(c echo.Context) error {
 
 	status, err = models.CreateScUserLogin(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed create user")
 	}
 
@@ -158,7 +157,7 @@ func Register(c echo.Context) error {
 
 	t, err = t.ParseFiles(config.BasePath + "/mail/index-email-activation.html")
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	var tpl bytes.Buffer
@@ -166,7 +165,7 @@ func Register(c echo.Context) error {
 		Url     string
 		FileUrl string
 	}{Url: config.BaseUrl + "/verifyemail?token=" + verifyKey, FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	result := tpl.String()
@@ -179,10 +178,10 @@ func Register(c echo.Context) error {
 
 	err = lib.SendEmail(mailer)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Error send email")
 	} else {
-		log.Info("Email sent")
+		// log.Info("Email sent")
 	}
 	// dialer := gomail.NewDialer(
 	// 	config.EmailSMTPHost,
@@ -194,10 +193,10 @@ func Register(c echo.Context) error {
 
 	// err = dialer.DialAndSend(mailer)
 	// if err != nil {
-	// 	log.Error(err)
+	// 	// log.Error(err)
 	// 	return lib.CustomError(http.StatusInternalServerError, err.Error(), "Error send email")
 	// }
-	// log.Info("Email sent")
+	// // log.Info("Email sent")
 	var data models.ScUserLoginRegister
 	data.UloginEmail = email
 	data.UloginMobileno = phone
@@ -222,30 +221,30 @@ func VerifyEmail(c echo.Context) error {
 	var userLogin []models.ScUserLogin
 	_, err = models.GetAllScUserLogin(&userLogin, 0, 0, params, true)
 	if err != nil {
-		log.Error("Error get email")
+		// log.Error("Error get email")
 		return lib.CustomError(http.StatusBadRequest, "Error get email", "Gagal mendapatkan data email")
 	}
 	if len(userLogin) < 1 {
-		log.Error("No matching token " + token)
+		// log.Error("No matching token " + token)
 		return lib.CustomError(http.StatusBadRequest, "Token not found", "Token tidak ditemukan")
 	}
 
 	accountData := userLogin[0]
-	log.Info("Found account with email " + accountData.UloginEmail)
+	// log.Info("Found account with email " + accountData.UloginEmail)
 
 	// Check if token is expired
 	dateLayout := "2006-01-02 15:04:05"
 	expired, err := time.Parse(dateLayout, *accountData.TokenExpired)
 	if err != nil {
-		log.Error("Error parsing data")
+		// log.Error("Error parsing data")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Error parsing data")
 	}
 	now := time.Now()
 	if now.After(expired) {
-		log.Error("Token is expired")
+		// log.Error("Token is expired")
 		return lib.CustomError(http.StatusInternalServerError, "Token is expired", "Token anda sudah kadaluarsa. Silakan kirim ulang email verifikasi.")
 	}
-	log.Info("Success verify email")
+	// log.Info("Success verify email")
 	// Set expired for otp
 	date := time.Now().Add(1 * time.Minute)
 	expiredOTP := date.Format(dateLayout)
@@ -253,14 +252,14 @@ func VerifyEmail(c echo.Context) error {
 	// Send otp
 	otp, err := sendOTP("0", *accountData.UloginMobileno)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		//return lib.CustomError(http.StatusInternalServerError, "Failed send otp", "Failed send otp")
 	}
 	if otp == "" {
-		log.Error("Failed send otp")
+		// log.Error("Failed send otp")
 		//return lib.CustomError(http.StatusInternalServerError, "Failed send otp", "Failed send otp")
 	} else {
-		log.Info("Success send otp")
+		// log.Info("Success send otp")
 	}
 
 	params["user_login_key"] = strconv.FormatUint(accountData.UserLoginKey, 10)
@@ -272,7 +271,7 @@ func VerifyEmail(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Error update user data")
+		// log.Error("Error update user data")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -297,26 +296,26 @@ func VerifyOtp(c echo.Context) error {
 	var userLogin []models.ScUserLogin
 	_, err = models.GetAllScUserLogin(&userLogin, 0, 0, params, true)
 	if err != nil {
-		log.Error("No matching otp " + otp)
+		// log.Error("No matching otp " + otp)
 		return lib.CustomError(http.StatusBadRequest, "OTP not found", "OTP not found")
 	}
 
 	accountData := userLogin[0]
-	log.Info("Found account with email " + accountData.UloginEmail)
+	// log.Info("Found account with email " + accountData.UloginEmail)
 
 	// Check if token is expired
 	dateLayout := "2006-01-02 15:04:05"
 	expired, err := time.Parse(dateLayout, *accountData.OtpNumberExpired)
 	if err != nil {
-		log.Error("Error parsing data")
+		// log.Error("Error parsing data")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Error parsing data")
 	}
 	now := time.Now()
 	if now.After(expired) {
-		log.Error("OTP is expired")
+		// log.Error("OTP is expired")
 		return lib.CustomError(http.StatusInternalServerError, "OTP is expired", "OTP is expired")
 	}
-	log.Info("Success verify OTP")
+	// log.Info("Success verify OTP")
 
 	params["user_login_key"] = strconv.FormatUint(accountData.UserLoginKey, 10)
 	params["otp_number"] = ""
@@ -326,7 +325,7 @@ func VerifyOtp(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Error update user data")
+		// log.Error("Error update user data")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -342,13 +341,13 @@ func VerifyOtp(c echo.Context) error {
 	var request []models.OaRequest
 	status, err = models.GetAllOaRequest(&request, config.LimitQuery, 0, true, paramsRequest)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	} else if len(request) > 0 {
 		if request[0].Oastatus != nil && *request[0].Oastatus > 0 {
 			var lookup models.GenLookup
 			status, err = models.GetGenLookup(&lookup, strconv.FormatUint(*request[0].Oastatus, 10))
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 			} else {
 				if lookup.LkpName != nil && *lookup.LkpName != "" {
 					atClaims["oa_status"] = *lookup.LkpName
@@ -363,7 +362,7 @@ func VerifyOtp(c echo.Context) error {
 		var role []models.ScRole
 		_, err = models.GetAllScRole(&role, config.LimitQuery, 0, paramsRole, true)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		} else if len(role) > 0 {
 			if role[0].RoleCategoryKey != nil && *role[0].RoleCategoryKey > 0 {
 				atClaims["role_category_key"] = *role[0].RoleCategoryKey
@@ -376,7 +375,7 @@ func VerifyOtp(c echo.Context) error {
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(config.Secret))
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusUnauthorized, err.Error(), "Login failed")
 	}
 
@@ -389,7 +388,7 @@ func VerifyOtp(c echo.Context) error {
 	paramsSession["login_date"] = time.Now().Format(dateLayout)
 	paramsSession["rec_status"] = "1"
 	if err == nil && len(loginSession) > 0 {
-		log.Info("Active session for previous login, overwrite whit new session")
+		// log.Info("Active session for previous login, overwrite whit new session")
 		if len(loginSession) > 1 {
 
 		}
@@ -397,21 +396,21 @@ func VerifyOtp(c echo.Context) error {
 
 		status, err = models.UpdateScLoginSession(paramsSession)
 		if err != nil {
-			log.Error("Error update session")
+			// log.Error("Error update session")
 			return lib.CustomError(status, "Error update session", "Login failed")
 		}
 	} else {
 		status, err = models.CreateScLoginSession(paramsSession)
 		if err != nil {
-			log.Error("Error create session")
+			// log.Error("Error create session")
 			return lib.CustomError(status, "Error create session", "Login failed")
 		}
 	}
-	log.Info("Success login")
+	// log.Info("Success login")
 
 	var data models.ScLoginSessionInfo
 	data.SessionID = token
-	log.Info(data)
+	// log.Info(data)
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -428,12 +427,12 @@ func Login(c echo.Context) error {
 	// Check parameters
 	email := c.FormValue("email")
 	if email == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 	password := c.FormValue("password")
 	if password == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 
@@ -446,30 +445,30 @@ func Login(c echo.Context) error {
 	var userLogin []models.ScUserLogin
 	status, err = models.GetAllScUserLoginByNameOrEmail(&userLogin, 0, 0, params, true)
 	if err != nil {
-		log.Error("Error get Username")
+		// log.Error("Error get Username")
 		return lib.CustomError(status, "Email/Username atau Kata Sandi kamu salah", "Email/Username atau Kata Sandi kamu salah")
 	}
 	if len(userLogin) < 1 {
-		log.Error("Email/Username not registered")
+		// log.Error("Email/Username not registered")
 		return lib.CustomError(http.StatusUnauthorized, "Email/Username atau Kata Sandi kamu salah", "Email/Username atau Kata Sandi kamu salah")
 	}
 
 	accountData := userLogin[0]
-	log.Info(accountData)
+	// log.Info(accountData)
 
 	if *accountData.VerifiedEmail != 1 || accountData.VerifiedMobileno != 1 {
-		log.Error("Email or Mobile number not verified")
+		// log.Error("Email or Mobile number not verified")
 		return lib.CustomError(http.StatusUnauthorized, "Email atau Nomor Telepon belum terverifikasi", "Email atau Nomor Telepon belum terverifikasi")
 	}
 
 	if accountData.UloginLocked == uint8(1) {
-		log.Error("User is locked")
+		// log.Error("User is locked")
 		countWrongPass := strconv.FormatUint(accountData.UloginFailedCount, 10)
 		return lib.CustomError(http.StatusUnauthorized, "Akun kamu terkunci karena salah memasukkan password "+countWrongPass+" kali berturut-turut. Silakan menunggu 1 jam lagi untuk login atau hubungi Customer Service untuk informasi lebih lanjut.", "Akun kamu terkunci karena salah memasukkan password "+countWrongPass+" kali berturut-turut. Silakan menunggu 1 jam lagi untuk login atau hubungi Customer Service untuk informasi lebih lanjut.")
 	}
 
 	if accountData.UloginEnabled == uint8(0) {
-		log.Error("User is Disable")
+		// log.Error("User is Disable")
 		return lib.CustomError(http.StatusUnauthorized, "Akun anda tidak aktif, Mohon hubungi admin MNCDuit untuk mengaktifkan akun anda kembali.", "Akun anda tidak aktif, Mohon hubungi admin MNCDuit untuk mengaktifkan akun anda kembali.")
 	}
 
@@ -490,7 +489,7 @@ func Login(c echo.Context) error {
 		var scApp models.ScAppConfig
 		status, err = models.GetScAppConfigByCode(&scApp, "LOGIN_ATTEMPT")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 
 		countWrong, _ := strconv.ParseUint(*scApp.AppConfigValue, 10, 64)
@@ -502,15 +501,15 @@ func Login(c echo.Context) error {
 
 		_, err = models.UpdateScUserLogin(paramsUpdate)
 		if err != nil {
-			log.Error(err.Error())
-			log.Error("erroe update ulogin_failed_count wrong password")
+			// log.Error(err.Error())
+			// log.Error("erroe update ulogin_failed_count wrong password")
 		}
 
 		if countFalse >= countWrong {
-			log.Error("Wrong password, user is locked")
+			// log.Error("Wrong password, user is locked")
 			return lib.CustomError(http.StatusUnauthorized, "Akun kamu terkunci karena salah memasukkan password "+*scApp.AppConfigValue+" kali berturut-turut. Silakan menunggu 1 jam lagi untuk login atau hubungi Customer Service untuk informasi lebih lanjut.", "Akun kamu terkunci karena salah memasukkan password "+*scApp.AppConfigValue+" kali berturut-turut. Silakan menunggu 1 jam lagi untuk login atau hubungi Customer Service untuk informasi lebih lanjut.")
 		} else {
-			log.Error("Wrong password")
+			// log.Error("Wrong password")
 			return lib.CustomError(http.StatusUnauthorized, "Email/Username atau Kata Sandi kamu salah", "Email/Username atau Kata Sandi kamu salah")
 		}
 	}
@@ -528,7 +527,7 @@ func Login(c echo.Context) error {
 	status, err = models.GetAllOaRequest(&request, config.LimitQuery, 0, true, paramsRequest)
 	if err != nil {
 		atClaims["oa_status"] = ""
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	} else if len(request) > 0 {
 		if request[0].Oastatus != nil && *request[0].Oastatus > 0 {
 			if *request[0].Oastatus == 260 || *request[0].Oastatus == 261 || *request[0].Oastatus == 262 { //sudah approve
@@ -536,7 +535,7 @@ func Login(c echo.Context) error {
 				var lookup models.GenLookup
 				status, err = models.GetGenLookup(&lookup, strconv.FormatUint(*request[0].Oastatus, 10))
 				if err != nil {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 				} else {
 					if lookup.LkpName != nil && *lookup.LkpName != "" {
 						atClaims["oa_status"] = *lookup.LkpName
@@ -549,7 +548,7 @@ func Login(c echo.Context) error {
 					var lookup models.GenLookup
 					status, err = models.GetGenLookup(&lookup, strconv.FormatUint(*request[0].Oastatus, 10))
 					if err != nil {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 					} else {
 						if lookup.LkpName != nil && *lookup.LkpName != "" {
 							atClaims["oa_status"] = *lookup.LkpName
@@ -568,7 +567,7 @@ func Login(c echo.Context) error {
 		var role []models.ScRole
 		_, err = models.GetAllScRole(&role, config.LimitQuery, 0, paramsRole, true)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		} else if len(role) > 0 {
 			if role[0].RoleCategoryKey != nil && *role[0].RoleCategoryKey > 0 {
 				atClaims["role_category_key"] = *role[0].RoleCategoryKey
@@ -582,7 +581,7 @@ func Login(c echo.Context) error {
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(config.Secret))
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusUnauthorized, err.Error(), "Login failed")
 	}
 
@@ -599,7 +598,7 @@ func Login(c echo.Context) error {
 	paramsSession["rec_status"] = "1"
 	paramsSession["rec_attribute_id3"] = c.Request().UserAgent()
 	if err == nil && len(loginSession) > 0 {
-		log.Info("Active session for previous login, overwrite with new session")
+		// log.Info("Active session for previous login, overwrite with new session")
 		if len(loginSession) > 1 {
 
 		}
@@ -607,13 +606,13 @@ func Login(c echo.Context) error {
 
 		status, err = models.UpdateScLoginSession(paramsSession)
 		if err != nil {
-			log.Error("Error update session")
+			// log.Error("Error update session")
 			return lib.CustomError(status, "Error update session", "Login failed")
 		}
 	} else {
 		status, err = models.CreateScLoginSession(paramsSession)
 		if err != nil {
-			log.Error("Error create session")
+			// log.Error("Error create session")
 			return lib.CustomError(status, "Error create session", "Login failed")
 		}
 	}
@@ -635,20 +634,20 @@ func Login(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(paramsUpdate)
 	if err != nil {
-		log.Error(err.Error())
-		log.Error("erroe update ulogin_failed_count = 0 if success login")
+		// log.Error(err.Error())
+		// log.Error("erroe update ulogin_failed_count = 0 if success login")
 	}
 
-	log.Info("Success login")
+	// log.Info("Success login")
 
 	var data models.ScLoginSessionInfo
 	data.SessionID = token
 	if accountData.UloginMustChangepwd == uint8(1) {
-		data.MustChangePassword = true
+		// data.MustChangePassword = true
 	} else {
-		data.MustChangePassword = false
+		// data.MustChangePassword = false
 	}
-	log.Info(data)
+	// log.Info(data)
 
 	//LOG LOGIN
 	saveLogLogin(c, paramsSession)
@@ -658,7 +657,7 @@ func Login(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Data = data
-	log.Info(response)
+	// log.Info(response)
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -668,7 +667,7 @@ func ResendVerification(c echo.Context) error {
 	// Check parameters
 	email := c.FormValue("email")
 	if email == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
@@ -677,16 +676,16 @@ func ResendVerification(c echo.Context) error {
 	var userLogin []models.ScUserLogin
 	status, err = models.GetAllScUserLogin(&userLogin, 0, 0, params, true)
 	if err != nil {
-		log.Error("Error get email")
+		// log.Error("Error get email")
 		return lib.CustomError(status, err.Error(), "Failed get email")
 	}
 	if len(userLogin) < 1 {
-		log.Error("No matching email " + email)
+		// log.Error("No matching email " + email)
 		return lib.CustomError(http.StatusBadRequest, "Email not registered", "Email not registered")
 	}
 
 	accountData := userLogin[0]
-	log.Info("Found account with email " + accountData.UloginEmail)
+	// log.Info("Found account with email " + accountData.UloginEmail)
 
 	dateLayout := "2006-01-02 15:04:05"
 	if accountData.VerifiedEmail != nil && *accountData.VerifiedEmail == 1 {
@@ -696,11 +695,11 @@ func ResendVerification(c echo.Context) error {
 		// Send otp
 		otp, err := sendOTP("0", *accountData.UloginMobileno)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(http.StatusInternalServerError, "Failed send otp", "Failed send otp")
 		}
 		if otp == "" {
-			log.Error("Failed send otp")
+			// log.Error("Failed send otp")
 			return lib.CustomError(http.StatusInternalServerError, "Failed send otp", "Failed send otp")
 		}
 
@@ -713,11 +712,11 @@ func ResendVerification(c echo.Context) error {
 
 		_, err = models.UpdateScUserLogin(params)
 		if err != nil {
-			log.Error("Error update user data")
+			// log.Error("Error update user data")
 			return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 		}
 
-		log.Info("Success send otp")
+		// log.Info("Success send otp")
 	} else {
 		// Set expired for token
 		date := time.Now().AddDate(0, 0, 1)
@@ -734,7 +733,7 @@ func ResendVerification(c echo.Context) error {
 
 		status, err = models.UpdateScUserLogin(params)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed update token")
 		}
 
@@ -744,7 +743,7 @@ func ResendVerification(c echo.Context) error {
 		var err error
 		t, err = t.ParseFiles(config.BasePath + "/mail/index-email-activation.html")
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		var tpl bytes.Buffer
@@ -752,7 +751,7 @@ func ResendVerification(c echo.Context) error {
 			Url     string
 			FileUrl string
 		}{Url: config.BaseUrl + "/verifyemail?token=" + verifyKey, FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		result := tpl.String()
@@ -765,10 +764,10 @@ func ResendVerification(c echo.Context) error {
 
 		err = lib.SendEmail(mailer)
 		if err != nil {
-			log.Error(err)
+			// log.Error(err)
 			return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 		} else {
-			log.Info("Email sent")
+			// log.Info("Email sent")
 		}
 
 		// dialer := gomail.NewDialer(
@@ -781,10 +780,10 @@ func ResendVerification(c echo.Context) error {
 
 		// err = dialer.DialAndSend(mailer)
 		// if err != nil {
-		// 	log.Error(err)
+		// 	// log.Error(err)
 		// 	return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 		// }
-		// log.Info("Email sent")
+		// // log.Info("Email sent")
 	}
 
 	var response lib.Response
@@ -801,7 +800,7 @@ func ForgotPassword(c echo.Context) error {
 	// Check parameters
 	email := c.FormValue("email")
 	if email == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 	params := make(map[string]string)
@@ -810,16 +809,16 @@ func ForgotPassword(c echo.Context) error {
 	var userLogin []models.ScUserLogin
 	status, err = models.GetAllScUserLogin(&userLogin, 0, 0, params, true)
 	if err != nil {
-		log.Error("Error get email")
+		// log.Error("Error get email")
 		return lib.CustomError(status, err.Error(), "Failed get email")
 	}
 	if len(userLogin) < 1 {
-		log.Error("No matching email " + email)
+		// log.Error("No matching email " + email)
 		return lib.CustomError(http.StatusBadRequest, "Pastikan email yang anda gunakan terdaftar, cek kembali email yang anda masukkan", "Pastikan email yang anda gunakan terdaftar, cek kembali email yang anda masukkan")
 	}
 
 	accountData := userLogin[0]
-	log.Info("Found account with email " + accountData.UloginEmail)
+	// log.Info("Found account with email " + accountData.UloginEmail)
 
 	rand.Seed(time.Now().UnixNano())
 	digits := "0123456789"
@@ -852,7 +851,7 @@ func ForgotPassword(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Error update user data")
+		// log.Error("Error update user data")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -871,7 +870,7 @@ func ForgotPassword(c echo.Context) error {
 
 	t, err = t.ParseFiles(config.BasePath + "/mail/index-forget-password.html")
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	var tpl bytes.Buffer
@@ -880,7 +879,7 @@ func ForgotPassword(c echo.Context) error {
 		FileUrl  string
 		Name     string
 	}{Password: str, FileUrl: config.ImageUrl + "/images/mail", Name: name}); err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	result := tpl.String()
@@ -893,10 +892,10 @@ func ForgotPassword(c echo.Context) error {
 
 	err = lib.SendEmail(mailer)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 	} else {
-		log.Info("Email sent")
+		// log.Info("Email sent")
 	}
 
 	// dialer := gomail.NewDialer(
@@ -909,10 +908,10 @@ func ForgotPassword(c echo.Context) error {
 
 	// err = dialer.DialAndSend(mailer)
 	// if err != nil {
-	// 	log.Error(err)
+	// 	// log.Error(err)
 	// 	return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 	// }
-	// log.Info("Email sent")
+	// // log.Info("Email sent")
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -933,7 +932,7 @@ func GetUserLogin(c echo.Context) error {
 	params["orderType"] = "DESC"
 	_, err = models.GetAllOaRequest(&oaRequestDB, 0, 0, true, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 
 	var oaRequestActive models.OaRequest
@@ -958,18 +957,18 @@ func GetUserLogin(c echo.Context) error {
 	if requestKey != "" {
 		_, err = models.GetOaPersonalData(&personalDataDB, requestKey, "oa_request_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 		_, err = models.GetOaRiskProfile(&riskProfileDB, requestKey, "oa_request_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 
 		var riskDB models.MsRiskProfile
 		if riskProfileDB.RiskProfileKey > 0 {
 			_, err = models.GetMsRiskProfile(&riskDB, strconv.FormatUint(riskProfileDB.RiskProfileKey, 10))
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 			}
 		}
 
@@ -977,7 +976,7 @@ func GetUserLogin(c echo.Context) error {
 		if lib.Profile.CustomerKey != nil && *lib.Profile.CustomerKey > 0 {
 			_, err = models.GetMsCustomer(&customerDB, strconv.FormatUint(*lib.Profile.CustomerKey, 10))
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 			}
 		}
 
@@ -1042,7 +1041,7 @@ func GetUserLogin(c echo.Context) error {
 			if personalDataDB.BankAccountKey != nil && *personalDataDB.BankAccountKey > 0 {
 				_, err = models.GetBankAccount(&bankAccountDB, strconv.FormatUint(*personalDataDB.BankAccountKey, 10))
 				if err != nil {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 				}
 			}
 
@@ -1050,7 +1049,7 @@ func GetUserLogin(c echo.Context) error {
 			if bankAccountDB.BankKey > 0 {
 				_, err = models.GetMsBank(&bankDB, strconv.FormatUint(bankAccountDB.BankKey, 10))
 				if err != nil {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 				}
 			}
 			responseData.BankAcc.BankName = bankDB.BankName
@@ -1093,7 +1092,7 @@ func UploadProfilePic(c echo.Context) error {
 	filePath := config.ImageUrl + "/images/user/" + strconv.FormatUint(lib.Profile.UserID, 10) + "/profile"
 	err = os.MkdirAll(filePath, 0755)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	} else {
 
 		var file *multipart.FileHeader
@@ -1108,7 +1107,7 @@ func UploadProfilePic(c echo.Context) error {
 			var filename string
 			for {
 				filename = lib.RandStringBytesMaskImprSrc(20)
-				log.Println("Generate filename:", filename)
+				// log.Println("Generate filename:", filename)
 				var trans []models.TrTransaction
 				getParams := make(map[string]string)
 				getParams["rec_image1"] = filename + extension
@@ -1121,14 +1120,14 @@ func UploadProfilePic(c echo.Context) error {
 						}
 					}
 				}
-				// log.Infoln("========== get parameter filename dan extension ==========")
-				log.Infoln(getParams)
+				// // log.Infoln("========== get parameter filename dan extension ==========")
+				// log.Infoln(getParams)
 			}
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, filePath+"/"+filename+extension)
-			log.Println("UPLOAD PATH: ", filePath+"/"+filename+extension)
+			// log.Println("UPLOAD PATH: ", filePath+"/"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			params["rec_image1"] = filename + extension
@@ -1137,7 +1136,7 @@ func UploadProfilePic(c echo.Context) error {
 	params["user_login_key"] = strconv.FormatUint(lib.Profile.UserID, 10)
 	status, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed update data")
 	}
 
@@ -1156,17 +1155,17 @@ func ChangePassword(c echo.Context) error {
 	// Check parameters
 	recentPassword := c.FormValue("recent_password")
 	if recentPassword == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 	newPassword1 := c.FormValue("new_password1")
 	if newPassword1 == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 	newPassword2 := c.FormValue("new_password2")
 	if newPassword2 == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 
@@ -1176,33 +1175,33 @@ func ChangePassword(c echo.Context) error {
 	var userLogin []models.ScUserLogin
 	status, err = models.GetAllScUserLogin(&userLogin, 0, 0, params, true)
 	if err != nil {
-		log.Error("Error get email")
+		// log.Error("Error get email")
 		return lib.CustomError(status, "Error get email", "Error get email")
 	}
 	if len(userLogin) < 1 {
-		log.Error("Email not registered")
+		// log.Error("Email not registered")
 		return lib.CustomError(http.StatusUnauthorized, "Email not registered", "Email not registered")
 	}
 
 	accountData := userLogin[0]
-	log.Info(accountData)
+	// log.Info(accountData)
 
 	// Check valid password
 	encryptedPasswordByte := sha256.Sum256([]byte(recentPassword))
 	encryptedPassword := hex.EncodeToString(encryptedPasswordByte[:])
 	if encryptedPassword != accountData.UloginPassword {
-		log.Error("Wrong password")
+		// log.Error("Wrong password")
 		return lib.CustomError(http.StatusUnauthorized, "Wrong password", "Wrong password")
 	}
 
 	if newPassword1 != newPassword2 {
-		log.Error("Password doesnt match")
+		// log.Error("Password doesnt match")
 		return lib.CustomError(http.StatusBadRequest, "Password doesnt match", "Password doesnt match")
 	}
 	// Validate password
 	length, number, upper, special := verifyPassword(newPassword1)
 	if length == false || number == false || upper == false || special == false {
-		log.Error("Password does meet the criteria")
+		// log.Error("Password does meet the criteria")
 		return lib.CustomError(http.StatusBadRequest, "Password does meet the criteria", "Your password need at least 8 character length, has lower and upper case letter, has numeric letter, and has special character")
 	}
 
@@ -1221,7 +1220,7 @@ func ChangePassword(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Error update user data")
+		// log.Error("Error update user data")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -1249,8 +1248,8 @@ func ChangePassword(c echo.Context) error {
 
 	status, err = models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error(err.Error())
-		log.Error("Error create user message")
+		// log.Error(err.Error())
+		// log.Error("Error create user message")
 	}
 	lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
 
@@ -1259,7 +1258,7 @@ func ChangePassword(c echo.Context) error {
 
 	t, err = t.ParseFiles(config.BasePath + "/mail/index-sukses-ubah-password.html")
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	var customer models.MsCustomer
@@ -1281,7 +1280,7 @@ func ChangePassword(c echo.Context) error {
 		}{
 			Name:    fullnameuser,
 			FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	result := tpl.String()
@@ -1294,9 +1293,9 @@ func ChangePassword(c echo.Context) error {
 
 	err = lib.SendEmail(mailer)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 	} else {
-		log.Info("Email sent")
+		// log.Info("Email sent")
 	}
 	// dialer := gomail.NewDialer(
 	// 	config.EmailSMTPHost,
@@ -1308,9 +1307,9 @@ func ChangePassword(c echo.Context) error {
 
 	// err = dialer.DialAndSend(mailer)
 	// if err != nil {
-	// 	log.Error(err)
+	// 	// log.Error(err)
 	// }
-	// log.Info("Email sent")
+	// // log.Info("Email sent")
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -1329,7 +1328,7 @@ func TransactionCutOffTime(c echo.Context) error {
 	_, err = models.GetScAppConfigByCode(&appConfig, "TRX_CUTOFF_TIME")
 	if err != nil {
 		str_message = err.Error()
-		log.Error(str_message)
+		// log.Error(str_message)
 		return lib.CustomError(http.StatusBadRequest, str_message, "Fail to get Config TRX_CUTOFF_TIME")
 	}
 
@@ -1344,7 +1343,7 @@ func TransactionCutOffTime(c echo.Context) error {
 	curr_date_time, err = time.Parse(dateLayout, date_time_string)
 	if err != nil {
 		str_message = err.Error()
-		log.Error(str_message)
+		// log.Error(str_message)
 		return lib.CustomError(http.StatusBadRequest, str_message, "Fail to parse time")
 
 	}
@@ -1411,7 +1410,7 @@ func sendOTP(gateway, phone string) (string, error) {
 	payload := strings.NewReader(string(jsonString))
 	req, err := http.NewRequest("POST", config.CitcallUrl, payload)
 	if err != nil {
-		log.Error("Error1", err.Error())
+		// log.Error("Error1", err.Error())
 		return "", err
 	}
 	req.Header.Add("content-type", "application/json")
@@ -1426,11 +1425,11 @@ func sendOTP(gateway, phone string) (string, error) {
 	if res.StatusCode != http.StatusOK {
 		body, err := ioutil.ReadAll(res.Body)
 		paramLog["response"] = string(body)
-		log.Error("Error2", err)
+		// log.Error("Error2", err)
 		_, err = models.CreateEndpoint3rdPartyLog(paramLog)
 		if err != nil {
-			log.Error("Error create log endpoint citcall")
-			log.Error(err.Error())
+			// log.Error("Error create log endpoint citcall")
+			// log.Error(err.Error())
 		}
 
 		return "", err
@@ -1441,20 +1440,20 @@ func sendOTP(gateway, phone string) (string, error) {
 			paramLog["response"] = err.Error()
 			_, err = models.CreateEndpoint3rdPartyLog(paramLog)
 			if err != nil {
-				log.Error("Error create log endpoint flash citcall")
-				log.Error(err.Error())
+				// log.Error("Error create log endpoint flash citcall")
+				// log.Error(err.Error())
 			}
-			log.Error("Error3", err.Error())
+			// log.Error("Error3", err.Error())
 			return "", err
 		}
 		paramLog["response"] = string(body)
 		_, err = models.CreateEndpoint3rdPartyLog(paramLog)
 		if err != nil {
-			log.Error("Error create log endpoint citcall")
-			log.Error(err.Error())
+			// log.Error("Error create log endpoint citcall")
+			// log.Error(err.Error())
 		}
 		if err = json.Unmarshal(body, &sec); err != nil {
-			log.Error("Error4", err.Error())
+			// log.Error("Error4", err.Error())
 			return "", err
 		}
 	}
@@ -1473,12 +1472,12 @@ func LoginBo(c echo.Context) error {
 	// Check parameters
 	email := c.FormValue("email")
 	if email == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 	password := c.FormValue("password")
 	if password == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 
@@ -1490,11 +1489,11 @@ func LoginBo(c echo.Context) error {
 	var userLogin []models.ScUserLogin
 	status, err = models.GetAllScUserLoginByNameOrEmail(&userLogin, 0, 0, params, true)
 	if err != nil {
-		log.Error("Error get Username")
+		// log.Error("Error get Username")
 		return lib.CustomError(status, "Error get Email/Username", "Error get Email/Username")
 	}
 	if len(userLogin) < 1 {
-		log.Error("Email/Username not registered")
+		// log.Error("Email/Username not registered")
 		return lib.CustomError(http.StatusUnauthorized, "Email/Username not registered", "Email/Username not registered")
 	}
 
@@ -1502,24 +1501,24 @@ func LoginBo(c echo.Context) error {
 
 	//check user USR_BOHO / USR_BOBRANCH
 	if (accountData.UserCategoryKey != 2) && (accountData.UserCategoryKey != 3) {
-		log.Error("Email/Username not registered")
+		// log.Error("Email/Username not registered")
 		return lib.CustomError(http.StatusUnauthorized, "Email/Username not registered", "Email/Username not registered")
 	}
 
-	log.Info(accountData)
+	// log.Info(accountData)
 
 	if *accountData.VerifiedEmail != 1 || accountData.VerifiedMobileno != 1 {
-		log.Error("Email or Mobile number not verified")
+		// log.Error("Email or Mobile number not verified")
 		return lib.CustomError(http.StatusUnauthorized, "Email or Mobile number not verified", "Email or Mobile number not verified")
 	}
 
 	if accountData.UloginLocked == uint8(1) {
-		log.Error("User is locked")
+		// log.Error("User is locked")
 		return lib.CustomError(http.StatusUnauthorized, "Akun kamu terkunci karena salah memasukkan password 3 kali berturut-turut. Silakan menunggu 1 jam lagi untuk login atau hubungi Customer Service untuk informasi lebih lanjut.", "Akun kamu terkunci karena salah memasukkan password 3 kali berturut-turut. Silakan menunggu 1 jam lagi untuk login atau hubungi Customer Service untuk informasi lebih lanjut.")
 	}
 
 	if accountData.UloginEnabled == uint8(0) {
-		log.Error("User is Disable")
+		// log.Error("User is Disable")
 		return lib.CustomError(http.StatusUnauthorized, "Akun kamu tidak aktif. Silakan menghubungi Customer Service untuk informasi lebih lanjut.", "Akun kamu tidak aktif. Silakan menghubungi Customer Service untuk informasi lebih lanjut.")
 	}
 
@@ -1538,7 +1537,7 @@ func LoginBo(c echo.Context) error {
 		var scApp models.ScAppConfig
 		status, err = models.GetScAppConfigByCode(&scApp, "LOGIN_ATTEMPT")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 
 		countWrong, _ := strconv.ParseUint(*scApp.AppConfigValue, 10, 64)
@@ -1549,15 +1548,15 @@ func LoginBo(c echo.Context) error {
 
 		_, err = models.UpdateScUserLogin(paramsUpdate)
 		if err != nil {
-			log.Error(err.Error())
-			log.Error("erroe update ulogin_failed_count wrong password")
+			// log.Error(err.Error())
+			// log.Error("erroe update ulogin_failed_count wrong password")
 		}
 
 		if countFalse >= countWrong {
-			log.Error("Wrong password, user is locked")
+			// log.Error("Wrong password, user is locked")
 			return lib.CustomError(http.StatusUnauthorized, "Akun kamu terkunci karena salah memasukkan password 3 kali berturut-turut. Silakan menghubungi Customer Service untuk informasi lebih lanjut.", "Akun kamu terkunci karena salah memasukkan password 3 kali berturut-turut. Silakan menghubungi Customer Service untuk informasi lebih lanjut.")
 		} else {
-			log.Error("Wrong password")
+			// log.Error("Wrong password")
 			return lib.CustomError(http.StatusUnauthorized, "Password yang kamu masukkan salah", "Password yang kamu masukkan salah")
 		}
 	}
@@ -1574,13 +1573,13 @@ func LoginBo(c echo.Context) error {
 	var request []models.OaRequest
 	status, err = models.GetAllOaRequest(&request, config.LimitQuery, 0, true, paramsRequest)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	} else if len(request) > 0 {
 		if request[0].Oastatus != nil && *request[0].Oastatus > 0 {
 			var lookup models.GenLookup
 			status, err = models.GetGenLookup(&lookup, strconv.FormatUint(*request[0].Oastatus, 10))
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 			} else {
 				if lookup.LkpName != nil && *lookup.LkpName != "" {
 					atClaims["oa_status"] = *lookup.LkpName
@@ -1605,7 +1604,7 @@ func LoginBo(c echo.Context) error {
 		var role []models.ScRole
 		_, err = models.GetAllScRole(&role, config.LimitQuery, 0, paramsRole, true)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		} else if len(role) > 0 {
 			if role[0].RoleCategoryKey != nil && *role[0].RoleCategoryKey > 0 {
 				atClaims["role_category_key"] = *role[0].RoleCategoryKey
@@ -1618,7 +1617,7 @@ func LoginBo(c echo.Context) error {
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(config.Secret))
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusUnauthorized, err.Error(), "Login failed")
 	}
 
@@ -1636,7 +1635,7 @@ func LoginBo(c echo.Context) error {
 	paramsSession["rec_status"] = "1"
 	paramsSession["rec_attribute_id3"] = c.Request().UserAgent()
 	if err == nil && len(loginSession) > 0 {
-		log.Info("Active session for previous login, overwrite with new session")
+		// log.Info("Active session for previous login, overwrite with new session")
 		if len(loginSession) > 1 {
 
 		}
@@ -1644,13 +1643,13 @@ func LoginBo(c echo.Context) error {
 
 		status, err = models.UpdateScLoginSession(paramsSession)
 		if err != nil {
-			log.Error("Error update session")
+			// log.Error("Error update session")
 			return lib.CustomError(status, "Error update session", "Login failed")
 		}
 	} else {
 		status, err = models.CreateScLoginSession(paramsSession)
 		if err != nil {
-			log.Error("Error create session")
+			// log.Error("Error create session")
 			return lib.CustomError(status, "Error create session", "Login failed")
 		}
 	}
@@ -1662,20 +1661,20 @@ func LoginBo(c echo.Context) error {
 	paramsUpdate["ulogin_failed_count"] = "0"
 	_, err = models.UpdateScUserLogin(paramsUpdate)
 	if err != nil {
-		log.Error(err.Error())
-		log.Error("erroe update ulogin_failed_count = 0 if success login")
+		// log.Error(err.Error())
+		// log.Error("erroe update ulogin_failed_count = 0 if success login")
 	}
 
-	log.Info("Success login")
+	// log.Info("Success login")
 
 	var data models.ScLoginSessionInfo
 	data.SessionID = token
 	if accountData.UloginMustChangepwd == uint8(1) {
-		data.MustChangePassword = true
+		// data.MustChangePassword = true
 	} else {
-		data.MustChangePassword = false
+		// data.MustChangePassword = false
 	}
-	log.Info(data)
+	// log.Info(data)
 
 	//LOG LOGIN
 	saveLogLogin(c, paramsSession)
@@ -1685,7 +1684,7 @@ func LoginBo(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Data = data
-	log.Info(response)
+	// log.Info(response)
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -1702,36 +1701,36 @@ func ChangeForgotPassword(c echo.Context) error {
 	var userLogin []models.ScUserLogin
 	_, err = models.GetAllScUserLogin(&userLogin, 0, 0, params, true)
 	if err != nil {
-		log.Error("Error get email")
+		// log.Error("Error get email")
 		return lib.CustomError(http.StatusBadRequest, "Error get email", "Gagal mendapatkan data email")
 	}
 	if len(userLogin) < 1 {
-		log.Error("No matching token " + token)
+		// log.Error("No matching token " + token)
 		return lib.CustomError(http.StatusBadRequest, "Token not found", "Token tidak ditemukan")
 	}
 
 	accountData := userLogin[0]
-	log.Info("Found account with email " + accountData.UloginEmail)
+	// log.Info("Found account with email " + accountData.UloginEmail)
 	// Check parameters
 	newPassword1 := c.FormValue("new_password1")
 	if newPassword1 == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 	newPassword2 := c.FormValue("new_password2")
 	if newPassword2 == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 
 	if newPassword1 != newPassword2 {
-		log.Error("Password doesnt match")
+		// log.Error("Password doesnt match")
 		return lib.CustomError(http.StatusBadRequest, "Password doesnt match", "Password doesnt match")
 	}
 	// Validate password
 	length, number, upper, special := verifyPassword(newPassword1)
 	if length == false || number == false || upper == false || special == false {
-		log.Error("Password does meet the criteria")
+		// log.Error("Password does meet the criteria")
 		return lib.CustomError(http.StatusBadRequest, "Password does meet the criteria", "Your password need at least 8 character length, has lower and upper case letter, has numeric letter, and has special character")
 	}
 
@@ -1751,7 +1750,7 @@ func ChangeForgotPassword(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Error update user data")
+		// log.Error("Error update user data")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -1777,8 +1776,8 @@ func ChangeForgotPassword(c echo.Context) error {
 
 	_, err = models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error(err.Error())
-		log.Error("Error create user message")
+		// log.Error(err.Error())
+		// log.Error("Error create user message")
 	}
 
 	//kirim email
@@ -1786,7 +1785,7 @@ func ChangeForgotPassword(c echo.Context) error {
 
 	t, err = t.ParseFiles(config.BasePath + "/mail/index-sukses-ubah-password.html")
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	var customer models.MsCustomer
@@ -1808,7 +1807,7 @@ func ChangeForgotPassword(c echo.Context) error {
 		}{
 			Name:    fullnameuser,
 			FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	result := tpl.String()
@@ -1821,9 +1820,9 @@ func ChangeForgotPassword(c echo.Context) error {
 
 	err = lib.SendEmail(mailer)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 	} else {
-		log.Info("Email sent")
+		// log.Info("Email sent")
 	}
 	// dialer := gomail.NewDialer(
 	// 	config.EmailSMTPHost,
@@ -1835,9 +1834,9 @@ func ChangeForgotPassword(c echo.Context) error {
 
 	// err = dialer.DialAndSend(mailer)
 	// if err != nil {
-	// 	log.Error(err)
+	// 	// log.Error(err)
 	// } else {
-	// 	log.Info("Email sent")
+	// 	// log.Info("Email sent")
 	// }
 
 	var response lib.Response
@@ -1855,12 +1854,12 @@ func CreatePin(c echo.Context) error {
 	// Check parameters
 	pin1 := c.FormValue("pin1")
 	if pin1 == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 	pin2 := c.FormValue("pin2")
 	if pin2 == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 
@@ -1870,19 +1869,19 @@ func CreatePin(c echo.Context) error {
 	// var userLogin []models.ScUserLogin
 	// status, err = models.GetAllScUserLogin(&userLogin, 0, 0, params, true)
 	// if err != nil {
-	// 	log.Error("Error get email")
+	// 	// log.Error("Error get email")
 	// 	return lib.CustomError(status, "Error get email", "Error get email")
 	// }
 	// if len(userLogin) < 1 {
-	// 	log.Error("Email not registered")
+	// 	// log.Error("Email not registered")
 	// 	return lib.CustomError(http.StatusUnauthorized, "Email not registered", "Email not registered")
 	// }
 
 	// accountData := userLogin[0]
-	// log.Info(accountData)
+	// // log.Info(accountData)
 
 	if pin1 != pin2 {
-		log.Error("Pin doesnt match")
+		// log.Error("Pin doesnt match")
 		return lib.CustomError(http.StatusBadRequest, "Pin doesnt match", "Pin doesnt match")
 	}
 
@@ -1901,7 +1900,7 @@ func CreatePin(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Error update user data")
+		// log.Error("Error update user data")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -1929,8 +1928,8 @@ func CreatePin(c echo.Context) error {
 
 	_, err = models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error(err.Error())
-		log.Error("Error create user message")
+		// log.Error(err.Error())
+		// log.Error("Error create user message")
 	}
 	lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
 
@@ -1949,17 +1948,17 @@ func ChangePin(c echo.Context) error {
 	// Check parameters
 	recentPin := c.FormValue("recent_pin")
 	if recentPin == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 	newPin1 := c.FormValue("new_pin1")
 	if newPin1 == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 	newPin2 := c.FormValue("new_pin2")
 	if newPin2 == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 
@@ -1970,28 +1969,28 @@ func ChangePin(c echo.Context) error {
 	var userLogin []models.ScUserLogin
 	status, err = models.GetAllScUserLogin(&userLogin, 0, 0, params, true)
 	if err != nil {
-		log.Error("Error get email")
+		// log.Error("Error get email")
 		return lib.CustomError(status, "Error get email", "Error get email")
 	}
 	if len(userLogin) < 1 {
-		log.Error("Email not registered")
+		// log.Error("Email not registered")
 		return lib.CustomError(http.StatusUnauthorized, "Email not registered", "Email not registered")
 	}
 
 	accountData := userLogin[0]
-	log.Info(accountData)
+	// log.Info(accountData)
 
 	// Check valid password
 	// encryptedPasswordByte := sha256.Sum256([]byte(recentPin))
 	// encryptedPassword := hex.EncodeToString(encryptedPasswordByte[:])
 	encryptedPassword := base64.StdEncoding.EncodeToString([]byte(recentPin))
 	if accountData.UloginPin != nil && encryptedPassword != *accountData.UloginPin {
-		log.Error("Wrong password")
+		// log.Error("Wrong password")
 		return lib.CustomError(http.StatusUnauthorized, "Wrong pin", "Wrong pin")
 	}
 
 	if newPin1 != newPin2 {
-		log.Error("Password doesnt match")
+		// log.Error("Password doesnt match")
 		return lib.CustomError(http.StatusBadRequest, "Pin doesnt match", "Pin doesnt match")
 	}
 
@@ -2010,7 +2009,7 @@ func ChangePin(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Error update user data")
+		// log.Error("Error update user data")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -2038,8 +2037,8 @@ func ChangePin(c echo.Context) error {
 
 	status, err = models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error(err.Error())
-		log.Error("Error create user message")
+		// log.Error(err.Error())
+		// log.Error("Error create user message")
 	}
 	lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
 
@@ -2062,16 +2061,16 @@ func ForgotPin(c echo.Context) error {
 	var userLogin []models.ScUserLogin
 	status, err = models.GetAllScUserLogin(&userLogin, 0, 0, params, true)
 	if err != nil {
-		log.Error("Error get user")
+		// log.Error("Error get user")
 		return lib.CustomError(status, "Error get user", "Error get user")
 	}
 	if len(userLogin) < 1 {
-		log.Error("Email not registered")
+		// log.Error("Email not registered")
 		return lib.CustomError(http.StatusUnauthorized, "Email not registered", "Email not registered")
 	}
 
 	accountData := userLogin[0]
-	log.Info("Found account with email " + accountData.UloginEmail)
+	// log.Info("Found account with email " + accountData.UloginEmail)
 
 	pin := ""
 	length := 6
@@ -2092,18 +2091,18 @@ func ForgotPin(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Error update user data")
+		// log.Error("Error update user data")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
-	// log.Println(rand.Intn(9))
+	// // log.Println(rand.Intn(9))
 
 	// Send email
 	t := template.New("index-forget-pin.html")
 
 	t, err = t.ParseFiles(config.BasePath + "/mail/index-forget-pin.html")
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	name := ""
@@ -2122,7 +2121,7 @@ func ForgotPin(c echo.Context) error {
 		FileUrl string
 		Name    string
 	}{PIN: pin, FileUrl: config.ImageUrl + "/images/mail", Name: name}); err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	result := tpl.String()
@@ -2135,10 +2134,10 @@ func ForgotPin(c echo.Context) error {
 
 	err = lib.SendEmail(mailer)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 	} else {
-		log.Info("Email sent")
+		// log.Info("Email sent")
 	}
 
 	// dialer := gomail.NewDialer(
@@ -2151,10 +2150,10 @@ func ForgotPin(c echo.Context) error {
 
 	// err = dialer.DialAndSend(mailer)
 	// if err != nil {
-	// 	log.Error(err)
+	// 	// log.Error(err)
 	// 	return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 	// }
-	// log.Info("Email sent")
+	// // log.Info("Email sent")
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -2171,17 +2170,17 @@ func ChangeForgotPin(c echo.Context) error {
 	// Check parameters
 	token := c.FormValue("token")
 	if token == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 	newPin1 := c.FormValue("new_pin1")
 	if newPin1 == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 	newPin2 := c.FormValue("new_pin2")
 	if newPin2 == "" {
-		log.Error("Missing required parameter")
+		// log.Error("Missing required parameter")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter", "Missing required parameter")
 	}
 
@@ -2192,19 +2191,19 @@ func ChangeForgotPin(c echo.Context) error {
 	var userLogin []models.ScUserLogin
 	status, err = models.GetAllScUserLogin(&userLogin, 0, 0, params, true)
 	if err != nil {
-		log.Error("Error get email")
+		// log.Error("Error get email")
 		return lib.CustomError(status, "Error get email", "Error get email")
 	}
 	if len(userLogin) < 1 {
-		log.Error("Email not registered")
+		// log.Error("Email not registered")
 		return lib.CustomError(http.StatusUnauthorized, "Email not registered", "Email not registered")
 	}
 
 	accountData := userLogin[0]
-	log.Info(accountData)
+	// log.Info(accountData)
 
 	if newPin1 != newPin2 {
-		log.Error("PIN doesnt match")
+		// log.Error("PIN doesnt match")
 		return lib.CustomError(http.StatusBadRequest, "PIN doesnt match", "PIN doesnt match")
 	}
 
@@ -2223,7 +2222,7 @@ func ChangeForgotPin(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Error update user data")
+		// log.Error("Error update user data")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -2251,8 +2250,8 @@ func ChangeForgotPin(c echo.Context) error {
 
 	status, err = models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error(err.Error())
-		log.Error("Error create user message")
+		// log.Error(err.Error())
+		// log.Error("Error create user message")
 	}
 	lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
 
@@ -2280,10 +2279,10 @@ func saveLogLogin(c echo.Context, session map[string]string) {
 	ua := ua.Parse(c.Request().UserAgent())
 	params["workstation_name"] = ua.OS
 	params["device_model"] = ua.Name
-	_, err = models.CreateScLoginLog(params)
-	if err != nil {
-		log.Error("Error create log loginsession")
-	}
+	// _, err = models.CreateScLoginLog(params)
+	// if err != nil {
+	// 	// log.Error("Error create log loginsession")
+	// }
 }
 
 func AccountDeletionIndividu(c echo.Context) error {
@@ -2297,24 +2296,24 @@ func AccountDeletionIndividu(c echo.Context) error {
 	if deactivatereason != "" {
 		n, err := strconv.ParseUint(deactivatereason, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: deactivate_reason")
+			// log.Error("Wrong input for parameter: deactivate_reason")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: deactivate_reason", "Wrong input for parameter: deactivate_reason")
 		}
 
 		if len(deactivatereason) > 11 {
-			log.Error("Wrong input for parameter: deactivate_reason too long")
+			// log.Error("Wrong input for parameter: deactivate_reason too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: deactivate_reason too long, max 11 character", "Missing required parameter: deactivate_reason too long, max 11 character")
 		}
 		paramsDeactive["deactivate_reason"] = deactivatereason
 	} else {
-		log.Error("Missing required parameter: deactivate_reason")
+		// log.Error("Missing required parameter: deactivate_reason")
 		return lib.CustomError(http.StatusBadRequest, "deactivate_reason can not be blank", "deactivate_reason can not be blank")
 	}
 
 	deactivatenotes := c.FormValue("deactivate_notes")
 	if deactivatenotes != "" {
 		if len(deactivatenotes) > 250 {
-			log.Error("Wrong input for parameter: deactivate_notes too long")
+			// log.Error("Wrong input for parameter: deactivate_notes too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: deactivate_notes too long, max 250 character", "Missing required parameter: deactivate_notes too long, max 250 character")
 		}
 		paramsDeactive["deactivate_notes"] = deactivatenotes
@@ -2331,7 +2330,7 @@ func AccountDeletionIndividu(c echo.Context) error {
 	paramsDeactive["rec_created_by"] = strIDUserLogin
 	_, err = models.CreateScLoginDeactivation(paramsDeactive)
 	if err != nil {
-		log.Error("Error create sc_login_deactivation")
+		// log.Error("Error create sc_login_deactivation")
 	}
 
 	paramsSession := make(map[string]string)
@@ -2341,7 +2340,7 @@ func AccountDeletionIndividu(c echo.Context) error {
 
 	_, err = models.UpdateScLoginSession(paramsSession)
 	if err != nil {
-		log.Error("Error update session in logout")
+		// log.Error("Error update session in logout")
 	}
 
 	params := make(map[string]string)
@@ -2353,7 +2352,7 @@ func AccountDeletionIndividu(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Error account deletion user data")
+		// log.Error("Error account deletion user data")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 

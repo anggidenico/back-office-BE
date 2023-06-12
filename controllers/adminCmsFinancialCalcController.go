@@ -9,7 +9,6 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetAdminCmsFinancialCalcList(c echo.Context) error {
@@ -25,7 +24,7 @@ func GetAdminCmsFinancialCalcList(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -41,7 +40,7 @@ func GetAdminCmsFinancialCalcList(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -57,7 +56,7 @@ func GetAdminCmsFinancialCalcList(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -80,7 +79,7 @@ func GetAdminCmsFinancialCalcList(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	}
@@ -88,7 +87,7 @@ func GetAdminCmsFinancialCalcList(c echo.Context) error {
 	var cmsFinancialCalcList []models.CmsFinancialCalcList
 	status, err = models.GetAllCmsFinancialCalc(&cmsFinancialCalcList, limit, offset, params, noLimit)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -99,7 +98,7 @@ func GetAdminCmsFinancialCalcList(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.GetCountCmsFinancialCalc(&countData, params)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {

@@ -5,8 +5,6 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type OaInstitutionDocs struct {
@@ -54,10 +52,10 @@ type OaInstitutionDocsDetail struct {
 func GetOaInstitutionDocs(c *OaInstitutionDocs, key string, field string) (int, error) {
 	query := `SELECT oa_institution_docs.* FROM oa_institution_docs 
 	WHERE oa_institution_docs.rec_status = 1 AND oa_institution_docs.` + field + ` = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusNotFound, err
 	}
 
@@ -79,17 +77,17 @@ func CreateOaInstitutionDocs(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	ret, err := tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -111,10 +109,10 @@ func GetOaInstitutionDocsRequest(c *[]OaInstitutionDocsDetail, oaReqKey string) 
 			AND ty.lkp_group_key = "95"`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -137,11 +135,11 @@ func UpdateOaInstitutionDocs(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE insti_docs_key = " + params["insti_docs_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -149,7 +147,7 @@ func UpdateOaInstitutionDocs(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()

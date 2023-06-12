@@ -3,8 +3,6 @@ package models
 import (
 	"mf-bo-api/db"
 	"net/http"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type GenLookupGroupList struct {
@@ -73,10 +71,10 @@ func GetAllGenLookupGroup(c *[]GenLookupGroup, params map[string]string) (int, e
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -97,10 +95,10 @@ func AdminGetListDropdownLookupGroup(c *[]ListDropdownLookupGroup) (int, error) 
 			FROM gen_lookup_group AS c
 			WHERE c.rec_status = 1 `
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

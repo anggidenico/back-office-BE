@@ -16,7 +16,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetAdminCmsPostList(c echo.Context) error {
@@ -32,7 +31,7 @@ func GetAdminCmsPostList(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -48,7 +47,7 @@ func GetAdminCmsPostList(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -64,7 +63,7 @@ func GetAdminCmsPostList(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -76,7 +75,7 @@ func GetAdminCmsPostList(c echo.Context) error {
 	if field != "" {
 		keyStr := c.QueryParam("key")
 		if keyStr == "" {
-			log.Error("Wrong value for parameter: key")
+			// log.Error("Wrong value for parameter: key")
 			return lib.CustomError(http.StatusBadRequest, "parameter key not allowed empty if parameter field not empty", "parameter key not allowed empty if parameter field not empty")
 		}
 		key, _ := strconv.ParseUint(keyStr, 10, 64)
@@ -89,7 +88,7 @@ func GetAdminCmsPostList(c echo.Context) error {
 		} else if field == "subtype" {
 			paramType["post_subtype_key"] = keyStr
 		} else {
-			log.Error("Wrong value for parameter: field")
+			// log.Error("Wrong value for parameter: field")
 			return lib.CustomError(http.StatusBadRequest, "Wrong value for parameter: field", "Wrong value for parameter: field")
 		}
 	}
@@ -109,7 +108,7 @@ func GetAdminCmsPostList(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	}
@@ -126,11 +125,11 @@ func GetAdminCmsPostList(c echo.Context) error {
 		var postSubtypeDB []models.CmsPostSubtype
 		status, err = models.GetAllCmsPostSubtype(&postSubtypeDB, limit, offset, paramType, true)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if len(postSubtypeDB) < 1 {
-			log.Error("post not found")
+			// log.Error("post not found")
 			return lib.CustomError(http.StatusNotFound, "Post subtype not found", "Post subtype not found")
 		}
 
@@ -164,7 +163,7 @@ func GetAdminCmsPostList(c echo.Context) error {
 		status, err = models.GetPostSubtypeIn(&postSubtypeDB, postSubtypeIDs, "post_subtype_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		} else {
@@ -238,7 +237,7 @@ func GetAdminCmsPostList(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.GetCountCmsPost(&countData, params, subtypeIdsParamCount)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -283,7 +282,7 @@ func GetAdminCmsPostData(c echo.Context) error {
 	var postTypeDB models.CmsPostType
 	status, err = models.GetCmsPostType(&postTypeDB, "post_type_key", strconv.FormatUint(postSubtype.PostTypeKey, 10))
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get post type data")
 	}
 
@@ -365,20 +364,20 @@ func CreateAdminCmsPost(c echo.Context) error {
 
 	postsubtypekey := c.FormValue("post_subtype_key")
 	if postsubtypekey == "" {
-		log.Error("Missing required parameter: post_subtype_key")
+		// log.Error("Missing required parameter: post_subtype_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_subtype_key", "Missing required parameter: post_subtype_key")
 	}
 	sub, err := strconv.ParseUint(postsubtypekey, 10, 64)
 	if err == nil && sub > 0 {
 		params["post_subtype_key"] = postsubtypekey
 	} else {
-		log.Error("Wrong input for parameter: post_subtype_key")
+		// log.Error("Wrong input for parameter: post_subtype_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_subtype_key", "Missing required parameter: post_subtype_key")
 	}
 
 	posttitle := c.FormValue("post_title")
 	if posttitle == "" {
-		log.Error("Missing required parameter: post_title")
+		// log.Error("Missing required parameter: post_title")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_title", "Missing required parameter: post_title")
 	}
 	params["post_title"] = posttitle
@@ -398,14 +397,14 @@ func CreateAdminCmsPost(c echo.Context) error {
 	//date
 	postpublishstart := c.FormValue("post_publish_start")
 	if postpublishstart == "" {
-		log.Error("Missing required parameter: post_publish_start")
+		// log.Error("Missing required parameter: post_publish_start")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_publish_start", "Missing required parameter: post_publish_start")
 	}
 	params["post_publish_start"] = postpublishstart
 	//date
 	postpublishthru := c.FormValue("post_publish_thru")
 	if postpublishthru == "" {
-		log.Error("Missing required parameter: post_publish_thru")
+		// log.Error("Missing required parameter: post_publish_thru")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_publish_thru", "Missing required parameter: post_publish_thru")
 	}
 	params["post_publish_thru"] = postpublishthru
@@ -415,7 +414,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 	if postpageallowed != "" {
 		postpageallowedBool, err = strconv.ParseBool(postpageallowed)
 		if err != nil {
-			log.Error("post_page_allowed parameter should be true/false")
+			// log.Error("post_page_allowed parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "post_page_allowed parameter should be true/false", "post_page_allowed parameter should be true/false")
 		}
 		if postpageallowedBool == true {
@@ -424,7 +423,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 			params["post_page_allowed"] = "0"
 		}
 	} else {
-		log.Error("post_page_allowed parameter should be true/false")
+		// log.Error("post_page_allowed parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "post_page_allowed parameter should be true/false", "post_page_allowed parameter should be true/false")
 	}
 
@@ -433,7 +432,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 	if postcommentallowed != "" {
 		postcommentallowedBool, err = strconv.ParseBool(postcommentallowed)
 		if err != nil {
-			log.Error("post_comment_allowed parameter should be true/false")
+			// log.Error("post_comment_allowed parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "post_comment_allowed parameter should be true/false", "post_comment_allowed parameter should be true/false")
 		}
 		if postcommentallowedBool == true {
@@ -442,7 +441,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 			params["post_comment_allowed"] = "0"
 		}
 	} else {
-		log.Error("post_comment_allowed parameter should be true/false")
+		// log.Error("post_comment_allowed parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "post_comment_allowed parameter should be true/false", "post_comment_allowed parameter should be true/false")
 	}
 
@@ -451,7 +450,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 	if postcommentdisplayed != "" {
 		postcommentdisplayedBool, err = strconv.ParseBool(postcommentdisplayed)
 		if err != nil {
-			log.Error("post_comment_displayed parameter should be true/false")
+			// log.Error("post_comment_displayed parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "post_comment_displayed parameter should be true/false", "post_comment_displayed parameter should be true/false")
 		}
 		if postcommentdisplayedBool == true {
@@ -460,7 +459,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 			params["post_comment_displayed"] = "0"
 		}
 	} else {
-		log.Error("post_comment_displayed parameter should be true/false")
+		// log.Error("post_comment_displayed parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "post_comment_displayed parameter should be true/false", "post_comment_displayed parameter should be true/false")
 	}
 
@@ -469,7 +468,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 	if postfilesallowed != "" {
 		postfilesallowedBool, err = strconv.ParseBool(postfilesallowed)
 		if err != nil {
-			log.Error("post_files_allowed parameter should be true/false")
+			// log.Error("post_files_allowed parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "post_files_allowed parameter should be true/false", "post_files_allowed parameter should be true/false")
 		}
 		if postfilesallowedBool == true {
@@ -478,7 +477,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 			params["post_files_allowed"] = "0"
 		}
 	} else {
-		log.Error("post_files_allowed parameter should be true/false")
+		// log.Error("post_files_allowed parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "post_files_allowed parameter should be true/false", "post_files_allowed parameter should be true/false")
 	}
 
@@ -487,7 +486,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 	if postvideoallowed != "" {
 		postvideoallowedBool, err = strconv.ParseBool(postvideoallowed)
 		if err != nil {
-			log.Error("post_video_allowed parameter should be true/false")
+			// log.Error("post_video_allowed parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "post_video_allowed parameter should be true/false", "post_video_allowed parameter should be true/false")
 		}
 		if postvideoallowedBool == true {
@@ -496,7 +495,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 			params["post_video_allowed"] = "0"
 		}
 	} else {
-		log.Error("post_video_allowed parameter should be true/false")
+		// log.Error("post_video_allowed parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "post_video_allowed parameter should be true/false", "post_video_allowed parameter should be true/false")
 	}
 
@@ -508,7 +507,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 	if postpinned != "" {
 		postpinnedBool, err = strconv.ParseBool(postpinned)
 		if err != nil {
-			log.Error("post_pinned parameter should be true/false")
+			// log.Error("post_pinned parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "post_pinned parameter should be true/false", "post_pinned parameter should be true/false")
 		}
 		if postpinnedBool == true {
@@ -517,7 +516,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 			params["post_pinned"] = "0"
 		}
 	} else {
-		log.Error("post_pinned parameter should be true/false")
+		// log.Error("post_pinned parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "post_pinned parameter should be true/false", "post_pinned parameter should be true/false")
 	}
 
@@ -545,7 +544,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 
 	err = os.MkdirAll(config.BasePathImage+"/images/post/"+pathType, 0755)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	} else {
 		var file *multipart.FileHeader
 		file, err = c.FormFile("rec_image1")
@@ -556,7 +555,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 		_, found := lib.Find(items, strType)
 		if found {
 			if file == nil {
-				log.Error("Wrong input for parameter rec_image1")
+				// log.Error("Wrong input for parameter rec_image1")
 				return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter rec_image1", "Wrong input for parameter rec_image1")
 			}
 		}
@@ -570,11 +569,11 @@ func CreateAdminCmsPost(c echo.Context) error {
 			// Generate filename
 			var filename string
 			filename = lib.RandStringBytesMaskImprSrc(20)
-			log.Println("Generate filename:", filename)
+			// log.Println("Generate filename:", filename)
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePathImage+"/images/post/"+pathType+"/"+randName+"_"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			params["rec_image1"] = randName + "_" + filename + extension
@@ -590,11 +589,11 @@ func CreateAdminCmsPost(c echo.Context) error {
 			// Generate filename
 			var filename string
 			filename = lib.RandStringBytesMaskImprSrc(20)
-			log.Println("Generate filename:", filename)
+			// log.Println("Generate filename:", filename)
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePathImage+"/images/post/"+pathType+"/"+randName+"_"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			params["rec_image2"] = randName + "_" + filename + extension
@@ -603,7 +602,7 @@ func CreateAdminCmsPost(c echo.Context) error {
 
 	status, err = models.CreatePost(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -622,14 +621,14 @@ func UpdateAdminCmsPost(c echo.Context) error {
 
 	postkey := c.FormValue("post_key")
 	if postkey == "" {
-		log.Error("Missing required parameter: post_key")
+		// log.Error("Missing required parameter: post_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_key", "Missing required parameter: post_key")
 	}
 	strPostKey, err := strconv.ParseUint(postkey, 10, 64)
 	if err == nil && strPostKey > 0 {
 		params["post_key"] = postkey
 	} else {
-		log.Error("Wrong input for parameter: post_key")
+		// log.Error("Wrong input for parameter: post_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_key", "Missing required parameter: post_key")
 	}
 
@@ -641,20 +640,20 @@ func UpdateAdminCmsPost(c echo.Context) error {
 
 	postsubtypekey := c.FormValue("post_subtype_key")
 	if postsubtypekey == "" {
-		log.Error("Missing required parameter: post_subtype_key")
+		// log.Error("Missing required parameter: post_subtype_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_subtype_key", "Missing required parameter: post_subtype_key")
 	}
 	sub, err := strconv.ParseUint(postsubtypekey, 10, 64)
 	if err == nil && sub > 0 {
 		params["post_subtype_key"] = postsubtypekey
 	} else {
-		log.Error("Wrong input for parameter: post_subtype_key")
+		// log.Error("Wrong input for parameter: post_subtype_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_subtype_key", "Missing required parameter: post_subtype_key")
 	}
 
 	posttitle := c.FormValue("post_title")
 	if posttitle == "" {
-		log.Error("Missing required parameter: post_title")
+		// log.Error("Missing required parameter: post_title")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_title", "Missing required parameter: post_title")
 	}
 	params["post_title"] = posttitle
@@ -674,14 +673,14 @@ func UpdateAdminCmsPost(c echo.Context) error {
 	//date
 	postpublishstart := c.FormValue("post_publish_start")
 	if postpublishstart == "" {
-		log.Error("Missing required parameter: post_publish_start")
+		// log.Error("Missing required parameter: post_publish_start")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_publish_start", "Missing required parameter: post_publish_start")
 	}
 	params["post_publish_start"] = postpublishstart
 	//date
 	postpublishthru := c.FormValue("post_publish_thru")
 	if postpublishthru == "" {
-		log.Error("Missing required parameter: post_publish_thru")
+		// log.Error("Missing required parameter: post_publish_thru")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_publish_thru", "Missing required parameter: post_publish_thru")
 	}
 	params["post_publish_thru"] = postpublishthru
@@ -691,7 +690,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 	if postpageallowed != "" {
 		postpageallowedBool, err = strconv.ParseBool(postpageallowed)
 		if err != nil {
-			log.Error("post_page_allowed parameter should be true/false")
+			// log.Error("post_page_allowed parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "post_page_allowed parameter should be true/false", "post_page_allowed parameter should be true/false")
 		}
 		if postpageallowedBool == true {
@@ -700,7 +699,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 			params["post_page_allowed"] = "0"
 		}
 	} else {
-		log.Error("post_page_allowed parameter should be true/false")
+		// log.Error("post_page_allowed parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "post_page_allowed parameter should be true/false", "post_page_allowed parameter should be true/false")
 	}
 
@@ -709,7 +708,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 	if postcommentallowed != "" {
 		postcommentallowedBool, err = strconv.ParseBool(postcommentallowed)
 		if err != nil {
-			log.Error("post_comment_allowed parameter should be true/false")
+			// log.Error("post_comment_allowed parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "post_comment_allowed parameter should be true/false", "post_comment_allowed parameter should be true/false")
 		}
 		if postcommentallowedBool == true {
@@ -718,7 +717,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 			params["post_comment_allowed"] = "0"
 		}
 	} else {
-		log.Error("post_comment_allowed parameter should be true/false")
+		// log.Error("post_comment_allowed parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "post_comment_allowed parameter should be true/false", "post_comment_allowed parameter should be true/false")
 	}
 
@@ -727,7 +726,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 	if postcommentdisplayed != "" {
 		postcommentdisplayedBool, err = strconv.ParseBool(postcommentdisplayed)
 		if err != nil {
-			log.Error("post_comment_displayed parameter should be true/false")
+			// log.Error("post_comment_displayed parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "post_comment_displayed parameter should be true/false", "post_comment_displayed parameter should be true/false")
 		}
 		if postcommentdisplayedBool == true {
@@ -736,7 +735,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 			params["post_comment_displayed"] = "0"
 		}
 	} else {
-		log.Error("post_comment_displayed parameter should be true/false")
+		// log.Error("post_comment_displayed parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "post_comment_displayed parameter should be true/false", "post_comment_displayed parameter should be true/false")
 	}
 
@@ -745,7 +744,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 	if postfilesallowed != "" {
 		postfilesallowedBool, err = strconv.ParseBool(postfilesallowed)
 		if err != nil {
-			log.Error("post_files_allowed parameter should be true/false")
+			// log.Error("post_files_allowed parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "post_files_allowed parameter should be true/false", "post_files_allowed parameter should be true/false")
 		}
 		if postfilesallowedBool == true {
@@ -754,7 +753,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 			params["post_files_allowed"] = "0"
 		}
 	} else {
-		log.Error("post_files_allowed parameter should be true/false")
+		// log.Error("post_files_allowed parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "post_files_allowed parameter should be true/false", "post_files_allowed parameter should be true/false")
 	}
 
@@ -763,7 +762,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 	if postvideoallowed != "" {
 		postvideoallowedBool, err = strconv.ParseBool(postvideoallowed)
 		if err != nil {
-			log.Error("post_video_allowed parameter should be true/false")
+			// log.Error("post_video_allowed parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "post_video_allowed parameter should be true/false", "post_video_allowed parameter should be true/false")
 		}
 		if postvideoallowedBool == true {
@@ -772,7 +771,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 			params["post_video_allowed"] = "0"
 		}
 	} else {
-		log.Error("post_video_allowed parameter should be true/false")
+		// log.Error("post_video_allowed parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "post_video_allowed parameter should be true/false", "post_video_allowed parameter should be true/false")
 	}
 
@@ -784,7 +783,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 	if postpinned != "" {
 		postpinnedBool, err = strconv.ParseBool(postpinned)
 		if err != nil {
-			log.Error("post_pinned parameter should be true/false")
+			// log.Error("post_pinned parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "post_pinned parameter should be true/false", "post_pinned parameter should be true/false")
 		}
 		if postpinnedBool == true {
@@ -793,7 +792,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 			params["post_pinned"] = "0"
 		}
 	} else {
-		log.Error("post_pinned parameter should be true/false")
+		// log.Error("post_pinned parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "post_pinned parameter should be true/false", "post_pinned parameter should be true/false")
 	}
 
@@ -820,7 +819,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 
 	err = os.MkdirAll(config.BasePathImage+"/images/post/"+pathType, 0755)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	} else {
 		var file *multipart.FileHeader
 		file, err = c.FormFile("rec_image1")
@@ -833,11 +832,11 @@ func UpdateAdminCmsPost(c echo.Context) error {
 			// Generate filename
 			var filename string
 			filename = lib.RandStringBytesMaskImprSrc(20)
-			log.Println("Generate filename:", filename)
+			// log.Println("Generate filename:", filename)
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePathImage+"/images/post/"+pathType+"/"+randName+"_"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			params["rec_image1"] = randName + "_" + filename + extension
@@ -853,11 +852,11 @@ func UpdateAdminCmsPost(c echo.Context) error {
 			// Generate filename
 			var filename string
 			filename = lib.RandStringBytesMaskImprSrc(20)
-			log.Println("Generate filename:", filename)
+			// log.Println("Generate filename:", filename)
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.ImageUrl+"/images/post/"+pathType+"/"+randName+"_"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			params["rec_image2"] = randName + "_" + filename + extension
@@ -866,7 +865,7 @@ func UpdateAdminCmsPost(c echo.Context) error {
 
 	status, err = models.UpdateCmsPost(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -885,14 +884,14 @@ func DeleteAdminCmsPost(c echo.Context) error {
 
 	postkey := c.FormValue("post_key")
 	if postkey == "" {
-		log.Error("Missing required parameter: post_key")
+		// log.Error("Missing required parameter: post_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_key", "Missing required parameter: post_key")
 	}
 	strPostKey, err := strconv.ParseUint(postkey, 10, 64)
 	if err == nil && strPostKey > 0 {
 		params["post_key"] = postkey
 	} else {
-		log.Error("Wrong input for parameter: post_key")
+		// log.Error("Wrong input for parameter: post_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_key", "Missing required parameter: post_key")
 	}
 
@@ -909,7 +908,7 @@ func DeleteAdminCmsPost(c echo.Context) error {
 
 	status, err = models.UpdateCmsPost(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 

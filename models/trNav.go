@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -113,10 +112,10 @@ func GetAllTrNav(c *[]TrNav, limit uint64, offset uint64, params map[string]stri
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -125,10 +124,10 @@ func GetAllTrNav(c *[]TrNav, limit uint64, offset uint64, params map[string]stri
 
 func GetTrNav(c *TrNav, key string) (int, error) {
 	query := `SELECT tr_nav.* FROM tr_nav WHERE tr_nav.product_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -156,10 +155,10 @@ func GetLastNavIn(c *[]TrNav, productKey []string) (int, error) {
 		AND a.publish_mode = 236 AND a.product_key IN(` + inQuery + `)
 		ORDER BY a.nav_date DESC`
 
-	log.Println("========== QUERY SELECT LAST NAV =========", query)
+	// log.Println("========== QUERY SELECT LAST NAV =========", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -174,10 +173,10 @@ func GetAllTrNavBetween(c *[]TrNav, start string, end string, productKey []strin
 	query += " WHERE tr_nav.product_key IN(" + inQuery + ") AND tr_nav.nav_date BETWEEN '" + start + "' AND '" + end + "'"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -191,10 +190,10 @@ func GetTrNav1D(c *[]TrNav, productKey string) (int, error) {
 	query += " WHERE tr_nav.product_key=" + productKey + " ORDER BY tr_nav.nav_key DESC LIMIT 2 "
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -209,10 +208,10 @@ func GetTrNavIn(c *[]TrNav, value []string, field string) (int, error) {
 	query := query2 + " WHERE tr_nav." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -226,10 +225,10 @@ func GetTrNavByProductKeyAndNavDate(c *[]TrNav, productKey string, navDate strin
 	query += " WHERE tr_nav.rec_status = 1 AND tr_nav.product_key = '" + productKey + "' AND tr_nav.nav_date = '" + navDate + "'"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -243,10 +242,10 @@ func GetNavByProductKeyAndNavDate(c *TrNav, productKey string, navDate string) (
 	query += " WHERE tr_nav.rec_status = 1 AND tr_nav.product_key = '" + productKey + "' AND tr_nav.nav_date = '" + navDate + "'"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -280,10 +279,10 @@ func GetAllTrNavCount(c *CountData, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -292,10 +291,10 @@ func GetAllTrNavCount(c *CountData, params map[string]string) (int, error) {
 
 func GetTrNavByKey(c *TrNav, key string) (int, error) {
 	query := `SELECT tr_nav.* FROM tr_nav WHERE tr_nav.nav_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -318,11 +317,11 @@ func UpdateTrNav(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE nav_key = " + params["nav_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -334,7 +333,7 @@ func UpdateTrNav(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -355,17 +354,17 @@ func CreateTrNav(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -380,10 +379,10 @@ func GetNavByProductKeyAndNavDateExcept(c *TrNav, productKey string, navDate str
 		" AND tr_nav.nav_date = '" + navDate + "' AND tr_nav.nav_key != '" + keyExcept + "'"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -398,10 +397,10 @@ func AdminLastNavValue(c *NavValue, productKey string, date string) (int, error)
 			ORDER BY nav_date DESC LIMIT 1`
 
 	// Main query
-	log.Println("========== QUERY GET LAST NAV VALUE ==========", query)
+	// log.Println("========== QUERY GET LAST NAV VALUE ==========", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -416,10 +415,10 @@ func GetTanggalBursa(c *TanggalBursa, date string, addDate string) (int, error) 
 	query := `SELECT fn_AddDate('` + date + `', ` + addDate + `) AS date_result`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

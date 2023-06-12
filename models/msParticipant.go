@@ -3,8 +3,6 @@ package models
 import (
 	"mf-bo-api/db"
 	"net/http"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MsParticipant struct {
@@ -45,10 +43,10 @@ func AdminGetListDropdownMsParticipant(c *[]ListDropdownMsParticipant) (int, err
 			FROM ms_participant AS p
 			WHERE p.rec_status = 1 `
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

@@ -3,8 +3,6 @@ package models
 import (
 	"mf-bo-api/db"
 	"net/http"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type CmsQuizHeaderData struct {
@@ -77,10 +75,10 @@ func GetAllCmsQuizHeader(c *[]CmsQuizHeader, params map[string]string) (int, err
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -89,10 +87,10 @@ func GetAllCmsQuizHeader(c *[]CmsQuizHeader, params map[string]string) (int, err
 
 func GetCmsQuizHeader(c *CmsQuizHeader, key string) (int, error) {
 	query := `SELECT cms_quiz_header.* FROM cms_quiz_header WHERE cms_quiz_header.quiz_header_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 

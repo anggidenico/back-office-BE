@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type TransStampData struct {
@@ -105,10 +104,10 @@ func GetStampNominal(c *[]StampDutyValue, params map[string]string) (int, error)
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -159,11 +158,11 @@ func GetTransactionStamps(c *TransStampData, params map[string]string) (int, err
 	GROUP BY a.customer_key `
 
 	// Main query
-	log.Info(s_qry)
-	log.Info(s_qry)
+	// log.Info(s_qry)
+	// log.Info(s_qry)
 	err := db.Db.Get(c, s_qry)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

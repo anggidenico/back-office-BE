@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetTransactionType(c echo.Context) error {
@@ -20,11 +19,11 @@ func GetTransactionType(c echo.Context) error {
 	var trTransactionType []models.TrTransactionType
 	status, err = models.GetAllMsTransactionTypeByCondition(&trTransactionType, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(trTransactionType) < 1 {
-		log.Error("transaction type not found")
+		// log.Error("transaction type not found")
 		return lib.CustomError(http.StatusNotFound, "Transaction not found", "Transaction not found")
 	}
 

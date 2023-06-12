@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
@@ -57,10 +56,10 @@ func GetLastBalanceIn(c *[]TrBalance, acaKey []string) (int, error) {
 	ON (t1.balance_date = t2.balance_date AND t1.tc_key = t2.tc_key)`
 	query := query2 + " WHERE t1.rec_status = 1 AND t1.aca_key IN(" + inQuery + ") GROUP BY tc_key ORDER BY t1.balance_key DESC"
 
-	log.Println("========= QUERY GET LAST BALANCE ========= >>>", query)
+	// log.Println("========= QUERY GET LAST BALANCE ========= >>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -82,17 +81,17 @@ func CreateTrBalance(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -116,10 +115,10 @@ func GetLastBalanceCustomerByProductKey(c *[]TrBalanceCustomerProduk, customerKe
 		  AND tc.rec_status = 1 AND tr.trans_type_key = 1 AND tb.balance_unit > 0 
 				GROUP BY tb.tc_key  ORDER BY tc.tc_key ASC`
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -128,10 +127,10 @@ func GetLastBalanceCustomerByProductKey(c *[]TrBalanceCustomerProduk, customerKe
 
 func GetLastTrBalanceByTcRed(c *TrBalance, tcKeyRed string) (int, error) {
 	query := `SELECT * FROM tr_balance WHERE rec_status = 1 AND tc_key_red = ` + tcKeyRed + ` ORDER BY rec_order DESC LIMIT 1`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -149,10 +148,10 @@ func GetLastAvgNavTrBalanceCustomerByProductKey(c *AvgNav, customerKey string, p
 		` AND tr.trans_status_key = 9 AND tr.rec_status = 1 AND tb.rec_status = 1 AND tc.rec_status = 1 
 				ORDER BY tb.balance_key DESC LIMIT 1`
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -172,11 +171,11 @@ func UpdateTrBalance(params map[string]string, value string, field string) (int,
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	// log.Println("==========  ==========>>>", query)
+	// // log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		// log.Error(err)
+		// // log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -188,7 +187,7 @@ func UpdateTrBalance(params map[string]string, value string, field string) (int,
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		// log.Error(err)
+		// // log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -217,10 +216,10 @@ func GetSumBalanceUnit(c *[]SumBalanceUnit, acaKeys []string) (int, error) {
 				GROUP BY t.aca_key`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -249,10 +248,10 @@ func GetBalanceUnitByCustomerAndProduct(c *SumBalanceUnit, customerKey string, p
 			GROUP BY t.aca_key`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -309,10 +308,10 @@ func GetBeginningEndingBalanceAcc(c *BeginningEndingBalance, desc string, date s
 			GROUP BY nv.product_key`
 
 	// Main query
-	log.Println("========== QUERY GET BEGINNING AND ENDING BALANCE ACCOUNT ==========", query)
+	// log.Println("========== QUERY GET BEGINNING AND ENDING BALANCE ACCOUNT ==========", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -357,10 +356,10 @@ func GetBeginningEndingBalanceAca(c *BeginningEndingBalance, desc string, date s
 			GROUP BY nv.product_key`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

@@ -16,7 +16,6 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetListCustomerIndividuStatusSuspend(c echo.Context) error {
@@ -35,7 +34,7 @@ func GetListCustomerIndividuStatusSuspend(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -51,7 +50,7 @@ func GetListCustomerIndividuStatusSuspend(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -67,7 +66,7 @@ func GetListCustomerIndividuStatusSuspend(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -87,7 +86,7 @@ func GetListCustomerIndividuStatusSuspend(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -124,12 +123,12 @@ func GetListCustomerIndividuStatusSuspend(c echo.Context) error {
 	var userCategory uint64
 	userCategory = 3
 	if lib.Profile.UserCategoryKey == userCategory {
-		log.Println(lib.Profile)
+		// log.Println(lib.Profile)
 		if lib.Profile.BranchKey != nil {
 			strBranchKey := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 			params["c.openacc_branch_key"] = strBranchKey
 		} else {
-			log.Error("User Branch haven't Branch")
+			// log.Error("User Branch haven't Branch")
 			return lib.CustomError(http.StatusBadRequest, "Wrong User Branch haven't Branch", "Wrong User Branch haven't Branch")
 		}
 	}
@@ -139,11 +138,11 @@ func GetListCustomerIndividuStatusSuspend(c echo.Context) error {
 	status, err = models.AdminGetAllCustomerStatusSuspend(&customers, limit, offset, params, paramsLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(customers) < 1 {
-		log.Error("Customer not found")
+		// log.Error("Customer not found")
 		return lib.CustomError(http.StatusNotFound, "Customer not found", "Customer not found")
 	}
 
@@ -152,7 +151,7 @@ func GetListCustomerIndividuStatusSuspend(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetAllCustomerStatusSuspend(&countData, params, paramsLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -183,30 +182,30 @@ func AdminSuspendUnsuspendCustomer(c echo.Context) error {
 	if customerKeyStr != "" {
 		customerKey, err := strconv.ParseUint(customerKeyStr, 10, 64)
 		if err != nil || customerKey == 0 {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
 	reason := c.FormValue("reason")
 	if reason == "" {
-		log.Error("Missing required parameter: reason")
+		// log.Error("Missing required parameter: reason")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: reason", "Missing required parameter: reason")
 	}
 
 	suspendFlag := c.FormValue("suspend_flag")
 	if suspendFlag == "" {
-		log.Error("Missing required parameter: suspend_flag")
+		// log.Error("Missing required parameter: suspend_flag")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: suspend_flag", "Missing required parameter: suspend_flag")
 	}
 
 	var cus models.MsCustomer
 	_, err := models.GetMsCustomer(&cus, customerKeyStr)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Customer tidak ditemukan")
 	}
 
@@ -219,7 +218,7 @@ func AdminSuspendUnsuspendCustomer(c echo.Context) error {
 	params["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 	_, err = models.UpdateMsCustomer(params)
 	if err != nil {
-		log.Error("Error update suspend ms_customer")
+		// log.Error("Error update suspend ms_customer")
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed update data")
 	}
 
@@ -237,7 +236,7 @@ func AdminSuspendUnsuspendCustomer(c echo.Context) error {
 	paramsTrAccount["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 	_, err = models.UpdateTrAccountUploadSinvest(paramsTrAccount, "customer_key", customerKeyStr)
 	if err != nil {
-		log.Println(err.Error())
+		// log.Println(err.Error())
 	}
 
 	var response lib.Response
@@ -254,11 +253,11 @@ func AdminGetDetailCustomer(c echo.Context) error {
 	if customerKeyStr != "" {
 		customerKey, err := strconv.ParseUint(customerKeyStr, 10, 64)
 		if err != nil || customerKey == 0 {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	} else {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
@@ -269,7 +268,7 @@ func AdminGetDetailCustomer(c echo.Context) error {
 	var customer models.CustomerIndividuStatusSuspend
 	_, err := models.AdminGetDetailCustomerStatusSuspend(&customer, params)
 	if err != nil {
-		log.Error("Error get data ms_customer")
+		// log.Error("Error get data ms_customer")
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 	}
 
@@ -286,7 +285,7 @@ func UploadExcelCIFSuspendUnsuspend(c echo.Context) error {
 	var err error
 	err = os.MkdirAll(config.BasePath+"/cif_suspend/", 0755)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusUnauthorized, "Terjadi kesalahan.", "Terjadi kesalahan.")
 	} else {
 		var file *multipart.FileHeader
@@ -298,7 +297,7 @@ func UploadExcelCIFSuspendUnsuspend(c echo.Context) error {
 			}
 			// Get file extension
 			extension := filepath.Ext(file.Filename)
-			log.Println(extension)
+			// log.Println(extension)
 			roles := []string{".xlsx", ".XLSX"}
 			_, found := lib.Find(roles, extension)
 			if !found {
@@ -308,18 +307,18 @@ func UploadExcelCIFSuspendUnsuspend(c echo.Context) error {
 			// Generate filename
 			var filename string
 			filename = lib.RandStringBytesMaskImprSrc(20)
-			log.Println("Generate filename:", filename)
+			// log.Println("Generate filename:", filename)
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePath+"/cif_suspend/"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 
 			xlsx, err := excelize.OpenFile(config.BasePath + "/cif_suspend/" + filename + extension)
 			if err != nil {
-				log.Println(config.BasePath + "/cif_suspend/" + filename + extension)
-				log.Fatal("ERROR ", err.Error())
+				// log.Println(config.BasePath + "/cif_suspend/" + filename + extension)
+				// log.Fatal("ERROR ", err.Error())
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 
@@ -343,10 +342,10 @@ func UploadExcelCIFSuspendUnsuspend(c echo.Context) error {
 				closingDate := xlsx.GetCellValue(sheet1Name, fmt.Sprintf("M%d", i))
 				closingDateInputTime := xlsx.GetCellValue(sheet1Name, fmt.Sprintf("N%d", i))
 
-				log.Println(classification)
-				log.Println(ifua)
-				log.Println(suspendType)
-				log.Println(suspendReason)
+				// log.Println(classification)
+				// log.Println(ifua)
+				// log.Println(suspendType)
+				// log.Println(suspendReason)
 
 				if no == "" && classification == "" && saCode == "" && saName == "" &&
 					sid == "" && ifua == "" && ifuaName == "" && suspendType == "" &&
@@ -396,8 +395,8 @@ func UploadExcelCIFSuspendUnsuspend(c echo.Context) error {
 						paramsTrAccount["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 						_, err = models.UpdateTrAccountUploadSinvest(paramsTrAccount, "customer_key", strconv.FormatUint(acc.CustomerKey, 10))
 						if err != nil {
-							log.Error("Error update suspend flag")
-							log.Error(err.Error())
+							// log.Error("Error update suspend flag")
+							// log.Error(err.Error())
 							continue
 						}
 
@@ -408,19 +407,19 @@ func UploadExcelCIFSuspendUnsuspend(c echo.Context) error {
 						paramsCustomer["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 						_, err = models.UpdateMsCustomerByField(paramsCustomer, "customer_key", strconv.FormatUint(acc.CustomerKey, 10))
 						if err != nil {
-							log.Error("Error update cms_customer")
-							log.Error(err.Error())
+							// log.Error("Error update cms_customer")
+							// log.Error(err.Error())
 							continue
 						}
 					} else {
-						log.Error("Error get tr_account")
-						log.Error(err.Error())
+						// log.Error("Error get tr_account")
+						// log.Error(err.Error())
 						continue
 					}
 				}
 			}
 		} else {
-			log.Error("File cann't be blank")
+			// log.Error("File cann't be blank")
 			return lib.CustomError(http.StatusNotFound, "File can not be blank", "File can not be blank")
 		}
 	}

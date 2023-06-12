@@ -13,7 +13,6 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	ua "github.com/mileusna/useragent"
-	log "github.com/sirupsen/logrus"
 )
 
 type CProfile struct {
@@ -41,20 +40,20 @@ func AuthenticationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		if authorization != nil {
 			if strings.HasPrefix(authorization[0], "Bearer ") == true {
 				tokenString = authorization[0][7:]
-				log.Info(tokenString)
+				// log.Info(tokenString)
 			}
 		}
 		token, err := VerifyToken(tokenString)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return CustomError(http.StatusForbidden, err.Error(), "Authentication failed : cannot verified user")
 		}
 		claims, ok := token.Claims.(jwt.MapClaims)
-		log.Info(claims)
+		// log.Info(claims)
 		if ok && token.Valid {
 			accessUuid, ok := claims["uuid"].(string)
 			if !ok {
-				log.Error("Cannot get uuid")
+				// log.Error("Cannot get uuid")
 				return CustomError(http.StatusForbidden, "Cannot get uuid", "Authentication failed : cannot verified user")
 			}
 			params := make(map[string]string)
@@ -62,11 +61,11 @@ func AuthenticationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			var loginSession []models.ScLoginSession
 			_, err := models.GetAllScLoginSession(&loginSession, config.LimitQuery, 0, params, true)
 			if err != nil {
-				log.Error("Error get email")
+				// log.Error("Error get email")
 				return CustomError(http.StatusForbidden, "Forbidden", "you have to login first")
 			}
 			if len(loginSession) < 1 {
-				log.Error("No matching token " + tokenString)
+				// log.Error("No matching token " + tokenString)
 				return CustomError(http.StatusForbidden, "Forbidden", "You have to login first")
 			}
 
@@ -76,11 +75,11 @@ func AuthenticationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			var userLogin []models.ScUserLogin
 			_, err = models.GetAllScUserLogin(&userLogin, config.LimitQuery, 0, paramsUser, true)
 			if err != nil {
-				log.Error("Error get email")
+				// log.Error("Error get email")
 				return CustomError(http.StatusForbidden, "Forbidden", "You have to login first")
 			}
 			if len(userLogin) < 1 {
-				log.Error("No user login")
+				// log.Error("No user login")
 				return CustomError(http.StatusForbidden, "Forbidden", "You have to login first")
 			}
 
@@ -97,11 +96,11 @@ func AuthenticationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 					var countData models.CountData
 					_, err = models.CheckAllowedEndpoint(&countData, strRoleKey, c.Path())
 					if err != nil {
-						log.Error("Error Check Allowed Endpoint")
+						// log.Error("Error Check Allowed Endpoint")
 						return CustomError(http.StatusForbidden, "Forbidden", "Error Check Allowed Endpoint")
 					}
 					if int(countData.CountData) < 1 {
-						log.Error("Action Not Allowed")
+						// log.Error("Action Not Allowed")
 						return CustomError(http.StatusForbidden, "Forbidden", "Action Not Allowed")
 					}
 				}
@@ -114,7 +113,7 @@ func AuthenticationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 				var role []models.ScRole
 				_, err = models.GetAllScRole(&role, config.LimitQuery, 0, paramsRole, true)
 				if err != nil {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 				} else if len(role) > 0 {
 					if role[0].RoleCategoryKey != nil && *role[0].RoleCategoryKey > 0 {
 						Profile.RoleCategoryKey = *role[0].RoleCategoryKey
@@ -126,7 +125,7 @@ func AuthenticationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 					strDept := strconv.FormatUint(*user.UserDeptKey, 10)
 					_, err = models.GetScUserDept(&dept, strDept)
 					if err != nil {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 					} else {
 						Profile.RolePrivileges = dept.RolePrivileges
 						Profile.BranchKey = dept.BranchKey
@@ -165,36 +164,36 @@ func AuthenticationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			paramLog["device_name"] = ua.Name
 			paramLog["notes"] = c.Request().UserAgent()
 
-			// log.Println("-----------------------")
+			// // log.Println("-----------------------")
 			// json_map := make(map[string]interface{})
-			// log.Println(c.Request())
-			// log.Println(json.NewDecoder(c.Request().Body))
+			// // log.Println(c.Request())
+			// // log.Println(json.NewDecoder(c.Request().Body))
 			// err = json.NewDecoder(c.Request().Body).Decode(&json_map)
 			// if err != nil {
-			// 	log.Println("HAHAHAHAHAHAHA")
-			// 	log.Println(err)
+			// 	// log.Println("HAHAHAHAHAHAHA")
+			// 	// log.Println(err)
 			// 	return err
 			// } else {
-			// 	log.Println(json_map)
+			// 	// log.Println(json_map)
 			// 	//json_map has the JSON Payload decoded into a map
 			// 	// cb_type := json_map["type"]
 			// 	// challenge := json_map["challenge"]
 			// }
 
-			// log.Println(request)
-			// log.Println(request.PostForm.Encode())
-			// log.Println(c.Echo().Binder)
-			// log.Println("-----------------------")
+			// // log.Println(request)
+			// // log.Println(request.PostForm.Encode())
+			// // log.Println(c.Echo().Binder)
+			// // log.Println("-----------------------")
 			// paramLog["data"] = c.Request().Body.Close().Error()
 
-			// log.Println("BODY: " + c.Request().Header)
+			// // log.Println("BODY: " + c.Request().Header)
 			_, err = models.CreateEndpointAuditTrail(paramLog)
 			if err != nil {
-				log.Error("Failed Log Audit Trail: " + err.Error())
+				// log.Error("Failed Log Audit Trail: " + err.Error())
 			}
 
 		} else {
-			log.Error("Invalid token")
+			// log.Error("Invalid token")
 			return CustomError(http.StatusForbidden, "Forbidden", "You have to login first")
 		}
 
@@ -206,7 +205,7 @@ func VerifyToken(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		//Make sure that the token method conform to "SigningMethodHMAC"
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			log.Error("unexpected signing method: %v", token.Header["alg"])
+			// log.Error("unexpected signing method: %v", token.Header["alg"])
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return []byte(config.Secret), nil

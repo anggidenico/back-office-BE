@@ -5,8 +5,6 @@ import (
 	models "mf-bo-api/models/dashboard"
 	"strconv"
 	"time"
-
-	log "github.com/sirupsen/logrus"
 )
 
 func GetDataUserBelumOA() {
@@ -55,14 +53,14 @@ func GetDataUserBelumOA() {
 						fmt.Println("DATA USER BELUM OA KOSONG - " + idCat + " - " + idTime)
 					}
 				} else {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 				}
 			}
 		} else {
 			fmt.Println("DATA NURTURING KOSONG")
 		}
 	} else {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 	fmt.Println("END CRON NURTURING 1 : " + time.Now().Format(dateLayout))
 }
@@ -113,14 +111,14 @@ func GetDataUserSudahCustomerBelumTransaksi() {
 						fmt.Println("DATA USER BELUM OA KOSONG - " + idCat + " - " + idTime)
 					}
 				} else {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 				}
 			}
 		} else {
 			fmt.Println("DATA NURTURING KOSONG")
 		}
 	} else {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 	fmt.Println("END CRON NURTURING 2 : " + time.Now().Format(dateLayout))
 }
@@ -180,7 +178,7 @@ func GetDataUserHanyaSubs1Kali() {
 							fmt.Println("DATA USER BELUM OA KOSONG - " + idCat + " - " + idTime)
 						}
 					} else {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 					}
 				}
 			}
@@ -188,7 +186,7 @@ func GetDataUserHanyaSubs1Kali() {
 			fmt.Println("DATA NURTURING KOSONG")
 		}
 	} else {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 	fmt.Println("END CRON NURTURING 3 : " + time.Now().Format(dateLayout))
 }

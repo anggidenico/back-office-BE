@@ -5,8 +5,6 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type ScAppConfig struct {
@@ -39,10 +37,10 @@ type ScAppConfig struct {
 func GetScAppConfigByCode(c *ScAppConfig, code string) (int, error) {
 	query := `SELECT sc_app_config.* FROM sc_app_config WHERE sc_app_config.rec_status = 1 
 			AND sc_app_config.app_config_code ='` + code + `' `
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -62,11 +60,11 @@ func UpdateMsCustomerByConfigCode(params map[string]string, code string) (int, e
 		i++
 	}
 	query += " WHERE app_config_code = '" + code + "'"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -78,7 +76,7 @@ func UpdateMsCustomerByConfigCode(params map[string]string, code string) (int, e
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -120,10 +118,10 @@ func GetAllScAppConfig(c *[]ScAppConfig, params map[string]string) (int, error) 
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -205,10 +203,10 @@ func AdminGetListScAppConfig(c *[]ListScAppConfig, limit uint64, offset uint64, 
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -253,10 +251,10 @@ func CountAdminGetListScAppConfig(c *CountData, params map[string]string, search
 			WHERE c.rec_status = 1 ` + condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -279,11 +277,11 @@ func UpdateScAppConfig(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE app_config_key = " + params["app_config_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -291,7 +289,7 @@ func UpdateScAppConfig(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -313,18 +311,18 @@ func CreateScAppConfig(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -341,10 +339,10 @@ func CountScAppConfigValidateUnique(c *CountData, field string, value string, ke
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -353,10 +351,10 @@ func CountScAppConfigValidateUnique(c *CountData, field string, value string, ke
 
 func GetScAppConfig(c *ScAppConfig, key string) (int, error) {
 	query := `SELECT sc_app_config.* FROM sc_app_config WHERE rec_status = 1 AND app_config_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -369,10 +367,10 @@ func GetScAppConfigTokenMotionPay(c *ScAppConfig, code string) (int, error) {
 				WHERE rec_status = 1 
 				AND app_config_code = "` + code + `"
 				AND DATE_ADD(rec_modified_date, INTERVAL 180 DAY) <= NOW();`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 

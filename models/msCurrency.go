@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MsCurrencyInfo struct {
@@ -50,10 +48,10 @@ func GetMsCurrencyIn(c *[]MsCurrency, value []string, field string) (int, error)
 	query := query2 + " WHERE ms_currency." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("========= QUERY GET CURRENCY ========= >>>", query)
+	// log.Println("========= QUERY GET CURRENCY ========= >>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -63,10 +61,10 @@ func GetMsCurrencyIn(c *[]MsCurrency, value []string, field string) (int, error)
 func GetMsCurrency(c *MsCurrency, key string) (int, error) {
 	query := `SELECT ms_currency.* FROM ms_currency WHERE ms_currency.rec_status = '1' 
 	AND ms_currency.currency_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -119,10 +117,10 @@ func AdminGetListMsCurrency(c *[]MsCurrency, limit uint64, offset uint64, params
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -197,10 +195,10 @@ func AdminGetListCurrency(c *[]ListCurrency, limit uint64, offset uint64, params
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -242,10 +240,10 @@ func CountAdminGetCurrency(c *CountData, params map[string]string, searchLike st
 			WHERE rec_status = 1` + condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -267,17 +265,17 @@ func CreateMsCurrency(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -299,11 +297,11 @@ func UpdateMsCurrency(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE currency_key = " + params["currency_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -311,7 +309,7 @@ func UpdateMsCurrency(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -329,10 +327,10 @@ func CountMsCurrencyValidateUnique(c *CountData, field string, value string, key
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type TrAutoinvestRegistration struct {
@@ -72,18 +71,18 @@ func CreateTrAutoinvestRegistration(params map[string]string) (int, error, strin
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -95,10 +94,10 @@ func GetTrAutoinvestRegistration(c *TrAutoinvestRegistration, key string) (int, 
 	FROM tr_autoinvest_registration 
 	WHERE tr_autoinvest_registration.rec_status = "1" 
 	AND tr_autoinvest_registration.autoinvest_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -115,10 +114,10 @@ func GetTrAutoinvestRegistrationCountData(c *TrAutoinvestRegistrationCount, acc 
 	if autoInvestKey != "" {
 		query += " AND autoinvest_key != " + autoInvestKey
 	}
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -141,11 +140,11 @@ func UpdateTrAutoinvestRegistration(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE autoinvest_key = " + params["autoinvest_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -157,7 +156,7 @@ func UpdateTrAutoinvestRegistration(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -172,10 +171,10 @@ func GetTrAutoinvestRegistrationIn(c *[]TrAutoinvestRegistration, value []string
 	query := query2 + " AND tr_autoinvest_registration." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

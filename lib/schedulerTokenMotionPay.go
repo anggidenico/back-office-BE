@@ -10,8 +10,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	log "github.com/sirupsen/logrus"
 )
 
 func GenerateTokenMPLinking() {
@@ -20,7 +18,7 @@ func GenerateTokenMPLinking() {
 	_, err := models.GetScAppConfigTokenMotionPay(&scApp, "TOKEN_MOTION_PAY_LINKING")
 	if err != nil {
 		fmt.Println("error get data config")
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	} else {
 		merchantId := config.MERCHANT_ID
 		partnerId := config.PARTNER_ID
@@ -48,12 +46,12 @@ func GenerateTokenMPLinking() {
 				paramsConfig["rec_modified_by"] = "CRON"
 				_, err = models.UpdateMsCustomerByConfigCode(paramsConfig, "TOKEN_MOTION_PAY_LINKING")
 				if err != nil {
-					log.Error("Error update App Config")
-					log.Error(err.Error())
+					// log.Error("Error update App Config")
+					// log.Error(err.Error())
 				}
 			}
 		} else {
-			log.Error(status, " error get data")
+			// log.Error(status, " error get data")
 		}
 	}
 	fmt.Println("end cron generate token linking motion pay")
@@ -65,7 +63,7 @@ func GenerateTokenMPPayment() {
 	_, err := models.GetScAppConfigTokenMotionPay(&scApp, "TOKEN_MOTION_PAY_PAYMENT")
 	if err != nil {
 		fmt.Println("error get data config")
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	} else {
 		merchantId := config.MERCHANT_ID_MP_PAYMENT
 		partnerId := config.PARTNER_ID_MP_PAYMENT
@@ -93,12 +91,12 @@ func GenerateTokenMPPayment() {
 				paramsConfig["rec_modified_by"] = "CRON"
 				_, err = models.UpdateMsCustomerByConfigCode(paramsConfig, "TOKEN_MOTION_PAY_PAYMENT")
 				if err != nil {
-					log.Error("Error update App Config")
-					log.Error(err.Error())
+					// log.Error("Error update App Config")
+					// log.Error(err.Error())
 				}
 			}
 		} else {
-			log.Error(status, " error get data")
+			// log.Error(status, " error get data")
 		}
 	}
 	fmt.Println("end cron generate token payment motion pay")
@@ -132,7 +130,7 @@ func requestTokenMotionPay(
 	payload := strings.NewReader(string(jsonString))
 	req, err := http.NewRequest(reqMethod, urlPath, payload)
 	if err != nil {
-		log.Error("Error1", err.Error())
+		// log.Error("Error1", err.Error())
 	}
 
 	req.Header.Add("content-type", "application/json")
@@ -141,7 +139,7 @@ func requestTokenMotionPay(
 	paramLog["body"] = string(jsonString)
 
 	res, err := http.DefaultClient.Do(req)
-	log.Info(res.StatusCode)
+	// log.Info(res.StatusCode)
 	paramLog["status"] = strconv.FormatUint(uint64(res.StatusCode), 10)
 
 	if res.StatusCode != http.StatusOK {
@@ -149,8 +147,8 @@ func requestTokenMotionPay(
 		paramLog["response"] = string(body)
 		_, err = models.CreateEndpoint3rdPartyLog(paramLog)
 		if err != nil {
-			log.Error("Error create log endpoint motion pay")
-			log.Error(err.Error())
+			// log.Error("Error create log endpoint motion pay")
+			// log.Error(err.Error())
 		}
 		return res.StatusCode, string(body), err
 	} else {
@@ -160,17 +158,17 @@ func requestTokenMotionPay(
 			paramLog["response"] = string(body)
 			_, err = models.CreateEndpoint3rdPartyLog(paramLog)
 			if err != nil {
-				log.Error("Error create log endpoint motion pay")
-				log.Error(err.Error())
+				// log.Error("Error create log endpoint motion pay")
+				// log.Error(err.Error())
 			}
-			log.Error("Error3", err.Error())
+			// log.Error("Error3", err.Error())
 			return http.StatusBadGateway, string(body), err
 		}
 		paramLog["response"] = string(body)
 		_, err = models.CreateEndpoint3rdPartyLog(paramLog)
 		if err != nil {
-			log.Error("Error create log endpoint motion pay")
-			log.Error(err.Error())
+			// log.Error("Error create log endpoint motion pay")
+			// log.Error(err.Error())
 		}
 
 		return http.StatusOK, string(body), nil

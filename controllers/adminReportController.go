@@ -14,7 +14,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetTransactionHistory(c echo.Context) error {
@@ -33,7 +32,7 @@ func GetTransactionHistory(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -49,7 +48,7 @@ func GetTransactionHistory(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -65,7 +64,7 @@ func GetTransactionHistory(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -78,12 +77,12 @@ func GetTransactionHistory(c echo.Context) error {
 	var roleKeyBranchEntry uint64
 	roleKeyBranchEntry = 7
 	if lib.Profile.RoleKey == roleKeyBranchEntry {
-		log.Println(lib.Profile)
+		// log.Println(lib.Profile)
 		if lib.Profile.BranchKey != nil {
 			strBranchKey := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 			params["t.branch_key"] = strBranchKey
 		} else {
-			log.Error("User Branch haven't Branch")
+			// log.Error("User Branch haven't Branch")
 			return lib.CustomError(http.StatusBadRequest, "Wrong User Branch haven't Branch", "Wrong User Branch haven't Branch")
 		}
 	}
@@ -100,13 +99,13 @@ func GetTransactionHistory(c echo.Context) error {
 
 	datefrom := c.QueryParam("date_from")
 	if datefrom == "" {
-		log.Error("date_from parameter tidak boleh kosong")
+		// log.Error("date_from parameter tidak boleh kosong")
 		return lib.CustomError(http.StatusBadRequest, "date_from parameter tidak boleh kosong", "date_from parameter tidak boleh kosong")
 	}
 
 	dateto := c.QueryParam("date_to")
 	if dateto == "" {
-		log.Error("date_to parameter tidak boleh kosong")
+		// log.Error("date_to parameter tidak boleh kosong")
 		return lib.CustomError(http.StatusBadRequest, "date_to parameter tidak boleh kosong", "date_to parameter tidak boleh kosong")
 	}
 
@@ -159,7 +158,7 @@ func GetTransactionHistory(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -179,11 +178,11 @@ func GetTransactionHistory(c echo.Context) error {
 	status, err = models.AdminGetTransactionCustomerHistory(&transaksi, limit, offset, params, paramsLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(transaksi) < 1 {
-		log.Error("Transaksi not found")
+		// log.Error("Transaksi not found")
 		return lib.CustomError(http.StatusNotFound, "Transaksi not found", "Transaksi not found")
 	}
 
@@ -192,7 +191,7 @@ func GetTransactionHistory(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.AdminCountTransactionCustomerHistory(&countData, params, paramsLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -230,12 +229,12 @@ func GetListCustomerDropDown(c echo.Context) error {
 		var userCategory uint64
 		userCategory = 3
 		if lib.Profile.UserCategoryKey == userCategory {
-			log.Println(lib.Profile)
+			// log.Println(lib.Profile)
 			if lib.Profile.BranchKey != nil {
 				strBranchKey := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 				params["c.openacc_branch_key"] = strBranchKey
 			} else {
-				log.Error("User Branch haven't Branch")
+				// log.Error("User Branch haven't Branch")
 				return lib.CustomError(http.StatusBadRequest, "Wrong User Branch haven't Branch", "Wrong User Branch haven't Branch")
 			}
 		}
@@ -253,11 +252,11 @@ func GetListCustomerDropDown(c echo.Context) error {
 	status, err = models.GetCustomerDropdown(&customer, params, paramsLike)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(customer) < 1 {
-		log.Error("Customer not found")
+		// log.Error("Customer not found")
 		return lib.CustomError(http.StatusNotFound, "Customer not found", "Customer not found")
 	}
 
@@ -282,14 +281,14 @@ func GetDetailCustomerProduct(c echo.Context) error {
 
 	param := c.Param("param")
 	if param == "" {
-		log.Error("Wrong input for parameter param")
+		// log.Error("Wrong input for parameter param")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter param", "Wrong input for parameter param")
 	}
 
 	raw, err := b64.StdEncoding.DecodeString(strings.Replace(param, "%3D", "=", 3))
 
 	if err != nil {
-		log.Error("Wrong input for parameter param")
+		// log.Error("Wrong input for parameter param")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter param", "Wrong input for parameter param")
 	}
 
@@ -316,7 +315,7 @@ func GetDetailCustomerProduct(c echo.Context) error {
 				dateTo = value
 			}
 		} else {
-			log.Error("Wrong input for parameter param")
+			// log.Error("Wrong input for parameter param")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter param", "Wrong input for parameter param")
 			break
 		}
@@ -334,13 +333,13 @@ func GetDetailCustomerProduct(c echo.Context) error {
 	var roleKeyBranchEntry uint64
 	roleKeyBranchEntry = 7
 	if lib.Profile.RoleKey == roleKeyBranchEntry {
-		log.Println(lib.Profile)
+		// log.Println(lib.Profile)
 		if lib.Profile.BranchKey != nil {
 			strBranchKey := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 			params["d.branch_key"] = strBranchKey
 			paramsList["t.branch_key"] = strBranchKey
 		} else {
-			log.Error("User Branch haven't Branch")
+			// log.Error("User Branch haven't Branch")
 			return lib.CustomError(http.StatusBadRequest, "Wrong User Branch haven't Branch", "Wrong User Branch haven't Branch")
 		}
 	}
@@ -349,7 +348,7 @@ func GetDetailCustomerProduct(c echo.Context) error {
 	var header models.DetailHeaderTransaksiCustomer
 	status, err = models.AdminGetDetailHeaderTransaksiCustomer(&header, dateFrom, dateTo, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, "Failed get data", "Failed get data")
 	}
 
@@ -358,7 +357,7 @@ func GetDetailCustomerProduct(c echo.Context) error {
 
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -418,21 +417,21 @@ func GetBankProductTransaction(c echo.Context) error {
 	//product_key
 	productKey := c.QueryParam("product_key")
 	if productKey == "" {
-		log.Error("Wrong input for parameter: product_key")
+		// log.Error("Wrong input for parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 	productKeyCek, err := strconv.ParseUint(productKey, 10, 64)
 	if err == nil && productKeyCek > 0 {
 		params["t.product_key"] = productKey
 	} else {
-		log.Error("Wrong input for parameter: product_key")
+		// log.Error("Wrong input for parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
 	//nav_date
 	navdate := c.QueryParam("nav_date")
 	if navdate == "" {
-		log.Error("Wrong input for parameter: nav_date")
+		// log.Error("Wrong input for parameter: nav_date")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date", "Missing required parameter: nav_date")
 	}
 	params["t.nav_date"] = navdate
@@ -440,13 +439,13 @@ func GetBankProductTransaction(c echo.Context) error {
 	//trans_type
 	transtype := c.QueryParam("trans_type")
 	if transtype == "" {
-		log.Error("Wrong input for parameter: trans_type")
+		// log.Error("Wrong input for parameter: trans_type")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_type", "Missing required parameter: trans_type")
 	}
 	if (transtype == "1") || (transtype == "2") {
 		params["t.trans_type_key"] = transtype
 	} else {
-		log.Error("Wrong input for parameter: trans_type")
+		// log.Error("Wrong input for parameter: trans_type")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_type", "Missing required parameter: trans_type")
 	}
 
@@ -455,13 +454,13 @@ func GetBankProductTransaction(c echo.Context) error {
 
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
 
 	if len(bankTransaction) < 1 {
-		log.Error("Bank not found")
+		// log.Error("Bank not found")
 		return lib.CustomError(http.StatusNotFound, "Bank not found", "Bank not found")
 	}
 
@@ -491,21 +490,21 @@ func getResultReportDaily(trans_type string, c echo.Context) error {
 	//product_key
 	productKey := c.QueryParam("product_key")
 	if productKey == "" {
-		log.Error("Wrong input for parameter: product_key")
+		// log.Error("Wrong input for parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 	productKeyCek, err := strconv.ParseUint(productKey, 10, 64)
 	if err == nil && productKeyCek > 0 {
 		params["t.product_key"] = productKey
 	} else {
-		log.Error("Wrong input for parameter: product_key")
+		// log.Error("Wrong input for parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
 	//nav_date
 	navdate := c.QueryParam("nav_date")
 	if navdate == "" {
-		log.Error("Wrong input for parameter: nav_date")
+		// log.Error("Wrong input for parameter: nav_date")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date", "Missing required parameter: nav_date")
 	}
 	params["t.nav_date"] = navdate
@@ -513,14 +512,14 @@ func getResultReportDaily(trans_type string, c echo.Context) error {
 	//prod_bankacc_key
 	prodbankacckey := c.QueryParam("prod_bankacc_key")
 	if prodbankacckey == "" {
-		log.Error("Wrong input for parameter: prod_bankacc_key")
+		// log.Error("Wrong input for parameter: prod_bankacc_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_bankacc_key", "Missing required parameter: prod_bankacc_key")
 	}
 	prodbankacckeyCek, err := strconv.ParseUint(prodbankacckey, 10, 64)
 	if err == nil && prodbankacckeyCek > 0 {
 		params["ba.prod_bankacc_key"] = prodbankacckey
 	} else {
-		log.Error("Wrong input for parameter: prod_bankacc_key")
+		// log.Error("Wrong input for parameter: prod_bankacc_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_bankacc_key", "Missing required parameter: prod_bankacc_key")
 	}
 
@@ -536,7 +535,7 @@ func getResultReportDaily(trans_type string, c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -552,7 +551,7 @@ func getResultReportDaily(trans_type string, c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -568,7 +567,7 @@ func getResultReportDaily(trans_type string, c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -598,7 +597,7 @@ func getResultReportDaily(trans_type string, c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -611,7 +610,7 @@ func getResultReportDaily(trans_type string, c echo.Context) error {
 	_, err = models.AdminGetHeaderDailySubsRedmBatchForm(&header, params)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(http.StatusBadRequest, "Failed get data", "Failed get data")
 		}
 	}
@@ -621,7 +620,7 @@ func getResultReportDaily(trans_type string, c echo.Context) error {
 	_, err = models.AdminGetDailySubsRedmBatchForm(&datas, limit, offset, params, noLimit)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(http.StatusBadRequest, "Failed get data", "Failed get data")
 		}
 	}
@@ -705,7 +704,7 @@ func getResultReportDaily(trans_type string, c echo.Context) error {
 	if limit > 0 {
 		status, err := models.AdminCountDailySubsRedmBatchForm(&countData, params)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -744,7 +743,7 @@ func GetDailyTransactionReport(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -760,7 +759,7 @@ func GetDailyTransactionReport(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -776,7 +775,7 @@ func GetDailyTransactionReport(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -797,13 +796,13 @@ func GetDailyTransactionReport(c echo.Context) error {
 
 	datefrom := c.QueryParam("date_from")
 	if datefrom == "" {
-		log.Error("date_from parameter tidak boleh kosong")
+		// log.Error("date_from parameter tidak boleh kosong")
 		return lib.CustomError(http.StatusBadRequest, "date_from parameter tidak boleh kosong", "date_from parameter tidak boleh kosong")
 	}
 
 	dateto := c.QueryParam("date_to")
 	if dateto == "" {
-		log.Error("date_to parameter tidak boleh kosong")
+		// log.Error("date_to parameter tidak boleh kosong")
 		return lib.CustomError(http.StatusBadRequest, "date_to parameter tidak boleh kosong", "date_to parameter tidak boleh kosong")
 	}
 
@@ -873,7 +872,7 @@ func GetDailyTransactionReport(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -886,11 +885,11 @@ func GetDailyTransactionReport(c echo.Context) error {
 	status, err = models.DailyTransactionReport(&transaksi, limit, offset, params, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(transaksi) < 1 {
-		log.Error("Transaksi not found")
+		// log.Error("Transaksi not found")
 		return lib.CustomError(http.StatusNotFound, "Transaksi not found", "Transaksi not found")
 	}
 
@@ -899,7 +898,7 @@ func GetDailyTransactionReport(c echo.Context) error {
 	status, err = models.DailyTransactionReportTotal(&transaksiTotal, params)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -912,7 +911,7 @@ func GetDailyTransactionReport(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.DailyTransactionReportCountRow(&countData, params)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -951,7 +950,7 @@ func GetSubscriptionBatchConfirmation(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -967,7 +966,7 @@ func GetSubscriptionBatchConfirmation(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -983,7 +982,7 @@ func GetSubscriptionBatchConfirmation(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -996,13 +995,13 @@ func GetSubscriptionBatchConfirmation(c echo.Context) error {
 	if productkey != "" {
 		params["t.product_key"] = productkey
 	} else {
-		log.Error("product_key parameter tidak boleh kosong")
+		// log.Error("product_key parameter tidak boleh kosong")
 		return lib.CustomError(http.StatusBadRequest, "product_key parameter tidak boleh kosong", "product_key parameter tidak boleh kosong")
 	}
 
 	date := c.QueryParam("date")
 	if date == "" {
-		log.Error("date parameter tidak boleh kosong")
+		// log.Error("date parameter tidak boleh kosong")
 		return lib.CustomError(http.StatusBadRequest, "date parameter tidak boleh kosong", "date parameter tidak boleh kosong")
 	} else {
 		params["t.nav_date"] = date
@@ -1052,7 +1051,7 @@ func GetSubscriptionBatchConfirmation(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -1065,13 +1064,13 @@ func GetSubscriptionBatchConfirmation(c echo.Context) error {
 
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
 
 	if len(listTransaksi) < 1 {
-		log.Error("Transaksi not found")
+		// log.Error("Transaksi not found")
 		return lib.CustomError(http.StatusNotFound, "Transaksi not found", "Transaksi not found")
 	}
 
@@ -1122,7 +1121,7 @@ func GetSubscriptionBatchConfirmation(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.SubscriptionBatchConfirmationCount(&countData, params)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -1160,7 +1159,7 @@ func GetRedemptionBatchConfirmation(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -1176,7 +1175,7 @@ func GetRedemptionBatchConfirmation(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -1192,7 +1191,7 @@ func GetRedemptionBatchConfirmation(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -1205,13 +1204,13 @@ func GetRedemptionBatchConfirmation(c echo.Context) error {
 	if productkey != "" {
 		params["t.product_key"] = productkey
 	} else {
-		log.Error("product_key parameter tidak boleh kosong")
+		// log.Error("product_key parameter tidak boleh kosong")
 		return lib.CustomError(http.StatusBadRequest, "product_key parameter tidak boleh kosong", "product_key parameter tidak boleh kosong")
 	}
 
 	date := c.QueryParam("date")
 	if date == "" {
-		log.Error("date parameter tidak boleh kosong")
+		// log.Error("date parameter tidak boleh kosong")
 		return lib.CustomError(http.StatusBadRequest, "date parameter tidak boleh kosong", "date parameter tidak boleh kosong")
 	} else {
 		params["t.nav_date"] = date
@@ -1267,7 +1266,7 @@ func GetRedemptionBatchConfirmation(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -1280,13 +1279,13 @@ func GetRedemptionBatchConfirmation(c echo.Context) error {
 
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
 
 	if len(listTransaksi) < 1 {
-		log.Error("Transaksi not found")
+		// log.Error("Transaksi not found")
 		return lib.CustomError(http.StatusNotFound, "Transaksi not found", "Transaksi not found")
 	}
 
@@ -1340,7 +1339,7 @@ func GetRedemptionBatchConfirmation(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.RedemptionBatchConfirmationCount(&countData, params)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -1378,7 +1377,7 @@ func GetTransactionPaymentReport(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -1394,7 +1393,7 @@ func GetTransactionPaymentReport(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -1410,7 +1409,7 @@ func GetTransactionPaymentReport(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -1421,13 +1420,13 @@ func GetTransactionPaymentReport(c echo.Context) error {
 
 	datefrom := c.QueryParam("date_from")
 	if datefrom == "" {
-		log.Error("date_from parameter tidak boleh kosong")
+		// log.Error("date_from parameter tidak boleh kosong")
 		return lib.CustomError(http.StatusBadRequest, "date_from parameter tidak boleh kosong", "date_from parameter tidak boleh kosong")
 	}
 
 	dateto := c.QueryParam("date_to")
 	if dateto == "" {
-		log.Error("date_to parameter tidak boleh kosong")
+		// log.Error("date_to parameter tidak boleh kosong")
 		return lib.CustomError(http.StatusBadRequest, "date_to parameter tidak boleh kosong", "date_to parameter tidak boleh kosong")
 	}
 
@@ -1440,7 +1439,7 @@ func GetTransactionPaymentReport(c echo.Context) error {
 	if paymentMethod != "" {
 		params["pc.pchannel_key"] = paymentMethod
 	} else {
-		log.Error("payment_method parameter tidak boleh kosong")
+		// log.Error("payment_method parameter tidak boleh kosong")
 		return lib.CustomError(http.StatusBadRequest, "payment_method parameter tidak boleh kosong", "payment_method parameter tidak boleh kosong")
 	}
 
@@ -1500,7 +1499,7 @@ func GetTransactionPaymentReport(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -1511,14 +1510,14 @@ func GetTransactionPaymentReport(c echo.Context) error {
 	var listTransaksi []models.TcPaymentReport
 	status, err = models.TransactionPaymentReport(&listTransaksi, limit, offset, params, noLimit)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		if err != sql.ErrNoRows {
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
 
 	if len(listTransaksi) < 1 {
-		log.Error("Transaksi not found")
+		// log.Error("Transaksi not found")
 		return lib.CustomError(http.StatusNotFound, "Transaksi not found", "Transaksi not found")
 	}
 
@@ -1526,7 +1525,7 @@ func GetTransactionPaymentReport(c echo.Context) error {
 	status, err = models.TransactionPaymentReportTotal(&totalData, params)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -1691,7 +1690,7 @@ func GetListCustomerBranchAgentDropdown(c echo.Context) error {
 		var userCategory uint64
 		userCategory = 3
 		if lib.Profile.UserCategoryKey == userCategory {
-			log.Println(lib.Profile)
+			// log.Println(lib.Profile)
 			if lib.Profile.BranchKey != nil {
 				branchKey = strconv.FormatUint(*lib.Profile.BranchKey, 10)
 			}
@@ -1699,13 +1698,13 @@ func GetListCustomerBranchAgentDropdown(c echo.Context) error {
 	}
 
 	// if branchKey == "" {
-	// 	log.Error("branch_key parameter tidak boleh kosong")
+	// 	// log.Error("branch_key parameter tidak boleh kosong")
 	// 	return lib.CustomError(http.StatusBadRequest, "branch_key parameter tidak boleh kosong", "branch_key parameter tidak boleh kosong")
 	// }
 
 	agentKey := c.QueryParam("agent_key")
 	// if agentKey == "" {
-	// 	log.Error("agent_key parameter tidak boleh kosong")
+	// 	// log.Error("agent_key parameter tidak boleh kosong")
 	// 	return lib.CustomError(http.StatusBadRequest, "agent_key parameter tidak boleh kosong", "agent_key parameter tidak boleh kosong")
 	// }
 
@@ -1716,11 +1715,11 @@ func GetListCustomerBranchAgentDropdown(c echo.Context) error {
 	status, err = models.GetCustomerBranchAgentDropdown(&customer, branchKey, agentKey, customername)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(customer) < 1 {
-		log.Error("Customer not found")
+		// log.Error("Customer not found")
 		return lib.CustomError(http.StatusNotFound, "Customer not found", "Customer not found")
 	}
 

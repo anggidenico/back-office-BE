@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func AdminGetListPostSubtype(c echo.Context) error {
@@ -25,7 +24,7 @@ func AdminGetListPostSubtype(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -41,7 +40,7 @@ func AdminGetListPostSubtype(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -57,7 +56,7 @@ func AdminGetListPostSubtype(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -79,7 +78,7 @@ func AdminGetListPostSubtype(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	}
@@ -89,7 +88,7 @@ func AdminGetListPostSubtype(c echo.Context) error {
 	var subtype []models.CmsPostSubtype
 	status, err = models.GetAllCmsPostSubtype(&subtype, limit, offset, params, noLimit)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -120,14 +119,14 @@ func AdminGetListPostSubtypeByType(c echo.Context) error {
 	params := make(map[string]string)
 	posttype := c.Param("post_type")
 	if posttype == "" {
-		log.Error("Missing required parameter: post_type")
+		// log.Error("Missing required parameter: post_type")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_type", "Missing required parameter: post_type")
 	}
 	sub, err := strconv.ParseUint(posttype, 10, 64)
 	if err == nil && sub > 0 {
 		params["post_type_key"] = posttype
 	} else {
-		log.Error("Wrong input for parameter: post_type")
+		// log.Error("Wrong input for parameter: post_type")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: post_type", "Missing required parameter: post_type")
 	}
 
@@ -136,7 +135,7 @@ func AdminGetListPostSubtypeByType(c echo.Context) error {
 	var subtype []models.CmsPostSubtype
 	status, err = models.GetAllCmsPostSubtype(&subtype, 0, 0, params, true)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 

@@ -22,7 +22,6 @@ import (
 	"github.com/badoux/checkmail"
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 
 	wkhtml "github.com/SebastiaanKlippert/go-wkhtmltopdf"
@@ -44,7 +43,7 @@ func GetListCustomerIndividuInquiry(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -60,7 +59,7 @@ func GetListCustomerIndividuInquiry(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -76,7 +75,7 @@ func GetListCustomerIndividuInquiry(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -96,7 +95,7 @@ func GetListCustomerIndividuInquiry(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -137,12 +136,12 @@ func GetListCustomerIndividuInquiry(c echo.Context) error {
 	var userCategory uint64
 	userCategory = 3
 	if lib.Profile.UserCategoryKey == userCategory {
-		log.Println(lib.Profile)
+		// log.Println(lib.Profile)
 		if lib.Profile.BranchKey != nil {
 			strBranchKey := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 			params["r.branch_key"] = strBranchKey
 		} else {
-			log.Error("User Branch haven't Branch")
+			// log.Error("User Branch haven't Branch")
 			return lib.CustomError(http.StatusBadRequest, "Wrong User Branch haven't Branch", "Wrong User Branch haven't Branch")
 		}
 	}
@@ -152,11 +151,11 @@ func GetListCustomerIndividuInquiry(c echo.Context) error {
 	status, err = models.AdminGetAllCustomerIndividuInquery(&customers, limit, offset, params, paramsLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(customers) < 1 {
-		log.Error("Customer not found")
+		// log.Error("Customer not found")
 		return lib.CustomError(http.StatusNotFound, "Customer not found", "Customer not found")
 	}
 
@@ -165,7 +164,7 @@ func GetListCustomerIndividuInquiry(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetAllCustomerIndividuInquery(&countData, params, paramsLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -204,7 +203,7 @@ func GetListCustomerInstitutionInquiry(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -220,7 +219,7 @@ func GetListCustomerInstitutionInquiry(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -236,7 +235,7 @@ func GetListCustomerInstitutionInquiry(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -275,7 +274,7 @@ func GetListCustomerInstitutionInquiry(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -304,12 +303,12 @@ func GetListCustomerInstitutionInquiry(c echo.Context) error {
 	var userCategory uint64
 	userCategory = 3
 	if lib.Profile.UserCategoryKey == userCategory {
-		log.Println(lib.Profile)
+		// log.Println(lib.Profile)
 		if lib.Profile.BranchKey != nil {
 			strBranchKey := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 			params["c.openacc_branch_key"] = strBranchKey
 		} else {
-			log.Error("User Branch haven't Branch")
+			// log.Error("User Branch haven't Branch")
 			return lib.CustomError(http.StatusBadRequest, "Wrong User Branch haven't Branch", "Wrong User Branch haven't Branch")
 		}
 	}
@@ -319,11 +318,11 @@ func GetListCustomerInstitutionInquiry(c echo.Context) error {
 	status, err = models.AdminGetAllCustomerInstitutionInquery(&customers, limit, offset, params, paramsLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(customers) < 1 {
-		log.Error("Customer not found")
+		// log.Error("Customer not found")
 		return lib.CustomError(http.StatusNotFound, "Customer not found", "Customer not found")
 	}
 
@@ -332,7 +331,7 @@ func GetListCustomerInstitutionInquiry(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetAllCustomerInstitutionInquery(&countData, params, paramsLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -360,7 +359,7 @@ func GetDetailCustomerIndividu(c echo.Context) error {
 
 	keyStr := c.Param("key") //oa_request_key
 	if keyStr == "" {
-		log.Error("Missing required parameter: key")
+		// log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
@@ -379,13 +378,13 @@ func GetDetailCustomerIndividu(c echo.Context) error {
 	userCategory = 3
 	if lib.Profile.UserCategoryKey == userCategory {
 		if customer.BranchKey == nil {
-			log.Error("User Branch null, not match with customer branch")
+			// log.Error("User Branch null, not match with customer branch")
 			return lib.CustomError(http.StatusNotFound)
 		} else {
 			strCusBranch := strconv.FormatUint(*customer.BranchKey, 10)
 			strUserBranch := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 			if strCusBranch != strUserBranch {
-				log.Error("User Branch not match with customer branch")
+				// log.Error("User Branch not match with customer branch")
 				return lib.CustomError(http.StatusNotFound)
 			}
 		}
@@ -427,7 +426,7 @@ func GetDetailCustomerInstitution(c echo.Context) error {
 
 	keyStr := c.Param("key")
 	if keyStr == "" {
-		log.Error("Missing required parameter: key")
+		// log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
@@ -446,13 +445,13 @@ func GetDetailCustomerInstitution(c echo.Context) error {
 	userCategory = 3
 	if lib.Profile.UserCategoryKey == userCategory {
 		if customer.BranchKey == nil {
-			log.Error("User Branch null, not match with customer branch")
+			// log.Error("User Branch null, not match with customer branch")
 			return lib.CustomError(http.StatusNotFound)
 		} else {
 			strCusBranch := strconv.FormatUint(*customer.BranchKey, 10)
 			strUserBranch := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 			if strCusBranch != strUserBranch {
-				log.Error("User Branch not match with customer branch")
+				// log.Error("User Branch not match with customer branch")
 				return lib.CustomError(http.StatusNotFound)
 			}
 		}
@@ -484,7 +483,7 @@ func GetDetailCustomerInquiry(c echo.Context) error {
 
 	keyStr := c.Param("key")
 	if keyStr == "" {
-		log.Error("Missing required parameter: key")
+		// log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
@@ -556,7 +555,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 	}
 
 	// if oareq.CustomerKey == nil {
-	// 	log.Println("data belum jadi customer")
+	// 	// log.Println("data belum jadi customer")
 	// 	return lib.CustomError(http.StatusNotFound)
 	// }
 
@@ -600,7 +599,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 		status, err = models.GetGenLookupIn(&lookupOaReq, oaRequestLookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -772,7 +771,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 			status, err = models.GetGenLookupIn(&lookupPersonData, personalDataLookupIds, "lookup_key")
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -811,7 +810,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 		status, err = models.GetMsCountry(&country, strCountry)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error("Error Personal Data not Found")
+				// log.Error("Error Personal Data not Found")
 				return lib.CustomError(status, err.Error(), "Personal data not found")
 			}
 		} else {
@@ -889,7 +888,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 			status, err = models.GetOaPostalAddressIn(&oaPstalAddressList, postalAddressIds, "postal_address_key")
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -923,7 +922,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 						status, err = models.GetMsCityIn(&cityList, cityIds, "city_key")
 						if err != nil {
 							if err != sql.ErrNoRows {
-								log.Error(err.Error())
+								// log.Error(err.Error())
 								return lib.CustomError(status, err.Error(), "Failed get data")
 							}
 						}
@@ -967,7 +966,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 						status, err = models.GetMsCityIn(&cityList, cityIds, "city_key")
 						if err != nil {
 							if err != sql.ErrNoRows {
-								log.Error(err.Error())
+								// log.Error(err.Error())
 								return lib.CustomError(status, err.Error(), "Failed get data")
 							}
 						}
@@ -1015,7 +1014,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 						status, err = models.GetMsCityIn(&cityList, cityIds, "city_key")
 						if err != nil {
 							if err != sql.ErrNoRows {
-								log.Error(err.Error())
+								// log.Error(err.Error())
 								return lib.CustomError(status, err.Error(), "Failed get data")
 							}
 						}
@@ -1069,7 +1068,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 		status, err = models.AdminGetOaRiskProfile(&oaRiskProfile, strKey)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -1080,7 +1079,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 		status, err = models.AdminGetOaRiskProfileQuizByOaRequestKey(&oaRiskProfileQuiz, strKey)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -1095,7 +1094,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 			status, err = models.GetCmsQuizOptionsIn(&optionDB, questionIDs, "quiz_question_key")
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -1169,7 +1168,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 			status, err = models.GetMsCustomer(&customer, strCustomerKey)
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed get data")
 				}
 			}
@@ -1194,7 +1193,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 				status, err = models.GetGenLookup(&fatca, strLookKey)
 				if err != nil {
 					if err != sql.ErrNoRows {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 						return lib.CustomError(status, err.Error(), "Failed get data")
 					}
 				}
@@ -1207,7 +1206,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 				status, err = models.GetMsCountry(&country, strCountryKey)
 				if err != nil {
 					if err != sql.ErrNoRows {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 						return lib.CustomError(status, err.Error(), "Failed get data")
 					}
 				}
@@ -1261,7 +1260,7 @@ func DetailPersonalDataCustomerIndividu(c echo.Context) error {
 		status, err = models.GetScUserLoginIn(&userappr, userApprovalIds, "user_login_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -1355,32 +1354,32 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 	branchkey := c.FormValue("branch_key")
 	if branchkey == "" {
-		log.Error("Missing required parameter: branch_key")
+		// log.Error("Missing required parameter: branch_key")
 		return lib.CustomError(http.StatusBadRequest, "branch_key can not be blank", "branch_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(branchkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 		if len(branchkey) > 11 {
-			log.Error("Wrong input for parameter: branch_key too long")
+			// log.Error("Wrong input for parameter: branch_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: branch_key too long, max 11 character", "Missing required parameter: branch_key too long, max 11 character")
 		}
 	}
 
 	agentkey := c.FormValue("agent_key")
 	if agentkey == "" {
-		log.Error("Missing required parameter: agent_key")
+		// log.Error("Missing required parameter: agent_key")
 		return lib.CustomError(http.StatusBadRequest, "agent_key can not be blank", "agent_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(agentkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_key")
+			// log.Error("Wrong input for parameter: agent_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_key", "Wrong input for parameter: agent_key")
 		}
 		if len(agentkey) > 11 {
-			log.Error("Wrong input for parameter: agent_key too long")
+			// log.Error("Wrong input for parameter: agent_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: agent_key too long, max 11 character", "Missing required parameter: agent_key too long, max 11 character")
 		}
 	}
@@ -1389,64 +1388,64 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	// Check parameters
 	email := c.FormValue("email")
 	if email == "" {
-		log.Error("Missing required parameter: email")
+		// log.Error("Missing required parameter: email")
 		return lib.CustomError(http.StatusBadRequest, "email can not be blank", "email can not be blank")
 	} else {
 		if len(email) > 50 {
-			log.Error("Wrong input for parameter: email too long")
+			// log.Error("Wrong input for parameter: email too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: email too long, max 50 character", "Missing required parameter: email too long, max 50 character")
 		}
 	}
 	uloginenabled := c.FormValue("ulogin_enabled")
 	if uloginenabled == "" {
-		log.Error("Missing required parameter: ulogin_enabled")
+		// log.Error("Missing required parameter: ulogin_enabled")
 		return lib.CustomError(http.StatusBadRequest, "ulogin_enabled can not be blank", "ulogin_enabled can not be blank")
 	} else {
 		n, err := strconv.ParseUint(uloginenabled, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: ulogin_enabled")
+			// log.Error("Wrong input for parameter: ulogin_enabled")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: ulogin_enabled", "Wrong input for parameter: ulogin_enabled")
 		}
 		if len(agentkey) > 11 {
-			log.Error("Wrong input for parameter: ulogin_enabled too long")
+			// log.Error("Wrong input for parameter: ulogin_enabled too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ulogin_enabled too long, max 11 character", "Missing required parameter: ulogin_enabled too long, max 11 character")
 		}
 	}
 
 	phone := c.FormValue("phone")
 	if phone == "" {
-		log.Error("Missing required parameter: phone")
+		// log.Error("Missing required parameter: phone")
 		return lib.CustomError(http.StatusBadRequest, "phone can not be blank", "phone can not be blank")
 	} else {
 		if len(phone) > 20 {
-			log.Error("Wrong input for parameter: phone too long")
+			// log.Error("Wrong input for parameter: phone too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: phone too long, max 20 character", "Missing required parameter: phone too long, max 20 character")
 		}
 	}
 	password := c.FormValue("password")
 	if password == "" {
-		log.Error("Missing required parameter: password")
+		// log.Error("Missing required parameter: password")
 		return lib.CustomError(http.StatusBadRequest, "password can not be blank", "password can not be blank")
 	} else {
 		if len(password) > 50 {
-			log.Error("Wrong input for parameter: password too long")
+			// log.Error("Wrong input for parameter: password too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: password too long, max 50 character", "Missing required parameter: password too long, max 50 character")
 		}
 	}
 	confpassword := c.FormValue("conf_password")
 	if confpassword == "" {
-		log.Error("Missing required parameter: conf_password")
+		// log.Error("Missing required parameter: conf_password")
 		return lib.CustomError(http.StatusBadRequest, "conf_password can not be blank", "conf_password can not be blank")
 	} else {
 		if len(confpassword) > 50 {
-			log.Error("Wrong input for parameter: conf_password too long")
+			// log.Error("Wrong input for parameter: conf_password too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: conf_password too long, max 50 character", "Missing required parameter: conf_password too long, max 50 character")
 		}
 	}
 	// Validate email
 	err = checkmail.ValidateFormat(email)
 	if err != nil {
-		log.Error("Email format is not valid")
+		// log.Error("Email format is not valid")
 		return lib.CustomError(http.StatusBadRequest, "Email format is not valid", "Email format is not valid")
 	}
 	var user []models.ScUserLogin
@@ -1454,77 +1453,77 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	paramsCekUserLogin["ulogin_email"] = email
 	status, err = models.GetAllScUserLogin(&user, 0, 0, paramsCekUserLogin, true)
 	if err != nil {
-		log.Error("Error get email " + email)
+		// log.Error("Error get email " + email)
 		return lib.CustomError(status, err.Error(), "Error get email")
 	}
 	if len(user) > 0 {
-		log.Error("Email " + email + " already registered")
+		// log.Error("Email " + email + " already registered")
 		return lib.CustomError(http.StatusBadRequest, "Email "+email+" already registered", "Email kamu sudah terdaftar.\nSilakan masukkan email lainnya atau hubungi Customer.")
 	}
 
 	// Validate password
 	length, number, upper, special := verifyPassword(password)
 	if length == false || number == false || upper == false || special == false {
-		log.Error("Password does meet the criteria")
+		// log.Error("Password does meet the criteria")
 		return lib.CustomError(http.StatusBadRequest, "Password does meet the criteria", "Your password need at least 8 character length, has lower and upper case letter, has numeric letter, and has special character")
 	}
 
 	if strings.Contains(password, confpassword) == false {
-		log.Error("Missing required parameter: conf_password must equal with password")
+		// log.Error("Missing required parameter: conf_password must equal with password")
 		return lib.CustomError(http.StatusBadRequest, "conf_password must equal with password", "conf_password must equal with password")
 	}
 
 	//INFORMASI NASABAH
 	fullname := c.FormValue("full_name")
 	if fullname == "" {
-		log.Error("Missing required parameter: full_name")
+		// log.Error("Missing required parameter: full_name")
 		return lib.CustomError(http.StatusBadRequest, "full_name can not be blank", "full_name can not be blank")
 	} else {
 		if len(fullname) > 50 {
-			log.Error("Wrong input for parameter: full_name too long")
+			// log.Error("Wrong input for parameter: full_name too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: full_name too long, max 50 character", "Missing required parameter: full_name too long, max 50 character")
 		}
 	}
 
 	nationality := c.FormValue("nationality")
 	if nationality == "" {
-		log.Error("Missing required parameter: nationality")
+		// log.Error("Missing required parameter: nationality")
 		return lib.CustomError(http.StatusBadRequest, "nationality can not be blank", "nationality can not be blank")
 	} else {
 		n, err := strconv.ParseUint(nationality, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: nationality")
+			// log.Error("Wrong input for parameter: nationality")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: nationality", "Wrong input for parameter: nationality")
 		}
 		if len(nationality) > 11 {
-			log.Error("Wrong input for parameter: nationality too long")
+			// log.Error("Wrong input for parameter: nationality too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nationality too long, max 11 character", "Missing required parameter: nationality too long, max 11 character")
 		}
 	}
 
 	idcardNumber := c.FormValue("idcard_no")
 	if idcardNumber == "" {
-		log.Error("Missing required parameter: idcard_no")
+		// log.Error("Missing required parameter: idcard_no")
 		return lib.CustomError(http.StatusBadRequest, "idcard_no can not be blank", "idcard_no can not be blank")
 	} else {
 		if len(idcardNumber) > 20 {
-			log.Error("Wrong input for parameter: idcard_no too long")
+			// log.Error("Wrong input for parameter: idcard_no too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: idcard_no too long, max 20 character", "Missing required parameter: idcard_no too long, max 20 character")
 		}
 	}
 
 	gender := c.FormValue("gender")
 	if gender == "" {
-		log.Error("Missing required parameter: gender")
+		// log.Error("Missing required parameter: gender")
 		return lib.CustomError(http.StatusBadRequest, "gender can not be blank", "gender can not be blank")
 	} else {
 		n, err := strconv.ParseUint(gender, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: gender")
+			// log.Error("Wrong input for parameter: gender")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: gender", "Wrong input for parameter: gender")
 		}
 		if len(gender) > 11 {
-			log.Error("Wrong input for parameter: gender too long")
+			// log.Error("Wrong input for parameter: gender too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: gender too long, max 11 character", "Missing required parameter: gender too long, max 11 character")
 		}
 	}
@@ -1532,60 +1531,60 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	salesCode := c.FormValue("sales_code")
 	if salesCode == "" {
 		salesCode = "1"
-		// log.Error("Missing required parameter: sales_code")
+		// // log.Error("Missing required parameter: sales_code")
 		// return lib.CustomError(http.StatusBadRequest, "sales_code can not be blank", "sales_code can not be blank")
 	} else {
 		if len(salesCode) > 20 {
-			log.Error("Wrong input for parameter: sales_code too long")
+			// log.Error("Wrong input for parameter: sales_code too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: sales_code too long, max 20 character", "Missing required parameter: sales_code too long, max 20 character")
 		}
 	}
 
 	placeBirth := c.FormValue("place_birth")
 	if placeBirth == "" {
-		log.Error("Missing required parameter: place_birth")
+		// log.Error("Missing required parameter: place_birth")
 		return lib.CustomError(http.StatusBadRequest, "place_birth can not be blank", "place_birth can not be blank")
 	} else {
 		if len(placeBirth) > 50 {
-			log.Error("Wrong input for parameter: place_birth too long")
+			// log.Error("Wrong input for parameter: place_birth too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: place_birth too long, max 50 character", "Missing required parameter: place_birth too long, max 50 character")
 		}
 	}
 
 	dateBirth := c.FormValue("date_birth")
 	if dateBirth == "" {
-		log.Error("Missing required parameter: date_birth")
+		// log.Error("Missing required parameter: date_birth")
 		return lib.CustomError(http.StatusBadRequest, "date_birth can not be blank", "date_birth can not be blank")
 	} else {
 		if len(dateBirth) > 50 {
-			log.Error("Wrong input for parameter: date_birth too long")
+			// log.Error("Wrong input for parameter: date_birth too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: date_birth too long, max 50 character", "Missing required parameter: date_birth too long, max 50 character")
 		}
 	}
 
 	maritalStatus := c.FormValue("marital_status")
 	if maritalStatus == "" {
-		log.Error("Missing required parameter: marital_status")
+		// log.Error("Missing required parameter: marital_status")
 		return lib.CustomError(http.StatusBadRequest, "marital_status can not be blank", "marital_status can not be blank")
 	} else {
 		n, err := strconv.ParseUint(maritalStatus, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: marital_status")
+			// log.Error("Wrong input for parameter: marital_status")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: marital_status", "Wrong input for parameter: marital_status")
 		}
 		if len(maritalStatus) > 11 {
-			log.Error("Wrong input for parameter: marital_status too long")
+			// log.Error("Wrong input for parameter: marital_status too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: marital_status too long, max 11 character", "Missing required parameter: marital_status too long, max 11 character")
 		}
 	}
 
 	addressid := c.FormValue("address_id")
 	if addressid == "" {
-		log.Error("Missing required parameter: address_id")
+		// log.Error("Missing required parameter: address_id")
 		return lib.CustomError(http.StatusBadRequest, "address_id can not be blank", "address_id can not be blank")
 	} else {
 		if len(addressid) > 200 {
-			log.Error("Wrong input for parameter: address_id too long")
+			// log.Error("Wrong input for parameter: address_id too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: address_id too long, max 200 character", "Missing required parameter: address_id too long, max 200 character")
 		}
 	}
@@ -1594,15 +1593,15 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	if kabupatenid != "" {
 		n, err := strconv.ParseUint(kabupatenid, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: kabupaten_id")
+			// log.Error("Wrong input for parameter: kabupaten_id")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: kabupaten_id", "Wrong input for parameter: kabupaten_id")
 		}
 		if len(kabupatenid) > 11 {
-			log.Error("Wrong input for parameter: kabupaten_id too long")
+			// log.Error("Wrong input for parameter: kabupaten_id too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: kabupaten_id too long, max 11 character", "Missing required parameter: kabupaten_id too long, max 11 character")
 		}
 	} else {
-		log.Error("Missing required parameter: kabupaten_id")
+		// log.Error("Missing required parameter: kabupaten_id")
 		return lib.CustomError(http.StatusBadRequest, "kabupaten_id can not be blank", "kabupaten_id can not be blank")
 	}
 
@@ -1610,15 +1609,15 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	if kecamatanid != "" {
 		n, err := strconv.ParseUint(kecamatanid, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: kecamatan_id")
+			// log.Error("Wrong input for parameter: kecamatan_id")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: kecamatan_id", "Wrong input for parameter: kecamatan_id")
 		}
 		if len(kecamatanid) > 11 {
-			log.Error("Wrong input for parameter: kecamatan_id too long")
+			// log.Error("Wrong input for parameter: kecamatan_id too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: kecamatan_id too long, max 11 character", "Missing required parameter: kecamatan_id too long, max 11 character")
 		}
 	} else {
-		log.Error("Missing required parameter: kecamatan_id")
+		// log.Error("Missing required parameter: kecamatan_id")
 		return lib.CustomError(http.StatusBadRequest, "kecamatan_id can not be blank", "kecamatan_id can not be blank")
 	}
 
@@ -1626,25 +1625,25 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	if postalid != "" {
 		ps, err := strconv.ParseUint(postalid, 10, 64)
 		if err != nil || ps == 0 {
-			log.Error("Wrong input for parameter: postal_id")
+			// log.Error("Wrong input for parameter: postal_id")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: postal_id", "Wrong input for parameter: postal_id")
 		}
 		if len(postalid) > 10 {
-			log.Error("Wrong input for parameter: postal_id too long")
+			// log.Error("Wrong input for parameter: postal_id too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: postal_id too long, max 10 character", "Missing required parameter: postal_id too long, max 10 character")
 		}
 	} else {
-		log.Error("Missing required parameter: postal_id")
+		// log.Error("Missing required parameter: postal_id")
 		return lib.CustomError(http.StatusBadRequest, "postal_id can not be blank", "postal_id can not be blank")
 	}
 
 	addressdomicile := c.FormValue("address_domicile")
 	if addressdomicile == "" {
-		log.Error("Missing required parameter: address_domicile")
+		// log.Error("Missing required parameter: address_domicile")
 		return lib.CustomError(http.StatusBadRequest, "address_domicile can not be blank", "address_domicile can not be blank")
 	} else {
 		if len(addressdomicile) > 200 {
-			log.Error("Wrong input for parameter: address_domicile too long")
+			// log.Error("Wrong input for parameter: address_domicile too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: address_domicile too long, max 200 character", "Missing required parameter: address_domicile too long, max 200 character")
 		}
 	}
@@ -1653,15 +1652,15 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	if kabupatendomicile != "" {
 		n, err := strconv.ParseUint(kabupatendomicile, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: kabupaten_domicile")
+			// log.Error("Wrong input for parameter: kabupaten_domicile")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: kabupaten_domicile", "Wrong input for parameter: kabupaten_domicile")
 		}
 		if len(kabupatendomicile) > 11 {
-			log.Error("Wrong input for parameter: kabupaten_domicile too long")
+			// log.Error("Wrong input for parameter: kabupaten_domicile too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: kabupaten_domicile too long, max 11 character", "Missing required parameter: kabupaten_domicile too long, max 11 character")
 		}
 	} else {
-		log.Error("Missing required parameter: kabupaten_domicile")
+		// log.Error("Missing required parameter: kabupaten_domicile")
 		return lib.CustomError(http.StatusBadRequest, "kabupaten_domicile can not be blank", "kabupaten_domicile can not be blank")
 	}
 
@@ -1669,15 +1668,15 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	if kecamatandomicile != "" {
 		n, err := strconv.ParseUint(kecamatandomicile, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: kecamatan_domicile")
+			// log.Error("Wrong input for parameter: kecamatan_domicile")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: kecamatan_domicile", "Wrong input for parameter: kecamatan_domicile")
 		}
 		if len(kecamatandomicile) > 11 {
-			log.Error("Wrong input for parameter: kecamatan_domicile too long")
+			// log.Error("Wrong input for parameter: kecamatan_domicile too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: kecamatan_domicile too long, max 11 character", "Missing required parameter: kecamatan_domicile too long, max 11 character")
 		}
 	} else {
-		log.Error("Missing required parameter: kecamatan_domicile")
+		// log.Error("Missing required parameter: kecamatan_domicile")
 		return lib.CustomError(http.StatusBadRequest, "kecamatan_domicile can not be blank", "kecamatan_domicile can not be blank")
 	}
 
@@ -1685,41 +1684,41 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	if postaldomicile != "" {
 		ps, err := strconv.ParseUint(postaldomicile, 10, 64)
 		if err != nil || ps == 0 {
-			log.Error("Wrong input for parameter: postal_domicile")
+			// log.Error("Wrong input for parameter: postal_domicile")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: postal_domicile", "Wrong input for parameter: postal_domicile")
 		}
 		if len(postaldomicile) > 10 {
-			log.Error("Wrong input for parameter: postal_domicile too long")
+			// log.Error("Wrong input for parameter: postal_domicile too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: postal_domicile too long, max 10 character", "Missing required parameter: postal_domicile too long, max 10 character")
 		}
 	} else {
-		log.Error("Missing required parameter: postal_domicile")
+		// log.Error("Missing required parameter: postal_domicile")
 		return lib.CustomError(http.StatusBadRequest, "postal_domicile can not be blank", "postal_domicile can not be blank")
 	}
 
 	phoneHome := c.FormValue("phone_home")
 	if phoneHome == "" {
-		log.Error("Missing required parameter: phone_home")
+		// log.Error("Missing required parameter: phone_home")
 		return lib.CustomError(http.StatusBadRequest, "phone_home can not be blank", "phone_home can not be blank")
 	} else {
 		if len(phoneHome) > 20 {
-			log.Error("Wrong input for parameter: phone_home too long")
+			// log.Error("Wrong input for parameter: phone_home too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: phone_home too long, max 20 character", "Missing required parameter: phone_home too long, max 20 character")
 		}
 	}
 
 	religion := c.FormValue("religion")
 	if religion == "" {
-		log.Error("Missing required parameter: religion")
+		// log.Error("Missing required parameter: religion")
 		return lib.CustomError(http.StatusBadRequest, "religion can not be blank", "religion can not be blank")
 	} else {
 		ps, err := strconv.ParseUint(religion, 10, 64)
 		if err != nil || ps == 0 {
-			log.Error("Wrong input for parameter: religion")
+			// log.Error("Wrong input for parameter: religion")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: religion", "Wrong input for parameter: religion")
 		}
 		if len(religion) > 11 {
-			log.Error("Wrong input for parameter: religion too long")
+			// log.Error("Wrong input for parameter: religion too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: religion too long, max 11 character", "Missing required parameter: religion too long, max 11 character")
 		}
 	}
@@ -1735,16 +1734,16 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 	education := c.FormValue("education")
 	if education == "" {
-		log.Error("Missing required parameter: education")
+		// log.Error("Missing required parameter: education")
 		return lib.CustomError(http.StatusBadRequest, "education can not be blank", "education can not be blank")
 	} else {
 		ps, err := strconv.ParseUint(education, 10, 64)
 		if err != nil || ps == 0 {
-			log.Error("Wrong input for parameter: education")
+			// log.Error("Wrong input for parameter: education")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: education", "Wrong input for parameter: education")
 		}
 		if len(education) > 11 {
-			log.Error("Wrong input for parameter: education too long")
+			// log.Error("Wrong input for parameter: education too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: education too long, max 11 character", "Missing required parameter: education too long, max 11 character")
 		}
 	}
@@ -1762,32 +1761,32 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	var file *multipart.FileHeader
 	file, err = c.FormFile("pic_ktp")
 	if file == nil {
-		log.Error("Missing required parameter: pic_ktp")
+		// log.Error("Missing required parameter: pic_ktp")
 		return lib.CustomError(http.StatusBadRequest, "pic_ktp can not be blank", "pic_ktp can not be blank")
 	}
 
 	var fileselfie *multipart.FileHeader
 	fileselfie, err = c.FormFile("pic_selfie_ktp")
 	if fileselfie == nil {
-		log.Error("Missing required parameter: pic_selfie_ktp")
+		// log.Error("Missing required parameter: pic_selfie_ktp")
 		return lib.CustomError(http.StatusBadRequest, "pic_selfie_ktp can not be blank", "pic_selfie_ktp can not be blank")
 	}
 
 	//URAIAN BIDANG USAHA DAN PEKERJAAN
 	job := c.FormValue("job")
 	if job == "" {
-		log.Error("Missing required parameter: job")
+		// log.Error("Missing required parameter: job")
 		return lib.CustomError(http.StatusBadRequest, "job can not be blank", "job can not be blank")
 	} else {
 		if len(job) > 11 {
-			log.Error("Wrong input for parameter: job too long")
+			// log.Error("Wrong input for parameter: job too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: job too long, max 11 character", "Missing required parameter: job too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(job, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["occup_job"] = job
 		} else {
-			log.Error("Wrong input for parameter: job")
+			// log.Error("Wrong input for parameter: job")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: job", "Wrong input for parameter: job")
 		}
 	}
@@ -1804,7 +1803,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	company := c.FormValue("company")
 	if company != "" {
 		if len(company) > 50 {
-			log.Error("Wrong input for parameter: company too long")
+			// log.Error("Wrong input for parameter: company too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: company too long, max 50 character", "Missing required parameter: company too long, max 50 character")
 		}
 		paramsOaPersonalData["occup_company"] = company
@@ -1813,14 +1812,14 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	position := c.FormValue("position")
 	if position != "" {
 		if len(position) > 11 {
-			log.Error("Wrong input for parameter: position too long")
+			// log.Error("Wrong input for parameter: position too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: position too long, max 11 character", "Missing required parameter: position too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(position, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["occup_position"] = position
 		} else {
-			log.Error("Wrong input for parameter: position")
+			// log.Error("Wrong input for parameter: position")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: position", "Wrong input for parameter: position")
 		}
 	}
@@ -1837,14 +1836,14 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	businessField := c.FormValue("business_field")
 	if businessField != "" {
 		if len(businessField) > 11 {
-			log.Error("Wrong input for parameter: business_field too long")
+			// log.Error("Wrong input for parameter: business_field too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: business_field too long, max 11 character", "Missing required parameter: business_field too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(businessField, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["occup_business_fields"] = businessField
 		} else {
-			log.Error("Wrong input for parameter: business_field")
+			// log.Error("Wrong input for parameter: business_field")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: business_field", "Wrong input for parameter: business_field")
 		}
 	}
@@ -1860,36 +1859,36 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 	annualIncome := c.FormValue("annual_income")
 	if annualIncome == "" {
-		log.Error("Missing required parameter: annual_income")
+		// log.Error("Missing required parameter: annual_income")
 		return lib.CustomError(http.StatusBadRequest, "annual_income can not be blank", "annual_income can not be blank")
 	} else {
 		if len(annualIncome) > 11 {
-			log.Error("Wrong input for parameter: annual_income too long")
+			// log.Error("Wrong input for parameter: annual_income too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: annual_income too long, max 11 character", "Missing required parameter: annual_income too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(annualIncome, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["annual_income"] = annualIncome
 		} else {
-			log.Error("Wrong input for parameter: annual_income")
+			// log.Error("Wrong input for parameter: annual_income")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: annual_income", "Wrong input for parameter: annual_income")
 		}
 	}
 
 	fundSource := c.FormValue("fund_source")
 	if fundSource == "" {
-		log.Error("Missing required parameter: fund_source")
+		// log.Error("Missing required parameter: fund_source")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fund_source", "Missing required parameter: fund_source")
 	} else {
 		if len(fundSource) > 11 {
-			log.Error("Wrong input for parameter: fund_source too long")
+			// log.Error("Wrong input for parameter: fund_source too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fund_source too long, max 11 character", "Missing required parameter: fund_source too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(fundSource, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["sourceof_fund"] = fundSource
 		} else {
-			log.Error("Wrong input for parameter: fund_source")
+			// log.Error("Wrong input for parameter: fund_source")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: fund_source", "Wrong input for parameter: fund_source")
 		}
 	}
@@ -1905,36 +1904,36 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 	pepStatus := c.FormValue("pep_status")
 	if pepStatus == "" {
-		log.Error("Missing required parameter: pep_status")
+		// log.Error("Missing required parameter: pep_status")
 		return lib.CustomError(http.StatusBadRequest, "pep_status can not be blank", "pep_status can not be blank")
 	} else {
 		if len(pepStatus) > 11 {
-			log.Error("Wrong input for parameter: pep_status too long")
+			// log.Error("Wrong input for parameter: pep_status too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: pep_status too long, max 11 character", "Missing required parameter: pep_status too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(pepStatus, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["pep_status"] = pepStatus
 		} else {
-			log.Error("Wrong input for parameter: pep_status")
+			// log.Error("Wrong input for parameter: pep_status")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: pep_status", "Wrong input for parameter: pep_status")
 		}
 	}
 
 	objectives := c.FormValue("objectives")
 	if objectives == "" {
-		log.Error("Missing required parameter: objectives")
+		// log.Error("Missing required parameter: objectives")
 		return lib.CustomError(http.StatusBadRequest, "objectives can not be blank", "objectives can not be blank")
 	} else {
 		if len(objectives) > 11 {
-			log.Error("Wrong input for parameter: objectives too long")
+			// log.Error("Wrong input for parameter: objectives too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: objectives too long, max 11 character", "Missing required parameter: objectives too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(objectives, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["invesment_objectives"] = objectives
 		} else {
-			log.Error("Wrong input for parameter: objectives")
+			// log.Error("Wrong input for parameter: objectives")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: objectives", "Wrong input for parameter: objectives")
 		}
 	}
@@ -1951,14 +1950,14 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	corespondence := c.FormValue("corespondence")
 	if corespondence != "" {
 		if len(corespondence) > 11 {
-			log.Error("Wrong input for parameter: corespondence too long")
+			// log.Error("Wrong input for parameter: corespondence too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: corespondence too long, max 11 character", "Missing required parameter: corespondence too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(corespondence, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["correspondence"] = corespondence
 		} else {
-			log.Error("Wrong input for parameter: corespondence")
+			// log.Error("Wrong input for parameter: corespondence")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: corespondence", "Wrong input for parameter: corespondence")
 		}
 	}
@@ -1966,29 +1965,29 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	//TAB 4
 	motherMaidenName := c.FormValue("mother_maiden_name")
 	if motherMaidenName == "" {
-		log.Error("Missing required parameter: mother_maiden_name")
+		// log.Error("Missing required parameter: mother_maiden_name")
 		return lib.CustomError(http.StatusBadRequest, "mother_maiden_name can not be blank", "mother_maiden_name can not be blank")
 	} else {
 		if len(motherMaidenName) > 50 {
-			log.Error("Wrong input for parameter: mother_maiden_name too long")
+			// log.Error("Wrong input for parameter: mother_maiden_name too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: mother_maiden_name too long, max 50 character", "Missing required parameter: mother_maiden_name too long, max 50 character")
 		}
 	}
 
 	relationOccupation := c.FormValue("relation_occupation")
 	if relationOccupation == "" {
-		log.Error("Missing required parameter: relation_occupation")
+		// log.Error("Missing required parameter: relation_occupation")
 		return lib.CustomError(http.StatusBadRequest, "relation_occupation can not be blank", "relation_occupation can not be blank")
 	} else {
 		if len(relationOccupation) > 11 {
-			log.Error("Wrong input for parameter: relation_occupation too long")
+			// log.Error("Wrong input for parameter: relation_occupation too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: relation_occupation too long, max 11 character", "Missing required parameter: relation_occupation too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(relationOccupation, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["relation_occupation"] = relationOccupation
 		} else {
-			log.Error("Wrong input for parameter: relation_occupation")
+			// log.Error("Wrong input for parameter: relation_occupation")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: relation_occupation", "Wrong input for parameter: relation_occupation")
 		}
 	}
@@ -2004,29 +2003,29 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 	relationType := c.FormValue("relation_type")
 	if relationType == "" {
-		log.Error("Missing required parameter: relation_type")
+		// log.Error("Missing required parameter: relation_type")
 		return lib.CustomError(http.StatusBadRequest, "relation_type can not be blank", "relation_type can not be blank")
 	} else {
 		if len(relationType) > 11 {
-			log.Error("Wrong input for parameter: relation_type too long")
+			// log.Error("Wrong input for parameter: relation_type too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: relation_type too long, max 11 character", "Missing required parameter: relation_type too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(relationType, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["relation_type"] = relationType
 		} else {
-			log.Error("Wrong input for parameter: relation_type")
+			// log.Error("Wrong input for parameter: relation_type")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: relation_type", "Wrong input for parameter: relation_type")
 		}
 	}
 
 	relationName := c.FormValue("relation_name")
 	if relationName == "" {
-		log.Error("Missing required parameter: relation_name")
+		// log.Error("Missing required parameter: relation_name")
 		return lib.CustomError(http.StatusBadRequest, "relation_name can not be blank", "relation_name can not be blank")
 	} else {
 		if len(relationName) > 50 {
-			log.Error("Wrong input for parameter: relation_name too long")
+			// log.Error("Wrong input for parameter: relation_name too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: relation_name too long, max 50 character", "Missing required parameter: relation_name too long, max 50 character")
 		}
 	}
@@ -2034,14 +2033,14 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	relationBusinessField := c.FormValue("relation_business_field")
 	if relationBusinessField != "" {
 		if len(relationBusinessField) > 11 {
-			log.Error("Wrong input for parameter: relation_business_field too long")
+			// log.Error("Wrong input for parameter: relation_business_field too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: relation_business_field too long, max 11 character", "Missing required parameter: relation_business_field too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(relationBusinessField, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["relation_business_fields"] = relationBusinessField
 		} else {
-			log.Error("Wrong input for parameter: relation_business_field")
+			// log.Error("Wrong input for parameter: relation_business_field")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: relation_business_field", "Wrong input for parameter: relation_business_field")
 		}
 	}
@@ -2057,40 +2056,40 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 	emergencyName := c.FormValue("emergency_name")
 	if emergencyName == "" {
-		log.Error("Missing required parameter: emergency_name")
+		// log.Error("Missing required parameter: emergency_name")
 		return lib.CustomError(http.StatusBadRequest, "emergency_name can not be blank", "emergency_name can not be blank")
 	} else {
 		if len(emergencyName) > 50 {
-			log.Error("Wrong input for parameter: emergency_name too long")
+			// log.Error("Wrong input for parameter: emergency_name too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: emergency_name too long, max 50 character", "Missing required parameter: emergency_name too long, max 50 character")
 		}
 	}
 
 	emergencyRelation := c.FormValue("emergency_relation")
 	if emergencyRelation == "" {
-		log.Error("Missing required parameter: emergency_relation")
+		// log.Error("Missing required parameter: emergency_relation")
 		return lib.CustomError(http.StatusBadRequest, "emergency_relation can not be blank", "emergency_relation can not be blank")
 	} else {
 		if len(emergencyRelation) > 11 {
-			log.Error("Wrong input for parameter: emergency_relation too long")
+			// log.Error("Wrong input for parameter: emergency_relation too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: emergency_relation too long, max 11 character", "Missing required parameter: emergency_relation too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(emergencyRelation, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["emergency_relation"] = emergencyRelation
 		} else {
-			log.Error("Wrong input for parameter: emergency_relation")
+			// log.Error("Wrong input for parameter: emergency_relation")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: emergency_relation", "Wrong input for parameter: emergency_relation")
 		}
 	}
 
 	emergencyPhone := c.FormValue("emergency_phone")
 	if emergencyPhone == "" {
-		log.Error("Missing required parameter: emergency_phone")
+		// log.Error("Missing required parameter: emergency_phone")
 		return lib.CustomError(http.StatusBadRequest, "emergency_phone can not be blank", "emergency_phone can not be blank")
 	} else {
 		if len(emergencyPhone) > 20 {
-			log.Error("Wrong input for parameter: emergency_phone too long")
+			// log.Error("Wrong input for parameter: emergency_phone too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: emergency_phone too long, max 20 character", "Missing required parameter: emergency_phone too long, max 20 character")
 		}
 	}
@@ -2098,85 +2097,85 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	//TAB 5 REKENING DLL
 	beneficialRelation := c.FormValue("beneficial_relation")
 	if beneficialRelation == "" {
-		log.Error("Missing required parameter: beneficial_relation")
+		// log.Error("Missing required parameter: beneficial_relation")
 		return lib.CustomError(http.StatusBadRequest, "beneficial_relation can not be blank", "beneficial_relation can not be blank")
 	} else {
 		if len(beneficialRelation) > 11 {
-			log.Error("Wrong input for parameter: beneficial_relation too long")
+			// log.Error("Wrong input for parameter: beneficial_relation too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: beneficial_relation too long, max 11 character", "Missing required parameter: beneficial_relation too long, max 11 character")
 		}
 		n, err := strconv.ParseUint(beneficialRelation, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["beneficial_relation"] = beneficialRelation
 		} else {
-			log.Error("Wrong input for parameter: beneficial_relation")
+			// log.Error("Wrong input for parameter: beneficial_relation")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: beneficial_relation", "Wrong input for parameter: beneficial_relation")
 		}
 	}
 
 	beneficialName := c.FormValue("beneficial_name")
 	if beneficialName == "" {
-		log.Error("Missing required parameter: beneficial_name")
+		// log.Error("Missing required parameter: beneficial_name")
 		return lib.CustomError(http.StatusBadRequest, "beneficial_name can not be blank", "beneficial_name can not be blank")
 	} else {
 		if len(beneficialName) > 50 {
-			log.Error("Wrong input for parameter: beneficial_name too long")
+			// log.Error("Wrong input for parameter: beneficial_name too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: beneficial_name too long, max 50 character", "Missing required parameter: beneficial_name too long, max 50 character")
 		}
 	}
 
 	bankKey := c.FormValue("bank_key")
 	if bankKey == "" {
-		log.Error("Missing required parameter: bank_key")
+		// log.Error("Missing required parameter: bank_key")
 		return lib.CustomError(http.StatusBadRequest, "bank_key can not be blank", "bank_key can not be blank")
 	} else {
 		bank, err := strconv.ParseUint(bankKey, 10, 64)
 		if err != nil || bank == 0 {
-			log.Error("Wrong input for parameter: bank_key")
+			// log.Error("Wrong input for parameter: bank_key")
 			return lib.CustomError(http.StatusBadRequest)
 		}
 		if len(bankKey) > 11 {
-			log.Error("Wrong input for parameter: bank_key too long")
+			// log.Error("Wrong input for parameter: bank_key too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_key too long, max 11 character", "Missing required parameter: bank_key too long, max 11 character")
 		}
 	}
 
 	accountNo := c.FormValue("account_no")
 	if accountNo == "" {
-		log.Error("Missing required parameter: account_no")
+		// log.Error("Missing required parameter: account_no")
 		return lib.CustomError(http.StatusBadRequest, "account_no can not be blank", "account_no can not be blank")
 	} else {
 		if len(accountNo) > 50 {
-			log.Error("Wrong input for parameter: account_no too long")
+			// log.Error("Wrong input for parameter: account_no too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: account_no too long, max 50 character", "Missing required parameter: account_no too long, max 50 character")
 		}
 	}
 
 	accountName := c.FormValue("account_name")
 	if accountName == "" {
-		log.Error("Missing required parameter: account_name")
+		// log.Error("Missing required parameter: account_name")
 		return lib.CustomError(http.StatusBadRequest, "account_name can not be blank", "account_name can not be blank")
 	} else {
 		if len(accountName) > 50 {
-			log.Error("Wrong input for parameter: account_name too long")
+			// log.Error("Wrong input for parameter: account_name too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: account_name too long, max 50 character", "Missing required parameter: account_name too long, max 50 character")
 		}
 	}
 
 	branchName := c.FormValue("branch_name")
 	if branchName == "" {
-		log.Error("Missing required parameter: branch_name")
+		// log.Error("Missing required parameter: branch_name")
 		return lib.CustomError(http.StatusBadRequest, "branch_name can not be blank", "branch_name can not be blank")
 	} else {
 		if len(branchName) > 50 {
-			log.Error("Wrong input for parameter: branch_name too long")
+			// log.Error("Wrong input for parameter: branch_name too long")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: branch_name too long, max 50 character", "Missing required parameter: branch_name too long, max 50 character")
 		}
 	}
 
 	quizOption := c.FormValue("quiz_option")
 	if quizOption == "" {
-		log.Error("Missing required parameter: quiz_option")
+		// log.Error("Missing required parameter: quiz_option")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: quiz_option", "Missing required parameter: quiz_option")
 	}
 
@@ -2192,7 +2191,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 		}
 	}
 	if len(quizoptionkey) <= 0 {
-		log.Error("Missing required parameter: quiz_option")
+		// log.Error("Missing required parameter: quiz_option")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: quiz_option", "Missing required parameter: quiz_option")
 	}
 
@@ -2284,11 +2283,11 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	paramsBank["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 
 	//OA_PERSONAL_DATA
-	log.Info("dateBirth: " + dateBirth)
+	// log.Info("dateBirth: " + dateBirth)
 	dateBirth += " 00:00:00"
 	date, err = time.Parse(layout, dateBirth)
 	dateStr := date.Format(layout)
-	log.Info("dateBirth: " + dateStr)
+	// log.Info("dateBirth: " + dateStr)
 
 	paramsOaPersonalData["full_name"] = fullname
 
@@ -2326,7 +2325,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	status, err, idUserLogin := models.CreateScUserLoginReturnKey(paramsUserLogin)
 	if err != nil {
 		tx.Rollback()
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed create data")
 	}
 	paramsOaRequest["user_login_key"] = idUserLogin
@@ -2336,13 +2335,13 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	status, err, addressidID := models.CreateOaPostalAddress(addressIDParams)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create adrress data idcard: " + err.Error())
+		// log.Error("Failed create adrress data idcard: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 	addressID, err := strconv.ParseUint(addressidID, 10, 64)
 	if addressID == 0 {
 		tx.Rollback()
-		log.Error("Failed create adrress data idcard")
+		// log.Error("Failed create adrress data idcard")
 		return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 	}
 	paramsOaPersonalData["idcard_address_key"] = addressidID
@@ -2351,13 +2350,13 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	status, err, addressDomicileID := models.CreateOaPostalAddress(addressDomicileParams)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create adrress data domicile: " + err.Error())
+		// log.Error("Failed create adrress data domicile: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 	addressID, err = strconv.ParseUint(addressDomicileID, 10, 64)
 	if addressID == 0 {
 		tx.Rollback()
-		log.Error("Failed create adrress data domicile")
+		// log.Error("Failed create adrress data domicile")
 		return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 	}
 	paramsOaPersonalData["domicile_address_key"] = addressDomicileID
@@ -2373,13 +2372,13 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 		status, err, addressCompanyID := models.CreateOaPostalAddress(addressCompanyParams)
 		if err != nil {
 			tx.Rollback()
-			log.Error("Failed create adrress data company: " + err.Error())
+			// log.Error("Failed create adrress data company: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 		addressID, err = strconv.ParseUint(addressCompanyID, 10, 64)
 		if addressID == 0 {
 			tx.Rollback()
-			log.Error("Failed create adrress data company")
+			// log.Error("Failed create adrress data company")
 			return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 		}
 		paramsOaPersonalData["occup_address_key"] = addressCompanyID
@@ -2389,13 +2388,13 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	status, err, bankAccountID := models.CreateMsBankAccount(paramsBank)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create bank account data: " + err.Error())
+		// log.Error("Failed create bank account data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 	accountID, err := strconv.ParseUint(bankAccountID, 10, 64)
 	if accountID == 0 {
 		tx.Rollback()
-		log.Error("Failed create bank account data")
+		// log.Error("Failed create bank account data")
 		return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 	}
 	paramsOaPersonalData["bank_account_key"] = bankAccountID
@@ -2404,11 +2403,11 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	if oaSource != "" {
 		_, err := strconv.ParseUint(oaSource, 10, 64)
 		if err != nil {
-			log.Error("Wrong input for parameter: oa_source")
+			// log.Error("Wrong input for parameter: oa_source")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_source", "Wrong input for parameter: oa_source")
 		}
 	} else {
-		log.Error("Missing required parameter: oa_source")
+		// log.Error("Missing required parameter: oa_source")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: oa_source", "Missing required parameter: oa_source")
 	}
 	paramsOaRequest["oa_source"] = oaSource
@@ -2417,13 +2416,13 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	status, err, requestID := models.CreateOaRequest(paramsOaRequest)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create oa request data: " + err.Error())
+		// log.Error("Failed create oa request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 	request, err := strconv.ParseUint(requestID, 10, 64)
 	if request == 0 {
 		tx.Rollback()
-		log.Error("Failed create oa request data")
+		// log.Error("Failed create oa request data")
 		return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 	}
 
@@ -2436,11 +2435,11 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	bankReq["rec_status"] = "1"
 	bankReq["rec_created_date"] = time.Now().Format(dateLayout)
 	bankReq["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-	log.Println("===== REQUEST BANK ACCOUNT ===== >>>", bankReq)
+	// log.Println("===== REQUEST BANK ACCOUNT ===== >>>", bankReq)
 	status, err, _ = models.CreateOaRequestBankAccount(bankReq)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create OA_REQUEST_BANK_ACCOUNT: " + err.Error())
+		// log.Error("Failed create OA_REQUEST_BANK_ACCOUNT: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -2449,7 +2448,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	//SAVE OA_PERSONAL_DATA
 	err = os.MkdirAll(config.BasePathImage+"/images/user/"+idUserLogin, 0755)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	} else {
 		var file *multipart.FileHeader
 		file, err = c.FormFile("pic_ktp")
@@ -2463,7 +2462,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 			var filename string
 			for {
 				filename = lib.RandStringBytesMaskImprSrc(20)
-				log.Println("Generate filename:", filename)
+				// log.Println("Generate filename:", filename)
 				var personalData []models.OaPersonalData
 				getParams := make(map[string]string)
 				getParams["pic_ktp"] = filename + extension
@@ -2475,7 +2474,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+idUserLogin+"/"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			paramsOaPersonalData["pic_ktp"] = filename + extension
@@ -2494,7 +2493,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 			var filename string
 			for {
 				filename = lib.RandStringBytesMaskImprSrc(20)
-				log.Println("Generate filename:", filename)
+				// log.Println("Generate filename:", filename)
 				var personalData []models.OaPersonalData
 				getParams := make(map[string]string)
 				getParams["pic_selfie_ktp"] = filename + extension
@@ -2504,10 +2503,10 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 				}
 			}
 			// Upload image and move to proper directory
-			// log.Println("===== LEWAT SINI =====")
+			// // log.Println("===== LEWAT SINI =====")
 			err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+idUserLogin+"/"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			paramsOaPersonalData["pic_selfie_ktp"] = filename + extension
@@ -2518,7 +2517,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 	err = os.MkdirAll(config.BasePathImage+"/images/user/"+idUserLogin+"/signature", 0755)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadGateway, err.Error(), err.Error())
 	}
 	file, err = c.FormFile("signature")
@@ -2532,7 +2531,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 		var filename string
 		for {
 			filename = lib.RandStringBytesMaskImprSrc(20)
-			log.Println("Generate filename:", filename)
+			// log.Println("Generate filename:", filename)
 			var personalData []models.OaPersonalData
 			getParams := make(map[string]string)
 			getParams["rec_image1"] = filename + extension
@@ -2544,7 +2543,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 		// Upload image and move to proper directory
 		err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+idUserLogin+"/signature/"+filename+extension)
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 			return lib.CustomError(http.StatusInternalServerError)
 		}
 		paramsOaPersonalData["rec_image1"] = filename + extension
@@ -2555,7 +2554,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	status, err, requestKey := models.CreateOaPersonalData(paramsOaPersonalData)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create personal data: " + err.Error())
+		// log.Error("Failed create personal data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -2568,7 +2567,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	if len(bindInterface) > 0 {
 		status, err = models.CreateMultipleUdfValue(bindInterface)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 	}
 
@@ -2578,12 +2577,12 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(questionOptions) < 1 {
 		tx.Rollback()
-		log.Error("Missing required parameter: quiz_option")
+		// log.Error("Missing required parameter: quiz_option")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: quiz_option", "Missing required parameter: quiz_option")
 	}
 
@@ -2606,7 +2605,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	status, err = models.GetMsRiskProfileScore(&riskProfile, scoreStr)
 	if err != nil {
 		tx.Rollback()
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data risk profile")
 	}
 
@@ -2621,14 +2620,14 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	status, err = models.CreateOaRiskProfile(paramsOaRiskProfile)
 	if err != nil {
 		tx.Rollback()
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
 	status, err = models.CreateMultipleOaRiskProfileQuiz(bindVar)
 	if err != nil {
 		tx.Rollback()
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -2641,12 +2640,12 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 	paramsBankRquest["rec_status"] = "1"
 	paramsBankRquest["rec_created_date"] = time.Now().Format(dateLayout)
 	paramsBankRquest["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-	log.Println("===== REQUEST BANK ACCOUNT 2===== >>>", paramsBankRquest)
+	// log.Println("===== REQUEST BANK ACCOUNT 2===== >>>", paramsBankRquest)
 
 	status, err, _ = models.CreateOaRequestBankAccount(paramsBankRquest)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create oa request bank acc: " + err.Error())
+		// log.Error("Failed create oa request bank acc: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -2660,7 +2659,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/index-registration.html")
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		var tpl bytes.Buffer
@@ -2668,7 +2667,7 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 			Name    string
 			FileUrl string
 		}{Name: fullname, FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		result := tpl.String()
@@ -2681,8 +2680,8 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 		err = lib.SendEmail(mailer)
 		if err != nil {
-			log.Error("Error send email")
-			log.Error(err)
+			// log.Error("Error send email")
+			// log.Error(err)
 		}
 		// dialer := gomail.NewDialer(
 		// 	config.EmailSMTPHost,
@@ -2694,20 +2693,20 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 		// err = dialer.DialAndSend(mailer)
 		// if err != nil {
-		// 	log.Error("Error send email")
-		// 	log.Error(err)
+		// 	// log.Error("Error send email")
+		// 	// log.Error(err)
 		// }
 
 		//sent email to all CS & Agent
 		var oaRequest models.OaRequest
 		status, err = models.GetOaRequest(&oaRequest, requestID)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		} else {
 			var personalData models.OaPersonalData
 			status, err = models.GetOaPersonalData(&personalData, requestID, "oa_request_key")
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 			} else {
 				SentEmailOaPengkinianToBackOffice(oaRequest, personalData, "11")
 				SentEmailOaPengkinianToSales(oaRequest, personalData)
@@ -2738,9 +2737,9 @@ func AdminCreateCustomerIndividu(c echo.Context) error {
 
 	status, err = models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error("Error create user message")
+		// log.Error("Error create user message")
 	} else {
-		log.Error("Sukses insert user message")
+		// log.Error("Sukses insert user message")
 	}
 
 	var responseData models.MsRiskProfileInfo
@@ -2775,12 +2774,12 @@ func GetAdminListCustomerRedemption(c echo.Context) error {
 		var userCategory uint64
 		userCategory = 3
 		if lib.Profile.UserCategoryKey == userCategory {
-			log.Println(lib.Profile)
+			// log.Println(lib.Profile)
 			if lib.Profile.BranchKey != nil {
 				strBranchKey := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 				params["c.openacc_branch_key"] = strBranchKey
 			} else {
-				log.Error("User Branch haven't Branch")
+				// log.Error("User Branch haven't Branch")
 				return lib.CustomError(http.StatusBadRequest, "Wrong User Branch haven't Branch", "Wrong User Branch haven't Branch")
 			}
 		}
@@ -2793,11 +2792,11 @@ func GetAdminListCustomerRedemption(c echo.Context) error {
 	status, err = models.GetCustomerRedemptionDropdown(&customer, params, paramsLike)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(customer) < 1 {
-		log.Error("Customer not found")
+		// log.Error("Customer not found")
 		return lib.CustomError(http.StatusNotFound, "Customer not found", "Customer not found")
 	}
 
@@ -2825,7 +2824,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	params["orderType"] = "DESC"
 	status, err := models.GetAllOaRequest(&oaRequestDB, 0, 0, true, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Oa Request not found")
 	}
 	// var requestKey string
@@ -2833,13 +2832,13 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	if len(oaRequestDB) > 0 {
 		oaData = oaRequestDB[0]
 		if *oaData.Oastatus == uint64(258) || *oaData.Oastatus == uint64(259) {
-			log.Error("oa in progress approval")
+			// log.Error("oa in progress approval")
 			return lib.CustomError(http.StatusNotFound, "Terdapat Data Request yang dalam approval. Mohon Tunggu proses approval untuk dapat melakukan pengkinian lagi.", "Terdapat Data Request yang dalam approval. Mohon Tunggu proses approval untuk dapat melakukan pengkinian lagi.")
 		} else {
 			requestKey = strconv.FormatUint(oaData.OaRequestKey, 10)
 		}
 	} else {
-		log.Error("oa not found")
+		// log.Error("oa not found")
 		return lib.CustomError(http.StatusNotFound, "Oa Request not found", "Oa Request not found")
 	}
 
@@ -2847,7 +2846,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	if requestKey != "" {
 		status, err = models.GetOaPersonalData(&personalDataDB, requestKey, "oa_request_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Oa Request not found")
 		}
 	}
@@ -2888,7 +2887,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		var city models.MsCity
 		_, err = models.GetMsCityByParent(&city, strconv.FormatUint(*address.KabupatenKey, 10))
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		addressID["provinsi_key"] = city.CityKey
@@ -2906,7 +2905,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		var city models.MsCity
 		_, err = models.GetMsCityByParent(&city, strconv.FormatUint(*address.KabupatenKey, 10))
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		addressID := make(map[string]interface{})
@@ -2931,7 +2930,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "1")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["religion_other"] = ud.Values
@@ -2970,7 +2969,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "3")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["education_other"] = ud.Values
@@ -2980,14 +2979,14 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "2")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["occup_other"] = ud.Values
 	}
 	responseData["occup_company"] = personalDataDB.OccupCompany
 	responseData["occup_position"] = personalDataDB.OccupPosition
-	// log.Println("============ OCCUP ADDRESS KEY =================== >>", personalDataDB.OccupAddressKey)
+	// // log.Println("============ OCCUP ADDRESS KEY =================== >>", personalDataDB.OccupAddressKey)
 
 	if personalDataDB.OccupAddressKey != nil {
 		_, err = models.GetOaPostalAddress(&address, strconv.FormatUint(*personalDataDB.OccupAddressKey, 10))
@@ -3013,13 +3012,13 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		addressID_occup["postal_code"] = ""
 		responseData["occup_address"] = addressID_occup
 	}
-	// log.Println("===== LEWAT SINI ===== >>")
+	// // log.Println("===== LEWAT SINI ===== >>")
 	responseData["occup_business_field"] = personalDataDB.OccupBusinessFields
 	if personalDataDB.OccupBusinessFields != nil && *personalDataDB.OccupBusinessFields == uint64(60) {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "4")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["occup_business_field_other"] = ud.Values
@@ -3033,7 +3032,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "5")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["sourceof_fund_other"] = ud.Values
@@ -3043,7 +3042,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "6")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["invesment_objectives_other"] = ud.Values
@@ -3055,7 +3054,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "8")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["relation_occupation_other"] = ud.Values
@@ -3065,7 +3064,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "9")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["relation_business_fields"] = ud.Values
@@ -3080,7 +3079,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 		var ud models.UdfOtherValueStruct
 		_, err = models.UdfOtherValueQuery(&ud, personalDataDB.PersonalDataKey, "7")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		responseData["beneficial_relation_other"] = ud.Values
@@ -3116,7 +3115,7 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	paramRequest["orderType"] = "DESC"
 	_, err = models.GetAllOaRequest(&requestDB, 1, 0, false, paramRequest)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	request := requestDB[0]
@@ -3127,13 +3126,13 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	paramQuiz["orderType"] = "DESC"
 	_, err = models.GetAllOaRiskProfileQuiz(&quizDB, 100, 0, paramQuiz, true)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(quizDB) < 1 {
 		_, err = models.RiskProfileQuizIfNull(&quizDB, request.OaRequestKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			// return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -3141,14 +3140,14 @@ func GetAdminOaRequestPersonalDataRiskProfile(c echo.Context) error {
 	var risk models.OaRiskProfile
 	_, err = models.GetOaRiskProfile(&risk, requestKey, "oa_request_key")
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
 	var riskProfile models.MsRiskProfile
 	_, err = models.GetMsRiskProfile(&riskProfile, strconv.FormatUint(risk.RiskProfileKey, 10))
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -3186,7 +3185,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	//DEFAULT PARAM
 	customerKey := c.FormValue("customer_key")
 	if customerKey == "" {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "customer_key can not be blank", "customer_key can not be blank")
 	}
 
@@ -3197,7 +3196,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	params["orderType"] = "DESC"
 	status, err = models.GetAllOaRequest(&oaRequestDB, 0, 0, true, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Customer not found")
 	}
 
@@ -3205,41 +3204,41 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	// if len(oaRequestDB) > 0 {
 	// 	oaData = oaRequestDB[0]
 	// 	if *oaData.Oastatus == uint64(258) || *oaData.Oastatus == uint64(259) {
-	// 		log.Error("oa in progress approval")
+	// 		// log.Error("oa in progress approval")
 	// 		return lib.CustomError(http.StatusForbidden, "Terdapat Data Request yang dalam approval. Mohon Tunggu proses approval untuk dapat melakukan pengkinian lagi.", "Terdapat Data Request yang dalam approval. Mohon Tunggu proses approval untuk dapat melakukan pengkinian lagi.")
 	// 	}
 	// } else {
-	// 	log.Error("oa not found")
+	// 	// log.Error("oa not found")
 	// 	return lib.CustomError(http.StatusNotFound, "Customer not found", "Customer not found")
 	// }
-	// log.Println(oaData)
+	// // log.Println(oaData)
 
 	oaRequestType := c.FormValue("oa_request_type")
 	if oaRequestType == "" {
-		log.Error("Missing required parameter: oa_request_type")
+		// log.Error("Missing required parameter: oa_request_type")
 		return lib.CustomError(http.StatusBadRequest, "oa_request_type can not be blank", "oa_request_type can not be blank")
 	}
 
 	branchkey := c.FormValue("branch_key")
 	if branchkey == "" {
-		log.Error("Missing required parameter: branch_key")
+		// log.Error("Missing required parameter: branch_key")
 		return lib.CustomError(http.StatusBadRequest, "branch_key can not be blank", "branch_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(branchkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 	}
 
 	agentkey := c.FormValue("agent_key")
 	if agentkey == "" {
-		log.Error("Missing required parameter: agent_key")
+		// log.Error("Missing required parameter: agent_key")
 		return lib.CustomError(http.StatusBadRequest, "agent_key can not be blank", "agent_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(agentkey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: agent_key")
+			// log.Error("Wrong input for parameter: agent_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: agent_key", "Wrong input for parameter: agent_key")
 		}
 	}
@@ -3248,77 +3247,77 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	//INFORMASI NASABAH
 	email := c.FormValue("email")
 	if email == "" {
-		log.Error("Missing required parameter: email")
+		// log.Error("Missing required parameter: email")
 		return lib.CustomError(http.StatusBadRequest, "email can not be blank", "email can not be blank")
 	}
 	phone := c.FormValue("phone")
 	if phone == "" {
-		log.Error("Missing required parameter: phone")
+		// log.Error("Missing required parameter: phone")
 		return lib.CustomError(http.StatusBadRequest, "phone can not be blank", "phone can not be blank")
 	}
 	fullname := c.FormValue("full_name")
 	if fullname == "" {
-		log.Error("Missing required parameter: full_name")
+		// log.Error("Missing required parameter: full_name")
 		return lib.CustomError(http.StatusBadRequest, "full_name can not be blank", "full_name can not be blank")
 	}
 
 	nationality := c.FormValue("nationality")
 	if nationality == "" {
-		log.Error("Missing required parameter: nationality")
+		// log.Error("Missing required parameter: nationality")
 		return lib.CustomError(http.StatusBadRequest, "nationality can not be blank", "nationality can not be blank")
 	} else {
 		n, err := strconv.ParseUint(nationality, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: nationality")
+			// log.Error("Wrong input for parameter: nationality")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: nationality", "Wrong input for parameter: nationality")
 		}
 	}
 
 	idcardNumber := c.FormValue("idcard_no")
 	if idcardNumber == "" {
-		log.Error("Missing required parameter: idcard_no")
+		// log.Error("Missing required parameter: idcard_no")
 		return lib.CustomError(http.StatusBadRequest, "idcard_no can not be blank", "idcard_no can not be blank")
 	}
 
 	gender := c.FormValue("gender")
 	if gender == "" {
-		log.Error("Missing required parameter: gender")
+		// log.Error("Missing required parameter: gender")
 		return lib.CustomError(http.StatusBadRequest, "gender can not be blank", "gender can not be blank")
 	} else {
 		n, err := strconv.ParseUint(gender, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: gender")
+			// log.Error("Wrong input for parameter: gender")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: gender", "Wrong input for parameter: gender")
 		}
 	}
 
 	placeBirth := c.FormValue("place_birth")
 	if placeBirth == "" {
-		log.Error("Missing required parameter: place_birth")
+		// log.Error("Missing required parameter: place_birth")
 		return lib.CustomError(http.StatusBadRequest, "place_birth can not be blank", "place_birth can not be blank")
 	}
 
 	dateBirth := c.FormValue("date_birth")
 	if dateBirth == "" {
-		log.Error("Missing required parameter: date_birth")
+		// log.Error("Missing required parameter: date_birth")
 		return lib.CustomError(http.StatusBadRequest, "date_birth can not be blank", "date_birth can not be blank")
 	}
 
 	maritalStatus := c.FormValue("marital_status")
 	if maritalStatus == "" {
-		log.Error("Missing required parameter: marital_status")
+		// log.Error("Missing required parameter: marital_status")
 		return lib.CustomError(http.StatusBadRequest, "marital_status can not be blank", "marital_status can not be blank")
 	} else {
 		n, err := strconv.ParseUint(maritalStatus, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: marital_status")
+			// log.Error("Wrong input for parameter: marital_status")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: marital_status", "Wrong input for parameter: marital_status")
 		}
 	}
 
 	addressid := c.FormValue("address_id")
 	if addressid == "" {
-		log.Error("Missing required parameter: address_id")
+		// log.Error("Missing required parameter: address_id")
 		return lib.CustomError(http.StatusBadRequest, "address_id can not be blank", "address_id can not be blank")
 	}
 
@@ -3326,11 +3325,11 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if kabupatenid != "" {
 		n, err := strconv.ParseUint(kabupatenid, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: kabupaten_id")
+			// log.Error("Wrong input for parameter: kabupaten_id")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: kabupaten_id", "Wrong input for parameter: kabupaten_id")
 		}
 	} else {
-		log.Error("Missing required parameter: kabupaten_id")
+		// log.Error("Missing required parameter: kabupaten_id")
 		return lib.CustomError(http.StatusBadRequest, "kabupaten_id can not be blank", "kabupaten_id can not be blank")
 	}
 
@@ -3338,11 +3337,11 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if kecamatanid != "" {
 		n, err := strconv.ParseUint(kecamatanid, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: kecamatan_id")
+			// log.Error("Wrong input for parameter: kecamatan_id")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: kecamatan_id", "Wrong input for parameter: kecamatan_id")
 		}
 	} else {
-		log.Error("Missing required parameter: kecamatan_id")
+		// log.Error("Missing required parameter: kecamatan_id")
 		return lib.CustomError(http.StatusBadRequest, "kecamatan_id can not be blank", "kecamatan_id can not be blank")
 	}
 
@@ -3350,17 +3349,17 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if postalid != "" {
 		ps, err := strconv.ParseUint(postalid, 10, 64)
 		if err != nil || ps == 0 {
-			log.Error("Wrong input for parameter: postal_id")
+			// log.Error("Wrong input for parameter: postal_id")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: postal_id", "Wrong input for parameter: postal_id")
 		}
 	} else {
-		log.Error("Missing required parameter: postal_id")
+		// log.Error("Missing required parameter: postal_id")
 		return lib.CustomError(http.StatusBadRequest, "postal_id can not be blank", "postal_id can not be blank")
 	}
 
 	addressdomicile := c.FormValue("address_domicile")
 	if addressdomicile == "" {
-		log.Error("Missing required parameter: address_domicile")
+		// log.Error("Missing required parameter: address_domicile")
 		return lib.CustomError(http.StatusBadRequest, "address_domicile can not be blank", "address_domicile can not be blank")
 	}
 
@@ -3368,11 +3367,11 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if kabupatendomicile != "" {
 		n, err := strconv.ParseUint(kabupatendomicile, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: kabupaten_domicile")
+			// log.Error("Wrong input for parameter: kabupaten_domicile")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: kabupaten_domicile", "Wrong input for parameter: kabupaten_domicile")
 		}
 	} else {
-		log.Error("Missing required parameter: kabupaten_domicile")
+		// log.Error("Missing required parameter: kabupaten_domicile")
 		return lib.CustomError(http.StatusBadRequest, "kabupaten_domicile can not be blank", "kabupaten_domicile can not be blank")
 	}
 
@@ -3380,11 +3379,11 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if kecamatandomicile != "" {
 		n, err := strconv.ParseUint(kecamatandomicile, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: kecamatan_domicile")
+			// log.Error("Wrong input for parameter: kecamatan_domicile")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: kecamatan_domicile", "Wrong input for parameter: kecamatan_domicile")
 		}
 	} else {
-		log.Error("Missing required parameter: kecamatan_domicile")
+		// log.Error("Missing required parameter: kecamatan_domicile")
 		return lib.CustomError(http.StatusBadRequest, "kecamatan_domicile can not be blank", "kecamatan_domicile can not be blank")
 	}
 
@@ -3392,28 +3391,28 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if postaldomicile != "" {
 		ps, err := strconv.ParseUint(postaldomicile, 10, 64)
 		if err != nil || ps == 0 {
-			log.Error("Wrong input for parameter: postal_domicile")
+			// log.Error("Wrong input for parameter: postal_domicile")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: postal_domicile", "Wrong input for parameter: postal_domicile")
 		}
 	} else {
-		log.Error("Missing required parameter: postal_domicile")
+		// log.Error("Missing required parameter: postal_domicile")
 		return lib.CustomError(http.StatusBadRequest, "postal_domicile can not be blank", "postal_domicile can not be blank")
 	}
 
 	phoneHome := c.FormValue("phone_home")
 	if phoneHome == "" {
-		log.Error("Missing required parameter: phone_home")
+		// log.Error("Missing required parameter: phone_home")
 		return lib.CustomError(http.StatusBadRequest, "phone_home can not be blank", "phone_home can not be blank")
 	}
 
 	religion := c.FormValue("religion")
 	if religion == "" {
-		log.Error("Missing required parameter: phone_home")
+		// log.Error("Missing required parameter: phone_home")
 		return lib.CustomError(http.StatusBadRequest, "phone_home can not be blank", "phone_home can not be blank")
 	} else {
 		ps, err := strconv.ParseUint(religion, 10, 64)
 		if err != nil || ps == 0 {
-			log.Error("Wrong input for parameter: religion")
+			// log.Error("Wrong input for parameter: religion")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: religion", "Wrong input for parameter: religion")
 		}
 	}
@@ -3429,12 +3428,12 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	education := c.FormValue("education")
 	if education == "" {
-		log.Error("Missing required parameter: education")
+		// log.Error("Missing required parameter: education")
 		return lib.CustomError(http.StatusBadRequest, "education can not be blank", "education can not be blank")
 	} else {
 		ps, err := strconv.ParseUint(education, 10, 64)
 		if err != nil || ps == 0 {
-			log.Error("Wrong input for parameter: education")
+			// log.Error("Wrong input for parameter: education")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: education", "Wrong input for parameter: education")
 		}
 	}
@@ -3457,28 +3456,28 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	var file *multipart.FileHeader
 	file, err = c.FormFile("pic_ktp")
 	if file == nil && picKtpDefault == "" {
-		log.Error("Missing required parameter: pic_ktp")
+		// log.Error("Missing required parameter: pic_ktp")
 		return lib.CustomError(http.StatusBadRequest, "pic_ktp can not be blank", "pic_ktp can not be blank")
 	}
 
 	var fileselfie *multipart.FileHeader
 	fileselfie, err = c.FormFile("pic_selfie_ktp")
 	if fileselfie == nil && picSelfieKtpDefault == "" {
-		log.Error("Missing required parameter: pic_selfie_ktp")
+		// log.Error("Missing required parameter: pic_selfie_ktp")
 		return lib.CustomError(http.StatusBadRequest, "pic_selfie_ktp can not be blank", "pic_selfie_ktp can not be blank")
 	}
 
 	//URAIAN BIDANG USAHA DAN PEKERJAAN
 	job := c.FormValue("job")
 	if job == "" {
-		log.Error("Missing required parameter: job")
+		// log.Error("Missing required parameter: job")
 		return lib.CustomError(http.StatusBadRequest, "job can not be blank", "job can not be blank")
 	} else {
 		n, err := strconv.ParseUint(job, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["occup_job"] = job
 		} else {
-			log.Error("Wrong input for parameter: job")
+			// log.Error("Wrong input for parameter: job")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: job", "Wrong input for parameter: job")
 		}
 	}
@@ -3503,7 +3502,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		if err == nil && n > 0 {
 			paramsOaPersonalData["occup_position"] = position
 		} else {
-			log.Error("Wrong input for parameter: position")
+			// log.Error("Wrong input for parameter: position")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: position", "Wrong input for parameter: position")
 		}
 	}
@@ -3523,7 +3522,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		if err == nil && n > 0 {
 			paramsOaPersonalData["occup_business_fields"] = businessField
 		} else {
-			log.Error("Wrong input for parameter: business_field")
+			// log.Error("Wrong input for parameter: business_field")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: business_field", "Wrong input for parameter: business_field")
 		}
 	}
@@ -3539,28 +3538,28 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	annualIncome := c.FormValue("annual_income")
 	if annualIncome == "" {
-		log.Error("Missing required parameter: annual_income")
+		// log.Error("Missing required parameter: annual_income")
 		return lib.CustomError(http.StatusBadRequest, "annual_income can not be blank", "annual_income can not be blank")
 	} else {
 		n, err := strconv.ParseUint(annualIncome, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["annual_income"] = annualIncome
 		} else {
-			log.Error("Wrong input for parameter: annual_income")
+			// log.Error("Wrong input for parameter: annual_income")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: annual_income", "Wrong input for parameter: annual_income")
 		}
 	}
 
 	fundSource := c.FormValue("fund_source")
 	if fundSource == "" {
-		log.Error("Missing required parameter: fund_source")
+		// log.Error("Missing required parameter: fund_source")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fund_source", "Missing required parameter: fund_source")
 	} else {
 		n, err := strconv.ParseUint(fundSource, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["sourceof_fund"] = fundSource
 		} else {
-			log.Error("Wrong input for parameter: fund_source")
+			// log.Error("Wrong input for parameter: fund_source")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: fund_source", "Wrong input for parameter: fund_source")
 		}
 	}
@@ -3576,14 +3575,14 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	objectives := c.FormValue("objectives")
 	if objectives == "" {
-		log.Error("Missing required parameter: objectives")
+		// log.Error("Missing required parameter: objectives")
 		return lib.CustomError(http.StatusBadRequest, "objectives can not be blank", "objectives can not be blank")
 	} else {
 		n, err := strconv.ParseUint(objectives, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["invesment_objectives"] = objectives
 		} else {
-			log.Error("Wrong input for parameter: objectives")
+			// log.Error("Wrong input for parameter: objectives")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: objectives", "Wrong input for parameter: objectives")
 		}
 	}
@@ -3603,7 +3602,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		if err == nil && n > 0 {
 			paramsOaPersonalData["correspondence"] = corespondence
 		} else {
-			log.Error("Wrong input for parameter: corespondence")
+			// log.Error("Wrong input for parameter: corespondence")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: corespondence", "Wrong input for parameter: corespondence")
 		}
 	}
@@ -3611,40 +3610,40 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	//TAB 4
 	motherMaidenName := c.FormValue("mother_maiden_name")
 	if motherMaidenName == "" {
-		log.Error("Missing required parameter: mother_maiden_name")
+		// log.Error("Missing required parameter: mother_maiden_name")
 		return lib.CustomError(http.StatusBadRequest, "mother_maiden_name can not be blank", "mother_maiden_name can not be blank")
 	}
 
 	relationName := c.FormValue("relation_name")
 	if relationName == "" {
-		log.Error("Missing required parameter: relation_name")
+		// log.Error("Missing required parameter: relation_name")
 		return lib.CustomError(http.StatusBadRequest, "relation_name can not be blank", "relation_name can not be blank")
 	}
 
 	pepStatus := c.FormValue("pep_status")
 	if pepStatus == "" {
-		log.Error("Missing required parameter: pep_status")
+		// log.Error("Missing required parameter: pep_status")
 		return lib.CustomError(http.StatusBadRequest, "pep_status can not be blank", "pep_status can not be blank")
 	} else {
 		n, err := strconv.ParseUint(pepStatus, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["pep_status"] = pepStatus
 		} else {
-			log.Error("Wrong input for parameter: pep_status")
+			// log.Error("Wrong input for parameter: pep_status")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: pep_status", "Wrong input for parameter: pep_status")
 		}
 	}
 
 	relationOccupation := c.FormValue("relation_occupation")
 	if relationOccupation == "" {
-		log.Error("Missing required parameter: relation_occupation")
+		// log.Error("Missing required parameter: relation_occupation")
 		return lib.CustomError(http.StatusBadRequest, "relation_occupation can not be blank", "relation_occupation can not be blank")
 	} else {
 		n, err := strconv.ParseUint(relationOccupation, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["relation_occupation"] = relationOccupation
 		} else {
-			log.Error("Wrong input for parameter: relation_occupation")
+			// log.Error("Wrong input for parameter: relation_occupation")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: relation_occupation", "Wrong input for parameter: relation_occupation")
 		}
 	}
@@ -3660,14 +3659,14 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	relationType := c.FormValue("relation_type")
 	if relationType == "" {
-		log.Error("Missing required parameter: relation_type")
+		// log.Error("Missing required parameter: relation_type")
 		return lib.CustomError(http.StatusBadRequest, "relation_type can not be blank", "relation_type can not be blank")
 	} else {
 		n, err := strconv.ParseUint(relationType, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["relation_type"] = relationType
 		} else {
-			log.Error("Wrong input for parameter: relation_type")
+			// log.Error("Wrong input for parameter: relation_type")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: relation_type", "Wrong input for parameter: relation_type")
 		}
 	}
@@ -3678,7 +3677,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		if err == nil && n > 0 {
 			paramsOaPersonalData["relation_business_fields"] = relationBusinessField
 		} else {
-			log.Error("Wrong input for parameter: relation_business_field")
+			// log.Error("Wrong input for parameter: relation_business_field")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: relation_business_field", "Wrong input for parameter: relation_business_field")
 		}
 	}
@@ -3694,41 +3693,41 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	emergencyName := c.FormValue("emergency_name")
 	if emergencyName == "" {
-		log.Error("Missing required parameter: emergency_name")
+		// log.Error("Missing required parameter: emergency_name")
 		return lib.CustomError(http.StatusBadRequest, "emergency_name can not be blank", "emergency_name can not be blank")
 	}
 
 	emergencyRelation := c.FormValue("emergency_relation")
 	if emergencyRelation == "" {
-		log.Error("Missing required parameter: emergency_relation")
+		// log.Error("Missing required parameter: emergency_relation")
 		return lib.CustomError(http.StatusBadRequest, "emergency_relation can not be blank", "emergency_relation can not be blank")
 	} else {
 		n, err := strconv.ParseUint(emergencyRelation, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["emergency_relation"] = emergencyRelation
 		} else {
-			log.Error("Wrong input for parameter: emergency_relation")
+			// log.Error("Wrong input for parameter: emergency_relation")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: emergency_relation", "Wrong input for parameter: emergency_relation")
 		}
 	}
 
 	emergencyPhone := c.FormValue("emergency_phone")
 	if emergencyPhone == "" {
-		log.Error("Missing required parameter: emergency_phone")
+		// log.Error("Missing required parameter: emergency_phone")
 		return lib.CustomError(http.StatusBadRequest, "emergency_phone can not be blank", "emergency_phone can not be blank")
 	}
 
 	//TAB 5 REKENING DLL
 	beneficialRelation := c.FormValue("beneficial_relation")
 	if beneficialRelation == "" {
-		log.Error("Missing required parameter: beneficial_relation")
+		// log.Error("Missing required parameter: beneficial_relation")
 		return lib.CustomError(http.StatusBadRequest, "beneficial_relation can not be blank", "beneficial_relation can not be blank")
 	} else {
 		n, err := strconv.ParseUint(beneficialRelation, 10, 64)
 		if err == nil && n > 0 {
 			paramsOaPersonalData["beneficial_relation"] = beneficialRelation
 		} else {
-			log.Error("Wrong input for parameter: beneficial_relation")
+			// log.Error("Wrong input for parameter: beneficial_relation")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: beneficial_relation", "Wrong input for parameter: beneficial_relation")
 		}
 	}
@@ -3744,44 +3743,44 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	beneficialName := c.FormValue("beneficial_name")
 	if beneficialName == "" {
-		log.Error("Missing required parameter: beneficial_name")
+		// log.Error("Missing required parameter: beneficial_name")
 		return lib.CustomError(http.StatusBadRequest, "beneficial_name can not be blank", "beneficial_name can not be blank")
 	}
 
 	//BANK DETAIL
 	bankKey := c.FormValue("bank_key")
 	if bankKey == "" {
-		log.Error("Missing required parameter: bank_key")
+		// log.Error("Missing required parameter: bank_key")
 		return lib.CustomError(http.StatusBadRequest, "bank_key can not be blank", "bank_key can not be blank")
 	} else {
 		bank, err := strconv.ParseUint(bankKey, 10, 64)
 		if err != nil || bank == 0 {
-			log.Error("Wrong input for parameter: bank_key")
+			// log.Error("Wrong input for parameter: bank_key")
 			return lib.CustomError(http.StatusBadRequest)
 		}
 	}
 
 	accountNo := c.FormValue("account_no")
 	if accountNo == "" {
-		log.Error("Missing required parameter: account_no")
+		// log.Error("Missing required parameter: account_no")
 		return lib.CustomError(http.StatusBadRequest, "account_no can not be blank", "account_no can not be blank")
 	}
 
 	accountName := c.FormValue("account_name")
 	if accountName == "" {
-		log.Error("Missing required parameter: account_name")
+		// log.Error("Missing required parameter: account_name")
 		return lib.CustomError(http.StatusBadRequest, "account_name can not be blank", "account_name can not be blank")
 	}
 
 	branchName := c.FormValue("branch_name")
 	if branchName == "" {
-		log.Error("Missing required parameter: branch_name")
+		// log.Error("Missing required parameter: branch_name")
 		return lib.CustomError(http.StatusBadRequest, "branch_name can not be blank", "branch_name can not be blank")
 	}
 
 	flagPriority := c.FormValue("flag_priority")
 	if flagPriority == "" {
-		log.Error("Missing required parameter: flag_priority")
+		// log.Error("Missing required parameter: flag_priority")
 		return lib.CustomError(http.StatusBadRequest, "flag_priority can not be blank", "flag_priority can not be blank")
 	}
 
@@ -3794,27 +3793,27 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	// if bankKey2 != "" || accountNo2 != "" || accountName2 != "" || branchName2 != "" || flagPriority2 != "" {
 	// 	if bankKey2 == "" {
-	// 		log.Error("Missing required parameter: bank_key_2")
+	// 		// log.Error("Missing required parameter: bank_key_2")
 	// 		return lib.CustomError(http.StatusBadRequest, "bank_key_2 can not be blank", "bank_key_2 can not be blank")
 	// 	}
 
 	// 	if accountNo2 == "" {
-	// 		log.Error("Missing required parameter: account_no_2")
+	// 		// log.Error("Missing required parameter: account_no_2")
 	// 		return lib.CustomError(http.StatusBadRequest, "account_no_2 can not be blank", "account_no_2 can not be blank")
 	// 	}
 
 	// 	if accountName2 == "" {
-	// 		log.Error("Missing required parameter: account_name_2")
+	// 		// log.Error("Missing required parameter: account_name_2")
 	// 		return lib.CustomError(http.StatusBadRequest, "account_name_2 can not be blank", "account_name_2 can not be blank")
 	// 	}
 
 	// 	if branchName2 == "" {
-	// 		log.Error("Missing required parameter: branch_name_2")
+	// 		// log.Error("Missing required parameter: branch_name_2")
 	// 		return lib.CustomError(http.StatusBadRequest, "branch_name_2 can not be blank", "branch_name_2 can not be blank")
 	// 	}
 
 	// 	if flagPriority2 == "" {
-	// 		log.Error("Missing required parameter: flag_priority_2")
+	// 		// log.Error("Missing required parameter: flag_priority_2")
 	// 		return lib.CustomError(http.StatusBadRequest, "flag_priority_2 can not be blank", "flag_priority_2 can not be blank")
 	// 	}
 	// }
@@ -3828,27 +3827,27 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	// if bankKey3 != "" || accountNo3 != "" || accountName3 != "" || branchName3 != "" || flagPriority3 != "" {
 	// 	if bankKey3 == "" {
-	// 		log.Error("Missing required parameter: bank_key_3")
+	// 		// log.Error("Missing required parameter: bank_key_3")
 	// 		return lib.CustomError(http.StatusBadRequest, "bank_key_3 can not be blank", "bank_key_3 can not be blank")
 	// 	}
 
 	// 	if accountNo3 == "" {
-	// 		log.Error("Missing required parameter: account_no_3")
+	// 		// log.Error("Missing required parameter: account_no_3")
 	// 		return lib.CustomError(http.StatusBadRequest, "account_no_3 can not be blank", "account_no_3 can not be blank")
 	// 	}
 
 	// 	if accountName3 == "" {
-	// 		log.Error("Missing required parameter: account_name_3")
+	// 		// log.Error("Missing required parameter: account_name_3")
 	// 		return lib.CustomError(http.StatusBadRequest, "account_name_3 can not be blank", "account_name_3 can not be blank")
 	// 	}
 
 	// 	if branchName3 == "" {
-	// 		log.Error("Missing required parameter: branch_name_3")
+	// 		// log.Error("Missing required parameter: branch_name_3")
 	// 		return lib.CustomError(http.StatusBadRequest, "branch_name_3 can not be blank", "branch_name_3 can not be blank")
 	// 	}
 
 	// 	if flagPriority3 == "" {
-	// 		log.Error("Missing required parameter: flag_priority_3")
+	// 		// log.Error("Missing required parameter: flag_priority_3")
 	// 		return lib.CustomError(http.StatusBadRequest, "flag_priority_3 can not be blank", "flag_priority_3 can not be blank")
 	// 	}
 	// }
@@ -3865,19 +3864,19 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	}
 
 	if countPriority == 0 {
-		log.Error("Missing required parameter: flag_prioriti must select 1")
+		// log.Error("Missing required parameter: flag_prioriti must select 1")
 		return lib.CustomError(http.StatusBadRequest, "flag_prioriti must select 1", "flag_prioriti must select 1")
 	}
 
 	if countPriority > 1 {
-		log.Error("Missing required parameter: flag_prioriti must select 1")
+		// log.Error("Missing required parameter: flag_prioriti must select 1")
 		return lib.CustomError(http.StatusBadRequest, "flag_prioriti must select 1", "flag_prioriti must select 1")
 	}
 
 	//QUIZ
 	quizOption := c.FormValue("quiz_option")
 	if quizOption == "" {
-		log.Error("Missing required parameter: quiz_option")
+		// log.Error("Missing required parameter: quiz_option")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: quiz_option", "Missing required parameter: quiz_option")
 	}
 
@@ -3887,10 +3886,10 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	// err = json.Unmarshal([]byte(quizOption), &quizSlice)
 	// if err != nil {
-	// 	log.Error(err.Error())
-	// 	log.Error("Missing required parameter: shares_holder")
+	// 	// log.Error(err.Error())
+	// 	// log.Error("Missing required parameter: shares_holder")
 	// }
-	// log.Println("===== TEST PARAMETER QUIZ SLICE ===== >>>", quizSlice)
+	// // log.Println("===== TEST PARAMETER QUIZ SLICE ===== >>>", quizSlice)
 
 	// if len(quizSlice) > 0 {
 	// 	for _, val := range quizSlice {
@@ -3912,11 +3911,11 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		}
 	}
 	if len(quizoptionkey) <= 0 {
-		log.Error("Missing required parameter: quiz_option")
+		// log.Error("Missing required parameter: quiz_option")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: quiz_option", "Missing required parameter: quiz_option")
 	}
 
-	date := time.Now().AddDate(0, 0, 1)
+	// date := time.Now().AddDate(0, 0, 1)
 	dateLayout := "2006-01-02 15:04:05"
 
 	//OA_REQUEST
@@ -3958,11 +3957,11 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	addressDomicileParams["rec_status"] = "1"
 
 	//OA_PERSONAL_DATA
-	log.Info("dateBirth: " + dateBirth)
+	// log.Info("dateBirth: " + dateBirth)
 	dateBirth += " 00:00:00"
-	date, err = time.Parse(layout, dateBirth)
-	dateStr := date.Format(layout)
-	log.Info("dateBirth: " + dateStr)
+	// date, err = time.Parse(layout, dateBirth)
+	// dateStr := date.Format(layout)
+	// log.Info("dateBirth: " + dateStr)
 
 	paramsOaPersonalData["full_name"] = fullname
 	if nationality == "97" { //indonesia
@@ -4001,7 +4000,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	status, err = models.GetScUserLoginByCustomerKey(&scUserLogin, customerKey)
 	if err != nil {
 		tx.Rollback()
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed create data")
 	} else {
 		idUserLogin = strconv.FormatUint(scUserLogin.UserLoginKey, 10)
@@ -4016,13 +4015,13 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	status, err, addressidID := models.CreateOaPostalAddress(addressIDParams)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create adrress data idcard: " + err.Error())
+		// log.Error("Failed create adrress data idcard: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 	addressID, err := strconv.ParseUint(addressidID, 10, 64)
 	if addressID == 0 {
 		tx.Rollback()
-		log.Error("Failed create adrress data idcard")
+		// log.Error("Failed create adrress data idcard")
 		return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 	}
 	paramsOaPersonalData["idcard_address_key"] = addressidID
@@ -4031,13 +4030,13 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	status, err, addressDomicileID := models.CreateOaPostalAddress(addressDomicileParams)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create adrress data domicile: " + err.Error())
+		// log.Error("Failed create adrress data domicile: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 	addressID, err = strconv.ParseUint(addressDomicileID, 10, 64)
 	if addressID == 0 {
 		tx.Rollback()
-		log.Error("Failed create adrress data domicile")
+		// log.Error("Failed create adrress data domicile")
 		return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 	}
 	paramsOaPersonalData["domicile_address_key"] = addressDomicileID
@@ -4055,13 +4054,13 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		status, err, addressCompanyID := models.CreateOaPostalAddress(addressCompanyParams)
 		if err != nil {
 			tx.Rollback()
-			log.Error("Failed create adrress data company: " + err.Error())
+			// log.Error("Failed create adrress data company: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 		addressID, err = strconv.ParseUint(addressCompanyID, 10, 64)
 		if addressID == 0 {
 			tx.Rollback()
-			log.Error("Failed create adrress data company")
+			// log.Error("Failed create adrress data company")
 			return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 		}
 		paramsOaPersonalData["occup_address_key"] = addressCompanyID
@@ -4071,11 +4070,11 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if oaSource != "" {
 		_, err := strconv.ParseUint(oaSource, 10, 64)
 		if err != nil {
-			log.Error("Wrong input for parameter: oa_source")
+			// log.Error("Wrong input for parameter: oa_source")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_source", "Wrong input for parameter: oa_source")
 		}
 	} else {
-		log.Error("Missing required parameter: oa_source")
+		// log.Error("Missing required parameter: oa_source")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: oa_source", "Missing required parameter: oa_source")
 	}
 	paramsOaRequest["oa_source"] = oaSource
@@ -4084,13 +4083,13 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	status, err, requestID := models.CreateOaRequest(paramsOaRequest)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create oa request data: " + err.Error())
+		// log.Error("Failed create oa request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 	request, err := strconv.ParseUint(requestID, 10, 64)
 	if request == 0 {
 		tx.Rollback()
-		log.Error("Failed create oa request data")
+		// log.Error("Failed create oa request data")
 		return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 	}
 	paramsOaPersonalData["oa_request_key"] = requestID
@@ -4113,13 +4112,13 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	status, err, bankAccountID := models.CreateMsBankAccount(paramsBank)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create bank account data: " + err.Error())
+		// log.Error("Failed create bank account data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 	accountID, err := strconv.ParseUint(bankAccountID, 10, 64)
 	if accountID == 0 {
 		tx.Rollback()
-		log.Error("Failed create bank account data")
+		// log.Error("Failed create bank account data")
 		return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 	}
 	if flagPriority == "1" {
@@ -4138,7 +4137,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	status, err, _ = models.CreateOaRequestBankAccount(bankReq)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create OA_REQUEST_BANK_ACCOUNT 1: " + err.Error())
+		// log.Error("Failed create OA_REQUEST_BANK_ACCOUNT 1: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -4159,13 +4158,13 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		status, err, bankAccountID2 := models.CreateMsBankAccount(paramsBank2)
 		if err != nil {
 			tx.Rollback()
-			log.Error("Failed create bank account data: " + err.Error())
+			// log.Error("Failed create bank account data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 		accountID, err := strconv.ParseUint(bankAccountID, 10, 64)
 		if accountID == 0 {
 			tx.Rollback()
-			log.Error("Failed create bank account data")
+			// log.Error("Failed create bank account data")
 			return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 		}
 		if flagPriority2 == "1" {
@@ -4184,7 +4183,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		status, err, _ = models.CreateOaRequestBankAccount(bankReq)
 		if err != nil {
 			tx.Rollback()
-			log.Error("Failed create OA_REQUEST_BANK_ACCOUNT 2: " + err.Error())
+			// log.Error("Failed create OA_REQUEST_BANK_ACCOUNT 2: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -4203,17 +4202,17 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		paramsBank3["rec_status"] = "1"
 		paramsBank3["rec_created_date"] = time.Now().Format(dateLayout)
 		paramsBank3["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-		log.Println("========== LEWAT SINI ========== >>>")
+		// log.Println("========== LEWAT SINI ========== >>>")
 		status, err, bankAccountID3 := models.CreateMsBankAccount(paramsBank3)
 		if err != nil {
 			tx.Rollback()
-			log.Error("Failed create bank account data: " + err.Error())
+			// log.Error("Failed create bank account data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 		accountID, err := strconv.ParseUint(bankAccountID, 10, 64)
 		if accountID == 0 {
 			tx.Rollback()
-			log.Error("Failed create bank account data")
+			// log.Error("Failed create bank account data")
 			return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 		}
 		if flagPriority3 == "1" {
@@ -4232,7 +4231,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		status, err, _ = models.CreateOaRequestBankAccount(bankReq)
 		if err != nil {
 			tx.Rollback()
-			log.Error("Failed create OA_REQUEST_BANK_ACCOUNT 3: " + err.Error())
+			// log.Error("Failed create OA_REQUEST_BANK_ACCOUNT 3: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed input data")
 		}
 	}
@@ -4242,7 +4241,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	//SAVE OA_PERSONAL_DATA
 	err = os.MkdirAll(config.BasePathImage+"/images/user/"+idUserLogin, 0755)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	} else {
 		var file *multipart.FileHeader
 		file, err = c.FormFile("pic_ktp")
@@ -4256,7 +4255,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			var filename string
 			for {
 				filename = lib.RandStringBytesMaskImprSrc(20)
-				log.Println("Generate filename:", filename)
+				// log.Println("Generate filename:", filename)
 				var personalData []models.OaPersonalData
 				getParams := make(map[string]string)
 				getParams["pic_ktp"] = filename + extension
@@ -4268,7 +4267,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+idUserLogin+"/"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			paramsOaPersonalData["pic_ktp"] = filename + extension
@@ -4287,7 +4286,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			var filename string
 			for {
 				filename = lib.RandStringBytesMaskImprSrc(20)
-				log.Println("Generate filename:", filename)
+				// log.Println("Generate filename:", filename)
 				var personalData []models.OaPersonalData
 				getParams := make(map[string]string)
 				getParams["pic_selfie_ktp"] = filename + extension
@@ -4299,7 +4298,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePathImage+"/images/user/"+idUserLogin+"/"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			paramsOaPersonalData["pic_selfie_ktp"] = filename + extension
@@ -4310,7 +4309,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	err = os.MkdirAll(config.BasePathImage+"/images/user/"+idUserLogin+"/signature", 0755)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadGateway, err.Error(), err.Error())
 	}
 	file, err = c.FormFile("signature")
@@ -4324,7 +4323,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		var filename string
 		for {
 			filename = lib.RandStringBytesMaskImprSrc(20)
-			log.Println("Generate filename:", filename)
+			// log.Println("Generate filename:", filename)
 			var personalData []models.OaPersonalData
 			getParams := make(map[string]string)
 			getParams["rec_image1"] = filename + extension
@@ -4336,7 +4335,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 		// Upload image and move to proper directory
 		err = lib.UploadImage(file, config.ImageUrl+"/images/user/"+idUserLogin+"/signature/"+filename+extension)
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 			return lib.CustomError(http.StatusInternalServerError)
 		}
 		paramsOaPersonalData["rec_image1"] = filename + extension
@@ -4347,7 +4346,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	status, err, personalDataID := models.CreateOaPersonalData(paramsOaPersonalData)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Failed create personal data: " + err.Error())
+		// log.Error("Failed create personal data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -4360,7 +4359,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	if len(bindInterface) > 0 {
 		status, err = models.CreateMultipleUdfValue(bindInterface)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 	}
 
@@ -4370,12 +4369,12 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(questionOptions) < 1 {
 		tx.Rollback()
-		log.Error("Missing required parameter: quiz_option")
+		// log.Error("Missing required parameter: quiz_option")
 		// return lib.CustomError(http.StatusBadRequest, "Missing required parameter: quiz_option", "Missing required parameter: quiz_option")
 	}
 
@@ -4398,7 +4397,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	status, err = models.GetMsRiskProfileScore(&riskProfile, scoreStr)
 	if err != nil {
 		tx.Rollback()
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data risk profile")
 	}
 
@@ -4413,14 +4412,14 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 	status, err = models.CreateOaRiskProfile(paramsOaRiskProfile)
 	if err != nil {
 		tx.Rollback()
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
 	status, err = models.CreateMultipleOaRiskProfileQuiz(bindVar)
 	if err != nil {
 		tx.Rollback()
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		// return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -4433,7 +4432,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/index-pengkinian.html")
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		var tpl bytes.Buffer
@@ -4441,7 +4440,7 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 			Name    string
 			FileUrl string
 		}{Name: fullname, FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		result := tpl.String()
@@ -4454,11 +4453,11 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 		err = lib.SendEmail(mailer)
 		if err != nil {
-			log.Error("Error send email")
-			log.Error(err)
-			log.Error("Error send email")
+			// log.Error("Error send email")
+			// log.Error(err)
+			// log.Error("Error send email")
 		} else {
-			log.Info("Email sent")
+			// log.Info("Email sent")
 		}
 		// dialer := gomail.NewDialer(
 		// 	config.EmailSMTPHost,
@@ -4470,22 +4469,22 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 		// err = dialer.DialAndSend(mailer)
 		// if err != nil {
-		// 	log.Error("Error send email")
-		// 	log.Error(err)
-		// 	log.Error("Error send email")
+		// 	// log.Error("Error send email")
+		// 	// log.Error(err)
+		// 	// log.Error("Error send email")
 		// }
-		// log.Info("Email sent")
+		// // log.Info("Email sent")
 
 		//sent email to all CS & Agent
 		var oaRequest models.OaRequest
 		status, err = models.GetOaRequest(&oaRequest, requestID)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		} else {
 			var personalData models.OaPersonalData
 			status, err = models.GetOaPersonalData(&personalData, requestID, "oa_request_key")
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 			} else {
 				SentEmailOaPengkinianToBackOffice(oaRequest, personalData, "11")
 				SentEmailOaPengkinianToSales(oaRequest, personalData)
@@ -4516,9 +4515,9 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 
 	status, err = models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error("Error create user message")
+		// log.Error("Error create user message")
 	} else {
-		log.Error("Sukses insert user message")
+		// log.Error("Sukses insert user message")
 	}
 	lib.CreateNotifCustomerFromAdminByUserLoginKey(idUserLogin, subject, body, "HOME")
 
@@ -4542,12 +4541,12 @@ func AdminSavePengkinianCustomerIndividu(c echo.Context) error {
 func CheckUniqueEmailNoHp(c echo.Context) error {
 	field := c.FormValue("field")
 	if field == "" {
-		log.Error("Wrong input for parameter: field")
+		// log.Error("Wrong input for parameter: field")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: field", "Missing required parameter: field")
 	}
 	value := c.FormValue("value")
 	if value == "" {
-		log.Error("Wrong input for parameter: value")
+		// log.Error("Wrong input for parameter: value")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: value", "Missing required parameter: value")
 	}
 
@@ -4560,7 +4559,7 @@ func CheckUniqueEmailNoHp(c echo.Context) error {
 	var countData models.CountData
 	status, err := models.ValidateUniqueData(&countData, field, value, userKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -4597,7 +4596,7 @@ func CheckUniqueEmailNoHp(c echo.Context) error {
 func CheckUniqueNoId(c echo.Context) error {
 	noId := c.FormValue("no_id")
 	if noId == "" {
-		log.Error("Wrong input for parameter: no_id")
+		// log.Error("Wrong input for parameter: no_id")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: no_id", "Missing required parameter: no_id")
 	}
 
@@ -4610,7 +4609,7 @@ func CheckUniqueNoId(c echo.Context) error {
 	var countData models.CountData
 	status, err := models.ValidateUniquePersonalData(&countData, "b.idcard_no", noId, cusKey, nil)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	var valid bool
@@ -4641,12 +4640,12 @@ func IndividuSendAccountStatement(c echo.Context) error {
 
 	customerKey := c.QueryParam("customer_key")
 	if customerKey == "" {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "customer_key can not be blank", "customer_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(customerKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	}
@@ -4654,7 +4653,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 	var customer models.HeaderCustomerDetailAccountStatement
 	_, err = models.GetHeaderCustomerDetailAccountStatement(&customer, customerKey)
 	if err != nil {
-		log.Error("Customer not found")
+		// log.Error("Customer not found")
 		return lib.CustomError(http.StatusBadRequest, "Customer not found", "Customer not found")
 	}
 
@@ -4663,13 +4662,13 @@ func IndividuSendAccountStatement(c echo.Context) error {
 
 	datefrom = c.QueryParam("date_from")
 	if datefrom == "" {
-		log.Error("Missing required parameter: date_from")
+		// log.Error("Missing required parameter: date_from")
 		return lib.CustomError(http.StatusBadRequest, "date_from can not be blank", "date_from can not be blank")
 	}
 
 	dateto = c.QueryParam("date_to")
 	if dateto == "" {
-		log.Error("Missing required parameter: date_to")
+		// log.Error("Missing required parameter: date_to")
 		return lib.CustomError(http.StatusBadRequest, "date_to can not be blank", "date_to can not be blank")
 	}
 	layoutISO := "2006-01-02"
@@ -4718,7 +4717,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data transaction")
 		}
 	}
@@ -5099,14 +5098,14 @@ func IndividuSendAccountStatement(c echo.Context) error {
 
 	tm, err = tm.ParseFiles(config.BasePath + "/mail/account-statement-template.html")
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 	f, err := os.Create(config.BasePath + "/mail/account-statement-" + customerKey + ".html")
 	if err != nil {
-		log.Println("create file: ", err)
+		// log.Println("create file: ", err)
 	}
 	if err := tm.Execute(f, responseData); err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 	f.Close()
 
@@ -5114,7 +5113,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 
 	pdfg, err := wkhtml.NewPDFGenerator()
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 	}
 
@@ -5125,7 +5124,7 @@ func IndividuSendAccountStatement(c echo.Context) error {
 
 	// Create a new input page from an URL
 	page := wkhtml.NewPage(config.BasePath + "/mail/account-statement-" + customerKey + ".html")
-	// log.Println("========= LEWAT SINI ==========")
+	// // log.Println("========= LEWAT SINI ==========")
 
 	// Set options for this page
 	page.FooterRight.Set("[page]")
@@ -5139,28 +5138,28 @@ func IndividuSendAccountStatement(c echo.Context) error {
 	// Create PDF document in internal buffer
 	err = pdfg.Create()
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 	}
 	err = os.MkdirAll(config.BasePath+"/files/"+customerKey, 0755)
 	// Write buffer contents to file on disk
 	err = pdfg.WriteFile(config.BasePath + "/files/" + customerKey + "/account-statement.pdf")
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 	}
-	log.Info("Success create file")
+	// log.Info("Success create file")
 
 	t := template.New("index-portofolio.html")
 
 	t, err = t.ParseFiles(config.BasePath + "/mail/index-portofolio.html")
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	var tpl bytes.Buffer
 	if err := t.Execute(&tpl, struct{ FileUrl string }{FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	result := tpl.String()
@@ -5174,10 +5173,10 @@ func IndividuSendAccountStatement(c echo.Context) error {
 
 	err = lib.SendEmail(mailer)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed send email")
 	} else {
-		log.Info("Email sent")
+		// log.Info("Email sent")
 	}
 
 	var response lib.Response

@@ -13,14 +13,13 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
 func CSApproveOAInstitution(c echo.Context) error {
 	errorAuth := initAuthCs()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	var err error
@@ -29,30 +28,30 @@ func CSApproveOAInstitution(c echo.Context) error {
 
 	oaRequestKey := c.FormValue("oa_request_key")
 	if oaRequestKey == "" {
-		log.Error("Missing required parameter: oa_request_key")
+		// log.Error("Missing required parameter: oa_request_key")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
 	n, err := strconv.ParseUint(oaRequestKey, 10, 64)
 	if err != nil || n == 0 {
-		log.Error("Wrong input for parameter: oa_request_key")
+		// log.Error("Wrong input for parameter: oa_request_key")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_request_key", "Wrong input for parameter: oa_request_key")
 	}
 
 	var oareq models.OaRequest
 	_, err = models.GetOaRequestInstitution(&oareq, oaRequestKey, "")
 	if err != nil {
-		log.Error("OA Request not found.")
+		// log.Error("OA Request not found.")
 		return lib.CustomError(http.StatusBadRequest, "OA Request not found.", "OA Request not found.")
 	}
 
 	if strconv.FormatUint(lib.Profile.UserID, 10) == *oareq.RecCreatedBy {
-		log.Error("User not autorized.")
+		// log.Error("User not autorized.")
 		return lib.CustomError(http.StatusBadRequest, "User not autorized.", "User not autorized.")
 	}
 
 	if *oareq.Oastatus != uint64(lib.OA_ENTRIED) {
-		log.Error("User not autorized.")
+		// log.Error("User not autorized.")
 		return lib.CustomError(http.StatusBadRequest, "User not autorized.", "User not autorized.")
 	}
 
@@ -60,18 +59,18 @@ func CSApproveOAInstitution(c echo.Context) error {
 
 	oastatus := c.FormValue("oa_status") //259 = approve --------- 444 = reject
 	if oastatus == "" {
-		log.Error("Missing required parameter: oa_status")
+		// log.Error("Missing required parameter: oa_status")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 	n, err = strconv.ParseUint(oastatus, 10, 64)
 	if err == nil && n > 0 {
 		if (oastatus != strconv.FormatUint(uint64(lib.CS_APPROVED), 10)) && (oastatus != strconv.FormatUint(uint64(lib.DRAFT), 10)) {
-			log.Error("Wrong input for parameter: oa_status must 444/258")
+			// log.Error("Wrong input for parameter: oa_status must 444/258")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_status", "Wrong input for parameter: oa_status")
 		}
 		params["oa_status"] = oastatus
 	} else {
-		log.Error("Wrong input for parameter: oa_status")
+		// log.Error("Wrong input for parameter: oa_status")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_status", "Wrong input for parameter: oa_status")
 	}
 
@@ -83,7 +82,7 @@ func CSApproveOAInstitution(c echo.Context) error {
 
 	if oastatus != strconv.FormatUint(uint64(lib.CS_APPROVED), 10) { //jika reject
 		if check1notes == "" {
-			log.Error("Missing required parameter notes: Notes tidak boleh kosong")
+			// log.Error("Missing required parameter notes: Notes tidak boleh kosong")
 			return lib.CustomError(http.StatusBadRequest, "Notes tidak boleh kosong", "Notes tidak boleh kosong")
 		}
 		params["check1_flag"] = "0"
@@ -98,7 +97,7 @@ func CSApproveOAInstitution(c echo.Context) error {
 
 	_, err = models.UpdateOaRequest(params)
 	if err != nil {
-		log.Error("Error update oa request")
+		// log.Error("Error update oa request")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -124,7 +123,7 @@ func CSApproveOAInstitution(c echo.Context) error {
 func KYCAPproveOAInstitution(c echo.Context) error {
 	errorAuth := initAuthKyc()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	var err error
@@ -134,32 +133,32 @@ func KYCAPproveOAInstitution(c echo.Context) error {
 
 	oaRequestKey := c.FormValue("oa_request_key")
 	if oaRequestKey == "" {
-		log.Error("Missing required parameter: oa_request_key")
+		// log.Error("Missing required parameter: oa_request_key")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
 	n, err := strconv.ParseUint(oaRequestKey, 10, 64)
 	if err != nil || n == 0 {
-		log.Error("Wrong input for parameter: oa_request_key")
+		// log.Error("Wrong input for parameter: oa_request_key")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_request_key", "Wrong input for parameter: oa_request_key")
 	}
 
 	var oareq models.OaRequest
 	_, err = models.GetOaRequestInstitution(&oareq, oaRequestKey, "")
 	if err != nil {
-		log.Error("OA Request not found.")
+		// log.Error("OA Request not found.")
 		return lib.CustomError(http.StatusBadRequest, "OA Request not found.", "OA Request not found.")
 	}
 
 	var institutionData models.OaInstitutionData
 	_, err = models.GetOaInstitutionData(&institutionData, oaRequestKey, "oa_request_key")
 	if err != nil {
-		log.Error("OA Institution data not found.")
+		// log.Error("OA Institution data not found.")
 		return lib.CustomError(http.StatusBadRequest, "OA Institution data not found.", "OA Institution data not found.")
 	}
 
 	if *oareq.Oastatus != uint64(lib.CS_APPROVED) {
-		log.Error("User not autorized.")
+		// log.Error("User not autorized.")
 		return lib.CustomError(http.StatusBadRequest, "User not autorized.", "User not autorized.")
 	}
 
@@ -167,18 +166,18 @@ func KYCAPproveOAInstitution(c echo.Context) error {
 
 	oastatus := c.FormValue("oa_status") //260 = approve --------- 444 = reject
 	if oastatus == "" {
-		log.Error("Missing required parameter: oa_status")
+		// log.Error("Missing required parameter: oa_status")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 	n, err = strconv.ParseUint(oastatus, 10, 64)
 	if err == nil && n > 0 {
 		if (oastatus != strconv.FormatUint(uint64(lib.KYC_APPROVED), 10)) && (oastatus != strconv.FormatUint(uint64(lib.DRAFT), 10)) {
-			log.Error("Wrong input for parameter: oa_status must 444/259")
+			// log.Error("Wrong input for parameter: oa_status must 444/259")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_status", "Wrong input for parameter: oa_status")
 		}
 		params["oa_status"] = oastatus
 	} else {
-		log.Error("Wrong input for parameter: oa_status")
+		// log.Error("Wrong input for parameter: oa_status")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_status", "Wrong input for parameter: oa_status")
 	}
 
@@ -187,7 +186,7 @@ func KYCAPproveOAInstitution(c echo.Context) error {
 
 	if oastatus != strconv.FormatUint(uint64(lib.KYC_APPROVED), 10) { //jika reject
 		if check2notes == "" {
-			log.Error("Missing required parameter notes: Notes tidak boleh kosong")
+			// log.Error("Missing required parameter notes: Notes tidak boleh kosong")
 			return lib.CustomError(http.StatusBadRequest, "Notes tidak boleh kosong", "Notes tidak boleh kosong")
 		}
 		params["check2_flag"] = "0"
@@ -197,14 +196,14 @@ func KYCAPproveOAInstitution(c echo.Context) error {
 
 	oarisklevel := c.FormValue("oa_risk_level")
 	if oarisklevel == "" {
-		log.Error("Missing required parameter: oa_risk_level")
+		// log.Error("Missing required parameter: oa_risk_level")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: oa_risk_level", "Missing required parameter: oa_risk_level")
 	}
 	n, err = strconv.ParseUint(oarisklevel, 10, 64)
 	if err == nil && n > 0 {
 		params["oa_risk_level"] = oarisklevel
 	} else {
-		log.Error("Wrong input for parameter: oa_risk_level")
+		// log.Error("Wrong input for parameter: oa_risk_level")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_risk_level", "Wrong input for parameter: oa_risk_level")
 	}
 
@@ -221,16 +220,16 @@ func KYCAPproveOAInstitution(c echo.Context) error {
 	_, err = models.UpdateOaRequest(params)
 	if err != nil {
 		tx.Rollback()
-		log.Error("Error update oa request")
+		// log.Error("Error update oa request")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
-	log.Info("Success update approved KYC Transaction")
+	// log.Info("Success update approved KYC Transaction")
 
 	var oadata models.OaInstitutionData
 	_, err = models.GetOaInstitutionData(&oadata, oaRequestKey, "oa_request_key")
 	if err != nil {
 		tx.Rollback()
-		log.Error("Error Institution Data not Found")
+		// log.Error("Error Institution Data not Found")
 		return lib.CustomError(status, err.Error(), "Institution data not found")
 	}
 
@@ -332,13 +331,13 @@ func KYCAPproveOAInstitution(c echo.Context) error {
 			status, err, cusID := models.CreateMsCustomer(paramsCustomer)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error create customer")
+				// log.Error("Error create customer")
 				return lib.CustomError(status, err.Error(), "failed input data")
 			}
 			request, err := strconv.ParseUint(cusID, 10, 64)
 			if request == 0 {
 				tx.Rollback()
-				log.Error("Failed create customer")
+				// log.Error("Failed create customer")
 				return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
 			}
 
@@ -349,14 +348,14 @@ func KYCAPproveOAInstitution(c echo.Context) error {
 			_, err = models.UpdateOaRequest(paramOaUpdate)
 			if err != nil {
 				tx.Rollback()
-				log.Error("Error update oa request")
+				// log.Error("Error update oa request")
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 			}
 			//create all ms_customer_bank_account by oa_req_key
 			var accBank []models.OaRequestByField
 			status, err = models.GetOaRequestBankByField(&accBank, "oa_request_key", strconv.FormatUint(oareq.OaRequestKey, 10))
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 			}
 			if len(accBank) > 0 {
 				var bindVarMsBank []interface{}
@@ -374,7 +373,7 @@ func KYCAPproveOAInstitution(c echo.Context) error {
 				_, err = models.CreateMultipleMsCustomerBankkAccount(bindVarMsBank)
 				if err != nil {
 					tx.Rollback()
-					log.Error("Failed create promo product: " + err.Error())
+					// log.Error("Failed create promo product: " + err.Error())
 					return lib.CustomError(status, err.Error(), "failed input data")
 				}
 			}
@@ -388,13 +387,13 @@ func KYCAPproveOAInstitution(c echo.Context) error {
 			deleteParam["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 			_, err = models.UpdateDataByField(deleteParam, "customer_key", strconv.FormatUint(*oareq.CustomerKey, 10))
 			if err != nil {
-				log.Error("Error delete all ms_customer_bank_account")
+				// log.Error("Error delete all ms_customer_bank_account")
 			}
 			//create all ms_customer_bank_account by oa_req_key
 			var accBank []models.OaRequestByField
 			status, err = models.GetOaRequestBankByField(&accBank, "oa_request_key", strconv.FormatUint(oareq.OaRequestKey, 10))
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 			}
 			if len(accBank) > 0 {
 				var bindVarMsBank []interface{}
@@ -412,7 +411,7 @@ func KYCAPproveOAInstitution(c echo.Context) error {
 				_, err = models.CreateMultipleMsCustomerBankkAccount(bindVarMsBank)
 				if err != nil {
 					tx.Rollback()
-					log.Error("Failed create promo product: " + err.Error())
+					// log.Error("Failed create promo product: " + err.Error())
 					return lib.CustomError(status, err.Error(), "failed input data")
 				}
 			}
@@ -516,14 +515,14 @@ func SentEmailInstitusiOaPengkinianToBackOfficeSales(
 	var userLogin []models.ScUserLogin
 	_, err = models.GetAllScUserLogin(&userLogin, 0, 0, paramsScLogin, true)
 	if err != nil {
-		log.Error("User BO tidak ditemukan")
-		log.Error(err)
+		// log.Error("User BO tidak ditemukan")
+		// log.Error(err)
 	} else {
 		t := template.New(mailTemp)
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 		if err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 		} else {
 			for _, scLogin := range userLogin {
 				if scLogin.UserLoginKey != lib.Profile.UserID {
@@ -531,7 +530,7 @@ func SentEmailInstitusiOaPengkinianToBackOfficeSales(
 					if (strUserCat == "2") || (strUserCat == "3") {
 						var tpl bytes.Buffer
 						if err := t.Execute(&tpl, mailParam); err != nil {
-							log.Error("Failed send mail: " + err.Error())
+							// log.Error("Failed send mail: " + err.Error())
 						} else {
 							result := tpl.String()
 
@@ -543,10 +542,10 @@ func SentEmailInstitusiOaPengkinianToBackOfficeSales(
 
 							err = lib.SendEmail(mailer)
 							if err != nil {
-								log.Error("Failed send mail to: " + scLogin.UloginEmail)
-								log.Error("Failed send mail: " + err.Error())
+								// log.Error("Failed send mail to: " + scLogin.UloginEmail)
+								// log.Error("Failed send mail: " + err.Error())
 							} else {
-								log.Println("Sukses kirim email")
+								// log.Println("Sukses kirim email")
 							}
 
 							// dialer := gomail.NewDialer(
@@ -559,8 +558,8 @@ func SentEmailInstitusiOaPengkinianToBackOfficeSales(
 
 							// err = dialer.DialAndSend(mailer)
 							// if err != nil {
-							// 	log.Error("Failed send mail to: " + scLogin.UloginEmail)
-							// 	log.Error("Failed send mail: " + err.Error())
+							// 	// log.Error("Failed send mail to: " + scLogin.UloginEmail)
+							// 	// log.Error("Failed send mail: " + err.Error())
 							// }
 						}
 					}
@@ -581,18 +580,18 @@ func SentEmailInstitusiOaPengkinianToBackOfficeSales(
 		var agent models.MsAgent
 		_, err = models.GetMsAgent(&agent, agentKey)
 		if err != nil {
-			log.Error("Agent not found")
+			// log.Error("Agent not found")
 		} else {
 			if agent.AgentEmail != nil {
 				t := template.New(mailTemp)
 
 				t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 				if err != nil {
-					log.Error("Failed send mail to sales: " + err.Error())
+					// log.Error("Failed send mail to sales: " + err.Error())
 				} else {
 					var tpl bytes.Buffer
 					if err := t.Execute(&tpl, mailParam); err != nil {
-						log.Error("Failed send mail to sales: " + err.Error())
+						// log.Error("Failed send mail to sales: " + err.Error())
 					} else {
 						result := tpl.String()
 
@@ -604,10 +603,10 @@ func SentEmailInstitusiOaPengkinianToBackOfficeSales(
 
 						err = lib.SendEmail(mailer)
 						if err != nil {
-							log.Error("Failed send mail to sales : " + *agent.AgentEmail)
-							log.Error("Failed send mail: " + err.Error())
+							// log.Error("Failed send mail to sales : " + *agent.AgentEmail)
+							// log.Error("Failed send mail: " + err.Error())
 						} else {
-							log.Println("Sukses kirim email")
+							// log.Println("Sukses kirim email")
 						}
 
 						// dialer := gomail.NewDialer(
@@ -620,13 +619,13 @@ func SentEmailInstitusiOaPengkinianToBackOfficeSales(
 
 						// err = dialer.DialAndSend(mailer)
 						// if err != nil {
-						// 	log.Error("Failed send mail to sales : " + *agent.AgentEmail)
-						// 	log.Error("Failed send mail: " + err.Error())
+						// 	// log.Error("Failed send mail to sales : " + *agent.AgentEmail)
+						// 	// log.Error("Failed send mail: " + err.Error())
 						// }
 					}
 				}
 			} else {
-				log.Error("Sales tidak punya email")
+				// log.Error("Sales tidak punya email")
 			}
 		}
 	}
@@ -660,14 +659,14 @@ func SentEmailOaApprovePicInstitutionCcSales(
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 		if err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 		} else {
 			var pipeline models.OaCustomerPipeline
 			_, err = models.GetOaCustomerPipeline(&pipeline, strconv.FormatUint(*oaRequest.PipelineKey, 10), "pipeline_key")
 			if err == nil {
 				var tpl bytes.Buffer
 				if err := t.Execute(&tpl, mailParam); err != nil {
-					log.Error("Failed send mail: " + err.Error())
+					// log.Error("Failed send mail: " + err.Error())
 				} else {
 					if pipeline.PicEmailAddress != nil {
 						result := tpl.String()
@@ -685,7 +684,7 @@ func SentEmailOaApprovePicInstitutionCcSales(
 						var agent models.MsAgent
 						_, err = models.GetMsAgent(&agent, agentKey)
 						if err != nil {
-							log.Error("Agent not found")
+							// log.Error("Agent not found")
 						} else {
 							if agent.AgentEmail != nil {
 								mailer.SetAddressHeader("Cc", *agent.AgentEmail, agent.AgentName)
@@ -697,8 +696,8 @@ func SentEmailOaApprovePicInstitutionCcSales(
 
 						err = lib.SendEmail(mailer)
 						if err != nil {
-							log.Error("Failed send mail pipeline to: " + *pipeline.PicEmailAddress)
-							log.Error("Failed send mail pipeline : " + err.Error())
+							// log.Error("Failed send mail pipeline to: " + *pipeline.PicEmailAddress)
+							// log.Error("Failed send mail pipeline : " + err.Error())
 						}
 
 						// dialer := gomail.NewDialer(
@@ -711,11 +710,11 @@ func SentEmailOaApprovePicInstitutionCcSales(
 
 						// err = dialer.DialAndSend(mailer)
 						// if err != nil {
-						// 	log.Error("Failed send mail pipeline to: " + *pipeline.PicEmailAddress)
-						// 	log.Error("Failed send mail pipeline : " + err.Error())
+						// 	// log.Error("Failed send mail pipeline to: " + *pipeline.PicEmailAddress)
+						// 	// log.Error("Failed send mail pipeline : " + err.Error())
 						// }
 					} else {
-						log.Error("Pipeline tidak punya email")
+						// log.Error("Pipeline tidak punya email")
 					}
 				}
 			}
@@ -773,11 +772,11 @@ func SentEmailOaRejectPicInstitutionCcSales(
 
 			t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 			if err != nil {
-				log.Error("Failed send mail: " + err.Error())
+				// log.Error("Failed send mail: " + err.Error())
 			} else {
 				var tpl bytes.Buffer
 				if err := t.Execute(&tpl, mailParam); err != nil {
-					log.Error("Failed send mail: " + err.Error())
+					// log.Error("Failed send mail: " + err.Error())
 				} else {
 					if pipeline.PicEmailAddress != nil {
 						result := tpl.String()
@@ -795,7 +794,7 @@ func SentEmailOaRejectPicInstitutionCcSales(
 						var agent models.MsAgent
 						_, err = models.GetMsAgent(&agent, agentKey)
 						if err != nil {
-							log.Error("Agent not found")
+							// log.Error("Agent not found")
 						} else {
 							if agent.AgentEmail != nil {
 								mailer.SetAddressHeader("Cc", *agent.AgentEmail, agent.AgentName)
@@ -807,8 +806,8 @@ func SentEmailOaRejectPicInstitutionCcSales(
 
 						err = lib.SendEmail(mailer)
 						if err != nil {
-							log.Error("Failed send mail pipeline to: " + *pipeline.PicEmailAddress)
-							log.Error("Failed send mail pipeline : " + err.Error())
+							// log.Error("Failed send mail pipeline to: " + *pipeline.PicEmailAddress)
+							// log.Error("Failed send mail pipeline : " + err.Error())
 						}
 
 						// dialer := gomail.NewDialer(
@@ -821,11 +820,11 @@ func SentEmailOaRejectPicInstitutionCcSales(
 
 						// err = dialer.DialAndSend(mailer)
 						// if err != nil {
-						// 	log.Error("Failed send mail pipeline to: " + *pipeline.PicEmailAddress)
-						// 	log.Error("Failed send mail pipeline : " + err.Error())
+						// 	// log.Error("Failed send mail pipeline to: " + *pipeline.PicEmailAddress)
+						// 	// log.Error("Failed send mail pipeline : " + err.Error())
 						// }
 					} else {
-						log.Error("Pipeline tidak punya email")
+						// log.Error("Pipeline tidak punya email")
 					}
 				}
 			}
@@ -889,11 +888,11 @@ func SentEmailOaRejectToSales(
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 		if err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 		} else {
 			var tpl bytes.Buffer
 			if err := t.Execute(&tpl, mailParam); err != nil {
-				log.Error("Failed send mail: " + err.Error())
+				// log.Error("Failed send mail: " + err.Error())
 			} else {
 				result := tpl.String()
 
@@ -905,8 +904,8 @@ func SentEmailOaRejectToSales(
 
 				err = lib.SendEmail(mailer)
 				if err != nil {
-					log.Error("Failed send mail sales to: " + *agent.AgentEmail)
-					log.Error("Failed send mail sales : " + err.Error())
+					// log.Error("Failed send mail sales to: " + *agent.AgentEmail)
+					// log.Error("Failed send mail sales : " + err.Error())
 				}
 
 				// dialer := gomail.NewDialer(
@@ -919,12 +918,12 @@ func SentEmailOaRejectToSales(
 
 				// err = dialer.DialAndSend(mailer)
 				// if err != nil {
-				// 	log.Error("Failed send mail sales to: " + *agent.AgentEmail)
-				// 	log.Error("Failed send mail sales : " + err.Error())
+				// 	// log.Error("Failed send mail sales to: " + *agent.AgentEmail)
+				// 	// log.Error("Failed send mail sales : " + err.Error())
 				// }
 			}
 		}
 	} else {
-		log.Error("Agent not found")
+		// log.Error("Agent not found")
 	}
 }

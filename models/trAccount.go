@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type TrAccount struct {
@@ -77,18 +75,18 @@ func CreateTrAccount(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -131,10 +129,10 @@ func GetAllTrAccount(c *[]TrAccount, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -155,10 +153,10 @@ func GetTrAccountIn(c *[]TrAccount, value []string, field string, groupBy *strin
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -178,11 +176,11 @@ func UpdateTrAccountUploadSinvest(params map[string]string, value string, field 
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -194,7 +192,7 @@ func UpdateTrAccountUploadSinvest(params map[string]string, value string, field 
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -266,10 +264,10 @@ func AdminGetAllTrAccount(c *[]TrAccountAdmin, limit uint64, offset uint64, para
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -307,10 +305,10 @@ func CountAdminGetAllTrAccount(c *CountData, params map[string]string) (int, err
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -342,10 +340,10 @@ func AdminGetDetailTrAccount(c *TrAccountAdmin, accKey string) (int, error) {
 			INNER JOIN ms_customer AS c ON c.customer_key = a.customer_key
 			WHERE a.rec_status = 1 AND c.rec_status = 1 AND p.rec_status = 1 AND a.acc_key = '` + accKey + `'`
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -365,11 +363,11 @@ func UpdateTrAccountByProductAndCustomer(params map[string]string, productKey st
 		i++
 	}
 	query += " WHERE product_key = " + productKey + " AND customer_key = " + customerKey
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -381,7 +379,7 @@ func UpdateTrAccountByProductAndCustomer(params map[string]string, productKey st
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -401,10 +399,10 @@ func GetCustomerAccountByProduct(c *[]CustomerDropdown, productKey string) (int,
 			GROUP BY a.customer_key ORDER BY c.full_name ASC `
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -413,10 +411,10 @@ func GetCustomerAccountByProduct(c *[]CustomerDropdown, productKey string) (int,
 
 func GetTrAccount(c *TrAccount, key string) (int, error) {
 	query := `SELECT tr_account.* FROM tr_account WHERE tr_account.acc_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -426,10 +424,10 @@ func GetTrAccount(c *TrAccount, key string) (int, error) {
 func GetTrAccountByField(c *TrAccount, value string, field string) (int, error) {
 	query := `SELECT * FROM tr_account WHERE rec_status = 1 AND 
 	` + field + ` = "` + value + `" LIMIT 1`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -443,10 +441,10 @@ type TrAccountIfua struct {
 func GetCifTrAccountByField(c *TrAccountIfua, value string, field string) (int, error) {
 	query := `SELECT ifua_no FROM tr_account WHERE (ifua_no IS NOT NULL OR ifua_no != "") AND 
 	rec_status = 1 AND ` + field + ` = "` + value + `" LIMIT 1`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 

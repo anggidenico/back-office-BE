@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 )
@@ -48,10 +47,10 @@ func GetUserRegistrasiBaruBelumOA(c *[]UserRegistrasiBaruBelumOA, idCategory str
 			AND DATE_FORMAT(DATE_ADD(u.rec_created_date, INTERVAL ` + catTime + ` DAY), '%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d')`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -84,10 +83,10 @@ func GetUserSudahCustomerBelumTransaksi(c *[]UserRegistrasiBaruBelumOA, idCatego
 			GROUP BY c.customer_key`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -121,10 +120,10 @@ func GetUserHanyaSubs1kali(c *[]UserRegistrasiBaruBelumOA, idCategory string, ca
 				WHERE DATE_FORMAT(DATE_ADD(dt.rec_created_date, INTERVAL ` + catTime + ` DAY), '%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d')`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

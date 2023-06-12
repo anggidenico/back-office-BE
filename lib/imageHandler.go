@@ -3,7 +3,6 @@ package lib
 import (
 	_ "errors"
 	"io"
-	"log"
 	_ "log"
 	"mime/multipart"
 	"os"
@@ -17,7 +16,7 @@ func UploadImage(file *multipart.FileHeader, target string) error {
 	}
 	defer src.Close()
 
-	log.Println("========== SOURCE UPLOAD ==========>>>", src)
+	// log.Println("========== SOURCE UPLOAD ==========>>>", src)
 
 	// Prepare destination file
 	dst, err := os.Create(target)
@@ -26,20 +25,20 @@ func UploadImage(file *multipart.FileHeader, target string) error {
 	}
 	defer dst.Close()
 
-	log.Println("========== DESTINASI UPLOAD ==========>>>", dst)
+	// log.Println("========== DESTINASI UPLOAD ==========>>>", dst)
 
 	// Copy
-	checks, err := io.Copy(dst, src)
+	_, err = io.Copy(dst, src)
 
 	if err != nil {
 		return err
 	} else {
-		log.Println("========== PROSES UPLOAD ==========>>>", checks)
+		// log.Println("========== PROSES UPLOAD ==========>>>", checks)
 	}
 
 	// err = CompressImage(target, target)
 	// if err != nil {
-	// 	log.Println("Processing without compressing image:", err)
+	// 	// log.Println("Processing without compressing image:", err)
 	// }
 
 	return nil
@@ -65,7 +64,7 @@ func UploadImage(file *multipart.FileHeader, target string) error {
 // 		// Check if it is animated PNG
 // 		// Read acTL chunk, if it exist the image is animated
 // 		// Reference: https://wiki.mozilla.org/APNG_Specification
-// 		//log.Printf("%0x %0x %0x %0x", buffer[36], buffer[37], buffer[38], buffer[39])
+// 		//// log.Printf("%0x %0x %0x %0x", buffer[36], buffer[37], buffer[38], buffer[39])
 // 		if (buffer[36] == '\x08') && (buffer[37] == '\x61') && (buffer[38] == '\x63') && (buffer[39] == '\x54') {
 // 			return errors.New("Unsupported type, must be static png, not animated png")
 // 		}

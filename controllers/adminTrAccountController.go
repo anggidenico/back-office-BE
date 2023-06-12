@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetListTrAccount(c echo.Context) error {
@@ -28,7 +27,7 @@ func GetListTrAccount(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -44,7 +43,7 @@ func GetListTrAccount(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -60,7 +59,7 @@ func GetListTrAccount(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -98,7 +97,7 @@ func GetListTrAccount(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -116,11 +115,11 @@ func GetListTrAccount(c echo.Context) error {
 	status, err = models.AdminGetAllTrAccount(&account, limit, offset, params, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(account) < 1 {
-		log.Error("Account not found")
+		// log.Error("Account not found")
 		return lib.CustomError(http.StatusNotFound, "Account not found", "Account not found")
 	}
 
@@ -129,7 +128,7 @@ func GetListTrAccount(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetAllTrAccount(&countData, params)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -156,18 +155,18 @@ func AdminGetDetailAccount(c echo.Context) error {
 	if accKey != "" {
 		aKey, err := strconv.ParseUint(accKey, 10, 64)
 		if err != nil || aKey == 0 {
-			log.Error("Wrong input for parameter: acc_key")
+			// log.Error("Wrong input for parameter: acc_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: acc_key", "Wrong input for parameter: acc_key")
 		}
 	} else {
-		log.Error("Missing required parameter: acc_key")
+		// log.Error("Missing required parameter: acc_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: acc_key", "Missing required parameter: acc_key")
 	}
 
 	var account models.TrAccountAdmin
 	_, err := models.AdminGetDetailTrAccount(&account, accKey)
 	if err != nil {
-		log.Error("Error get data tr_account")
+		// log.Error("Error get data tr_account")
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 	}
 
@@ -185,11 +184,11 @@ func AdminUpdateTrAccount(c echo.Context) error {
 	if productKey != "" {
 		pKey, err := strconv.ParseUint(productKey, 10, 64)
 		if err != nil || pKey == 0 {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_key", "Wrong input for parameter: product_key")
 		}
 	} else {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
@@ -197,27 +196,27 @@ func AdminUpdateTrAccount(c echo.Context) error {
 	if customerKeyStr != "" {
 		customerKey, err := strconv.ParseUint(customerKeyStr, 10, 64)
 		if err != nil || customerKey == 0 {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	}
 
 	subsuspendflag := c.FormValue("sub_suspend_flag")
 	if subsuspendflag == "" {
-		log.Error("Missing required parameter: sub_suspend_flag")
+		// log.Error("Missing required parameter: sub_suspend_flag")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: sub_suspend_flag", "Missing required parameter: sub_suspend_flag")
 	}
 
 	redsuspendflag := c.FormValue("red_suspend_flag")
 	if redsuspendflag == "" {
-		log.Error("Missing required parameter: red_suspend_flag")
+		// log.Error("Missing required parameter: red_suspend_flag")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: red_suspend_flag", "Missing required parameter: red_suspend_flag")
 	}
 
 	subsuspendreason := c.FormValue("sub_suspend_reason")
 	if subsuspendflag == "1" {
 		if subsuspendreason == "" {
-			log.Error("Missing required parameter: sub_suspend_reason")
+			// log.Error("Missing required parameter: sub_suspend_reason")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: sub_suspend_reason", "Missing required parameter: sub_suspend_reason")
 		}
 	}
@@ -225,7 +224,7 @@ func AdminUpdateTrAccount(c echo.Context) error {
 	redsuspendreason := c.FormValue("red_suspend_reason")
 	if redsuspendflag == "1" {
 		if redsuspendreason == "" {
-			log.Error("Missing required parameter: red_suspend_reason")
+			// log.Error("Missing required parameter: red_suspend_reason")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: red_suspend_reason", "Missing required parameter: red_suspend_reason")
 		}
 	}
@@ -247,12 +246,12 @@ func AdminUpdateTrAccount(c echo.Context) error {
 	if customerKeyStr == "" {
 		_, err := models.UpdateTrAccountUploadSinvest(paramsTrAccount, "product_key", productKey)
 		if err != nil {
-			log.Println(err.Error())
+			// log.Println(err.Error())
 		}
 	} else {
 		_, err := models.UpdateTrAccountByProductAndCustomer(paramsTrAccount, productKey, customerKeyStr)
 		if err != nil {
-			log.Println(err.Error())
+			// log.Println(err.Error())
 		}
 	}
 
@@ -270,18 +269,18 @@ func AdminGetCustomerAccount(c echo.Context) error {
 	if productKey != "" {
 		pKey, err := strconv.ParseUint(productKey, 10, 64)
 		if err != nil || pKey == 0 {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: product_key", "Wrong input for parameter: product_key")
 		}
 	} else {
-		log.Error("Missing required parameter: product_key")
+		// log.Error("Missing required parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
 	var customer []models.CustomerDropdown
 	_, err := models.GetCustomerAccountByProduct(&customer, productKey)
 	if err != nil {
-		log.Error("Error get data tr_account")
+		// log.Error("Error get data tr_account")
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 	}
 

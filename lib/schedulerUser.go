@@ -5,8 +5,6 @@ import (
 	"mf-bo-api/models"
 	"strconv"
 	"time"
-
-	"github.com/labstack/gommon/log"
 )
 
 func Unlockuser() {
@@ -33,7 +31,7 @@ func Unlockuser() {
 				params["rec_modified_date"] = time.Now().Format(dateLayout)
 				_, err = models.UpdateScUserLoginByKeyIn(params, userIds, "user_login_key")
 				if err != nil {
-					log.Error("ERROR CRON UNLOCK USER : " + err.Error())
+					// log.Error("ERROR CRON UNLOCK USER : " + err.Error())
 				} else {
 					fmt.Println("UNLOCK USER DONE. Jumlah Data : ")
 					fmt.Println(len(userIds))

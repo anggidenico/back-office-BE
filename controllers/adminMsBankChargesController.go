@@ -11,7 +11,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func AdminGetListMsBankCharges(c echo.Context) error {
@@ -29,7 +28,7 @@ func AdminGetListMsBankCharges(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -45,7 +44,7 @@ func AdminGetListMsBankCharges(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -61,7 +60,7 @@ func AdminGetListMsBankCharges(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -97,7 +96,7 @@ func AdminGetListMsBankCharges(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -122,11 +121,11 @@ func AdminGetListMsBankCharges(c echo.Context) error {
 	status, err = models.AdminGetListBankCharges(&bankCharges, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(bankCharges) < 1 {
-		log.Error("Bank Charges not found")
+		// log.Error("Bank Charges not found")
 		return lib.CustomError(http.StatusNotFound, "Bank Charges not found", "Bank Charges not found")
 	}
 
@@ -135,7 +134,7 @@ func AdminGetListMsBankCharges(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetListBankCharges(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -166,7 +165,7 @@ func AdminDeleteMsBankCharges(c echo.Context) error {
 	keyStr := c.FormValue("bcharges_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: bcharges_key")
+		// log.Error("Missing required parameter: bcharges_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bcharges_key", "Missing required parameter: bcharges_key")
 	}
 
@@ -178,7 +177,7 @@ func AdminDeleteMsBankCharges(c echo.Context) error {
 
 	_, err = models.UpdateMsBankCharges(params)
 	if err != nil {
-		log.Error("Error delete ms_bank")
+		// log.Error("Error delete ms_bank")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -198,12 +197,12 @@ func AdminCreateMsBankCharges(c echo.Context) error {
 
 	bankNetworkType := c.FormValue("bank_network_type")
 	if bankNetworkType == "" {
-		log.Error("Missing required parameter: bank_network_type")
+		// log.Error("Missing required parameter: bank_network_type")
 		return lib.CustomError(http.StatusBadRequest, "bank_network_type can not be blank", "bank_network_type can not be blank")
 	} else {
 		n, err := strconv.ParseUint(bankNetworkType, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: bank_network_type")
+			// log.Error("Wrong input for parameter: bank_network_type")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: bank_network_type", "Wrong input for parameter: bank_network_type")
 		}
 		params["bank_network_type"] = bankNetworkType
@@ -213,7 +212,7 @@ func AdminCreateMsBankCharges(c echo.Context) error {
 	if bankKey != "" {
 		n, err := strconv.ParseUint(bankKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: bank_key")
+			// log.Error("Wrong input for parameter: bank_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: bank_key", "Wrong input for parameter: bank_key")
 		}
 		params["bank_key"] = bankKey
@@ -223,7 +222,7 @@ func AdminCreateMsBankCharges(c echo.Context) error {
 	if custodianKey != "" {
 		n, err := strconv.ParseUint(custodianKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: custodian_key")
+			// log.Error("Wrong input for parameter: custodian_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: custodian_key", "Wrong input for parameter: custodian_key")
 		}
 		params["custodian_key"] = custodianKey
@@ -233,7 +232,7 @@ func AdminCreateMsBankCharges(c echo.Context) error {
 	if minNominalTrx != "" {
 		_, err := decimal.NewFromString(minNominalTrx)
 		if err != nil {
-			log.Error("Wrong input for parameter: min_nominal_trx")
+			// log.Error("Wrong input for parameter: min_nominal_trx")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: min_nominal_trx", "Wrong input for parameter: min_nominal_trx")
 		}
 		params["min_nominal_trx"] = minNominalTrx
@@ -245,7 +244,7 @@ func AdminCreateMsBankCharges(c echo.Context) error {
 	if valueType != "" {
 		_, err := decimal.NewFromString(valueType)
 		if err != nil {
-			log.Error("Wrong input for parameter: value_type")
+			// log.Error("Wrong input for parameter: value_type")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: value_type", "Wrong input for parameter: value_type")
 		}
 		params["value_type"] = valueType
@@ -257,7 +256,7 @@ func AdminCreateMsBankCharges(c echo.Context) error {
 	if chargesValue != "" {
 		_, err := decimal.NewFromString(chargesValue)
 		if err != nil {
-			log.Error("Wrong input for parameter: charges_value")
+			// log.Error("Wrong input for parameter: charges_value")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: charges_value", "Wrong input for parameter: charges_value")
 		}
 		params["charges_value"] = chargesValue
@@ -269,7 +268,7 @@ func AdminCreateMsBankCharges(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -282,7 +281,7 @@ func AdminCreateMsBankCharges(c echo.Context) error {
 
 	status, err = models.CreateMsBankCharges(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -305,23 +304,23 @@ func AdminUpdateMsBankCharges(c echo.Context) error {
 	if bchargesKey != "" {
 		n, err := strconv.ParseUint(bchargesKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: bcharges_key")
+			// log.Error("Wrong input for parameter: bcharges_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: bcharges_key", "Wrong input for parameter: bcharges_key")
 		}
 		params["bcharges_key"] = bchargesKey
 	} else {
-		log.Error("Missing required parameter: bcharges_key")
+		// log.Error("Missing required parameter: bcharges_key")
 		return lib.CustomError(http.StatusBadRequest, "bcharges_key can not be blank", "bcharges_key can not be blank")
 	}
 
 	bankNetworkType := c.FormValue("bank_network_type")
 	if bankNetworkType == "" {
-		log.Error("Missing required parameter: bank_network_type")
+		// log.Error("Missing required parameter: bank_network_type")
 		return lib.CustomError(http.StatusBadRequest, "bank_network_type can not be blank", "bank_network_type can not be blank")
 	} else {
 		n, err := strconv.ParseUint(bankNetworkType, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: bank_network_type")
+			// log.Error("Wrong input for parameter: bank_network_type")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: bank_network_type", "Wrong input for parameter: bank_network_type")
 		}
 		params["bank_network_type"] = bankNetworkType
@@ -331,7 +330,7 @@ func AdminUpdateMsBankCharges(c echo.Context) error {
 	if bankKey != "" {
 		n, err := strconv.ParseUint(bankKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: bank_key")
+			// log.Error("Wrong input for parameter: bank_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: bank_key", "Wrong input for parameter: bank_key")
 		}
 		params["bank_key"] = bankKey
@@ -341,7 +340,7 @@ func AdminUpdateMsBankCharges(c echo.Context) error {
 	if chargesValue != "" {
 		_, err := decimal.NewFromString(chargesValue)
 		if err != nil {
-			log.Error("Wrong input for parameter: charges_value")
+			// log.Error("Wrong input for parameter: charges_value")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: charges_value", "Wrong input for parameter: charges_value")
 		}
 		params["charges_value"] = chargesValue
@@ -353,7 +352,7 @@ func AdminUpdateMsBankCharges(c echo.Context) error {
 	if minNominalTrx != "" {
 		_, err := decimal.NewFromString(minNominalTrx)
 		if err != nil {
-			log.Error("Wrong input for parameter: min_nominal_trx")
+			// log.Error("Wrong input for parameter: min_nominal_trx")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: min_nominal_trx", "Wrong input for parameter: min_nominal_trx")
 		}
 		params["min_nominal_trx"] = minNominalTrx
@@ -365,7 +364,7 @@ func AdminUpdateMsBankCharges(c echo.Context) error {
 	if valueType != "" {
 		_, err := decimal.NewFromString(valueType)
 		if err != nil {
-			log.Error("Wrong input for parameter: value_type")
+			// log.Error("Wrong input for parameter: value_type")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: value_type", "Wrong input for parameter: value_type")
 		}
 		params["value_type"] = valueType
@@ -377,7 +376,7 @@ func AdminUpdateMsBankCharges(c echo.Context) error {
 	if custodianKey != "" {
 		n, err := strconv.ParseUint(custodianKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: custodian_key")
+			// log.Error("Wrong input for parameter: custodian_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: custodian_key", "Wrong input for parameter: custodian_key")
 		}
 		params["custodian_key"] = custodianKey
@@ -387,7 +386,7 @@ func AdminUpdateMsBankCharges(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -400,7 +399,7 @@ func AdminUpdateMsBankCharges(c echo.Context) error {
 
 	status, err = models.UpdateMsBankCharges(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -419,19 +418,19 @@ func AdminDetailBankCharges(c echo.Context) error {
 
 	bchargesKey := c.Param("bcharges_key")
 	if bchargesKey == "" {
-		log.Error("Missing required parameter: bcharges_key")
+		// log.Error("Missing required parameter: bcharges_key")
 		return lib.CustomError(http.StatusBadRequest, "bcharges_key can not be blank", "bcharges_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(bchargesKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: bcharges_key")
+			// log.Error("Wrong input for parameter: bcharges_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: bcharges_key", "Wrong input for parameter: bcharges_key")
 		}
 	}
 	var bank models.MsBankCharges
 	_, err = models.GetMsBankCharges(&bank, bchargesKey)
 	if err != nil {
-		log.Error("Bank Charges not found")
+		// log.Error("Bank Charges not found")
 		return lib.CustomError(http.StatusBadRequest, "Bank Charges not found", "Bank Charges not found")
 	}
 

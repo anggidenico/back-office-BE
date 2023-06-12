@@ -11,7 +11,6 @@ import (
 	crytporand "crypto/rand"
 	"crypto/tls"
 
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
@@ -99,8 +98,8 @@ func SendEmail(mailer *gomail.Message) error {
 		d := &gomail.Dialer{Host: config.EmailSMTPHost, Port: int(config.EmailSMTPPort)}
 		d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 		if err := d.DialAndSend(mailer); err != nil {
-			log.Error("Error send email no passwor")
-			log.Error(err)
+			// log.Error("Error send email no passwor")
+			// log.Error(err)
 			return err
 		}
 	} else {
@@ -113,8 +112,8 @@ func SendEmail(mailer *gomail.Message) error {
 		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 		err := dialer.DialAndSend(mailer)
 		if err != nil {
-			log.Error("Error send email with password")
-			log.Error(err)
+			// log.Error("Error send email with password")
+			// log.Error(err)
 			return err
 		}
 	}

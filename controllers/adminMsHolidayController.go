@@ -11,7 +11,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func AdminGetListMsHoliday(c echo.Context) error {
@@ -29,7 +28,7 @@ func AdminGetListMsHoliday(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -45,7 +44,7 @@ func AdminGetListMsHoliday(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -61,7 +60,7 @@ func AdminGetListMsHoliday(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -89,7 +88,7 @@ func AdminGetListMsHoliday(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -104,11 +103,11 @@ func AdminGetListMsHoliday(c echo.Context) error {
 	status, err = models.AdminGetListHoliday(&holiday, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(holiday) < 1 {
-		log.Error("Country Charges not found")
+		// log.Error("Country Charges not found")
 		return lib.CustomError(http.StatusNotFound, "Country Charges not found", "Country Charges not found")
 	}
 
@@ -117,7 +116,7 @@ func AdminGetListMsHoliday(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetHoliday(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -148,7 +147,7 @@ func AdminDeleteMsHoliday(c echo.Context) error {
 	keyStr := c.FormValue("holiday_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: holiday_key")
+		// log.Error("Missing required parameter: holiday_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: holiday_key", "Missing required parameter: holiday_key")
 	}
 
@@ -160,7 +159,7 @@ func AdminDeleteMsHoliday(c echo.Context) error {
 
 	_, err = models.UpdateMsHoliday(params)
 	if err != nil {
-		log.Error("Error delete ms_bank")
+		// log.Error("Error delete ms_bank")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -180,12 +179,12 @@ func AdminCreateMsHoliday(c echo.Context) error {
 
 	stockMarket := c.FormValue("stock_market")
 	if stockMarket == "" {
-		log.Error("Missing required parameter: stock_market")
+		// log.Error("Missing required parameter: stock_market")
 		return lib.CustomError(http.StatusBadRequest, "stock_market can not be blank", "stock_market can not be blank")
 	} else {
 		n, err := strconv.ParseUint(stockMarket, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: stock_market")
+			// log.Error("Wrong input for parameter: stock_market")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: stock_market", "Wrong input for parameter: stock_market")
 		}
 		params["stock_market"] = stockMarket
@@ -193,18 +192,18 @@ func AdminCreateMsHoliday(c echo.Context) error {
 
 	holidayDate := c.FormValue("holiday_date")
 	if holidayDate == "" {
-		log.Error("Missing required parameter: holiday_date")
+		// log.Error("Missing required parameter: holiday_date")
 		return lib.CustomError(http.StatusBadRequest, "holiday_date can not be blank", "holiday_date can not be blank")
 	} else {
 		//validate unique holiday_date
 		var countData models.CountData
 		status, err = models.CountMsHolidayValidateUnique(&countData, "holiday_date", holidayDate, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: holiday_date")
+			// log.Error("Missing required parameter: holiday_date")
 			return lib.CustomError(http.StatusBadRequest, "holiday_date already used", "holiday_date already used")
 		}
 		params["holiday_date"] = holidayDate
@@ -213,12 +212,12 @@ func AdminCreateMsHoliday(c echo.Context) error {
 	shortName := c.FormValue("holiday_name")
 	if shortName != "" {
 		if len(shortName) > 30 {
-			log.Error("holiday_name must maximal 30 character")
+			// log.Error("holiday_name must maximal 30 character")
 			return lib.CustomError(http.StatusBadRequest, "holiday_name must maximal 30 character", "holiday_name must maximal 30 character")
 		}
 		params["holiday_name"] = shortName
 	} else {
-		log.Error("Missing required parameter: holiday_name")
+		// log.Error("Missing required parameter: holiday_name")
 		return lib.CustomError(http.StatusBadRequest, "holiday_name can not be blank", "holiday_name can not be blank")
 	}
 
@@ -226,7 +225,7 @@ func AdminCreateMsHoliday(c echo.Context) error {
 	if recOrder != "" {
 		_, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -239,7 +238,7 @@ func AdminCreateMsHoliday(c echo.Context) error {
 
 	status, err = models.CreateMsHoliday(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -262,23 +261,23 @@ func AdminUpdateMsHoliday(c echo.Context) error {
 	if holidayKey != "" {
 		n, err := strconv.ParseUint(holidayKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: holiday_key")
+			// log.Error("Wrong input for parameter: holiday_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: holiday_key", "Wrong input for parameter: holiday_key")
 		}
 		params["holiday_key"] = holidayKey
 	} else {
-		log.Error("Missing required parameter: holiday_key")
+		// log.Error("Missing required parameter: holiday_key")
 		return lib.CustomError(http.StatusBadRequest, "holiday_key can not be blank", "holiday_key can not be blank")
 	}
 
 	stockMarket := c.FormValue("stock_market")
 	if stockMarket == "" {
-		log.Error("Missing required parameter: stock_market")
+		// log.Error("Missing required parameter: stock_market")
 		return lib.CustomError(http.StatusBadRequest, "stock_market can not be blank", "stock_market can not be blank")
 	} else {
 		n, err := strconv.ParseUint(stockMarket, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: stock_market")
+			// log.Error("Wrong input for parameter: stock_market")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: stock_market", "Wrong input for parameter: stock_market")
 		}
 		params["stock_market"] = stockMarket
@@ -286,18 +285,18 @@ func AdminUpdateMsHoliday(c echo.Context) error {
 
 	holidayDate := c.FormValue("holiday_date")
 	if holidayDate == "" {
-		log.Error("Missing required parameter: holiday_date")
+		// log.Error("Missing required parameter: holiday_date")
 		return lib.CustomError(http.StatusBadRequest, "holiday_date can not be blank", "holiday_date can not be blank")
 	} else {
 		//validate unique holiday_date
 		var countData models.CountData
 		status, err = models.CountMsHolidayValidateUnique(&countData, "holiday_date", holidayDate, holidayKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: holiday_date")
+			// log.Error("Missing required parameter: holiday_date")
 			return lib.CustomError(http.StatusBadRequest, "holiday_date already used", "holiday_date already used")
 		}
 		params["holiday_date"] = holidayDate
@@ -306,12 +305,12 @@ func AdminUpdateMsHoliday(c echo.Context) error {
 	shortName := c.FormValue("holiday_name")
 	if shortName != "" {
 		if len(shortName) > 30 {
-			log.Error("holiday_name must maximal 30 character")
+			// log.Error("holiday_name must maximal 30 character")
 			return lib.CustomError(http.StatusBadRequest, "holiday_name must maximal 30 character", "holiday_name must maximal 30 character")
 		}
 		params["holiday_name"] = shortName
 	} else {
-		log.Error("Missing required parameter: holiday_name")
+		// log.Error("Missing required parameter: holiday_name")
 		return lib.CustomError(http.StatusBadRequest, "holiday_name can not be blank", "holiday_name can not be blank")
 	}
 
@@ -319,7 +318,7 @@ func AdminUpdateMsHoliday(c echo.Context) error {
 	if recOrder != "" {
 		_, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -332,7 +331,7 @@ func AdminUpdateMsHoliday(c echo.Context) error {
 
 	status, err = models.UpdateMsHoliday(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -350,19 +349,19 @@ func AdminDetailMsHoliday(c echo.Context) error {
 
 	holidayKey := c.Param("holiday_key")
 	if holidayKey == "" {
-		log.Error("Missing required parameter: holiday_key")
+		// log.Error("Missing required parameter: holiday_key")
 		return lib.CustomError(http.StatusBadRequest, "holiday_key can not be blank", "holiday_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(holidayKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: holiday_key")
+			// log.Error("Wrong input for parameter: holiday_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: holiday_key", "Wrong input for parameter: holiday_key")
 		}
 	}
 	var holiday models.MsHoliday
 	_, err = models.GetMsHoliday(&holiday, holidayKey)
 	if err != nil {
-		log.Error("Holiday not found")
+		// log.Error("Holiday not found")
 		return lib.CustomError(http.StatusBadRequest, "Holiday not found", "Holiday not found")
 	}
 
@@ -396,14 +395,14 @@ func AdminCheckHoliday(c echo.Context) error {
 
 	date := c.QueryParam("date")
 	if date == "" {
-		log.Error("Missing required parameter: date")
+		// log.Error("Missing required parameter: date")
 		return lib.CustomError(http.StatusBadRequest, "date can not be blank", "date can not be blank")
 	}
 
 	var holiday models.MsHoliday
 	_, err = models.GetHolidayStatus(&holiday, date)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		// return lib.CustomError(http.StatusBadRequest, "Holiday not found", "Holiday not found")
 		responseData["is_holiday"] = false
 	} else {

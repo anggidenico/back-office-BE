@@ -7,8 +7,6 @@ import (
 	"strings"
 
 	"github.com/shopspring/decimal"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type TrCurrencyRate struct {
@@ -38,10 +36,10 @@ type TrCurrencyRate struct {
 
 func GetTrCurrencyRate(c *TrCurrencyRate, key string) (int, error) {
 	query := `SELECT tr_currency_rate.* FROM tr_currency_rate WHERE tr_currency_rate.rec_status = 1 AND tr_currency_rate.curr_rate_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Info(err)
+		// log.Info(err)
 		return http.StatusNotFound, err
 	}
 
@@ -55,10 +53,10 @@ func GetLastCurrencyIn(c *[]TrCurrencyRate, key []string) (int, error) {
 			   ON t1.curr_rate_key = t2.curr_rate_key`
 	query := query2 + " WHERE t1.currency_key IN(" + inQuery + ") GROUP BY currency_key"
 
-	log.Println("========= QUERY GET CURRENCY LAST ========= >>>", query)
+	// log.Println("========= QUERY GET CURRENCY LAST ========= >>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -138,10 +136,10 @@ func AdminGetListCurrencyRate(c *[]ListCurrencyRate, limit uint64, offset uint64
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -186,10 +184,10 @@ func CountAdminGetCurrencyRate(c *CountData, params map[string]string, searchLik
 			WHERE cr.rec_status = 1` + condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -211,17 +209,17 @@ func CreateTrCurrenctyRate(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -243,11 +241,11 @@ func UpdateTrCurrenctyRate(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE curr_rate_key = " + params["curr_rate_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -255,7 +253,7 @@ func UpdateTrCurrenctyRate(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -273,10 +271,10 @@ func CountTrCurrencyRateValidateUniqueDateRateCurrency(c *CountData, date string
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

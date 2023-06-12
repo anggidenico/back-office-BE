@@ -5,8 +5,6 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MsProductBankAccountInfo struct {
@@ -111,10 +109,10 @@ func GetAllMsProductBankAccount(c *[]MsProductBankAccount, params map[string]str
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -192,10 +190,10 @@ func AdminGetAllMsProductBankAccount(c *[]AdminMsProductBankAccountList, limit u
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -257,10 +255,10 @@ func AdminCountDataGetAllMsProductBankAccount(c *CountData, params map[string]st
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -269,10 +267,10 @@ func AdminCountDataGetAllMsProductBankAccount(c *CountData, params map[string]st
 
 func GetMsProductBankAccount(c *MsProductBankAccount, key string) (int, error) {
 	query := `SELECT ms_product_bank_account.* FROM ms_product_bank_account WHERE ms_product_bank_account.rec_status = 1 AND ms_product_bank_account.prod_bankacc_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -295,11 +293,11 @@ func UpdateMsProductBankAccount(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE prod_bankacc_key = " + params["prod_bankacc_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -311,7 +309,7 @@ func UpdateMsProductBankAccount(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -332,17 +330,17 @@ func CreateMsProductBankAccount(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -360,10 +358,10 @@ func GetAllMsProductBankAccountTransaction(c *[]MsProductBankAccountTransactionI
 	query := query2 + " WHERE ba.rec_status = 1 AND ba.product_key = '" + productKey + "' AND ba.bank_account_purpose = '" + transType + "'"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -383,10 +381,10 @@ func GetAllMsProductBankAccountTransactionAutoInvest(c *MsProductBankAccountTran
 	query += " ORDER BY ba.prod_bankacc_key ASC LIMIT 1"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -405,10 +403,10 @@ func GetMsProductBankAccountTransactionByKey(c *MsProductBankAccountTransactionI
 	query := query2 + " WHERE ba.rec_status = 1 AND ba.prod_bankacc_key = '" + prodBankaccKey + "'"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -454,10 +452,10 @@ func GetAllMsProductBankAccountOrderByBank(c *[]MsProductBankAccount, params map
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

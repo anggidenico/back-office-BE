@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	log "github.com/sirupsen/logrus"
 )
 
 type OaRequestBankAccount struct {
@@ -51,18 +50,18 @@ func CreateOaRequestBankAccount(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -85,11 +84,11 @@ func UpdateOaRequestBankAccount(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE req_bankacc_key = " + params["req_bankacc_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -101,7 +100,7 @@ func UpdateOaRequestBankAccount(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -143,12 +142,12 @@ func GetOaRequestBankByField(c *[]OaRequestByField, field string, value string) 
 			ORDER BY br.flag_priority DESC`
 
 	// Main query
-	// log.Infoln("==================== query get bank account ====================")
-	log.Infoln(query)
-	// log.Infoln("==========================================================")
+	// // log.Infoln("==================== query get bank account ====================")
+	// log.Infoln(query)
+	// // log.Infoln("==========================================================")
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -172,7 +171,7 @@ func CreateMultipleOaRequestBankAccount(params []interface{}) (int, error) {
 			q += ","
 		}
 	}
-	log.Println("==========  ==========>>>", q)
+	// log.Println("==========  ==========>>>", q)
 	query, args, err := sqlx.In(q, params...)
 	if err != nil {
 		return http.StatusBadGateway, err
@@ -181,7 +180,7 @@ func CreateMultipleOaRequestBankAccount(params []interface{}) (int, error) {
 	query = db.Db.Rebind(query)
 	_, err = db.Db.Query(query, args...)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
@@ -192,10 +191,10 @@ func GetOaRequestBankAccount(c *OaRequestBankAccount, key string, field string) 
 				FROM oa_request_bank_account 
 				WHERE rec_status = 1 
 				AND ` + field + ` = "` + key + `"`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -220,11 +219,11 @@ func DeleteOaRequestBankAccount(params map[string]string, bankKey []string, requ
 	} else {
 		query += " WHERE rec_status = 1 AND oa_request_key = '" + requestKey + "'"
 	}
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -236,7 +235,7 @@ func DeleteOaRequestBankAccount(params map[string]string, bankKey []string, requ
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -269,10 +268,10 @@ func GetBankAccountPriority(c *BankAccountPriority, oaRequest string) (int, erro
 			AND orba.oa_request_key = "` + oaRequest + `" ORDER BY orba.flag_priority DESC LIMIT 1`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

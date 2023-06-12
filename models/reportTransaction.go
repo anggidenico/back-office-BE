@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type ResponseDailySubscriptionBatchForm struct {
@@ -205,10 +204,10 @@ func AdminGetHeaderDailySubsRedmBatchForm(c *HeaderDailySubsRedmBatchForm, param
 	query += " LIMIT 1"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -292,10 +291,10 @@ func AdminGetDailySubsRedmBatchForm(c *[]DailySubsRedmBatchForm, limit uint64, o
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -339,10 +338,10 @@ func AdminCountDailySubsRedmBatchForm(c *CountData, params map[string]string) (i
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -391,10 +390,10 @@ func AdminGetBankProductTransactionReport(c *[]BankProductTransactionReport, par
 	query += " GROUP BY ba.prod_bankacc_key"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -443,10 +442,10 @@ func AdminGetNotesRedemption(c *NotesRedemption, customerKey string, productKey 
 			ORDER BY t.transaction_key DESC LIMIT 1`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -538,10 +537,10 @@ func DailyTransactionReport(c *[]DailyTransactionReportField, limit uint64, offs
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -604,10 +603,10 @@ func DailyTransactionReportTotal(c *DailyTransactionReportTotalField, params map
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -669,10 +668,10 @@ func DailyTransactionReportCountRow(c *CountData, params map[string]string) (int
 	query += " GROUP BY t.customer_key, t.product_key) trans"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -768,10 +767,10 @@ func SubscriptionBatchConfirmation(c *[]SubscriptionBatchConfirmationField, limi
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -818,10 +817,10 @@ func SubscriptionBatchConfirmationCount(c *CountData, params map[string]string) 
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -922,10 +921,10 @@ func RedemptionBatchConfirmation(c *[]RedemptionBatchConfirmationField, limit ui
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -972,10 +971,10 @@ func RedemptionBatchConfirmationCount(c *CountData, params map[string]string) (i
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -1091,10 +1090,10 @@ func TransactionPaymentReport(c *[]TcPaymentReport, limit uint64, offset uint64,
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -1200,10 +1199,10 @@ func TransactionPaymentReportTotal(c *TcPaymentReportTotal, params map[string]st
 	query += conditionOrder
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

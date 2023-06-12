@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	log "github.com/sirupsen/logrus"
 )
 
 type UdfValue struct {
@@ -26,10 +25,10 @@ func GetUdfValueIn(c *[]UdfValue, value []string, field string) (int, error) {
 	query := query2 + " WHERE udf_value." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -49,7 +48,7 @@ func CreateMultipleUdfValue(params []interface{}) (int, error) {
 			q += ","
 		}
 	}
-	log.Println("==========  ==========>>>", q)
+	// log.Println("==========  ==========>>>", q)
 	query, args, err := sqlx.In(q, params...)
 	if err != nil {
 		return http.StatusBadGateway, err
@@ -58,7 +57,7 @@ func CreateMultipleUdfValue(params []interface{}) (int, error) {
 	query = db.Db.Rebind(query)
 	_, err = db.Db.Query(query, args...)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
@@ -69,11 +68,11 @@ func DeleteUdfValue(field string, value string, valueIn []string) (int, error) {
 	query := `DELETE FROM mam_core.udf_value where ` + field + ` = "` + value + `" 
 	AND udf_info_key IN (` + inQuery + `)`
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -85,7 +84,7 @@ func DeleteUdfValue(field string, value string, valueIn []string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -129,13 +128,13 @@ func GetAllUdfValue(c *[]UdfValue, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	// log.Infoln("=============================QUERY GET UDF VALUE=================================")
-	log.Infoln(query)
-	// log.Infoln("==============================================================")
+	// // log.Infoln("=============================QUERY GET UDF VALUE=================================")
+	// log.Infoln(query)
+	// // log.Infoln("==============================================================")
 
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -163,23 +162,23 @@ func CreateUdfValue(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
-
-	// log.Println("================================ QUERYNYA ADALAH ===============================")
-	// log.Println("==========  ==========>>>",query)
 	// log.Println("==========  ==========>>>", query)
-	// log.Println("================================================================================")
+
+	// // log.Println("================================ QUERYNYA ADALAH ===============================")
+	// // log.Println("==========  ==========>>>",query)
+	// // log.Println("==========  ==========>>>", query)
+	// // log.Println("================================================================================")
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -202,11 +201,11 @@ func UpdateDeleteUdfValue(params map[string]string, valueIn []string, fieldIn st
 	query += " WHERE udf_info_key IN(" + inQuery + ")"
 	query += " AND row_data_key = '" + rowDataKey + "'"
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -218,7 +217,7 @@ func UpdateDeleteUdfValue(params map[string]string, valueIn []string, fieldIn st
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil

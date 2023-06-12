@@ -17,7 +17,6 @@ import (
 
 	"github.com/badoux/checkmail"
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
@@ -34,7 +33,7 @@ func LogoutAdmin(c echo.Context) error {
 
 	_, err = models.UpdateScLoginSession(paramsSession)
 	if err != nil {
-		log.Error("Error update session in logout")
+		// log.Error("Error update session in logout")
 	}
 
 	var response lib.Response
@@ -49,7 +48,7 @@ func GetListScUserLoginAdmin(c echo.Context) error {
 
 	// errorAuth := initAuthHoIt()
 	// if errorAuth != nil {
-	// 	log.Error("User Autorizer")
+	// 	// log.Error("User Autorizer")
 	// 	return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	// }
 
@@ -66,7 +65,7 @@ func GetListScUserLoginAdmin(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -82,7 +81,7 @@ func GetListScUserLoginAdmin(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -98,7 +97,7 @@ func GetListScUserLoginAdmin(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -145,7 +144,7 @@ func GetListScUserLoginAdmin(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -171,7 +170,7 @@ func GetListScUserLoginAdmin(c echo.Context) error {
 		if err == nil && rolekeyCek > 0 {
 			params["role.role_key"] = rolekey
 		} else {
-			log.Error("Wrong input for parameter: role_key")
+			// log.Error("Wrong input for parameter: role_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_key", "Missing required parameter: role_key")
 		}
 	}
@@ -179,7 +178,7 @@ func GetListScUserLoginAdmin(c echo.Context) error {
 	var scUserLogin []models.AdminListScUserLogin
 	status, err = models.AdminGetAllScUserLogin(&scUserLogin, limit, offset, params, noLimit, searchData)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -188,7 +187,7 @@ func GetListScUserLoginAdmin(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.AdminCountDataGetAllScUserlogin(&countData, params, searchData)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -369,7 +368,7 @@ func DisableEnableUser(c echo.Context) error {
 
 	key := c.FormValue("key")
 	if key == "" {
-		log.Error("Missing required parameter: key")
+		// log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
@@ -377,14 +376,14 @@ func DisableEnableUser(c echo.Context) error {
 	if err == nil && keyCek > 0 {
 		params["user_login_key"] = key
 	} else {
-		log.Error("Wrong input for parameter: key")
+		// log.Error("Wrong input for parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
 	var scUserLogin models.ScUserLogin
 	status, err := models.GetScUserLoginByKey(&scUserLogin, key)
 	if err != nil {
-		log.Error("User login not found")
+		// log.Error("User login not found")
 		return lib.CustomError(http.StatusNotFound)
 	}
 
@@ -400,7 +399,7 @@ func DisableEnableUser(c echo.Context) error {
 
 	status, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -420,7 +419,7 @@ func LockUnlockUser(c echo.Context) error {
 
 	key := c.FormValue("key")
 	if key == "" {
-		log.Error("Missing required parameter: key")
+		// log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
@@ -428,14 +427,14 @@ func LockUnlockUser(c echo.Context) error {
 	if err == nil && keyCek > 0 {
 		params["user_login_key"] = key
 	} else {
-		log.Error("Wrong input for parameter: key")
+		// log.Error("Wrong input for parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
 	var scUserLogin models.ScUserLogin
 	status, err := models.GetScUserLoginByKey(&scUserLogin, key)
 	if err != nil {
-		log.Error("User login not found")
+		// log.Error("User login not found")
 		return lib.CustomError(http.StatusNotFound)
 	}
 
@@ -451,7 +450,7 @@ func LockUnlockUser(c echo.Context) error {
 
 	status, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -473,63 +472,63 @@ func CreateAdminScUserLogin(c echo.Context) error {
 	//user_category_key
 	usercategorykey := c.FormValue("user_category_key")
 	if usercategorykey == "" {
-		log.Error("Missing required parameter: user_category_key cann't be blank")
+		// log.Error("Missing required parameter: user_category_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: user_category_key cann't be blank", "Missing required parameter: user_category_key cann't be blank")
 	}
 	sub, err := strconv.ParseUint(usercategorykey, 10, 64)
 	if err == nil && sub > 0 {
 		params["user_category_key"] = usercategorykey
 	} else {
-		log.Error("Wrong input for parameter: user_category_key number")
+		// log.Error("Wrong input for parameter: user_category_key number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: user_category_key must number", "Missing required parameter: user_category_key number")
 	}
 
 	//user_dept_key
 	userdeptkey := c.FormValue("user_dept_key")
 	if userdeptkey == "" {
-		log.Error("Missing required parameter: user_dept_key cann't be blank")
+		// log.Error("Missing required parameter: user_dept_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: user_dept_key cann't be blank", "Missing required parameter: user_dept_key cann't be blank")
 	}
 	sub, err = strconv.ParseUint(userdeptkey, 10, 64)
 	if err == nil && sub > 0 {
 		params["user_dept_key"] = userdeptkey
 	} else {
-		log.Error("Wrong input for parameter: user_dept_key number")
+		// log.Error("Wrong input for parameter: user_dept_key number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: user_dept_key must number", "Missing required parameter: user_dept_key number")
 	}
 
 	//role_key
 	rolekey := c.FormValue("role_key")
 	if rolekey == "" {
-		log.Error("Missing required parameter: role_key cann't be blank")
+		// log.Error("Missing required parameter: role_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_key cann't be blank", "Missing required parameter: role_key cann't be blank")
 	}
 	sub, err = strconv.ParseUint(rolekey, 10, 64)
 	if err == nil && sub > 0 {
 		params["role_key"] = rolekey
 	} else {
-		log.Error("Wrong input for parameter: role_key number")
+		// log.Error("Wrong input for parameter: role_key number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_key must number", "Missing required parameter: role_key number")
 	}
 
 	//ulogin_name / ulogin_email
 	email := c.FormValue("email")
 	if email == "" {
-		log.Error("Missing required parameter: email cann't be blank")
+		// log.Error("Missing required parameter: email cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: email cann't be blank", "Missing required parameter: email cann't be blank")
 	}
 	//ulogin_name / ulogin_email
 	uloginname := c.FormValue("username")
 	if uloginname == "" {
-		log.Error("Missing required parameter: username cann't be blank")
+		// log.Error("Missing required parameter: username cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: username cann't be blank", "Missing required parameter: username cann't be blank")
 	} else {
 		if len(uloginname) < 5 {
-			log.Error("Wrong input for parameter: username kurang dari 5 digit")
+			// log.Error("Wrong input for parameter: username kurang dari 5 digit")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: username kurang dari 5 digit", "Missing required parameter: username kurang dari 5 digit")
 		}
 		if len(uloginname) > 50 {
-			log.Error("Wrong input for parameter: username lebih dari 50 digit")
+			// log.Error("Wrong input for parameter: username lebih dari 50 digit")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: username lebih dari 50 digit", "Missing required parameter: username lebih dari 50 digit")
 		}
 	}
@@ -544,66 +543,66 @@ func CreateAdminScUserLogin(c echo.Context) error {
 	var countDataExisting models.CountData
 	status, err = models.AdminGetValidateUniqueInsertUpdateScUserLogin(&countDataExisting, paramsScUserLogin, nil)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataExisting.CountData) > 0 {
-		log.Error("Missing required parameter: username or email already existing, use other username or email")
+		// log.Error("Missing required parameter: username or email already existing, use other username or email")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: username or email already existing, use other username or email", "Missing required parameter: username or email already existing, use other username or email")
 	}
 
 	// Validate email
 	err = checkmail.ValidateFormat(email)
 	if err != nil {
-		log.Error("email format is not valid, must email")
+		// log.Error("email format is not valid, must email")
 		return lib.CustomError(http.StatusBadRequest, "email format is not valid, email must email format", "Email format is not valid, Email must email format")
 	}
 
 	if strings.Contains(uloginname, " ") {
-		log.Error("Username format is not valid")
+		// log.Error("Username format is not valid")
 		return lib.CustomError(http.StatusBadRequest, "Username format is not valid", "Username format is not valid")
 	}
 
 	err = checkmail.ValidateFormat(email)
 	if err != nil {
-		log.Error("Username format is not valid, must email")
+		// log.Error("Username format is not valid, must email")
 		return lib.CustomError(http.StatusBadRequest, "Username format is not valid, Username must email format", "Username format is not valid, Username must email format")
 	}
 
 	//ulogin_full_name
 	uloginfullname := c.FormValue("ulogin_full_name")
 	if uloginfullname == "" {
-		log.Error("Missing required parameter: ulogin_full_name cann't be blank")
+		// log.Error("Missing required parameter: ulogin_full_name cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ulogin_full_name cann't be blank", "Missing required parameter: ulogin_full_name cann't be blank")
 	}
 	params["ulogin_full_name"] = uloginfullname
 
 	password := c.FormValue("password")
 	if password == "" {
-		log.Error("Missing required parameter: password cann't be blank")
+		// log.Error("Missing required parameter: password cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: password cann't be blank", "Missing required parameter: password cann't be blank")
 	} else {
 		if len(password) < 8 {
-			log.Error("Wrong input for parameter: password kurang dari 8 digit")
+			// log.Error("Wrong input for parameter: password kurang dari 8 digit")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: password kurang dari 8 digit", "Missing required parameter: password kurang dari 8 digit")
 		}
 	}
 
 	repassword := c.FormValue("re_password")
 	if repassword == "" {
-		log.Error("Missing required parameter: re_password cann't be blank")
+		// log.Error("Missing required parameter: re_password cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: re_password cann't be blank", "Missing required parameter: re_password cann't be blank")
 	}
 
 	if password != repassword {
-		log.Error("Missing required parameter: password & re_password harus sama")
+		// log.Error("Missing required parameter: password & re_password harus sama")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: password & re_password harus sama", "Missing required parameter: password & re_password harus sama")
 	}
 
 	// Validate password
 	length, number, upper, special := verifyPassword(password)
 	if length == false || number == false || upper == false || special == false {
-		log.Error("Password does meet the criteria")
+		// log.Error("Password does meet the criteria")
 		return lib.CustomError(http.StatusBadRequest, "Password does meet the criteria", "Your password need at least 8 character length, has lower and upper case letter, has numeric letter, and has special character")
 	}
 	// Encrypt password
@@ -623,7 +622,7 @@ func CreateAdminScUserLogin(c echo.Context) error {
 	if enabled != "" {
 		enabledBool, err = strconv.ParseBool(enabled)
 		if err != nil {
-			log.Error("enabled parameter should be true/false")
+			// log.Error("enabled parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "enabled parameter should be true/false", "enabled parameter should be true/false")
 		}
 		if enabledBool == true {
@@ -632,7 +631,7 @@ func CreateAdminScUserLogin(c echo.Context) error {
 			params["ulogin_enabled"] = "0"
 		}
 	} else {
-		log.Error("enabled parameter should be true/false")
+		// log.Error("enabled parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "enabled parameter should be true/false", "enabled parameter should be true/false")
 	}
 
@@ -642,7 +641,7 @@ func CreateAdminScUserLogin(c echo.Context) error {
 	if locked != "" {
 		lockedBool, err = strconv.ParseBool(locked)
 		if err != nil {
-			log.Error("locked parameter should be true/false")
+			// log.Error("locked parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "locked parameter should be true/false", "locked parameter should be true/false")
 		}
 		if lockedBool == true {
@@ -651,7 +650,7 @@ func CreateAdminScUserLogin(c echo.Context) error {
 			params["ulogin_locked"] = "0"
 		}
 	} else {
-		log.Error("locked parameter should be true/false")
+		// log.Error("locked parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "locked parameter should be true/false", "locked parameter should be true/false")
 	}
 
@@ -684,7 +683,7 @@ func CreateAdminScUserLogin(c echo.Context) error {
 
 	status, err = models.CreateScUserLogin(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed create user")
 	}
 
@@ -703,70 +702,70 @@ func UpdateAdminScUserLogin(c echo.Context) error {
 
 	userloginkey := c.FormValue("key")
 	if userloginkey == "" {
-		log.Error("Missing required parameter: key")
+		// log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 	struserloginkey, err := strconv.ParseUint(userloginkey, 10, 64)
 	if err == nil && struserloginkey > 0 {
 		params["user_login_key"] = userloginkey
 	} else {
-		log.Error("Wrong input for parameter: key")
+		// log.Error("Wrong input for parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
 	var scUserLogin models.ScUserLogin
 	_, err = models.GetScUserLoginByKey(&scUserLogin, userloginkey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
 	//user_category_key
 	usercategorykey := c.FormValue("user_category_key")
 	if usercategorykey == "" {
-		log.Error("Missing required parameter: user_category_key cann't be blank")
+		// log.Error("Missing required parameter: user_category_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: user_category_key cann't be blank", "Missing required parameter: user_category_key cann't be blank")
 	}
 	sub, err := strconv.ParseUint(usercategorykey, 10, 64)
 	if err == nil && sub > 0 {
 		params["user_category_key"] = usercategorykey
 	} else {
-		log.Error("Wrong input for parameter: user_category_key number")
+		// log.Error("Wrong input for parameter: user_category_key number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: user_category_key must number", "Missing required parameter: user_category_key number")
 	}
 
 	//user_dept_key
 	userdeptkey := c.FormValue("user_dept_key")
 	if userdeptkey == "" {
-		log.Error("Missing required parameter: user_dept_key cann't be blank")
+		// log.Error("Missing required parameter: user_dept_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: user_dept_key cann't be blank", "Missing required parameter: user_dept_key cann't be blank")
 	}
 	sub, err = strconv.ParseUint(userdeptkey, 10, 64)
 	if err == nil && sub > 0 {
 		params["user_dept_key"] = userdeptkey
 	} else {
-		log.Error("Wrong input for parameter: user_dept_key number")
+		// log.Error("Wrong input for parameter: user_dept_key number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: user_dept_key must number", "Missing required parameter: user_dept_key number")
 	}
 
 	//role_key
 	rolekey := c.FormValue("role_key")
 	if rolekey == "" {
-		log.Error("Missing required parameter: role_key cann't be blank")
+		// log.Error("Missing required parameter: role_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_key cann't be blank", "Missing required parameter: role_key cann't be blank")
 	}
 	sub, err = strconv.ParseUint(rolekey, 10, 64)
 	if err == nil && sub > 0 {
 		params["role_key"] = rolekey
 	} else {
-		log.Error("Wrong input for parameter: role_key number")
+		// log.Error("Wrong input for parameter: role_key number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_key must number", "Missing required parameter: role_key number")
 	}
 
 	//ulogin_full_name
 	uloginfullname := c.FormValue("ulogin_full_name")
 	if uloginfullname == "" {
-		log.Error("Missing required parameter: ulogin_full_name cann't be blank")
+		// log.Error("Missing required parameter: ulogin_full_name cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ulogin_full_name cann't be blank", "Missing required parameter: ulogin_full_name cann't be blank")
 	}
 	params["ulogin_full_name"] = uloginfullname
@@ -783,7 +782,7 @@ func UpdateAdminScUserLogin(c echo.Context) error {
 	if recstatus != "" {
 		recstatusBool, err = strconv.ParseBool(recstatus)
 		if err != nil {
-			log.Error("enabled parameter should be true/false")
+			// log.Error("enabled parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "enabled parameter should be true/false", "enabled parameter should be true/false")
 		}
 		if recstatusBool == true {
@@ -792,7 +791,7 @@ func UpdateAdminScUserLogin(c echo.Context) error {
 			params["ulogin_enabled"] = "0"
 		}
 	} else {
-		log.Error("enabled parameter should be true/false")
+		// log.Error("enabled parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "enabled parameter should be true/false", "enabled parameter should be true/false")
 	}
 
@@ -802,7 +801,7 @@ func UpdateAdminScUserLogin(c echo.Context) error {
 	if uloginlocked != "" {
 		uloginlockedBool, err = strconv.ParseBool(uloginlocked)
 		if err != nil {
-			log.Error("locked parameter should be true/false")
+			// log.Error("locked parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "locked parameter should be true/false", "locked parameter should be true/false")
 		}
 		if uloginlockedBool == true {
@@ -811,7 +810,7 @@ func UpdateAdminScUserLogin(c echo.Context) error {
 			params["ulogin_locked"] = "0"
 		}
 	} else {
-		log.Error("locked parameter should be true/false")
+		// log.Error("locked parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "locked parameter should be true/false", "locked parameter should be true/false")
 	}
 
@@ -821,7 +820,7 @@ func UpdateAdminScUserLogin(c echo.Context) error {
 	if verifiedemail != "" {
 		verifiedemailBool, err = strconv.ParseBool(verifiedemail)
 		if err != nil {
-			log.Error("verified_email parameter should be true/false")
+			// log.Error("verified_email parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "verified_email parameter should be true/false", "verified_email parameter should be true/false")
 		}
 		if verifiedemailBool == true {
@@ -830,7 +829,7 @@ func UpdateAdminScUserLogin(c echo.Context) error {
 			params["verified_email"] = "0"
 		}
 	} else {
-		log.Error("verified_email parameter should be true/false")
+		// log.Error("verified_email parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "verified_email parameter should be true/false", "verified_email parameter should be true/false")
 	}
 
@@ -840,7 +839,7 @@ func UpdateAdminScUserLogin(c echo.Context) error {
 	if verifiedmobileno != "" {
 		verifiedmobilenoBool, err = strconv.ParseBool(verifiedmobileno)
 		if err != nil {
-			log.Error("verified_mobileno parameter should be true/false")
+			// log.Error("verified_mobileno parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "verified_mobileno parameter should be true/false", "verified_mobileno parameter should be true/false")
 		}
 		if verifiedmobilenoBool == true {
@@ -849,7 +848,7 @@ func UpdateAdminScUserLogin(c echo.Context) error {
 			params["verified_mobileno"] = "0"
 		}
 	} else {
-		log.Error("verified_mobileno parameter should be true/false")
+		// log.Error("verified_mobileno parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "verified_mobileno parameter should be true/false", "verified_mobileno parameter should be true/false")
 	}
 
@@ -860,7 +859,7 @@ func UpdateAdminScUserLogin(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed create user")
 	}
 
@@ -879,21 +878,21 @@ func ChangePasswordUser(c echo.Context) error {
 
 	userloginkey := c.FormValue("key")
 	if userloginkey == "" {
-		log.Error("Missing required parameter: key")
+		// log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 	struserloginkey, err := strconv.ParseUint(userloginkey, 10, 64)
 	if err == nil && struserloginkey > 0 {
 		params["user_login_key"] = userloginkey
 	} else {
-		log.Error("Wrong input for parameter: key")
+		// log.Error("Wrong input for parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
 	var scUserLogin models.ScUserLogin
 	_, err = models.GetScUserLoginByKey(&scUserLogin, userloginkey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
@@ -913,7 +912,7 @@ func ChangePasswordUser(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed create user")
 	}
 
@@ -927,8 +926,8 @@ func ChangePasswordUser(c echo.Context) error {
 
 	err = lib.SendEmail(mailer)
 	if err != nil {
-		log.Error("Error send email")
-		log.Error(err)
+		// log.Error("Error send email")
+		// log.Error(err)
 	}
 
 	// e := email.NewEmail()
@@ -941,7 +940,7 @@ func ChangePasswordUser(c echo.Context) error {
 
 	// privateKey, err := ioutil.ReadFile(config.BasePath + "/pkey-dkim_motionfunds.txt")
 	// if err != nil {
-	// 	log.Fatal(err)
+	// 	// log.Fatal(err)
 	// }
 
 	// options := dkim.NewSigOptions()
@@ -956,8 +955,8 @@ func ChangePasswordUser(c echo.Context) error {
 
 	// err = dkim.Sign(&byteSlice, options)
 	// if err != nil {
-	// 	log.Error("Error send email no password")
-	// 	log.Error(err)
+	// 	// log.Error("Error send email no password")
+	// 	// log.Error(err)
 	// 	return err
 	// }
 	// tlsconfig := &tls.Config{
@@ -967,15 +966,15 @@ func ChangePasswordUser(c echo.Context) error {
 	// // err = e.Send(add, smtp.PlainAuth("", config.EmailFrom, config.EmailFromPassword, config.EmailSMTPHost))
 	// err = e.SendWithStartTLS(add, smtp.PlainAuth("", config.EmailFrom, config.EmailFromPassword, config.EmailSMTPHost), tlsconfig)
 	// if err != nil {
-	// 	log.Error("Error send email dkim")
-	// 	log.Error(err)
+	// 	// log.Error("Error send email dkim")
+	// 	// log.Error(err)
 	// }
 
 	// d := &gomail.Dialer{Host: config.EmailSMTPHost, Port: int(config.EmailSMTPPort)}
 	// d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	// if err := d.DialAndSend(mailer); err != nil {
-	// 	log.Error("Error send email no password")
-	// 	log.Error(err)
+	// 	// log.Error("Error send email no password")
+	// 	// log.Error(err)
 	// }
 
 	//end send email to user
@@ -994,7 +993,7 @@ func ChangeRoleUser(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -1002,35 +1001,35 @@ func ChangeRoleUser(c echo.Context) error {
 
 	userloginkey := c.FormValue("key")
 	if userloginkey == "" {
-		log.Error("Missing required parameter: key")
+		// log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 	struserloginkey, err := strconv.ParseUint(userloginkey, 10, 64)
 	if err == nil && struserloginkey > 0 {
 		params["user_login_key"] = userloginkey
 	} else {
-		log.Error("Wrong input for parameter: key")
+		// log.Error("Wrong input for parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
 	var scUserLogin models.ScUserLogin
 	_, err = models.GetScUserLoginByKey(&scUserLogin, userloginkey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
 	//role_key
 	rolekey := c.FormValue("role_key")
 	if rolekey == "" {
-		log.Error("Missing required parameter: role_key cann't be blank")
+		// log.Error("Missing required parameter: role_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_key cann't be blank", "Missing required parameter: role_key cann't be blank")
 	}
 	sub, err := strconv.ParseUint(rolekey, 10, 64)
 	if err == nil && sub > 0 {
 		params["role_key"] = rolekey
 	} else {
-		log.Error("Wrong input for parameter: role_key number")
+		// log.Error("Wrong input for parameter: role_key number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role_key must number", "Missing required parameter: role_key number")
 	}
 
@@ -1041,7 +1040,7 @@ func ChangeRoleUser(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed create user")
 	}
 
@@ -1059,7 +1058,7 @@ func DeleteUser(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -1067,7 +1066,7 @@ func DeleteUser(c echo.Context) error {
 
 	key := c.FormValue("key")
 	if key == "" {
-		log.Error("Missing required parameter: key")
+		// log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
@@ -1075,14 +1074,14 @@ func DeleteUser(c echo.Context) error {
 	if err == nil && keyCek > 0 {
 		params["user_login_key"] = key
 	} else {
-		log.Error("Wrong input for parameter: key")
+		// log.Error("Wrong input for parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
 	var scUserLogin models.ScUserLogin
 	status, err := models.GetScUserLoginByKey(&scUserLogin, key)
 	if err != nil {
-		log.Error("User login not found")
+		// log.Error("User login not found")
 		return lib.CustomError(http.StatusNotFound)
 	}
 
@@ -1094,7 +1093,7 @@ func DeleteUser(c echo.Context) error {
 
 	status, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -1239,19 +1238,19 @@ func AdminChangePasswordUserLogin(c echo.Context) error {
 
 	currentPassword := c.FormValue("current_password")
 	if currentPassword == "" {
-		log.Error("Missing required parameter: current_password")
+		// log.Error("Missing required parameter: current_password")
 		return lib.CustomError(http.StatusBadRequest, "current password can not be blank", "current password can not be blank")
 	}
 
 	newPassword := c.FormValue("new_password")
 	if newPassword == "" {
-		log.Error("Missing required parameter: new_password")
+		// log.Error("Missing required parameter: new_password")
 		return lib.CustomError(http.StatusBadRequest, "new password can not be blank", "new password can not be blank")
 	}
 
 	confirmPassword := c.FormValue("confirm_password")
 	if confirmPassword == "" {
-		log.Error("Missing required parameter: confirm_password")
+		// log.Error("Missing required parameter: confirm_password")
 		return lib.CustomError(http.StatusBadRequest, "confirm new password can not be blank", "confirm new password can not be blank")
 	}
 
@@ -1266,19 +1265,19 @@ func AdminChangePasswordUserLogin(c echo.Context) error {
 
 	length, number, upper, special := verifyPassword(newPassword)
 	if length == false || number == false || upper == false || special == false {
-		log.Error("New Password does meet the criteria")
+		// log.Error("New Password does meet the criteria")
 		return lib.CustomError(http.StatusBadRequest, "New Password does meet the criteria", "Your New password need at least 8 character length, has lower and upper case letter, has numeric letter, and has special character")
 	}
 
 	if strings.Contains(newPassword, confirmPassword) == false {
-		log.Error("Missing required parameter: conf_password must equal with password")
+		// log.Error("Missing required parameter: conf_password must equal with password")
 		return lib.CustomError(http.StatusBadRequest, "conf_password must equal with password", "conf_password must equal with password")
 	}
 	// Check valid password
 	encryptedPasswordByte := sha256.Sum256([]byte(currentPassword))
 	encryptedPassword := hex.EncodeToString(encryptedPasswordByte[:])
 	if encryptedPassword != scUserLogin.UloginPassword {
-		log.Error("Missing required parameter: wrong current password")
+		// log.Error("Missing required parameter: wrong current password")
 		return lib.CustomError(http.StatusBadRequest, "wrong current password", "wrong current password")
 	}
 
@@ -1294,7 +1293,7 @@ func AdminChangePasswordUserLogin(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed update password")
 	}
 
@@ -1308,10 +1307,10 @@ func AdminChangePasswordUserLogin(c echo.Context) error {
 
 		err = lib.SendEmail(mailer)
 		if err != nil {
-			log.Error("Error send email")
-			log.Error(err)
+			// log.Error("Error send email")
+			// log.Error(err)
 		} else {
-			log.Info("Email sent")
+			// log.Info("Email sent")
 		}
 		// dialer := gomail.NewDialer(
 		// 	config.EmailSMTPHost,
@@ -1323,8 +1322,8 @@ func AdminChangePasswordUserLogin(c echo.Context) error {
 
 		// err = dialer.DialAndSend(mailer)
 		// if err != nil {
-		// 	log.Error("Error send email")
-		// 	log.Error(err)
+		// 	// log.Error("Error send email")
+		// 	// log.Error(err)
 		// }
 		//end send email to user
 	}
@@ -1343,34 +1342,34 @@ func AdminChangeDataUserLogin(c echo.Context) error {
 
 	username := c.FormValue("username")
 	if username == "" {
-		log.Error("Missing required parameter: username")
+		// log.Error("Missing required parameter: username")
 		return lib.CustomError(http.StatusBadRequest, "username can not be blank", "username can not be blank")
 	}
 	params["ulogin_name"] = username
 
 	name := c.FormValue("name")
 	if name == "" {
-		log.Error("Missing required parameter: name")
+		// log.Error("Missing required parameter: name")
 		return lib.CustomError(http.StatusBadRequest, "name can not be blank", "name can not be blank")
 	}
 	params["ulogin_full_name"] = name
 
 	email := c.FormValue("email")
 	if email == "" {
-		log.Error("Missing required parameter: email")
+		// log.Error("Missing required parameter: email")
 		return lib.CustomError(http.StatusBadRequest, "email can not be blank", "email can not be blank")
 	}
 
 	err = checkmail.ValidateFormat(email)
 	if err != nil {
-		log.Error("Email format is not valid")
+		// log.Error("Email format is not valid")
 		return lib.CustomError(http.StatusBadRequest, "Email format is not valid", "Email format is not valid")
 	}
 	params["ulogin_email"] = email
 
 	no_hp := c.FormValue("no_hp")
 	if no_hp == "" {
-		log.Error("Missing required parameter: no_hp")
+		// log.Error("Missing required parameter: no_hp")
 		return lib.CustomError(http.StatusBadRequest, "no_hp can not be blank", "no_hp can not be blank")
 	}
 	params["ulogin_mobileno"] = no_hp
@@ -1385,11 +1384,11 @@ func AdminChangeDataUserLogin(c echo.Context) error {
 	var countDataExisting models.CountData
 	status, err := models.AdminGetValidateUniqueInsertUpdateScUserLogin(&countDataExisting, paramsScUserLogin, &strKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataExisting.CountData) > 0 {
-		log.Error("Missing required parameter: username or email already existing, use other username or email")
+		// log.Error("Missing required parameter: username or email already existing, use other username or email")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: username or email already existing, use other username or email", "Missing required parameter: username or email already existing, use other username or email")
 	}
 
@@ -1400,11 +1399,11 @@ func AdminChangeDataUserLogin(c echo.Context) error {
 	var countDataEmail models.CountData
 	status, err = models.AdminGetValidateUniqueInsertUpdateScUserLogin(&countDataEmail, paramsEmail, &strKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataEmail.CountData) > 0 {
-		log.Error("Missing required parameter: email already existing, use other email")
+		// log.Error("Missing required parameter: email already existing, use other email")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: email already existing, use other email", "Missing required parameter: email already existing, use other email")
 	}
 
@@ -1421,7 +1420,7 @@ func AdminChangeDataUserLogin(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed create user")
 	}
 
@@ -1435,8 +1434,8 @@ func AdminChangeDataUserLogin(c echo.Context) error {
 
 		err = lib.SendEmail(mailer)
 		if err != nil {
-			log.Error("Error send email")
-			log.Error(err)
+			// log.Error("Error send email")
+			// log.Error(err)
 		}
 		// dialer := gomail.NewDialer(
 		// 	config.EmailSMTPHost,
@@ -1448,8 +1447,8 @@ func AdminChangeDataUserLogin(c echo.Context) error {
 
 		// err = dialer.DialAndSend(mailer)
 		// if err != nil {
-		// 	log.Error("Error send email")
-		// 	log.Error(err)
+		// 	// log.Error("Error send email")
+		// 	// log.Error(err)
 		// }
 		//end send email to user
 	}
@@ -1468,26 +1467,26 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 
 	userloginkey := c.FormValue("key")
 	if userloginkey == "" {
-		log.Error("Missing required parameter: key")
+		// log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
 	if len(userloginkey) > 11 {
-		log.Error("key must maximal 11 character")
+		// log.Error("key must maximal 11 character")
 		return lib.CustomError(http.StatusBadRequest, "key must maximal 11 character", "key must maximal 11 character")
 	}
 	struserloginkey, err := strconv.ParseUint(userloginkey, 10, 64)
 	if err == nil && struserloginkey > 0 {
 		params["user_login_key"] = userloginkey
 	} else {
-		log.Error("Wrong input for parameter: key")
+		// log.Error("Wrong input for parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
 	var scUserLogin models.ScUserLogin
 	_, err = models.GetScUserLoginByKey(&scUserLogin, userloginkey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest)
 	}
 	ulogin_enable_prev_state := scUserLogin.UloginEnabled
@@ -1495,15 +1494,15 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 	//username
 	username := c.FormValue("username")
 	if username == "" {
-		log.Error("Missing required parameter: username cann't be blank")
+		// log.Error("Missing required parameter: username cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: username cann't be blank", "Missing required parameter: username cann't be blank")
 	}
 	if len(username) > 50 {
-		log.Error("username must maximal 50 character")
+		// log.Error("username must maximal 50 character")
 		return lib.CustomError(http.StatusBadRequest, "username must maximal 50 character", "username must maximal 50 character")
 	}
 	if strings.Contains(username, " ") {
-		log.Error("username tidak boleh terdapat spasi")
+		// log.Error("username tidak boleh terdapat spasi")
 		return lib.CustomError(http.StatusBadRequest, "username tidak boleh terdapat spasi", "username tidak boleh terdapat spasi")
 	}
 
@@ -1511,11 +1510,11 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 	var countDataUsername models.CountData
 	status, err := models.ValidateUniqueData(&countDataUsername, "ulogin_name", username, &userloginkey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataUsername.CountData) > 0 {
-		log.Error("Missing required parameter: username already existing, use other username")
+		// log.Error("Missing required parameter: username already existing, use other username")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: username already existing, use other username", "Missing required parameter: username already existing, use other username")
 	}
 	params["ulogin_name"] = username
@@ -1523,27 +1522,27 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 	//email
 	email := c.FormValue("email")
 	if email == "" {
-		log.Error("Missing required parameter: email cann't be blank")
+		// log.Error("Missing required parameter: email cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: email cann't be blank", "Missing required parameter: email cann't be blank")
 	}
 	if len(email) > 50 {
-		log.Error("email must maximal 50 character")
+		// log.Error("email must maximal 50 character")
 		return lib.CustomError(http.StatusBadRequest, "email must maximal 50 character", "email must maximal 50 character")
 	}
 	err = checkmail.ValidateFormat(email)
 	if err != nil {
-		log.Error("Email format is not valid")
+		// log.Error("Email format is not valid")
 		return lib.CustomError(http.StatusBadRequest, "Email format is not valid", "Email format is not valid")
 	}
 
 	var countDataEmail models.CountData
 	status, err = models.ValidateUniqueData(&countDataEmail, "ulogin_email", email, &userloginkey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataEmail.CountData) > 0 {
-		log.Error("Missing required parameter: email already existing, use other email")
+		// log.Error("Missing required parameter: email already existing, use other email")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: email already existing, use other email", "Missing required parameter: email already existing, use other email")
 	}
 	params["ulogin_email"] = email
@@ -1551,22 +1550,22 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 	//no_hp
 	noHp := c.FormValue("no_hp")
 	if noHp == "" {
-		log.Error("Missing required parameter: no_hp cann't be blank")
+		// log.Error("Missing required parameter: no_hp cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: no_hp cann't be blank", "Missing required parameter: no_hp cann't be blank")
 	}
 	if len(noHp) > 18 {
-		log.Error("no_hp must maximal 18 character")
+		// log.Error("no_hp must maximal 18 character")
 		return lib.CustomError(http.StatusBadRequest, "no_hp must maximal 18 character", "no_hp must maximal 18 character")
 	}
 
 	var countDataNoHp models.CountData
 	status, err = models.ValidateUniqueData(&countDataNoHp, "ulogin_mobileno", noHp, &userloginkey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if int(countDataNoHp.CountData) > 0 {
-		log.Error("Missing required parameter: no_hp already existing, use other no_hp")
+		// log.Error("Missing required parameter: no_hp already existing, use other no_hp")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: no_hp already existing, use other no_hp", "Missing required parameter: no_hp already existing, use other no_hp")
 	}
 	params["ulogin_mobileno"] = noHp
@@ -1574,11 +1573,11 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 	//ulogin_full_name
 	uloginFullName := c.FormValue("ulogin_full_name")
 	if uloginFullName == "" {
-		log.Error("Missing required parameter: ulogin_full_name cann't be blank")
+		// log.Error("Missing required parameter: ulogin_full_name cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ulogin_full_name cann't be blank", "Missing required parameter: ulogin_full_name cann't be blank")
 	}
 	if len(uloginFullName) > 50 {
-		log.Error("ulogin_full_name must maximal 50 character")
+		// log.Error("ulogin_full_name must maximal 50 character")
 		return lib.CustomError(http.StatusBadRequest, "ulogin_full_name must maximal 50 character", "ulogin_full_name must maximal 50 character")
 	}
 	params["ulogin_full_name"] = uloginFullName
@@ -1586,11 +1585,11 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 	//ulogin_enabled
 	statusEnable := c.FormValue("status_enabled")
 	if statusEnable == "" {
-		log.Error("Missing required parameter: status_enabled cann't be blank")
+		// log.Error("Missing required parameter: status_enabled cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: status_enabled cann't be blank", "Missing required parameter: status_enabled cann't be blank")
 	}
 	if len(statusEnable) > 2 {
-		log.Error("status_enabled must maximal 2 character")
+		// log.Error("status_enabled must maximal 2 character")
 		return lib.CustomError(http.StatusBadRequest, "status_enabled must maximal 2 character", "status_enabled must maximal 2 character")
 	}
 
@@ -1601,7 +1600,7 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 
 	_, found := lib.Find(items, statusEnable)
 	if !found {
-		log.Error("status_enabled tidak sesuai format")
+		// log.Error("status_enabled tidak sesuai format")
 		return lib.CustomError(http.StatusBadRequest, "status_enabled tidak sesuai format", "status_enabled tidak sesuai format")
 	}
 	params["verified_email"] = "0"
@@ -1630,7 +1629,7 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 
 	_, err = models.UpdateScUserLogin(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed update user")
 	}
 
@@ -1639,7 +1638,7 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 
 	t, err = t.ParseFiles(config.BasePath + "/mail/index-email-activation.html")
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	var tpl bytes.Buffer
@@ -1647,7 +1646,7 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 		Url     string
 		FileUrl string
 	}{Url: config.BaseUrl + "/verifyuser?token=" + verifyKey, FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-		log.Println(err)
+		// log.Println(err)
 	}
 
 	//kirim email: JIKA nasabah Offline berubah menjadi ONLINE
@@ -1662,10 +1661,10 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 
 		err = lib.SendEmail(mailer)
 		if err != nil {
-			log.Error(err)
+			// log.Error(err)
 			return lib.CustomError(http.StatusInternalServerError, err.Error(), "Error send email")
 		} else {
-			log.Info("Email sent")
+			// log.Info("Email sent")
 		}
 	}
 

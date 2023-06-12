@@ -22,7 +22,6 @@ import (
 	"github.com/labstack/echo"
 	"github.com/leekchan/accounting"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
@@ -52,7 +51,7 @@ func initAuthTransactionAdmin() error {
 func GetTransactionApprovalList(c echo.Context) error {
 	errorAuth := initAuthCsKyc()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -78,7 +77,7 @@ func GetTransactionApprovalList(c echo.Context) error {
 func GetTransactionCutOffList(c echo.Context) error {
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -91,14 +90,14 @@ func GetTransactionCutOffList(c echo.Context) error {
 func GetTransactionBatchList(c echo.Context) error {
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
 	//date
 	postnavdate := c.QueryParam("nav_date")
 	if postnavdate == "" {
-		log.Error("Missing required parameter: nav_date")
+		// log.Error("Missing required parameter: nav_date")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date", "Missing required parameter: nav_date")
 	}
 
@@ -111,7 +110,7 @@ func GetTransactionBatchList(c echo.Context) error {
 func GetTransactionConfirmationList(c echo.Context) error {
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -131,7 +130,7 @@ func GetTransactionCorrectionAdminList(c echo.Context) error {
 func GetTransactionPostingList(c echo.Context) error {
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -151,7 +150,7 @@ func GetTransactionPostingList(c echo.Context) error {
 func GetTransactionUnpostingList(c echo.Context) error {
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -177,7 +176,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -193,7 +192,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -209,7 +208,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -229,7 +228,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -247,12 +246,12 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	var userCategory uint64
 	userCategory = 3
 	if lib.Profile.UserCategoryKey == userCategory {
-		log.Println(lib.Profile)
+		// log.Println(lib.Profile)
 		if lib.Profile.BranchKey != nil {
 			strBranchKey := strconv.FormatUint(*lib.Profile.BranchKey, 10)
 			params["c.openacc_branch_key"] = strBranchKey
 		} else {
-			log.Error("User Branch haven't Branch")
+			// log.Error("User Branch haven't Branch")
 			return lib.CustomError(http.StatusBadRequest, "Wrong User Branch haven't Branch", "Wrong User Branch haven't Branch")
 		}
 	}
@@ -276,11 +275,11 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	}
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(trTransaction) < 1 {
-		log.Error("transaction not found")
+		// log.Error("transaction not found")
 		return lib.CustomError(http.StatusNotFound, "Transaction not found", "Transaction not found")
 	}
 
@@ -350,7 +349,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if len(branchIds) > 0 {
 		status, err = models.GetMsBranchIn(&msBranch, branchIds, "branch_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -365,7 +364,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 		status, err = models.GetGenLookupIn(&lookupOaReq, lookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 			}
 		}
 	}
@@ -379,7 +378,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if len(transIds) > 0 {
 		status, err = models.GetTrTransactionSettlementIn(&trSettle, transIds, "transaction_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 	}
 	var paymentChannelIds []string
@@ -398,7 +397,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if len(paymentChannelIds) > 0 {
 		status, err = models.GetMsPaymentChannelIn(&pChannel, paymentChannelIds, "pchannel_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 	}
 	channelData := make(map[uint64]models.MsPaymentChannel)
@@ -411,7 +410,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if len(agentIds) > 0 {
 		status, err = models.GetMsAgentIn(&msAgent, agentIds, "agent_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -425,7 +424,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if len(customerIds) > 0 {
 		status, err = models.GetMsCustomerIn(&msCustomer, customerIds, "customer_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -439,7 +438,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if len(customerIds) > 0 {
 		status, err = models.GetScUserLoginIn(&userLogin, customerIds, "customer_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -453,7 +452,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if len(parentTransIds) > 0 {
 		status, err = models.GetTrTransactionIn(&parentTrans, parentTransIds, "transaction_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -471,7 +470,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if len(productIds) > 0 {
 		status, err = models.GetMsProductIn(&msProduct, productIds, "product_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -485,7 +484,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if len(transTypeIds) > 0 {
 		status, err = models.GetMsTransactionTypeIn(&transactionType, transTypeIds, "trans_type_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -499,7 +498,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if len(bankIds) > 0 {
 		status, err = models.GetMsBankIn(&msBank, bankIds, "bank_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -513,7 +512,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if len(transStatusKey) > 0 {
 		status, err = models.GetMsTransactionStatusIn(&trTransactionStatus, transStatusKey, "trans_status_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -602,10 +601,10 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 				if pc, ok := channelData[sd.SettlePaymentMethod]; ok {
 					data.PaymentChannel = pc.PchannelName
 				} else {
-					log.Println("no channel")
+					// log.Println("no channel")
 				}
 			} else {
-				log.Println("no settle")
+				// log.Println("no settle")
 			}
 		}
 
@@ -636,7 +635,7 @@ func getListAdmin(transStatusKey []string, c echo.Context, postnavdate *string) 
 	if limit > 0 {
 		status, err = models.AdminGetCountTrTransaction(&countData, params, transStatusKey, "trans_status_key", strconv.FormatUint(lib.Profile.UserID, 10))
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -688,14 +687,14 @@ func GetTransactionDetail(c echo.Context) error {
 	if lib.Profile.RoleKey == roleKeyCs {
 		statusCs := strconv.FormatUint(uint64(2), 10)
 		if statusCs != strTransStatusKey {
-			log.Error("User Autorizer")
+			// log.Error("User Autorizer")
 			return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 		}
 	}
 	if lib.Profile.RoleKey == roleKeyKyc {
 		statusKyc := strconv.FormatUint(uint64(4), 10)
 		if statusKyc != strTransStatusKey {
-			log.Error("User Autorizer")
+			// log.Error("User Autorizer")
 			return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 		}
 	}
@@ -703,7 +702,7 @@ func GetTransactionDetail(c echo.Context) error {
 		status := []string{"5", "6", "7", "8", "9"}
 		_, found := lib.Find(status, strTransStatusKey)
 		if !found {
-			log.Error("User Autorizer")
+			// log.Error("User Autorizer")
 			return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 		}
 	}
@@ -716,19 +715,19 @@ func GetTransactionDetail(c echo.Context) error {
 		strCusKey := strconv.FormatUint(transaction.CustomerKey, 10)
 		status, err = models.GetMsCustomer(&cus, strCusKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(http.StatusBadRequest, err.Error(), "Customer tidak ditemukan")
 		} else {
 			if cus.OpenaccBranchKey == nil {
-				log.Error("Customer Branch null, not match with user branch")
+				// log.Error("Customer Branch null, not match with user branch")
 				return lib.CustomError(http.StatusNotFound)
 			} else {
 				strCusBranch := strconv.FormatUint(*cus.OpenaccBranchKey, 10)
 				strUserBranch := strconv.FormatUint(*lib.Profile.BranchKey, 10)
-				log.Error("Customer branch " + strCusBranch)
-				log.Error("User branch " + strUserBranch)
+				// log.Error("Customer branch " + strCusBranch)
+				// log.Error("User branch " + strUserBranch)
 				if strCusBranch != strUserBranch {
-					log.Error("User Branch not match with customer branch")
+					// log.Error("User Branch not match with customer branch")
 					return lib.CustomError(http.StatusNotFound)
 				}
 			}
@@ -799,7 +798,7 @@ func GetTransactionDetail(c echo.Context) error {
 	if len(pChannelIds) > 0 {
 		status, err = models.GetMsPaymentChannelIn(&pChannel, pChannelIds, "pchannel_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 	}
 	channelData := make(map[uint64]models.MsPaymentChannel)
@@ -813,7 +812,7 @@ func GetTransactionDetail(c echo.Context) error {
 		status, err = models.GetGenLookupIn(&lookupOaReq, lookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -1213,9 +1212,9 @@ func GetTransactionDetail(c echo.Context) error {
 	paramsFile["rec_status"] = "1"
 	var filez []models.MsFile
 	_, err = models.GetAllMsFile(&filez, 100, 100, paramsFile, true)
-	// log.Println("========== jumlah record ==========", len(filez))
+	// // log.Println("========== jumlah record ==========", len(filez))
 	if len(filez) > 0 {
-		log.Println("========== sudah upload bukti trf ==========")
+		// log.Println("========== sudah upload bukti trf ==========")
 		for _, fl := range filez {
 			aa := config.ImageUrl + *fl.FilePath
 			responseData.UrlUpload = append(responseData.UrlUpload, &aa)
@@ -1234,7 +1233,7 @@ func GetTransactionDetail(c echo.Context) error {
 func TransactionApprovalCs(c echo.Context) error {
 	errorAuth := initAuthCs()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -1247,7 +1246,7 @@ func TransactionApprovalCs(c echo.Context) error {
 func TransactionApprovalCompliance(c echo.Context) error {
 	errorAuth := initAuthKyc()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -1271,12 +1270,12 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 
 	transStatus := c.FormValue("trans_status_key")
 	if transStatus == "" {
-		log.Error("Missing required parameter: trans_status_key")
+		// log.Error("Missing required parameter: trans_status_key")
 		return lib.CustomError(http.StatusBadRequest)
 	} else {
 		_, found := lib.Find(transStatusIds, transStatus)
 		if !found {
-			log.Error("Missing required parameter: trans_status_key")
+			// log.Error("Missing required parameter: trans_status_key")
 			return lib.CustomError(http.StatusBadRequest)
 		}
 	}
@@ -1285,7 +1284,7 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 	if err == nil && n > 0 {
 		params["trans_status_key"] = transStatus
 	} else {
-		log.Error("Wrong input for parameter: trans_status_key")
+		// log.Error("Wrong input for parameter: trans_status_key")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trans_status_key", "Wrong input for parameter: trans_status_key")
 	}
 
@@ -1293,7 +1292,7 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 
 	if (transStatus == "1") || (transStatus == "3") { //CORRECTED / DELETED
 		if notes == "" {
-			log.Error("Missing required parameter notes: Notes tidak boleh kosong")
+			// log.Error("Missing required parameter notes: Notes tidak boleh kosong")
 			return lib.CustomError(http.StatusBadRequest, "Notes tidak boleh kosong", "Notes tidak boleh kosong")
 		}
 	}
@@ -1301,14 +1300,14 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 	if lib.Profile.RoleKey == roleKeyKyc {
 		trxrisklevel := c.FormValue("trx_risk_level")
 		if trxrisklevel == "" {
-			log.Error("Missing required parameter: trx_risk_level")
+			// log.Error("Missing required parameter: trx_risk_level")
 			return lib.CustomError(http.StatusBadRequest, "trx_risk_level can not be blank", "trx_risk_level can not be blank")
 		} else {
 
 			listLevelOption := []string{"114", "115"} //lookup group key 24
 			_, found := lib.Find(listLevelOption, trxrisklevel)
 			if !found {
-				log.Error("Missing required parameter: trx_risk_level")
+				// log.Error("Missing required parameter: trx_risk_level")
 				return lib.CustomError(http.StatusBadRequest)
 			}
 		}
@@ -1317,14 +1316,14 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 		if err == nil && n > 0 {
 			params["trx_risk_level"] = trxrisklevel
 		} else {
-			log.Error("Wrong input for parameter: trx_risk_level")
+			// log.Error("Wrong input for parameter: trx_risk_level")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: trx_risk_level", "Wrong input for parameter: trx_risk_level")
 		}
 	}
 
 	transactionkey := c.FormValue("transaction_key")
 	if transactionkey == "" {
-		log.Error("Missing required parameter: transaction_key")
+		// log.Error("Missing required parameter: transaction_key")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
@@ -1332,7 +1331,7 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 	if err == nil && n > 0 {
 		params["transaction_key"] = transactionkey
 	} else {
-		log.Error("Wrong input for parameter: transaction_key")
+		// log.Error("Wrong input for parameter: transaction_key")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: transaction_key", "Wrong input for parameter: transaction_key")
 	}
 
@@ -1347,12 +1346,12 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 	strTransTypeKey := strconv.FormatUint(transaction.TransTypeKey, 10)
 
 	if strTransTypeKey == "3" {
-		log.Error("Transaction not found")
+		// log.Error("Transaction not found")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
 	if transStatusKeyDefault != strTransStatusKey {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -1378,7 +1377,7 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 
 	_, err = models.UpdateTrTransaction(params)
 	if err != nil {
-		log.Error("Error update tr transaction")
+		// log.Error("Error update tr transaction")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -1386,10 +1385,10 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 		if transaction.ParentKey != nil {
 			strParentKey := strconv.FormatUint(*transaction.ParentKey, 10)
 			params["transaction_key"] = strParentKey
-			log.Println(params)
+			// log.Println(params)
 			_, err = models.UpdateTrTransaction(params)
 			if err != nil {
-				log.Error("Error update tr transaction parent")
+				// log.Error("Error update tr transaction parent")
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 			}
 		}
@@ -1427,7 +1426,7 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 		}
 
 	}
-	log.Info("Success update transaksi")
+	// log.Info("Success update transaksi")
 
 	//notif if reject
 	if transStatus == "3" {
@@ -1440,7 +1439,7 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 				var userLogin models.ScUserLogin
 				_, err := models.GetScUserLoginByCustomerKey(&userLogin, strCustomerKey)
 				if err != nil {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 				}
 				//create user message
 				CreateNotifRejected(strCustomerKey, strIDUserLogin, notes, strTransTypeKey, transaction, userLogin)
@@ -1481,7 +1480,7 @@ func SendEmailRejected(strCustomerKey string, strIDUserLogin string,
 	_, err := models.GetMsCustomer(&customer, strCustomerKey)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 	}
 
@@ -1490,13 +1489,13 @@ func SendEmailRejected(strCustomerKey string, strIDUserLogin string,
 	var product models.MsProduct
 	_, err = models.GetMsProduct(&product, strProductKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 
 	var currencyDB models.MsCurrency
 	_, err = models.GetMsCurrency(&currencyDB, strconv.FormatUint(*product.CurrencyKey, 10))
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	}
 
 	date, _ := time.Parse(layout, transaction.TransDate)
@@ -1612,11 +1611,11 @@ func SendEmailRejected(strCustomerKey string, strIDUserLogin string,
 
 		t, err := t.ParseFiles(config.BasePath + "/mail/email-subscription-rejected.html")
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		if err := t.Execute(&tpl, dataReplace); err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 	}
 
@@ -1626,11 +1625,11 @@ func SendEmailRejected(strCustomerKey string, strIDUserLogin string,
 
 		t, err := t.ParseFiles(config.BasePath + "/mail/email-redemption-rejected.html")
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		if err := t.Execute(&tpl, dataReplace); err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 	}
@@ -1641,11 +1640,11 @@ func SendEmailRejected(strCustomerKey string, strIDUserLogin string,
 
 		t, err := t.ParseFiles(config.BasePath + "/mail/email-switching-rejected.html")
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 		if err := t.Execute(&tpl, dataReplace); err != nil {
-			log.Println(err)
+			// log.Println(err)
 		}
 
 	}
@@ -1661,10 +1660,10 @@ func SendEmailRejected(strCustomerKey string, strIDUserLogin string,
 
 	err = lib.SendEmail(mailer)
 	if err != nil {
-		log.Info("Email sent error")
-		log.Error(err)
+		// log.Info("Email sent error")
+		// log.Error(err)
 	} else {
-		log.Info("Email sent")
+		// log.Info("Email sent")
 	}
 	// dialer := gomail.NewDialer(
 	// 	config.EmailSMTPHost,
@@ -1676,10 +1675,10 @@ func SendEmailRejected(strCustomerKey string, strIDUserLogin string,
 
 	// err = dialer.DialAndSend(mailer)
 	// if err != nil {
-	// 	log.Info("Email sent error")
-	// 	log.Error(err)
+	// 	// log.Info("Email sent error")
+	// 	// log.Error(err)
 	// } else {
-	// 	log.Info("Email sent")
+	// 	// log.Info("Email sent")
 	// }
 }
 
@@ -1736,10 +1735,10 @@ func CreateNotifRejected(strCustomerKey string, strIDUserLogin string,
 
 	_, err := models.CreateScUserMessage(paramsUserMessage)
 	if err != nil {
-		log.Error(err.Error())
-		log.Error("Error create user message")
+		// log.Error(err.Error())
+		// log.Error("Error create user message")
 	} else {
-		log.Println("Success create user message")
+		// log.Println("Success create user message")
 	}
 	lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
 }
@@ -1747,7 +1746,7 @@ func CreateNotifRejected(strCustomerKey string, strIDUserLogin string,
 func UpdateNavDate(c echo.Context) error {
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	decimal.MarshalJSONWithoutQuotes = true
@@ -1760,7 +1759,7 @@ func UpdateNavDate(c echo.Context) error {
 	//date
 	postnavdate := c.FormValue("nav_date")
 	if postnavdate == "" {
-		log.Error("Missing required parameter: nav_date")
+		// log.Error("Missing required parameter: nav_date")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date", "Missing required parameter: nav_date")
 	}
 
@@ -1770,7 +1769,7 @@ func UpdateNavDate(c echo.Context) error {
 	t = time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
 	w := lib.IsWeekend(t)
 	if w {
-		log.Error("Missing required parameter: nav_date cann't Weekend")
+		// log.Error("Missing required parameter: nav_date cann't Weekend")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date cann't Weekend", "Missing required parameter: nav_date cann't Weekend")
 	}
 
@@ -1781,12 +1780,12 @@ func UpdateNavDate(c echo.Context) error {
 	status, err = models.GetAllMsHoliday(&holiday, paramHoliday)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
 	if len(holiday) > 0 {
-		log.Error("nav_date is Bursa Holiday")
+		// log.Error("nav_date is Bursa Holiday")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date is Bursa Holiday", "Missing required parameter: nav_date is Bursa Holiday")
 	}
 
@@ -1798,12 +1797,12 @@ func UpdateNavDate(c echo.Context) error {
 		transfeepercentFloat, err := strconv.ParseFloat(transfeepercent, 64)
 		if err == nil {
 			if transfeepercentFloat < 0 {
-				log.Error("Wrong input for parameter: trans_fee_percent cann't negatif")
+				// log.Error("Wrong input for parameter: trans_fee_percent cann't negatif")
 				return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_fee_percent must cann't negatif", "Missing required parameter: trans_fee_percent cann't negatif")
 			}
 			params["trans_fee_percent"] = transfeepercent
 		} else {
-			log.Error("Wrong input for parameter: trans_fee_percent number")
+			// log.Error("Wrong input for parameter: trans_fee_percent number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_fee_percent must number", "Missing required parameter: trans_fee_percent number")
 		}
 	}
@@ -1814,12 +1813,12 @@ func UpdateNavDate(c echo.Context) error {
 		transfeeamountFloat, err := strconv.ParseFloat(transfeeamount, 64)
 		if err == nil {
 			if transfeeamountFloat < 0 {
-				log.Error("Wrong input for parameter: trans_fee_amount cann't negatif")
+				// log.Error("Wrong input for parameter: trans_fee_amount cann't negatif")
 				return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_fee_amount must cann't negatif", "Missing required parameter: trans_fee_amount cann't negatif")
 			}
 			params["trans_fee_amount"] = transfeeamount
 		} else {
-			log.Error("Wrong input for parameter: trans_fee_amount number")
+			// log.Error("Wrong input for parameter: trans_fee_amount number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_fee_amount must number", "Missing required parameter: trans_fee_amount number")
 		}
 	}
@@ -1830,12 +1829,12 @@ func UpdateNavDate(c echo.Context) error {
 		chargesfeeamountFloat, err := strconv.ParseFloat(chargesfeeamount, 64)
 		if err == nil {
 			if chargesfeeamountFloat < 0 {
-				log.Error("Wrong input for parameter: charges_fee_amount cann't negatif")
+				// log.Error("Wrong input for parameter: charges_fee_amount cann't negatif")
 				return lib.CustomError(http.StatusBadRequest, "Missing required parameter: charges_fee_amount must cann't negatif", "Missing required parameter: charges_fee_amount cann't negatif")
 			}
 			params["charges_fee_amount"] = chargesfeeamount
 		} else {
-			log.Error("Wrong input for parameter: charges_fee_amount number")
+			// log.Error("Wrong input for parameter: charges_fee_amount number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: charges_fee_amount must number", "Missing required parameter: charges_fee_amount number")
 		}
 	}
@@ -1846,12 +1845,12 @@ func UpdateNavDate(c echo.Context) error {
 		servicesfeeamountFloat, err := strconv.ParseFloat(servicesfeeamount, 64)
 		if err == nil {
 			if servicesfeeamountFloat < 0 {
-				log.Error("Wrong input for parameter: services_fee_amount cann't negatif")
+				// log.Error("Wrong input for parameter: services_fee_amount cann't negatif")
 				return lib.CustomError(http.StatusBadRequest, "Missing required parameter: services_fee_amount must cann't negatif", "Missing required parameter: services_fee_amount cann't negatif")
 			}
 			params["services_fee_amount"] = servicesfeeamount
 		} else {
-			log.Error("Wrong input for parameter: services_fee_amount number")
+			// log.Error("Wrong input for parameter: services_fee_amount number")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: services_fee_amount must number", "Missing required parameter: services_fee_amount number")
 		}
 	}
@@ -1862,34 +1861,34 @@ func UpdateNavDate(c echo.Context) error {
 	//prod_bankacc_key
 	prodbankacckey := c.FormValue("prod_bankacc_key")
 	if prodbankacckey == "" {
-		log.Error("Missing required parameter: prod_bankacc_key cann't be blank")
+		// log.Error("Missing required parameter: prod_bankacc_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_bankacc_key cann't be blank", "Missing required parameter: prod_bankacc_key cann't be blank")
 	}
 	strprodbankacckey, err := strconv.ParseUint(prodbankacckey, 10, 64)
 	if err == nil && strprodbankacckey > 0 {
 		productbankacckey = prodbankacckey
 	} else {
-		log.Error("Wrong input for parameter: prod_bankacc_key")
+		// log.Error("Wrong input for parameter: prod_bankacc_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: prod_bankacc_key", "Missing required parameter: prod_bankacc_key")
 	}
 
 	//cust_bankacc_key
 	custbankacckey := c.FormValue("cust_bankacc_key")
 	if custbankacckey == "" {
-		log.Error("Missing required parameter: cust_bankacc_key cann't be blank")
+		// log.Error("Missing required parameter: cust_bankacc_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: cust_bankacc_key cann't be blank", "Missing required parameter: cust_bankacc_key cann't be blank")
 	}
 	strcustbankacckey, err := strconv.ParseUint(custbankacckey, 10, 64)
 	if err == nil && strcustbankacckey > 0 {
 		customerbankacckey = custbankacckey
 	} else {
-		log.Error("Wrong input for parameter: cust_bankacc_key")
+		// log.Error("Wrong input for parameter: cust_bankacc_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: cust_bankacc_key", "Missing required parameter: cust_bankacc_key")
 	}
 
 	transactionkey := c.FormValue("transaction_key")
 	if transactionkey == "" {
-		log.Error("Missing required parameter: transaction_key")
+		// log.Error("Missing required parameter: transaction_key")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
@@ -1897,7 +1896,7 @@ func UpdateNavDate(c echo.Context) error {
 	if err == nil && n > 0 {
 		params["transaction_key"] = transactionkey
 	} else {
-		log.Error("Wrong input for parameter: transaction_key")
+		// log.Error("Wrong input for parameter: transaction_key")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: transaction_key", "Wrong input for parameter: transaction_key")
 	}
 
@@ -1914,7 +1913,7 @@ func UpdateNavDate(c echo.Context) error {
 	strStatusCutOff := "5"
 
 	if strTransStatusKey != strStatusCutOff {
-		log.Error("Data not found")
+		// log.Error("Data not found")
 		return lib.CustomError(http.StatusUnauthorized, "Data not found", "Data not found")
 	}
 
@@ -1949,7 +1948,7 @@ func UpdateNavDate(c echo.Context) error {
 
 	_, err = models.UpdateTrTransaction(params)
 	if err != nil {
-		log.Error("Error update tr transaction")
+		// log.Error("Error update tr transaction")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -1957,10 +1956,10 @@ func UpdateNavDate(c echo.Context) error {
 		if transaction.ParentKey != nil {
 			strParentKey := strconv.FormatUint(*transaction.ParentKey, 10)
 			params["transaction_key"] = strParentKey
-			log.Println(params)
+			// log.Println(params)
 			_, err = models.UpdateTrTransaction(params)
 			if err != nil {
-				log.Error("Error update tr transaction parent")
+				// log.Error("Error update tr transaction parent")
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 			}
 		}
@@ -1978,8 +1977,8 @@ func UpdateNavDate(c echo.Context) error {
 		strTrBankAccKey := strconv.FormatUint(trBankAccount.TransBankaccKey, 10)
 		_, err = models.UpdateTrTransactionBankAccount(paramsTrBankAcc, strTrBankAccKey, "trans_bankacc_key")
 		if err != nil {
-			log.Error(err.Error())
-			log.Error("Error update tr transaction bank account parent")
+			// log.Error(err.Error())
+			// log.Error("Error update tr transaction bank account parent")
 		}
 
 	} else { //null -> insert
@@ -1989,13 +1988,13 @@ func UpdateNavDate(c echo.Context) error {
 		paramsTrBankAcc["rec_status"] = "1"
 		_, err = models.CreateTrTransactionBankAccount(paramsTrBankAcc)
 		if err != nil {
-			log.Error(err.Error())
-			log.Error("Error insert tr transaction bank account parent")
+			// log.Error(err.Error())
+			// log.Error("Error insert tr transaction bank account parent")
 		}
 
 	}
 
-	log.Info("Success update transaksi")
+	// log.Info("Success update transaksi")
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -2008,14 +2007,14 @@ func UpdateNavDate(c echo.Context) error {
 func TransactionApprovalCutOff(c echo.Context) error {
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
 	//list id
 	transIds := c.FormValue("trans_ids")
 	if transIds == "" {
-		log.Error("Missing required parameter: trans_ids")
+		// log.Error("Missing required parameter: trans_ids")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_ids", "Missing required parameter: trans_ids")
 	}
 
@@ -2036,15 +2035,15 @@ func TransactionApprovalCutOff(c echo.Context) error {
 	if len(transParamIds) > 0 {
 		status, err := models.GetTrTransactionIn(&transactionList, transParamIds, "transaction_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if len(transParamIds) != len(transactionList) {
-			log.Error("Missing required parameter: trans_ids")
+			// log.Error("Missing required parameter: trans_ids")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: Jumlah Data & Parameter berbeda", "Missing required parameter: Jumlah Data & Parameter berbeda")
 		}
 	} else {
-		log.Error("Missing required parameter: trans_ids")
+		// log.Error("Missing required parameter: trans_ids")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_ids", "Missing required parameter: trans_ids")
 	}
 
@@ -2057,7 +2056,7 @@ func TransactionApprovalCutOff(c echo.Context) error {
 	for _, tr := range transactionList {
 		strTransStatusKey := strconv.FormatUint(tr.TransStatusKey, 10)
 		if strTransStatusKey != strStatusCutOff {
-			log.Error("Missing required parameter: trans_ids")
+			// log.Error("Missing required parameter: trans_ids")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_ids ", "Missing required parameter: trans_ids")
 		}
 
@@ -2086,13 +2085,13 @@ func TransactionApprovalCutOff(c echo.Context) error {
 	if len(transParamIdsValid) > 0 {
 		_, err := models.UpdateTrTransactionByKeyIn(paramsUpdate, transParamIdsValid, "transaction_key")
 		if err != nil {
-			log.Error("Error update oa request")
+			// log.Error("Error update oa request")
 			return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 		}
 	}
 
 	if trBankAccNotDone > 0 {
-		log.Error("Ada Transaksi yang belum memiliki transaksi bank akun. Silakan update terlebih dahulu.")
+		// log.Error("Ada Transaksi yang belum memiliki transaksi bank akun. Silakan update terlebih dahulu.")
 		return lib.CustomError(http.StatusInternalServerError, "Ada Transaksi yang belum memiliki transaksi bank akun. Silakan update terlebih dahulu.", "Ada Transaksi yang belum memiliki transaksi bank akun. Silakan update terlebih dahulu.")
 	}
 
@@ -2175,7 +2174,7 @@ func CheckHolidayBursa(date string) string {
 func GetFormatExcelDownloadList(c echo.Context) error {
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	decimal.MarshalJSONWithoutQuotes = true
@@ -2191,13 +2190,13 @@ func GetFormatExcelDownloadList(c echo.Context) error {
 	//date
 	postnavdate := c.FormValue("nav_date")
 	if postnavdate == "" {
-		log.Error("Missing required parameter: nav_date")
+		// log.Error("Missing required parameter: nav_date")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date", "Missing required parameter: nav_date")
 	}
 
 	transactiontype := c.FormValue("transaction_type")
 	if transactiontype == "" {
-		log.Error("Missing required parameter: transaction_type")
+		// log.Error("Missing required parameter: transaction_type")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: transaction_type", "Missing required parameter: transaction_type")
 	}
 
@@ -2214,11 +2213,11 @@ func GetFormatExcelDownloadList(c echo.Context) error {
 	var trTransaction []models.TrTransaction
 	status, err = models.AdminGetAllTrTransaction(&trTransaction, 0, 0, true, params, transStatusKey, "trans_status_key", true, strconv.FormatUint(lib.Profile.UserID, 10))
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(trTransaction) < 1 {
-		log.Error("transaction not found")
+		// log.Error("transaction not found")
 		return lib.CustomError(http.StatusNotFound, "Transaction not found", "Transaction not found")
 	}
 
@@ -2242,7 +2241,7 @@ func GetFormatExcelDownloadList(c echo.Context) error {
 	if len(customerIds) > 0 {
 		status, err = models.GetMsCustomerIn(&msCustomer, customerIds, "customer_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2256,7 +2255,7 @@ func GetFormatExcelDownloadList(c echo.Context) error {
 	if len(productIds) > 0 {
 		status, err = models.GetMsProductIn(&msProduct, productIds, "product_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2277,7 +2276,7 @@ func GetFormatExcelDownloadList(c echo.Context) error {
 	if len(transTypeIds) > 0 {
 		status, err = models.GetMsTransactionTypeIn(&transactionType, transTypeIds, "trans_type_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2291,7 +2290,7 @@ func GetFormatExcelDownloadList(c echo.Context) error {
 	if len(custodianIds) > 0 {
 		status, err = models.GetMsCustodianBankIn(&custodianBank, custodianIds, "custodian_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2305,7 +2304,7 @@ func GetFormatExcelDownloadList(c echo.Context) error {
 	if len(productIds) > 0 {
 		status, err = models.GetAllTrNavBetween(&trNav, postnavdate, postnavdate, productIds)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -2379,7 +2378,7 @@ func UploadExcelConfirmation(c echo.Context) error {
 
 	err = os.MkdirAll(config.BasePath+"/transaksi_upload/confirmation/", 0755)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 	} else {
 		var file *multipart.FileHeader
 		file, err = c.FormFile("excel")
@@ -2390,7 +2389,7 @@ func UploadExcelConfirmation(c echo.Context) error {
 			}
 			// Get file extension
 			extension := filepath.Ext(file.Filename)
-			log.Println(extension)
+			// log.Println(extension)
 			roles := []string{".xlsx", ".XLSX"}
 			_, found := lib.Find(roles, extension)
 			if !found {
@@ -2400,18 +2399,18 @@ func UploadExcelConfirmation(c echo.Context) error {
 			// Generate filename
 			var filename string
 			filename = lib.RandStringBytesMaskImprSrc(20)
-			log.Println("Generate filename:", filename)
+			// log.Println("Generate filename:", filename)
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePath+"/transaksi_upload/confirmation/"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 
 			xlsx, err := excelize.OpenFile(config.BasePath + "/transaksi_upload/confirmation/" + filename + extension)
 			if err != nil {
-				log.Println(config.BasePath + "/transaksi_upload/confirmation/" + filename + extension)
-				// log.Fatal("ERROR", err.Error())
+				// log.Println(config.BasePath + "/transaksi_upload/confirmation/" + filename + extension)
+				// // log.Fatal("ERROR", err.Error())
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 
@@ -2434,8 +2433,8 @@ func UploadExcelConfirmation(c echo.Context) error {
 				keterangan := xlsx.GetCellValue(sheet1Name, fmt.Sprintf("L%d", i))
 				result := xlsx.GetCellValue(sheet1Name, fmt.Sprintf("M%d", i))
 
-				log.Println(navDate)
-				log.Println(transactionDate)
+				// log.Println(navDate)
+				// log.Println(transactionDate)
 
 				if iDTransaction == "" {
 					break
@@ -2676,7 +2675,7 @@ func UploadExcelConfirmation(c echo.Context) error {
 
 				status, err, trConfirmationID := models.CreateTrTransactionConfirmation(params)
 				if err != nil {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed input data")
 				}
 
@@ -2689,7 +2688,7 @@ func UploadExcelConfirmation(c echo.Context) error {
 				paramsTrans["transaction_key"] = iDTransaction
 				_, err = models.UpdateTrTransaction(paramsTrans)
 				if err != nil {
-					log.Error("Error update tr transaction")
+					// log.Error("Error update tr transaction")
 					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 				}
 
@@ -2728,7 +2727,7 @@ func UploadExcelConfirmation(c echo.Context) error {
 						if err == sql.ErrNoRows {
 							_, err = models.GetMsProductFeeItemLastCalculateFifo(&feeItem, strProductKey, feeTypeStr)
 							if err != nil {
-								log.Error(err.Error())
+								// log.Error(err.Error())
 								paramsFifo["trans_fee_amount"] = "0"
 								paramsFifo["trans_nett_amount"] = "0"
 							} else {
@@ -2741,7 +2740,7 @@ func UploadExcelConfirmation(c echo.Context) error {
 								paramsFifo["trans_nett_amount"] = transnett.String()
 							}
 						} else {
-							log.Error(err.Error())
+							// log.Error(err.Error())
 							paramsFifo["trans_fee_amount"] = "0"
 							paramsFifo["trans_nett_amount"] = "0"
 						}
@@ -2761,7 +2760,7 @@ func UploadExcelConfirmation(c echo.Context) error {
 					paramsFifo["rec_created_date"] = time.Now().Format(dateLayout)
 					_, err = models.CreateTrTransactionFifo(paramsFifo)
 					if err != nil {
-						log.Error("Error update tr transaction")
+						// log.Error("Error update tr transaction")
 						return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed insert data")
 					}
 				}
@@ -2830,7 +2829,7 @@ func UploadExcelConfirmation(c echo.Context) error {
 								if err == sql.ErrNoRows {
 									_, err = models.GetMsProductFeeItemLastCalculateFifo(&feeItem, strProductKey, feeTypeStr)
 									if err != nil {
-										log.Error(err.Error())
+										// log.Error(err.Error())
 										paramsFifo["trans_fee_amount"] = "0"
 										paramsFifo["trans_nett_amount"] = "0"
 									} else {
@@ -2843,7 +2842,7 @@ func UploadExcelConfirmation(c echo.Context) error {
 										paramsFifo["trans_nett_amount"] = transnett.String()
 									}
 								} else {
-									log.Error(err.Error())
+									// log.Error(err.Error())
 									paramsFifo["trans_fee_amount"] = "0"
 									paramsFifo["trans_nett_amount"] = "0"
 								}
@@ -2863,7 +2862,7 @@ func UploadExcelConfirmation(c echo.Context) error {
 							paramsFifo["rec_created_date"] = time.Now().Format(dateLayout)
 							_, err = models.CreateTrTransactionFifo(paramsFifo)
 							if err != nil {
-								log.Error("Error update tr transaction")
+								// log.Error("Error update tr transaction")
 								return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed insert data")
 							}
 						} else {
@@ -2878,7 +2877,7 @@ func UploadExcelConfirmation(c echo.Context) error {
 				responseData = append(responseData, data)
 			}
 		} else {
-			log.Error("File cann't be blank")
+			// log.Error("File cann't be blank")
 			return lib.CustomError(http.StatusNotFound, "File can not be blank", "File can not be blank")
 		}
 	}
@@ -2897,7 +2896,7 @@ func ProsesPosting(c echo.Context) error {
 
 	zero := decimal.NewFromInt(0)
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -2908,7 +2907,7 @@ func ProsesPosting(c echo.Context) error {
 
 	transactionkey := c.FormValue("transaction_key")
 	if transactionkey == "" {
-		log.Error("Missing required parameter: transaction_key")
+		// log.Error("Missing required parameter: transaction_key")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
@@ -2916,7 +2915,7 @@ func ProsesPosting(c echo.Context) error {
 	if err == nil && n > 0 {
 		params["transaction_key"] = transactionkey
 	} else {
-		log.Error("Wrong input for parameter: transaction_key")
+		// log.Error("Wrong input for parameter: transaction_key")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: transaction_key", "Wrong input for parameter: transaction_key")
 	}
 
@@ -2929,7 +2928,7 @@ func ProsesPosting(c echo.Context) error {
 	strTransStatusKey := strconv.FormatUint(transaction.TransStatusKey, 10)
 
 	if strTransStatusKey != "8" {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
@@ -2942,7 +2941,7 @@ func ProsesPosting(c echo.Context) error {
 	strTransactionKey := strconv.FormatUint(transaction.TransactionKey, 10)
 	_, err = models.GetTrTransactionConfirmationByTransactionKey(&transactionConf, strTransactionKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
@@ -2955,10 +2954,10 @@ func ProsesPosting(c echo.Context) error {
 	if err != nil {
 		if strTransTypeKey == "2" || strTransTypeKey == "3" { // REDM
 			if err != sql.ErrNoRows {
-				log.Error("Transaction have not balance")
+				// log.Error("Transaction have not balance")
 				return lib.CustomError(http.StatusBadRequest)
 			} else {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(http.StatusBadRequest)
 			}
 		}
@@ -3015,7 +3014,7 @@ func ProsesPosting(c echo.Context) error {
 
 		status, err := models.CreateTrBalance(paramsBalance)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed input data")
 		}
 	}
@@ -3089,7 +3088,7 @@ func ProsesPosting(c echo.Context) error {
 				paramsBalance["rec_created_by"] = strIDUserLogin
 				status, err := models.CreateTrBalance(paramsBalance)
 				if err != nil {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(status, err.Error(), "Failed input data")
 				}
 			} else {
@@ -3107,7 +3106,7 @@ func ProsesPosting(c echo.Context) error {
 
 	_, err = models.UpdateTrTransaction(params)
 	if err != nil {
-		log.Error("Error update tr transaction")
+		// log.Error("Error update tr transaction")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -3124,7 +3123,7 @@ func ProsesPosting(c echo.Context) error {
 				var userLogin models.ScUserLogin
 				_, err = models.GetScUserLoginByCustomerKey(&userLogin, strCustomerKey)
 				if err != nil {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(http.StatusBadRequest)
 				}
 
@@ -3180,7 +3179,7 @@ func ProsesPosting(c echo.Context) error {
 
 				status, err = models.CreateScUserMessage(paramsUserMessage)
 				if err != nil {
-					log.Error("Error create user message")
+					// log.Error("Error create user message")
 					return lib.CustomError(status, err.Error(), "failed input data user message")
 				}
 				lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
@@ -3193,7 +3192,7 @@ func ProsesPosting(c echo.Context) error {
 
 	}
 
-	log.Info("Success update transaksi")
+	// log.Info("Success update transaksi")
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -3224,7 +3223,7 @@ func sendEmailTransactionPosted(
 		_, err := models.GetMsCustomer(&customer, strCustomerKey)
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 			}
 		}
 
@@ -3233,7 +3232,7 @@ func sendEmailTransactionPosted(
 		var product models.MsProduct
 		_, err = models.GetMsProduct(&product, strProductKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 
 		var trNavData models.TrNav
@@ -3248,7 +3247,7 @@ func sendEmailTransactionPosted(
 		var currencyDB models.MsCurrency
 		_, err = models.GetMsCurrency(&currencyDB, strconv.FormatUint(*product.CurrencyKey, 10))
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 
 		date, _ := time.Parse(layout, transaction.TransDate)
@@ -3365,11 +3364,11 @@ func sendEmailTransactionPosted(
 
 			t, err := t.ParseFiles(config.BasePath + "/mail/email-subscription-posted.html")
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 			}
 
 			if err := t.Execute(&tpl, dataReplace); err != nil {
-				log.Println(err)
+				// log.Println(err)
 			}
 		}
 
@@ -3379,11 +3378,11 @@ func sendEmailTransactionPosted(
 
 			t, err := t.ParseFiles(config.BasePath + "/mail/email-redemption-posted.html")
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 			}
 
 			if err := t.Execute(&tpl, dataReplace); err != nil {
-				log.Println(err)
+				// log.Println(err)
 			}
 
 		}
@@ -3394,11 +3393,11 @@ func sendEmailTransactionPosted(
 
 			t, err := t.ParseFiles(config.BasePath + "/mail/email-switching-posted.html")
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 			}
 
 			if err := t.Execute(&tpl, dataReplace); err != nil {
-				log.Println(err)
+				// log.Println(err)
 			}
 
 		}
@@ -3414,10 +3413,10 @@ func sendEmailTransactionPosted(
 
 		err = lib.SendEmail(mailer)
 		if err != nil {
-			log.Info("Email sent error")
-			log.Error(err)
+			// log.Info("Email sent error")
+			// log.Error(err)
 		} else {
-			log.Info("Email sent")
+			// log.Info("Email sent")
 		}
 		// dialer := gomail.NewDialer(
 		// 	config.EmailSMTPHost,
@@ -3429,10 +3428,10 @@ func sendEmailTransactionPosted(
 
 		// err = dialer.DialAndSend(mailer)
 		// if err != nil {
-		// 	log.Info("Email sent error")
-		// 	log.Error(err)
+		// 	// log.Info("Email sent error")
+		// 	// log.Error(err)
 		// } else {
-		// 	log.Info("Email sent")
+		// 	// log.Info("Email sent")
 		// }
 	}
 }
@@ -3460,7 +3459,7 @@ func GetCustomerBankAccount(c echo.Context) error {
 	status, err = models.GetAllMsCustomerBankAccountTransaction(&customerBankAccountInfo, strCusKey)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -3506,7 +3505,7 @@ func GetProductBankAccount(c echo.Context) error {
 	status, err = models.GetAllMsProductBankAccountTransaction(&bankAccountTransactionInfo, strProductKey, lookupTransType)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -3523,7 +3522,7 @@ func GetProductBankAccount(c echo.Context) error {
 func ProsesUnposting(c echo.Context) error {
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -3534,7 +3533,7 @@ func ProsesUnposting(c echo.Context) error {
 
 	transactionkey := c.FormValue("transaction_key")
 	if transactionkey == "" {
-		log.Error("Missing required parameter: transaction_key")
+		// log.Error("Missing required parameter: transaction_key")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
@@ -3542,21 +3541,21 @@ func ProsesUnposting(c echo.Context) error {
 	if err == nil && n > 0 {
 		params["transaction_key"] = transactionkey
 	} else {
-		log.Error("Wrong input for parameter: transaction_key")
+		// log.Error("Wrong input for parameter: transaction_key")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: transaction_key", "Wrong input for parameter: transaction_key")
 	}
 
 	var transaction models.TrTransaction
 	status, err = models.GetTrTransaction(&transaction, transactionkey)
 	if err != nil {
-		log.Error("Transaction not exist")
+		// log.Error("Transaction not exist")
 		return lib.CustomError(status)
 	}
 
 	strTransStatusKey := strconv.FormatUint(transaction.TransStatusKey, 10)
 
 	if strTransStatusKey != "9" {
-		log.Error("User Autorizer, status transaksi not posted")
+		// log.Error("User Autorizer, status transaksi not posted")
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
@@ -3566,7 +3565,7 @@ func ProsesUnposting(c echo.Context) error {
 	var transAfter models.TrTransaction
 	status, err = models.CheckTrTransactionLastProductCustomer(&transAfter, strCustomer, strPro, transactionkey)
 	if err == nil {
-		log.Error("Transaksi tidak dapat di Un-posting karena bukan data terakhir dari customer dan produk yang sama.")
+		// log.Error("Transaksi tidak dapat di Un-posting karena bukan data terakhir dari customer dan produk yang sama.")
 		return lib.CustomError(http.StatusBadRequest, "Transaksi tidak dapat di Un-posting karena bukan data terakhir dari customer dan produk yang sama.", "Transaksi tidak dapat di Un-posting karena bukan data terakhir dari customer dan produk yang sama.")
 	}
 
@@ -3579,7 +3578,7 @@ func ProsesUnposting(c echo.Context) error {
 	strTransactionKey := strconv.FormatUint(transaction.TransactionKey, 10)
 	_, err = models.GetTrTransactionConfirmationByTransactionKey(&transactionConf, strTransactionKey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest)
 	}
 
@@ -3590,7 +3589,7 @@ func ProsesUnposting(c echo.Context) error {
 
 	_, err = models.UpdateTrTransaction(params)
 	if err != nil {
-		log.Error("Error update tr transaction")
+		// log.Error("Error update tr transaction")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -3604,7 +3603,7 @@ func ProsesUnposting(c echo.Context) error {
 
 	_, err = models.UpdateTrTransactionConfirmation(paramsConf)
 	if err != nil {
-		log.Error("Error delete tr transaction condirmation")
+		// log.Error("Error delete tr transaction condirmation")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Error delete tr transaction condirmation")
 	}
 
@@ -3623,7 +3622,7 @@ func ProsesUnposting(c echo.Context) error {
 
 	_, err = models.UpdateTrTransactionFifo(paramsFifo, strTcKey, field)
 	if err != nil {
-		log.Error("Error delete tr transaction fifo")
+		// log.Error("Error delete tr transaction fifo")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Error delete tr transaction fifo")
 	}
 
@@ -3642,7 +3641,7 @@ func ProsesUnposting(c echo.Context) error {
 
 	_, err = models.UpdateTrBalance(paramsFifo, strTcKey, fieldBalance)
 	if err != nil {
-		log.Error("Error delete tr balance")
+		// log.Error("Error delete tr balance")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Error delete tr balance")
 	}
 
@@ -3669,7 +3668,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -3685,7 +3684,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -3701,7 +3700,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -3728,7 +3727,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -3742,7 +3741,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 		if err == nil && productKeyCek > 0 {
 			params["product_key"] = productKey
 		} else {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 		}
 	}
@@ -3753,7 +3752,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 		if err == nil && transstatuskeyCek > 0 {
 			params["trans_status_key"] = transstatuskey
 		} else {
-			log.Error("Wrong input for parameter: trans_status_key")
+			// log.Error("Wrong input for parameter: trans_status_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_status_key", "Missing required parameter: trans_status_key")
 		}
 	}
@@ -3764,7 +3763,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 		if err == nil && transtypekeyCek > 0 {
 			params["trans_type_key"] = transtypekey
 		} else {
-			log.Error("Wrong input for parameter: trans_type_key")
+			// log.Error("Wrong input for parameter: trans_type_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_type_key", "Missing required parameter: trans_type_key")
 		}
 	}
@@ -3780,7 +3779,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 	}
 
 	if lib.Profile.UserCategoryKey == 3 { //user branch
-		log.Println(lib.Profile)
+		// log.Println(lib.Profile)
 		if lib.Profile.BranchKey != nil {
 			params["branch_key"] = strconv.FormatUint(*lib.Profile.BranchKey, 10)
 		}
@@ -3793,11 +3792,11 @@ func DataTransaksiInquiry(c echo.Context) error {
 	status, err = models.AdminGetAllTrTransaction(&trTransaction, limit, offset, noLimit, params, transStatusKey, "trans_status_key", isAll, strconv.FormatUint(lib.Profile.UserID, 10))
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(trTransaction) < 1 {
-		log.Error("transaction not found")
+		// log.Error("transaction not found")
 		return lib.CustomError(http.StatusNotFound, "Transaction not found", "Transaction not found")
 	}
 
@@ -3849,7 +3848,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 		status, err = models.GetGenLookupIn(&lookupOaReq, lookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -3865,7 +3864,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 	if len(branchIds) > 0 {
 		status, err = models.GetMsBranchIn(&msBranch, branchIds, "branch_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -3879,7 +3878,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 	if len(agentIds) > 0 {
 		status, err = models.GetMsAgentIn(&msAgent, agentIds, "agent_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -3893,7 +3892,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 	if len(customerIds) > 0 {
 		status, err = models.GetMsCustomerIn(&msCustomer, customerIds, "customer_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -3907,7 +3906,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 	if len(customerIds) > 0 {
 		status, err = models.GetScUserLoginIn(&userLogin, customerIds, "customer_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -3922,7 +3921,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 		status, err = models.GetMsProductIn(&msProduct, productIds, "product_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -3938,7 +3937,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 		status, err = models.GetMsTransactionTypeIn(&transactionType, transTypeIds, "trans_type_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -3954,7 +3953,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 		status, err = models.GetMsTransactionStatusIn(&trTransactionStatus, transStatusIds, "trans_status_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -3970,7 +3969,7 @@ func DataTransaksiInquiry(c echo.Context) error {
 		status, err = models.GetTrTransactionConfirmationIn(&transConf, transactionIds, "transaction_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get TC data")
 			}
 		}
@@ -4058,14 +4057,14 @@ func DataTransaksiInquiry(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.AdminGetCountTrTransaction(&countData, params, transStatusKey, "trans_status_key", strconv.FormatUint(lib.Profile.UserID, 10))
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
 			pagination = 1
 		} else {
-			log.Println("JUMLAH DATANYA => ", countData.CountData)
-			log.Println("LIMIT => ", limit)
+			// log.Println("JUMLAH DATANYA => ", countData.CountData)
+			// log.Println("LIMIT => ", limit)
 			calc := math.Ceil(float64(countData.CountData) / float64(limit))
 			pagination = int(calc)
 		}
@@ -4164,7 +4163,7 @@ func DetailTransaksiInquiry(c echo.Context) error {
 	if len(pChannelIds) > 0 {
 		status, err = models.GetMsPaymentChannelIn(&pChannel, pChannelIds, "pchannel_key")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		}
 	}
 	channelData := make(map[uint64]models.MsPaymentChannel)
@@ -4178,7 +4177,7 @@ func DetailTransaksiInquiry(c echo.Context) error {
 		status, err = models.GetGenLookupIn(&lookupOaReq, lookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -4574,9 +4573,9 @@ func DetailTransaksiInquiry(c echo.Context) error {
 	paramsFile["rec_status"] = "1"
 	var filez []models.MsFile
 	_, err = models.GetAllMsFile(&filez, 100, 100, paramsFile, true)
-	// log.Println("========== jumlah record ==========", len(filez))
+	// // log.Println("========== jumlah record ==========", len(filez))
 	if len(filez) > 0 {
-		log.Println("========== sudah upload bukti trf ==========")
+		// log.Println("========== sudah upload bukti trf ==========")
 		for _, fl := range filez {
 			aa := config.ImageUrl + *fl.FilePath
 			responseData.UrlUpload = append(responseData.UrlUpload, &aa)
@@ -4602,13 +4601,13 @@ func ProsesPostingAll(c echo.Context) error {
 
 	transTypeKey := c.FormValue("trans_type_key")
 	if transTypeKey == "" {
-		log.Error("Missing required parameter: trans_type_key")
+		// log.Error("Missing required parameter: trans_type_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_type_key", "Missing required parameter: trans_type_key")
 	}
 
 	navDate := c.FormValue("nav_date")
 	if navDate == "" {
-		log.Error("Missing required parameter: nav_date")
+		// log.Error("Missing required parameter: nav_date")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date", "Missing required parameter: nav_date")
 	}
 	paramsSearch["nav_date"] = navDate
@@ -4625,11 +4624,11 @@ func ProsesPostingAll(c echo.Context) error {
 		transTypeIds = append(transTypeIds, "4")
 		status, err = models.AdminGetAllTrTransactionPosting(&trTransaction, paramsSearch, transTypeIds, "trans_type_key", true)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if len(trTransaction) < 1 {
-			log.Error("transaction switching not found")
+			// log.Error("transaction switching not found")
 			return lib.CustomError(http.StatusNotFound, "Transaction not found", "Transaction not found")
 		}
 	} else {
@@ -4638,11 +4637,11 @@ func ProsesPostingAll(c echo.Context) error {
 		transTypeIds = append(transTypeIds, transTypeKey)
 		status, err = models.AdminGetAllTrTransactionPosting(&trTransaction, paramsSearch, transTypeIds, "trans_type_key", false)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if len(trTransaction) < 1 {
-			log.Error("transaction sub/redm not found")
+			// log.Error("transaction sub/redm not found")
 			return lib.CustomError(http.StatusNotFound, "Transaction not found", "Transaction not found")
 		}
 	}
@@ -4657,7 +4656,7 @@ func ProsesPostingAll(c echo.Context) error {
 		strTransactionKey := strconv.FormatUint(transaction.TransactionKey, 10)
 		_, err = models.GetTrTransactionConfirmationByTransactionKey(&transactionConf, strTransactionKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(http.StatusBadRequest)
 		}
 
@@ -4669,10 +4668,10 @@ func ProsesPostingAll(c echo.Context) error {
 			_, err = models.GetLastBalanceCustomerByProductKey(&trBalanceCustomer, strCustomerKey, strProductKey)
 			if err != nil {
 				if err != sql.ErrNoRows {
-					log.Error("Transaction have not balance")
+					// log.Error("Transaction have not balance")
 					return lib.CustomError(http.StatusBadRequest)
 				} else {
-					log.Error(err.Error())
+					// log.Error(err.Error())
 					return lib.CustomError(http.StatusBadRequest)
 				}
 			}
@@ -4729,7 +4728,7 @@ func ProsesPostingAll(c echo.Context) error {
 
 			status, err := models.CreateTrBalance(paramsBalance)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed input data")
 			}
 		}
@@ -4803,7 +4802,7 @@ func ProsesPostingAll(c echo.Context) error {
 					paramsBalance["rec_created_by"] = strIDUserLogin
 					status, err := models.CreateTrBalance(paramsBalance)
 					if err != nil {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 						return lib.CustomError(status, err.Error(), "Failed input data")
 					}
 				} else {
@@ -4823,7 +4822,7 @@ func ProsesPostingAll(c echo.Context) error {
 
 		_, err = models.UpdateTrTransaction(params)
 		if err != nil {
-			log.Error("Error update tr transaction")
+			// log.Error("Error update tr transaction")
 			return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 		}
 
@@ -4840,7 +4839,7 @@ func ProsesPostingAll(c echo.Context) error {
 					var userLogin models.ScUserLogin
 					_, err = models.GetScUserLoginByCustomerKey(&userLogin, strCustomerKey)
 					if err != nil {
-						log.Error(err.Error())
+						// log.Error(err.Error())
 						return lib.CustomError(http.StatusBadRequest)
 					}
 
@@ -4896,7 +4895,7 @@ func ProsesPostingAll(c echo.Context) error {
 
 					status, err = models.CreateScUserMessage(paramsUserMessage)
 					if err != nil {
-						log.Error("Error create user message")
+						// log.Error("Error create user message")
 						return lib.CustomError(status, err.Error(), "failed input data user message")
 					}
 					lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
@@ -4908,7 +4907,7 @@ func ProsesPostingAll(c echo.Context) error {
 			}
 		}
 
-		log.Info("Success update transaksi")
+		// log.Info("Success update transaksi")
 	}
 
 	var response lib.Response
@@ -4922,12 +4921,12 @@ func ProsesPostingAll(c echo.Context) error {
 func TestSentEmail(c echo.Context) error {
 	trKey := c.FormValue("tr_key")
 	if trKey == "" {
-		log.Error("Missing required parameter: tr_key")
+		// log.Error("Missing required parameter: tr_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: tr_key", "Missing required parameter: tr_key")
 	}
 	role := c.FormValue("role")
 	if role == "" {
-		log.Error("Missing required parameter: role")
+		// log.Error("Missing required parameter: role")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: role", "Missing required parameter: role")
 	}
 
@@ -4948,7 +4947,7 @@ func SentEmailTransactionToBackOffice(transactionKey string, roleKey string) {
 	var transaction models.DetailTransactionDataSentEmail
 	_, err = models.AdminDetailTransactionDataSentEmail(&transaction, transactionKey)
 	if err != nil {
-		log.Error("Failed get transaction: " + err.Error())
+		// log.Error("Failed get transaction: " + err.Error())
 		return
 	}
 	var mailTemp, subject string
@@ -4984,7 +4983,7 @@ func SentEmailTransactionToBackOffice(transactionKey string, roleKey string) {
 		mailParam["MetodePembayaran"] = *transaction.PaymentMethodName
 		mailParam["RekeningBankKustodian"] = *transaction.RekBankCustodian
 		if *transaction.PaymentMethod == uint64(284) { //manual
-			log.Println("MANUAL TRANSFER")
+			// log.Println("MANUAL TRANSFER")
 			mailTemp = "email-new-subs-to-cs-kyc-fundadmin.html"
 			var trDef models.TrTransaction
 			_, err := models.GetTrTransaction(&trDef, transactionKey)
@@ -5004,7 +5003,7 @@ func SentEmailTransactionToBackOffice(transactionKey string, roleKey string) {
 				}
 			}
 		} else {
-			log.Println("NON MANUAL TRANSFER")
+			// log.Println("NON MANUAL TRANSFER")
 			mailTemp = "email-new-subs-to-cs-kyc-fundadmin-non-manual-transfer.html"
 			mailParam["BuktiTransfer"] = "-"
 		}
@@ -5033,24 +5032,24 @@ func SentEmailTransactionToBackOffice(transactionKey string, roleKey string) {
 	var userLogin []models.ScUserLogin
 	_, err = models.GetAllScUserLogin(&userLogin, 0, 0, paramsScLogin, true)
 	if err != nil {
-		log.Println("Email BO kosong")
-		log.Error("User BO tidak ditemukan")
-		log.Error(err)
+		// log.Println("Email BO kosong")
+		// log.Error("User BO tidak ditemukan")
+		// log.Error(err)
 	} else {
-		log.Println("Data User BO tersedia")
-		log.Println(len(userLogin))
+		// log.Println("Data User BO tersedia")
+		// log.Println(len(userLogin))
 		t := template.New(mailTemp)
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 		if err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 		} else {
 			for _, scLogin := range userLogin {
 				strUserCat := strconv.FormatUint(scLogin.UserCategoryKey, 10)
 				if (strUserCat == "2") || (strUserCat == "3") {
 					var tpl bytes.Buffer
 					if err := t.Execute(&tpl, mailParam); err != nil {
-						log.Error("Failed send mail: " + err.Error())
+						// log.Error("Failed send mail: " + err.Error())
 					} else {
 						result := tpl.String()
 
@@ -5062,10 +5061,10 @@ func SentEmailTransactionToBackOffice(transactionKey string, roleKey string) {
 
 						err = lib.SendEmail(mailer)
 						if err != nil {
-							log.Error("Failed send mail to: " + scLogin.UloginEmail)
-							log.Error("Failed send mail: " + err.Error())
+							// log.Error("Failed send mail to: " + scLogin.UloginEmail)
+							// log.Error("Failed send mail: " + err.Error())
 						} else {
-							log.Println("Sukses email BO : " + scLogin.UloginEmail)
+							// log.Println("Sukses email BO : " + scLogin.UloginEmail)
 						}
 
 						// dialer := gomail.NewDialer(
@@ -5078,10 +5077,10 @@ func SentEmailTransactionToBackOffice(transactionKey string, roleKey string) {
 
 						// err = dialer.DialAndSend(mailer)
 						// if err != nil {
-						// 	log.Error("Failed send mail to: " + scLogin.UloginEmail)
-						// 	log.Error("Failed send mail: " + err.Error())
+						// 	// log.Error("Failed send mail to: " + scLogin.UloginEmail)
+						// 	// log.Error("Failed send mail: " + err.Error())
 						// } else {
-						// 	log.Println("Sukses email BO : " + scLogin.UloginEmail)
+						// 	// log.Println("Sukses email BO : " + scLogin.UloginEmail)
 						// }
 					}
 				}
@@ -5095,7 +5094,7 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 	var transaction models.DetailTransactionDataSentEmail
 	_, err = models.AdminDetailTransactionDataSentEmail(&transaction, transactionKey)
 	if err != nil {
-		log.Error("Failed get transaction: " + err.Error())
+		// log.Error("Failed get transaction: " + err.Error())
 		return
 	}
 	var mailTemp, subject string
@@ -5131,7 +5130,7 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 		mailParam["MetodePembayaran"] = *transaction.PaymentMethodName
 		mailParam["RekeningBankKustodian"] = *transaction.RekBankCustodian
 		if *transaction.PaymentMethod == uint64(284) { //manual
-			log.Println("MANUAL TRANSFER")
+			// log.Println("MANUAL TRANSFER")
 			mailTemp = "email-new-subs-to-cs-kyc-fundadmin.html"
 			var trDef models.TrTransaction
 			_, err := models.GetTrTransaction(&trDef, transactionKey)
@@ -5151,7 +5150,7 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 				}
 			}
 		} else {
-			log.Println("NON MANUAL TRANSFER")
+			// log.Println("NON MANUAL TRANSFER")
 			mailTemp = "email-new-subs-to-cs-kyc-fundadmin-non-manual-transfer.html"
 			mailParam["BuktiTransfer"] = "-"
 		}
@@ -5180,24 +5179,24 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 	var userLogin []models.ScUserLogin
 	_, err = models.GetAllScUserLogin(&userLogin, 0, 0, paramsScLogin, true)
 	if err != nil {
-		log.Println("Email BO kosong")
-		log.Error("User BO tidak ditemukan")
-		log.Error(err)
+		// log.Println("Email BO kosong")
+		// log.Error("User BO tidak ditemukan")
+		// log.Error(err)
 	} else {
-		log.Println("Data User BO tersedia")
-		log.Println(len(userLogin))
+		// log.Println("Data User BO tersedia")
+		// log.Println(len(userLogin))
 		t := template.New(mailTemp)
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 		if err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 		} else {
 			for _, scLogin := range userLogin {
 				strUserCat := strconv.FormatUint(scLogin.UserCategoryKey, 10)
 				if (strUserCat == "2") || (strUserCat == "3") {
 					var tpl bytes.Buffer
 					if err := t.Execute(&tpl, mailParam); err != nil {
-						log.Error("Failed send mail: " + err.Error())
+						// log.Error("Failed send mail: " + err.Error())
 					} else {
 						result := tpl.String()
 
@@ -5209,10 +5208,10 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 
 						err = lib.SendEmail(mailer)
 						if err != nil {
-							log.Error("Failed send mail to: " + scLogin.UloginEmail)
-							log.Error("Failed send mail: " + err.Error())
+							// log.Error("Failed send mail to: " + scLogin.UloginEmail)
+							// log.Error("Failed send mail: " + err.Error())
 						} else {
-							log.Println("Sukses email BO : " + scLogin.UloginEmail)
+							// log.Println("Sukses email BO : " + scLogin.UloginEmail)
 						}
 
 						// dialer := gomail.NewDialer(
@@ -5225,10 +5224,10 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 
 						// err = dialer.DialAndSend(mailer)
 						// if err != nil {
-						// 	log.Error("Failed send mail to: " + scLogin.UloginEmail)
-						// 	log.Error("Failed send mail: " + err.Error())
+						// 	// log.Error("Failed send mail to: " + scLogin.UloginEmail)
+						// 	// log.Error("Failed send mail: " + err.Error())
 						// } else {
-						// 	log.Println("Sukses email BO : " + scLogin.UloginEmail)
+						// 	// log.Println("Sukses email BO : " + scLogin.UloginEmail)
 						// }
 					}
 				}
@@ -5242,10 +5241,10 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 		if transaction.TransTypeKey == uint64(1) { // subs
 			subject = "[MotionFunds] Mohon Verifikasi Transaksi Subscription"
 			if *transaction.PaymentMethod == uint64(284) { //manual
-				log.Println("MANUAL TRANSFER")
+				// log.Println("MANUAL TRANSFER")
 				mailTempSales = "email-new-subs-to-sales.html"
 			} else {
-				log.Println("NON MANUAL TRANSFER")
+				// log.Println("NON MANUAL TRANSFER")
 				mailTempSales = "email-new-subs-to-sales-non-manual-transfer.html"
 			}
 		} else if transaction.TransTypeKey == uint64(2) { // redm
@@ -5260,12 +5259,12 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTempSales)
 		if err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 			return
 		}
 		var tpl bytes.Buffer
 		if err := t.Execute(&tpl, mailParam); err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 			return
 		}
 		result := tpl.String()
@@ -5278,10 +5277,10 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 
 		err = lib.SendEmail(mailer)
 		if err != nil {
-			log.Error("Failed send mail to sales: " + *transaction.SalesEmail)
-			log.Error("Failed send mail to sales: " + err.Error())
+			// log.Error("Failed send mail to sales: " + *transaction.SalesEmail)
+			// log.Error("Failed send mail to sales: " + err.Error())
 		} else {
-			log.Println("Sukses email Sales : " + *transaction.SalesEmail)
+			// log.Println("Sukses email Sales : " + *transaction.SalesEmail)
 		}
 
 		// dialer := gomail.NewDialer(
@@ -5294,13 +5293,13 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 
 		// err = dialer.DialAndSend(mailer)
 		// if err != nil {
-		// 	log.Error("Failed send mail to sales: " + *transaction.SalesEmail)
-		// 	log.Error("Failed send mail to sales: " + err.Error())
+		// 	// log.Error("Failed send mail to sales: " + *transaction.SalesEmail)
+		// 	// log.Error("Failed send mail to sales: " + err.Error())
 		// } else {
-		// 	log.Println("Sukses email Sales : " + *transaction.SalesEmail)
+		// 	// log.Println("Sukses email Sales : " + *transaction.SalesEmail)
 		// }
 	} else {
-		log.Println("Data Sales tidak ada email")
+		// log.Println("Data Sales tidak ada email")
 	}
 }
 
@@ -5309,7 +5308,7 @@ func SentEmailTransactionRejectToSales(transactionKey string, notes string) {
 	var transaction models.DetailTransactionDataSentEmail
 	_, err = models.AdminDetailTransactionDataSentEmail(&transaction, transactionKey)
 	if err != nil {
-		log.Error("Failed get transaction: " + err.Error())
+		// log.Error("Failed get transaction: " + err.Error())
 		return
 	}
 	if transaction.SalesEmail != nil {
@@ -5339,7 +5338,7 @@ func SentEmailTransactionRejectToSales(transactionKey string, notes string) {
 			mailParam["MetodePembayaran"] = *transaction.PaymentMethodName
 			mailParam["RekeningBankKustodian"] = *transaction.RekBankCustodian
 			if *transaction.PaymentMethod == uint64(284) { //manual
-				log.Println("MANUAL TRANSFER")
+				// log.Println("MANUAL TRANSFER")
 				mailTemp = "email-subs-rejected-to-sales.html"
 
 				var trDef models.TrTransaction
@@ -5360,7 +5359,7 @@ func SentEmailTransactionRejectToSales(transactionKey string, notes string) {
 					}
 				}
 			} else {
-				log.Println("NON MANUAL TRANSFER")
+				// log.Println("NON MANUAL TRANSFER")
 				mailTemp = "email-subs-rejected-to-sales-non-manual-transfer.html"
 				mailParam["BuktiTransfer"] = "-"
 			}
@@ -5389,12 +5388,12 @@ func SentEmailTransactionRejectToSales(transactionKey string, notes string) {
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 		if err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 			return
 		}
 		var tpl bytes.Buffer
 		if err := t.Execute(&tpl, mailParam); err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 			return
 		}
 		result := tpl.String()
@@ -5407,10 +5406,10 @@ func SentEmailTransactionRejectToSales(transactionKey string, notes string) {
 
 		err = lib.SendEmail(mailer)
 		if err != nil {
-			log.Error("Failed send mail to sales: " + *transaction.SalesEmail)
-			log.Error("Failed send mail to sales: " + err.Error())
+			// log.Error("Failed send mail to sales: " + *transaction.SalesEmail)
+			// log.Error("Failed send mail to sales: " + err.Error())
 		} else {
-			log.Println("Sukses email Sales : " + *transaction.SalesEmail)
+			// log.Println("Sukses email Sales : " + *transaction.SalesEmail)
 		}
 
 		// dialer := gomail.NewDialer(
@@ -5423,13 +5422,13 @@ func SentEmailTransactionRejectToSales(transactionKey string, notes string) {
 
 		// err = dialer.DialAndSend(mailer)
 		// if err != nil {
-		// 	log.Error("Failed send mail to sales: " + *transaction.SalesEmail)
-		// 	log.Error("Failed send mail to sales: " + err.Error())
+		// 	// log.Error("Failed send mail to sales: " + *transaction.SalesEmail)
+		// 	// log.Error("Failed send mail to sales: " + err.Error())
 		// } else {
-		// 	log.Println("Sukses email Sales : " + *transaction.SalesEmail)
+		// 	// log.Println("Sukses email Sales : " + *transaction.SalesEmail)
 		// }
 	} else {
-		log.Println("Data Sales tidak ada email")
+		// log.Println("Data Sales tidak ada email")
 	}
 }
 
@@ -5438,7 +5437,7 @@ func SentEmailTransactionToBackOfficeWithDb(transactionKey string, roleKey strin
 	var transaction models.DetailTransactionDataSentEmail
 	_, err = models.AdminDetailTransactionDataSentEmail(&transaction, transactionKey)
 	if err != nil {
-		log.Error("Failed get transaction: " + err.Error())
+		// log.Error("Failed get transaction: " + err.Error())
 		return
 	}
 	var mailTemp, subject string
@@ -5474,7 +5473,7 @@ func SentEmailTransactionToBackOfficeWithDb(transactionKey string, roleKey strin
 		mailParam["MetodePembayaran"] = *transaction.PaymentMethodName
 		mailParam["RekeningBankKustodian"] = *transaction.RekBankCustodian
 		if *transaction.PaymentMethod == uint64(284) { //manual
-			log.Println("MANUAL TRANSFER")
+			// log.Println("MANUAL TRANSFER")
 			mailTemp = "NEW-SUBS-TO-BACKOFFICE-MANUAL-TRANSFER"
 
 			var trDef models.TrTransaction
@@ -5495,7 +5494,7 @@ func SentEmailTransactionToBackOfficeWithDb(transactionKey string, roleKey strin
 				}
 			}
 		} else {
-			log.Println("NON MANUAL TRANSFER")
+			// log.Println("NON MANUAL TRANSFER")
 			mailTemp = "NEW-SUBS-TO-BACKOFFICE-NON-MANUAL-TRANSFER"
 			mailParam["BuktiTransfer"] = "-"
 		}
@@ -5519,8 +5518,8 @@ func SentEmailTransactionToBackOfficeWithDb(transactionKey string, roleKey strin
 	var mail models.MmMailMaster
 	_, err = models.GetMmMailMaster(&mail, "mail_template_name", mailTemp)
 	if err != nil {
-		log.Error("Mail Template Name : " + mailTemp)
-		log.Error("Mail Template Name tidak di temukan: " + err.Error())
+		// log.Error("Mail Template Name : " + mailTemp)
+		// log.Error("Mail Template Name tidak di temukan: " + err.Error())
 		return
 	} else {
 		subject = *mail.MailSubject
@@ -5531,29 +5530,29 @@ func SentEmailTransactionToBackOfficeWithDb(transactionKey string, roleKey strin
 		var userLogin []models.ScUserLogin
 		_, err = models.GetAllScUserLogin(&userLogin, 0, 0, paramsScLogin, true)
 		if err != nil {
-			log.Println("Email BO kosong")
-			log.Error("User BO tidak ditemukan")
-			log.Error(err)
+			// log.Println("Email BO kosong")
+			// log.Error("User BO tidak ditemukan")
+			// log.Error(err)
 		} else {
-			log.Println("Data User BO tersedia")
-			log.Println(len(userLogin))
+			// log.Println("Data User BO tersedia")
+			// log.Println(len(userLogin))
 			t := template.New(mailTemp)
 
 			t, err = t.Parse(*mail.MailBody)
 			if err != nil {
-				log.Error("Failed send mail: " + err.Error())
+				// log.Error("Failed send mail: " + err.Error())
 			} else {
 				for _, scLogin := range userLogin {
 					strUserCat := strconv.FormatUint(scLogin.UserCategoryKey, 10)
 					if (strUserCat == "2") || (strUserCat == "3") {
 						var tpl bytes.Buffer
 						if err := t.Execute(&tpl, mailParam); err != nil {
-							log.Error("Failed send mail: " + err.Error())
+							// log.Error("Failed send mail: " + err.Error())
 						} else {
 							result := tpl.String()
 							result = strings.ReplaceAll(result, "\r\n", "")
 							result = strings.ReplaceAll(result, "\"", "")
-							log.Println(result)
+							// log.Println(result)
 
 							mailer := gomail.NewMessage()
 							mailer.SetHeader("From", config.EmailFrom)
@@ -5564,11 +5563,11 @@ func SentEmailTransactionToBackOfficeWithDb(transactionKey string, roleKey strin
 							paramsLog := make(map[string]string)
 							err = lib.SendEmail(mailer)
 							if err != nil {
-								log.Error("Failed send mail to: " + scLogin.UloginEmail)
-								log.Error("Failed send mail: " + err.Error())
+								// log.Error("Failed send mail to: " + scLogin.UloginEmail)
+								// log.Error("Failed send mail: " + err.Error())
 								paramsLog["job_error_log"] = err.Error()
 							} else {
-								log.Println("Sukses email BO : " + scLogin.UloginEmail)
+								// log.Println("Sukses email BO : " + scLogin.UloginEmail)
 							}
 
 							// dialer := gomail.NewDialer(
@@ -5581,11 +5580,11 @@ func SentEmailTransactionToBackOfficeWithDb(transactionKey string, roleKey strin
 
 							// err = dialer.DialAndSend(mailer)
 							// if err != nil {
-							// 	log.Error("Failed send mail to: " + scLogin.UloginEmail)
-							// 	log.Error("Failed send mail: " + err.Error())
+							// 	// log.Error("Failed send mail to: " + scLogin.UloginEmail)
+							// 	// log.Error("Failed send mail: " + err.Error())
 							// 	paramsLog["job_error_log"] = err.Error()
 							// } else {
-							// 	log.Println("Sukses email BO : " + scLogin.UloginEmail)
+							// 	// log.Println("Sukses email BO : " + scLogin.UloginEmail)
 							// }
 
 							//save to mail log
@@ -5630,10 +5629,10 @@ func SentEmailTransactionToBackOfficeWithDb(transactionKey string, roleKey strin
 							paramsLog["rec_status"] = "1"
 							_, err, _ := models.CreateMmMailSentLog(paramsLog)
 							if err != nil {
-								log.Error(err.Error())
-								log.Error("Error create log email")
+								// log.Error(err.Error())
+								// log.Error("Error create log email")
 							} else {
-								log.Println("Success create log email")
+								// log.Println("Success create log email")
 							}
 						}
 					}
@@ -5653,7 +5652,7 @@ func SentEmailTransactionInstitutionRejectBackOfficeToUserCcSales(
 	var transaction models.DetailTransactionDataSentEmail
 	_, err = models.AdminDetailTransactionDataSentEmail(&transaction, transactionKey)
 	if err != nil {
-		log.Error("Failed get transaction: " + err.Error())
+		// log.Error("Failed get transaction: " + err.Error())
 		return
 	}
 	var mailTemp, subject string
@@ -5711,16 +5710,16 @@ func SentEmailTransactionInstitutionRejectBackOfficeToUserCcSales(
 	var userTujuan []models.ScUserLogin
 	_, err = models.GetAllScUserLogin(&userTujuan, 0, 0, paramsScLoginNext, true)
 	if err == nil {
-		log.Println("Data User BO tersedia")
+		// log.Println("Data User BO tersedia")
 		t := template.New(mailTemp)
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 		if err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 		} else {
 			var tpl bytes.Buffer
 			if err := t.Execute(&tpl, mailParam); err != nil {
-				log.Error("Failed send mail: " + err.Error())
+				// log.Error("Failed send mail: " + err.Error())
 			} else {
 				result := tpl.String()
 
@@ -5751,10 +5750,10 @@ func SentEmailTransactionInstitutionRejectBackOfficeToUserCcSales(
 
 				err = dialer.DialAndSend(mailer)
 				if err != nil {
-					log.Error("Failed send mail to user institution")
-					log.Error("Failed send mail: " + err.Error())
+					// log.Error("Failed send mail to user institution")
+					// log.Error("Failed send mail: " + err.Error())
 				} else {
-					log.Println("Sukses email internal intitution : customer_key = " + customerKey)
+					// log.Println("Sukses email internal intitution : customer_key = " + customerKey)
 				}
 			}
 		}
@@ -5770,7 +5769,7 @@ func SentEmailTransactionInstitutionPostingBackOfficeToUserCcSales(
 	var transaction models.DetailTransactionDataSentEmail
 	_, err = models.AdminDetailTransactionDataSentEmail(&transaction, transactionKey)
 	if err != nil {
-		log.Error("Failed get transaction: " + err.Error())
+		// log.Error("Failed get transaction: " + err.Error())
 		return
 	}
 	var mailTemp, subject string
@@ -5834,16 +5833,16 @@ func SentEmailTransactionInstitutionPostingBackOfficeToUserCcSales(
 	var userTujuan []models.ScUserLogin
 	_, err = models.GetAllScUserLogin(&userTujuan, 0, 0, paramsScLoginNext, true)
 	if err == nil {
-		log.Println("Data User BO tersedia")
+		// log.Println("Data User BO tersedia")
 		t := template.New(mailTemp)
 
 		t, err = t.ParseFiles(config.BasePath + "/mail/" + mailTemp)
 		if err != nil {
-			log.Error("Failed send mail: " + err.Error())
+			// log.Error("Failed send mail: " + err.Error())
 		} else {
 			var tpl bytes.Buffer
 			if err := t.Execute(&tpl, mailParam); err != nil {
-				log.Error("Failed send mail: " + err.Error())
+				// log.Error("Failed send mail: " + err.Error())
 			} else {
 				result := tpl.String()
 
@@ -5866,10 +5865,10 @@ func SentEmailTransactionInstitutionPostingBackOfficeToUserCcSales(
 
 				err = lib.SendEmail(mailer)
 				if err != nil {
-					log.Error("Failed send mail to user institution")
-					log.Error("Failed send mail: " + err.Error())
+					// log.Error("Failed send mail to user institution")
+					// log.Error("Failed send mail: " + err.Error())
 				} else {
-					log.Println("Sukses email internal intitution : customer_key = " + customerKey)
+					// log.Println("Sukses email internal intitution : customer_key = " + customerKey)
 				}
 
 				// dialer := gomail.NewDialer(
@@ -5882,10 +5881,10 @@ func SentEmailTransactionInstitutionPostingBackOfficeToUserCcSales(
 
 				// err = dialer.DialAndSend(mailer)
 				// if err != nil {
-				// 	log.Error("Failed send mail to user institution")
-				// 	log.Error("Failed send mail: " + err.Error())
+				// 	// log.Error("Failed send mail to user institution")
+				// 	// log.Error("Failed send mail: " + err.Error())
 				// } else {
-				// 	log.Println("Sukses email internal intitution : customer_key = " + customerKey)
+				// 	// log.Println("Sukses email internal intitution : customer_key = " + customerKey)
 				// }
 			}
 		}
@@ -5898,7 +5897,7 @@ func ProsesCorrection(c echo.Context) error {
 
 	transactionkey := c.FormValue("transaction_key")
 	if transactionkey == "" {
-		log.Error("Missing required parameter: transaction_key")
+		// log.Error("Missing required parameter: transaction_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: transaction_key", "Missing required parameter: transaction_key")
 	}
 
@@ -5906,14 +5905,14 @@ func ProsesCorrection(c echo.Context) error {
 	if err == nil && n > 0 {
 		params["transaction_key"] = transactionkey
 	} else {
-		log.Error("Wrong input for parameter: transaction_key")
+		// log.Error("Wrong input for parameter: transaction_key")
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: transaction_key", "Wrong input for parameter: transaction_key")
 	}
 
 	var transaction models.TrTransaction
 	_, err = models.GetTrTransaction(&transaction, transactionkey)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: transaction_key", "Wrong input for parameter: transaction_key")
 	}
 
@@ -5921,17 +5920,17 @@ func ProsesCorrection(c echo.Context) error {
 
 	_, found := lib.Find(transStatusIds, strconv.FormatUint(transaction.TransStatusKey, 10))
 	if !found {
-		log.Error("trans_status_key buka 2,4,5")
+		// log.Error("trans_status_key buka 2,4,5")
 		return lib.CustomError(http.StatusBadRequest, "Transaction Not Allowed", "Transaction Not Allowed")
 	}
 
 	notes := c.FormValue("notes")
 	if notes == "" {
-		log.Error("Missing required parameter notes: Notes tidak boleh kosong")
+		// log.Error("Missing required parameter notes: Notes tidak boleh kosong")
 		return lib.CustomError(http.StatusBadRequest, "Notes tidak boleh kosong", "Notes tidak boleh kosong")
 	} else {
 		if len(notes) > 250 {
-			log.Error("Missing required parameter: notes too long, max 250 character")
+			// log.Error("Missing required parameter: notes too long, max 250 character")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notes too long, max 250 character", "Missing required parameter: notes too long, max 250 character")
 		}
 	}
@@ -5950,7 +5949,7 @@ func ProsesCorrection(c echo.Context) error {
 
 	_, err = models.UpdateTrTransaction(params)
 	if err != nil {
-		log.Error("Error update tr transaction")
+		// log.Error("Error update tr transaction")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
@@ -5983,12 +5982,12 @@ func GetTransactionStampsAdmin(c echo.Context) error {
 	status, err = models.GetScAppConfigByCode(&appConfig, "TRX_STAMP_MIN_VALUE_IDR")
 	if err != nil {
 		str_message = err.Error()
-		log.Error(str_message)
+		// log.Error(str_message)
 		return lib.CustomError(http.StatusBadRequest, str_message, "Fail to get Config TRX_STAMP_MIN_VALUE_IDR")
 	}
 	min_trx_amount, _ := strconv.ParseInt(*appConfig.AppConfigValue, 10, 64)
 
-	log.Info("min_trx_amount %T, %d", min_trx_amount, min_trx_amount)
+	// log.Info("min_trx_amount %T, %d", min_trx_amount, min_trx_amount)
 	paramsStamp := make(map[string]string)
 
 	//paramsStamp["currency_key"] = "1" //mata uang materai
@@ -5996,12 +5995,12 @@ func GetTransactionStampsAdmin(c echo.Context) error {
 	_, err = models.GetStampNominal(&stampValues, paramsStamp)
 	if err != nil {
 		str_message = err.Error()
-		log.Error(str_message)
+		// log.Error(str_message)
 		return lib.CustomError(http.StatusBadRequest, str_message, "Fail to get Stamp Nominal")
 	}
 	if len(stampValues) < 1 {
 		str_message = err.Error()
-		log.Error(str_message)
+		// log.Error(str_message)
 		return lib.CustomError(http.StatusBadRequest, str_message, "Fail to get Stamp Nominal")
 	}
 
@@ -6009,7 +6008,7 @@ func GetTransactionStampsAdmin(c echo.Context) error {
 	status, err = models.GetTransactionStamps(&stampData, params)
 	if err != nil {
 		str_message = err.Error()
-		log.Error(str_message)
+		// log.Error(str_message)
 		return lib.CustomError(status, str_message, "Failed get StampDataInfo")
 	}
 	//nilai materai

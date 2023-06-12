@@ -16,7 +16,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetListPromo(c echo.Context) error {
@@ -35,7 +34,7 @@ func GetListPromo(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -51,7 +50,7 @@ func GetListPromo(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -67,7 +66,7 @@ func GetListPromo(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -87,7 +86,7 @@ func GetListPromo(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -132,11 +131,11 @@ func GetListPromo(c echo.Context) error {
 	status, err = models.AdminGetAllTrPromo(&promoList, limit, offset, params, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(promoList) < 1 {
-		log.Error("Promo not found")
+		// log.Error("Promo not found")
 		return lib.CustomError(http.StatusNotFound, "Promo not found", "Promo not found")
 	}
 
@@ -145,7 +144,7 @@ func GetListPromo(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.AdminGetCountTrPromo(&countData, params)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -177,7 +176,7 @@ func CreateAdminTrPromo(c echo.Context) error {
 	//promo_code
 	promocode := c.FormValue("promo_code")
 	if promocode == "" {
-		log.Error("Missing required parameter: promo_code cann't be blank")
+		// log.Error("Missing required parameter: promo_code cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_code cann't be blank", "Missing required parameter: promo_code cann't be blank")
 	}
 
@@ -185,16 +184,16 @@ func CreateAdminTrPromo(c echo.Context) error {
 	var promo models.TrPromo
 	status, err = models.GetTrPromo(&promo, "promo_code", promocode)
 	if err == nil {
-		log.Error("Missing required parameter: promo_code already used")
+		// log.Error("Missing required parameter: promo_code already used")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_code already used", "Missing required parameter: promo_code already used")
 	}
-	log.Println(promo)
+	// log.Println(promo)
 	params["promo_code"] = promocode
 
 	//promo_title
 	promootitle := c.FormValue("promo_title")
 	if promootitle == "" {
-		log.Error("Missing required parameter: promo_title cann't be blank")
+		// log.Error("Missing required parameter: promo_title cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_title cann't be blank", "Missing required parameter: promo_title cann't be blank")
 	}
 	params["promo_title"] = promootitle
@@ -206,11 +205,11 @@ func CreateAdminTrPromo(c echo.Context) error {
 		if err == nil && strpromocategory > 0 {
 			params["promo_category"] = promocategory
 		} else {
-			log.Error("Wrong input for parameter: promo_category")
+			// log.Error("Wrong input for parameter: promo_category")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_category", "Missing required parameter: promo_category")
 		}
 	} else {
-		log.Error("Missing required parameter: promo_category cann't be blank")
+		// log.Error("Missing required parameter: promo_category cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_category cann't be blank", "Missing required parameter: promo_category cann't be blank")
 	}
 
@@ -219,12 +218,12 @@ func CreateAdminTrPromo(c echo.Context) error {
 	if promonominalStr != "" {
 		_, err := strconv.ParseFloat(promonominalStr, 64)
 		if err != nil {
-			log.Error("Wrong input for parameter: promo_nominal")
+			// log.Error("Wrong input for parameter: promo_nominal")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: promo_nominal", "Wrong input for parameter: promo_nominal")
 		}
 		params["promo_nominal"] = promonominalStr
 	} else {
-		log.Error("Missing required parameter: promo_nominal cann't be blank")
+		// log.Error("Missing required parameter: promo_nominal cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_nominal cann't be blank", "Missing required parameter: promo_nominal cann't be blank")
 	}
 
@@ -233,12 +232,12 @@ func CreateAdminTrPromo(c echo.Context) error {
 	if promomaxnominalStr != "" {
 		_, err := strconv.ParseFloat(promomaxnominalStr, 64)
 		if err != nil {
-			log.Error("Wrong input for parameter: promo_max_nominal")
+			// log.Error("Wrong input for parameter: promo_max_nominal")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: promo_max_nominal", "Wrong input for parameter: promo_max_nominal")
 		}
 		params["promo_max_nominal"] = promomaxnominalStr
 	} else {
-		log.Error("Missing required parameter: promo_max_nominal cann't be blank")
+		// log.Error("Missing required parameter: promo_max_nominal cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_max_nominal cann't be blank", "Missing required parameter: promo_max_nominal cann't be blank")
 	}
 
@@ -249,11 +248,11 @@ func CreateAdminTrPromo(c echo.Context) error {
 		if err == nil && strpromovaluestype > 0 {
 			params["promo_values_type"] = promovaluestype
 		} else {
-			log.Error("Wrong input for parameter: promo_values_type")
+			// log.Error("Wrong input for parameter: promo_values_type")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_values_type", "Missing required parameter: promo_values_type")
 		}
 	} else {
-		log.Error("Missing required parameter: promo_values_type cann't be blank")
+		// log.Error("Missing required parameter: promo_values_type cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_values_type cann't be blank", "Missing required parameter: promo_values_type cann't be blank")
 	}
 
@@ -264,11 +263,11 @@ func CreateAdminTrPromo(c echo.Context) error {
 		if err == nil && strpromomaxuser > 0 {
 			params["promo_maxuser"] = promomaxuser
 		} else {
-			log.Error("Wrong input for parameter: promo_maxuser")
+			// log.Error("Wrong input for parameter: promo_maxuser")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_maxuser", "Missing required parameter: promo_maxuser")
 		}
 	} else {
-		log.Error("Missing required parameter: promo_maxuser cann't be blank")
+		// log.Error("Missing required parameter: promo_maxuser cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_maxuser cann't be blank", "Missing required parameter: promo_maxuser cann't be blank")
 	}
 
@@ -279,11 +278,11 @@ func CreateAdminTrPromo(c echo.Context) error {
 		if err == nil && strpromostayperiode > 0 {
 			params["promo_stay_periode"] = promostayperiode
 		} else {
-			log.Error("Wrong input for parameter: promo_stay_periode")
+			// log.Error("Wrong input for parameter: promo_stay_periode")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_stay_periode", "Missing required parameter: promo_stay_periode")
 		}
 	} else {
-		log.Error("Missing required parameter: promo_stay_periode cann't be blank")
+		// log.Error("Missing required parameter: promo_stay_periode cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_stay_periode cann't be blank", "Missing required parameter: promo_stay_periode cann't be blank")
 	}
 
@@ -293,7 +292,7 @@ func CreateAdminTrPromo(c echo.Context) error {
 	if promoflaguniquser != "" {
 		promoflaguniquserBool, err = strconv.ParseBool(promoflaguniquser)
 		if err != nil {
-			log.Error("promo_flag_uniq_user parameter should be true/false")
+			// log.Error("promo_flag_uniq_user parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "promo_flag_uniq_user parameter should be true/false", "promo_flag_uniq_user parameter should be true/false")
 		}
 		if promoflaguniquserBool == true {
@@ -302,14 +301,14 @@ func CreateAdminTrPromo(c echo.Context) error {
 			params["promo_flag_uniq_user"] = "0"
 		}
 	} else {
-		log.Error("promo_flag_uniq_user parameter should be true/false")
+		// log.Error("promo_flag_uniq_user parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "promo_flag_uniq_user parameter should be true/false", "promo_flag_uniq_user parameter should be true/false")
 	}
 
 	//promo_valid_date1
 	promovaliddate1 := c.FormValue("promo_valid_date1")
 	if promovaliddate1 == "" {
-		log.Error("Missing required parameter: promo_valid_date1 cann't be blank")
+		// log.Error("Missing required parameter: promo_valid_date1 cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_valid_date1 cann't be blank", "Missing required parameter: promo_valid_date1 cann't be blank")
 	}
 	params["promo_valid_date1"] = promovaliddate1 + " 00:00:00"
@@ -317,7 +316,7 @@ func CreateAdminTrPromo(c echo.Context) error {
 	//promo_valid_date2
 	promovaliddate2 := c.FormValue("promo_valid_date2")
 	if promovaliddate2 == "" {
-		log.Error("Missing required parameter: promo_valid_date2 cann't be blank")
+		// log.Error("Missing required parameter: promo_valid_date2 cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_valid_date2 cann't be blank", "Missing required parameter: promo_valid_date2 cann't be blank")
 	}
 	params["promo_valid_date2"] = promovaliddate2 + " 23:59:59"
@@ -325,7 +324,7 @@ func CreateAdminTrPromo(c echo.Context) error {
 	//promo_notif_start
 	promonotifstart := c.FormValue("promo_notif_start")
 	if promonotifstart == "" {
-		log.Error("Missing required parameter: promo_notif_start cann't be blank")
+		// log.Error("Missing required parameter: promo_notif_start cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_notif_start cann't be blank", "Missing required parameter: promo_notif_start cann't be blank")
 	}
 	params["promo_notif_start"] = promonotifstart + " 00:00:00"
@@ -333,7 +332,7 @@ func CreateAdminTrPromo(c echo.Context) error {
 	//promo_notif_end
 	promonotifend := c.FormValue("promo_notif_end")
 	if promonotifend == "" {
-		log.Error("Missing required parameter: promo_notif_end cann't be blank")
+		// log.Error("Missing required parameter: promo_notif_end cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_notif_end cann't be blank", "Missing required parameter: promo_notif_end cann't be blank")
 	}
 	params["promo_notif_end"] = promonotifend + " 23:59:59"
@@ -345,18 +344,18 @@ func CreateAdminTrPromo(c echo.Context) error {
 		if err == nil && strpromonotiftype > 0 {
 			params["promo_notif_type"] = promonotiftype
 		} else {
-			log.Error("Wrong input for parameter: promo_notif_type")
+			// log.Error("Wrong input for parameter: promo_notif_type")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_notif_type", "Missing required parameter: promo_notif_type")
 		}
 	} else {
-		log.Error("Missing required parameter: promo_notif_type cann't be blank")
+		// log.Error("Missing required parameter: promo_notif_type cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_notif_type cann't be blank", "Missing required parameter: promo_notif_type cann't be blank")
 	}
 
 	//promo_description
 	promodescription := c.FormValue("promo_description")
 	if promodescription == "" {
-		log.Error("Missing required parameter: promo_description cann't be blank")
+		// log.Error("Missing required parameter: promo_description cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_description cann't be blank", "Missing required parameter: promo_description cann't be blank")
 	}
 	params["promo_description"] = promodescription
@@ -364,7 +363,7 @@ func CreateAdminTrPromo(c echo.Context) error {
 	//promo_tnc
 	promotnc := c.FormValue("promo_tnc")
 	if promotnc == "" {
-		log.Error("Missing required parameter: promo_tnc cann't be blank")
+		// log.Error("Missing required parameter: promo_tnc cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_tnc cann't be blank", "Missing required parameter: promo_tnc cann't be blank")
 	}
 	params["promo_tnc"] = promotnc
@@ -373,7 +372,7 @@ func CreateAdminTrPromo(c echo.Context) error {
 	//promo_product_items
 	promoproductitems := c.FormValue("promo_product_items")
 	if promoproductitems == "" {
-		log.Error("Missing required parameter: product cann't be blank")
+		// log.Error("Missing required parameter: product cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product cann't be blank", "Missing required parameter: product cann't be blank")
 	}
 
@@ -382,19 +381,19 @@ func CreateAdminTrPromo(c echo.Context) error {
 	if file != nil {
 		err = os.MkdirAll(config.BasePathImage+"/images/promo", 0755)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		} else {
 			// Get file extension
 			extension := filepath.Ext(file.Filename)
-			log.Println("-------------extension---------------")
-			log.Println(extension)
-			log.Println("-------------extension---------------")
+			// log.Println("-------------extension---------------")
+			// log.Println(extension)
+			// log.Println("-------------extension---------------")
 			// Generate filename
 			filename := lib.RandStringBytesMaskImprSrc(20)
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePathImage+"/images/promo/"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			params["rec_image1"] = filename + extension
@@ -407,7 +406,7 @@ func CreateAdminTrPromo(c echo.Context) error {
 
 	status, err, lastID := models.CreateTrPromo(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -430,7 +429,7 @@ func CreateAdminTrPromo(c echo.Context) error {
 
 	_, err = models.CreateMultiplePromoProduct(bindVarPromoPruduct)
 	if err != nil {
-		log.Error("Failed create promo product: " + err.Error())
+		// log.Error("Failed create promo product: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -449,7 +448,7 @@ func DeletePromo(c echo.Context) error {
 
 	promoKey := c.FormValue("promo_key")
 	if promoKey == "" {
-		log.Error("Missing required parameter: promo_key")
+		// log.Error("Missing required parameter: promo_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_key", "Missing required parameter: promo_key")
 	}
 
@@ -457,21 +456,21 @@ func DeletePromo(c echo.Context) error {
 	if err == nil && promoKeyCek > 0 {
 		params["promo_key"] = promoKey
 	} else {
-		log.Error("Wrong input for parameter: promo_key")
+		// log.Error("Wrong input for parameter: promo_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_key", "Missing required parameter: promo_key")
 	}
 
 	var promo models.TrPromo
 	status, err := models.GetTrPromo(&promo, "promo_key", promoKey)
 	if err != nil {
-		log.Error("Promo not found")
+		// log.Error("Promo not found")
 		return lib.CustomError(status)
 	}
 
 	var trans models.TrTransaction
 	status, err = models.GetTrTransactionByField(&trans, "promo_code", *promo.PromoCode)
 	if err == nil {
-		log.Error("Promo already used in transaction, cann't delete promo")
+		// log.Error("Promo already used in transaction, cann't delete promo")
 		return lib.CustomError(http.StatusBadRequest, "Promo already used in transaction, cann't delete promo", "Promo already used in transaction, cann't delete promo")
 	}
 
@@ -482,7 +481,7 @@ func DeletePromo(c echo.Context) error {
 
 	status, err = models.UpdateTrPromo(params)
 	if err != nil {
-		log.Error("Failed delete data: " + err.Error())
+		// log.Error("Failed delete data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed delete data")
 	}
 
@@ -493,7 +492,7 @@ func DeletePromo(c echo.Context) error {
 
 	status, err = models.UpdateTrPromoProductByField(paramsPromo, "promo_key", promoKey)
 	if err != nil {
-		log.Error("Failed delete data: " + err.Error())
+		// log.Error("Failed delete data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed delete data")
 	}
 
@@ -519,25 +518,25 @@ func UpdateAdminTrPromo(c echo.Context) error {
 		if err == nil && strpromokey > 0 {
 			params["promo_key"] = promokey
 		} else {
-			log.Error("Wrong input for parameter: promo_key")
+			// log.Error("Wrong input for parameter: promo_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_key", "Missing required parameter: promo_key")
 		}
 	} else {
-		log.Error("Missing required parameter: promo_key cann't be blank")
+		// log.Error("Missing required parameter: promo_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_key cann't be blank", "Missing required parameter: promo_key cann't be blank")
 	}
 
 	//promo_code
 	promocode := c.FormValue("promo_code")
 	if promocode == "" {
-		log.Error("Missing required parameter: promo_code cann't be blank")
+		// log.Error("Missing required parameter: promo_code cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_code cann't be blank", "Missing required parameter: promo_code cann't be blank")
 	}
 
 	var promoData models.TrPromo
 	status, err = models.GetTrPromo(&promoData, "promo_key", promokey)
 	if err != nil {
-		log.Error("Promo not found")
+		// log.Error("Promo not found")
 		return lib.CustomError(status)
 	}
 
@@ -545,7 +544,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 	var promo models.TrPromo
 	status, err = models.GetTrPromoValidasiDuplikat(&promo, "promo_code", promocode, promokey)
 	if err == nil {
-		log.Error("Missing required parameter: promo_code already used")
+		// log.Error("Missing required parameter: promo_code already used")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_code already used", "Missing required parameter: promo_code already used")
 	}
 
@@ -555,7 +554,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 		var trans models.TrTransaction
 		status, err = models.GetTrTransactionByField(&trans, "promo_code", *promoData.PromoCode)
 		if err == nil {
-			log.Error("Promo already used in transaction, cann't update promo code")
+			// log.Error("Promo already used in transaction, cann't update promo code")
 			return lib.CustomError(http.StatusBadRequest, "Promo already used in transaction, cann't update promo code", "Promo already used in transaction, cann't update promo code")
 		}
 	}
@@ -563,7 +562,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 	//promo_title
 	promootitle := c.FormValue("promo_title")
 	if promootitle == "" {
-		log.Error("Missing required parameter: promo_title cann't be blank")
+		// log.Error("Missing required parameter: promo_title cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_title cann't be blank", "Missing required parameter: promo_title cann't be blank")
 	}
 	params["promo_title"] = promootitle
@@ -575,11 +574,11 @@ func UpdateAdminTrPromo(c echo.Context) error {
 		if err == nil && strpromocategory > 0 {
 			params["promo_category"] = promocategory
 		} else {
-			log.Error("Wrong input for parameter: promo_category")
+			// log.Error("Wrong input for parameter: promo_category")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_category", "Missing required parameter: promo_category")
 		}
 	} else {
-		log.Error("Missing required parameter: promo_category cann't be blank")
+		// log.Error("Missing required parameter: promo_category cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_category cann't be blank", "Missing required parameter: promo_category cann't be blank")
 	}
 
@@ -588,12 +587,12 @@ func UpdateAdminTrPromo(c echo.Context) error {
 	if promonominalStr != "" {
 		_, err := strconv.ParseFloat(promonominalStr, 64)
 		if err != nil {
-			log.Error("Wrong input for parameter: promo_nominal")
+			// log.Error("Wrong input for parameter: promo_nominal")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: promo_nominal", "Wrong input for parameter: promo_nominal")
 		}
 		params["promo_nominal"] = promonominalStr
 	} else {
-		log.Error("Missing required parameter: promo_nominal cann't be blank")
+		// log.Error("Missing required parameter: promo_nominal cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_nominal cann't be blank", "Missing required parameter: promo_nominal cann't be blank")
 	}
 
@@ -602,12 +601,12 @@ func UpdateAdminTrPromo(c echo.Context) error {
 	if promomaxnominalStr != "" {
 		_, err := strconv.ParseFloat(promomaxnominalStr, 64)
 		if err != nil {
-			log.Error("Wrong input for parameter: promo_max_nominal")
+			// log.Error("Wrong input for parameter: promo_max_nominal")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: promo_max_nominal", "Wrong input for parameter: promo_max_nominal")
 		}
 		params["promo_max_nominal"] = promomaxnominalStr
 	} else {
-		log.Error("Missing required parameter: promo_max_nominal cann't be blank")
+		// log.Error("Missing required parameter: promo_max_nominal cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_max_nominal cann't be blank", "Missing required parameter: promo_max_nominal cann't be blank")
 	}
 
@@ -618,11 +617,11 @@ func UpdateAdminTrPromo(c echo.Context) error {
 		if err == nil && strpromovaluestype > 0 {
 			params["promo_values_type"] = promovaluestype
 		} else {
-			log.Error("Wrong input for parameter: promo_values_type")
+			// log.Error("Wrong input for parameter: promo_values_type")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_values_type", "Missing required parameter: promo_values_type")
 		}
 	} else {
-		log.Error("Missing required parameter: promo_values_type cann't be blank")
+		// log.Error("Missing required parameter: promo_values_type cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_values_type cann't be blank", "Missing required parameter: promo_values_type cann't be blank")
 	}
 
@@ -633,11 +632,11 @@ func UpdateAdminTrPromo(c echo.Context) error {
 		if err == nil && strpromomaxuser > 0 {
 			params["promo_maxuser"] = promomaxuser
 		} else {
-			log.Error("Wrong input for parameter: promo_maxuser")
+			// log.Error("Wrong input for parameter: promo_maxuser")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_maxuser", "Missing required parameter: promo_maxuser")
 		}
 	} else {
-		log.Error("Missing required parameter: promo_maxuser cann't be blank")
+		// log.Error("Missing required parameter: promo_maxuser cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_maxuser cann't be blank", "Missing required parameter: promo_maxuser cann't be blank")
 	}
 
@@ -648,11 +647,11 @@ func UpdateAdminTrPromo(c echo.Context) error {
 		if err == nil && strpromostayperiode > 0 {
 			params["promo_stay_periode"] = promostayperiode
 		} else {
-			log.Error("Wrong input for parameter: promo_stay_periode")
+			// log.Error("Wrong input for parameter: promo_stay_periode")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_stay_periode", "Missing required parameter: promo_stay_periode")
 		}
 	} else {
-		log.Error("Missing required parameter: promo_stay_periode cann't be blank")
+		// log.Error("Missing required parameter: promo_stay_periode cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_stay_periode cann't be blank", "Missing required parameter: promo_stay_periode cann't be blank")
 	}
 
@@ -662,7 +661,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 	if promoflaguniquser != "" {
 		promoflaguniquserBool, err = strconv.ParseBool(promoflaguniquser)
 		if err != nil {
-			log.Error("promo_flag_uniq_user parameter should be true/false")
+			// log.Error("promo_flag_uniq_user parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "promo_flag_uniq_user parameter should be true/false", "promo_flag_uniq_user parameter should be true/false")
 		}
 		if promoflaguniquserBool == true {
@@ -671,14 +670,14 @@ func UpdateAdminTrPromo(c echo.Context) error {
 			params["promo_flag_uniq_user"] = "0"
 		}
 	} else {
-		log.Error("promo_flag_uniq_user parameter should be true/false")
+		// log.Error("promo_flag_uniq_user parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "promo_flag_uniq_user parameter should be true/false", "promo_flag_uniq_user parameter should be true/false")
 	}
 
 	//promo_valid_date1
 	promovaliddate1 := c.FormValue("promo_valid_date1")
 	if promovaliddate1 == "" {
-		log.Error("Missing required parameter: promo_valid_date1 cann't be blank")
+		// log.Error("Missing required parameter: promo_valid_date1 cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_valid_date1 cann't be blank", "Missing required parameter: promo_valid_date1 cann't be blank")
 	}
 	params["promo_valid_date1"] = promovaliddate1 + " 00:00:00"
@@ -686,7 +685,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 	//promo_valid_date2
 	promovaliddate2 := c.FormValue("promo_valid_date2")
 	if promovaliddate2 == "" {
-		log.Error("Missing required parameter: promo_valid_date2 cann't be blank")
+		// log.Error("Missing required parameter: promo_valid_date2 cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_valid_date2 cann't be blank", "Missing required parameter: promo_valid_date2 cann't be blank")
 	}
 	params["promo_valid_date2"] = promovaliddate2 + " 23:59:59"
@@ -694,7 +693,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 	//promo_notif_start
 	promonotifstart := c.FormValue("promo_notif_start")
 	if promonotifstart == "" {
-		log.Error("Missing required parameter: promo_notif_start cann't be blank")
+		// log.Error("Missing required parameter: promo_notif_start cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_notif_start cann't be blank", "Missing required parameter: promo_notif_start cann't be blank")
 	}
 	params["promo_notif_start"] = promonotifstart + " 00:00:00"
@@ -702,7 +701,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 	//promo_notif_end
 	promonotifend := c.FormValue("promo_notif_end")
 	if promonotifend == "" {
-		log.Error("Missing required parameter: promo_notif_end cann't be blank")
+		// log.Error("Missing required parameter: promo_notif_end cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_notif_end cann't be blank", "Missing required parameter: promo_notif_end cann't be blank")
 	}
 	params["promo_notif_end"] = promonotifend + " 23:59:59"
@@ -714,18 +713,18 @@ func UpdateAdminTrPromo(c echo.Context) error {
 		if err == nil && strpromonotiftype > 0 {
 			params["promo_notif_type"] = promonotiftype
 		} else {
-			log.Error("Wrong input for parameter: promo_notif_type")
+			// log.Error("Wrong input for parameter: promo_notif_type")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_notif_type", "Missing required parameter: promo_notif_type")
 		}
 	} else {
-		log.Error("Missing required parameter: promo_notif_type cann't be blank")
+		// log.Error("Missing required parameter: promo_notif_type cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_notif_type cann't be blank", "Missing required parameter: promo_notif_type cann't be blank")
 	}
 
 	//promo_description
 	promodescription := c.FormValue("promo_description")
 	if promodescription == "" {
-		log.Error("Missing required parameter: promo_description cann't be blank")
+		// log.Error("Missing required parameter: promo_description cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_description cann't be blank", "Missing required parameter: promo_description cann't be blank")
 	}
 	params["promo_description"] = promodescription
@@ -733,7 +732,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 	//promo_tnc
 	promotnc := c.FormValue("promo_tnc")
 	if promotnc == "" {
-		log.Error("Missing required parameter: promo_tnc cann't be blank")
+		// log.Error("Missing required parameter: promo_tnc cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_tnc cann't be blank", "Missing required parameter: promo_tnc cann't be blank")
 	}
 	params["promo_tnc"] = promotnc
@@ -742,7 +741,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 	//promo_product_items
 	promoproductitems := c.FormValue("promo_product_items")
 	if promoproductitems == "" {
-		log.Error("Missing required parameter: product cann't be blank")
+		// log.Error("Missing required parameter: product cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product cann't be blank", "Missing required parameter: product cann't be blank")
 	}
 
@@ -755,7 +754,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 	if file != nil {
 		err = os.MkdirAll(config.BasePathImage+"/images/promo", 0755)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 		} else {
 			// Get file extension
 			extension := filepath.Ext(file.Filename)
@@ -764,7 +763,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePathImage+"/images/promo/"+filename+extension)
 			if err != nil {
-				log.Println(err)
+				// log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			params["rec_image1"] = filename + extension
@@ -773,7 +772,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 
 	status, err = models.UpdateTrPromo(params)
 	if err != nil {
-		log.Error("Failed update request data: " + err.Error())
+		// log.Error("Failed update request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed update data")
 	}
 
@@ -796,7 +795,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 		status, err = models.AdminGetPromoProductInNotIn(&promoProductDelete, productIds, "product_key", promokey, "NOT IN")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error("Error Get Promo Product")
+				// log.Error("Error Get Promo Product")
 				return lib.CustomError(status)
 			}
 		}
@@ -817,7 +816,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 
 				status, err = models.UpdateTrPromoProductByFieldIn(paramsPromo, "promo_product_key", ppKey)
 				if err != nil {
-					log.Error("Failed delete data: " + err.Error())
+					// log.Error("Failed delete data: " + err.Error())
 					return lib.CustomError(status, err.Error(), "failed delete data")
 				}
 			}
@@ -830,7 +829,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 		status, err = models.AdminGetPromoProductInNotIn(&promoProductExist, productIds, "product_key", promokey, "IN")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error("Error Get Promo Product")
+				// log.Error("Error Get Promo Product")
 				return lib.CustomError(status)
 			}
 		}
@@ -876,7 +875,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 			}
 			_, err = models.CreateMultiplePromoProduct(bindVarPromoPruduct)
 			if err != nil {
-				log.Error("Failed create promo product: " + err.Error())
+				// log.Error("Failed create promo product: " + err.Error())
 				return lib.CustomError(status, err.Error(), "failed input data")
 			}
 		}
@@ -929,7 +928,7 @@ func DetailPromo(c echo.Context) error {
 		status, err = models.GetGenLookupIn(&lookupOaReq, lookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -1010,7 +1009,7 @@ func DetailPromo(c echo.Context) error {
 	status, err = models.AdminGetPromoProductByPromoKey(&promoProductData, keyStr)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 	}
@@ -1030,21 +1029,21 @@ func CheckPromo(c echo.Context) error {
 	//promo_code
 	promoCode := c.FormValue("promo_code")
 	if promoCode == "" {
-		log.Error("Wrong input for parameter: promo_code")
+		// log.Error("Wrong input for parameter: promo_code")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_code", "Missing required parameter: promo_code")
 	}
 
 	//customer_key
 	customerKey := c.FormValue("customer_key")
 	if customerKey == "" {
-		log.Error("Wrong input for parameter: customer_key")
+		// log.Error("Wrong input for parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
 	//product_key
 	productKey := c.FormValue("product_key")
 	if productKey == "" {
-		log.Error("Wrong input for parameter: product_key")
+		// log.Error("Wrong input for parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
@@ -1082,7 +1081,7 @@ func validatePromo(promoCode string, customerKey string, productKey string, tran
 	_, err = models.GetTrPromoProductActive(&promo, promoCode, productKey)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return err, false, "Failed get data", nil
 		} else {
 			promoEnabled = false
@@ -1097,7 +1096,7 @@ func validatePromo(promoCode string, customerKey string, productKey string, tran
 			var countData models.CountData
 			_, err = models.AdminGetCountPromoUsed(&countData, &promoKeyStr, &customerKey, transactionKey)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return err, false, "Failed get data", nil
 			}
 			if int(countData.CountData) > int(0) {
@@ -1115,7 +1114,7 @@ func validatePromo(promoCode string, customerKey string, productKey string, tran
 			var countData models.CountData
 			_, err = models.AdminGetCountPromoUsed(&countData, &promoKeyStr, nil, transactionKey)
 			if err != nil {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return err, false, "Failed get data", nil
 			}
 			if int(countData.CountData) >= int(promo.PromoMaxuser) {

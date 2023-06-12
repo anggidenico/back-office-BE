@@ -3,8 +3,6 @@ package models
 import (
 	"mf-bo-api/db"
 	"net/http"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type WfPath struct {
@@ -72,10 +70,10 @@ func GetAllWfPath(c *[]WfPath, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -87,10 +85,10 @@ func GetWfPathByProfilAndStageCurrent(c *WfPath, profileKey string, stageCurrent
 			FROM wf_path 
 			WHERE wf_path.rec_status = "1" AND wf_path.wf_profile_key = "` + profileKey + `" 
 			AND wf_path.stage_current = "` + stageCurrent + `"`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 

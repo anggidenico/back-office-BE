@@ -4,8 +4,6 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type CmsQuizQuestionInfo struct {
@@ -85,10 +83,10 @@ func GetAllCmsQuizQuestion(c *[]CmsQuizQuestion, params map[string]string) (int,
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -109,10 +107,10 @@ func AdminGetQuestionOptionQuiz(c *[]QuestionOptionQuiz, optionKey []string) (in
 			AND q.quiz_header_key = 2 AND q.rec_status = 1 
 			AND o.quiz_option_key IN(` + inQuery + `) ORDER BY q.rec_order ASC `
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -146,10 +144,10 @@ func GetListQuestionOptionCustomer(c *[]QuestionOptionCustomer, oaReqKey string)
 			ORDER BY q.quiz_question_key, o.quiz_option_key ASC`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

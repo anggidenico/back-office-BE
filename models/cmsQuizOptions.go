@@ -4,8 +4,6 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type CmsQuizOptionsInfo struct {
@@ -78,10 +76,10 @@ func GetAllCmsQuizOptions(c *[]CmsQuizOptions, params map[string]string) (int, e
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -96,10 +94,10 @@ func GetCmsQuizOptionsIn(c *[]CmsQuizOptions, value []string, field string) (int
 	query := query2 + " WHERE cms_quiz_options." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

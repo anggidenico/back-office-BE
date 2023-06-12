@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type OaPostalAddress struct {
@@ -71,18 +69,18 @@ func CreateOaPostalAddress(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -105,11 +103,11 @@ func UpdateOaPostalAddress(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE postal_address_key = " + params["postal_address_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -117,7 +115,7 @@ func UpdateOaPostalAddress(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -132,10 +130,10 @@ func GetOaPostalAddressIn(c *[]OaPostalAddress, value []string, field string) (i
 	query := query2 + " WHERE oa_postal_address." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -144,12 +142,12 @@ func GetOaPostalAddressIn(c *[]OaPostalAddress, value []string, field string) (i
 
 func GetOaPostalAddress(c *OaPostalAddress, key string) (int, error) {
 	query := `SELECT oa_postal_address.* FROM oa_postal_address WHERE oa_postal_address.rec_status = 1 AND oa_postal_address.postal_address_key = ` + key
-	// log.Println("==========  ==========>>>",query)
-	log.Println("===== QUERY OA POSTAL ADDRESS ===== >>", query)
+	// // log.Println("==========  ==========>>>",query)
+	// log.Println("===== QUERY OA POSTAL ADDRESS ===== >>", query)
 
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -178,10 +176,10 @@ func GetOaPostalAddressDetailIn(c *[]AddressDetail, value []string, field string
 			WHERE p.rec_status = 1 AND p.` + field + ` IN(` + inQuery + `)`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

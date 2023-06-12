@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
@@ -47,17 +46,17 @@ func CreateScEndpointAuth(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("================ cek query insert endpoint ==================", query)
+	// log.Println("================ cek query insert endpoint ==================", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -75,11 +74,11 @@ func UpdateEndpointAuthByField(params map[string]string, value string, field str
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -91,7 +90,7 @@ func UpdateEndpointAuthByField(params map[string]string, value string, field str
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -105,10 +104,10 @@ func AdminGetEndpointAuthUncheckUpdate(c *[]ScEndpointAuth, roleKey string, menu
 			  WHERE epa.menu_key NOT IN(` + inQuery + `) AND epa.rec_status = 1  AND epa.role_key = ` + roleKey
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

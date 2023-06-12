@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
-	log "github.com/sirupsen/logrus"
 )
 
 type ScUserMessageList struct {
@@ -79,18 +78,18 @@ func CreateScUserMessage(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -137,10 +136,10 @@ func GetAllScUserMessage(c *[]ScUserMessage, params map[string]string, limitStr 
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -149,10 +148,10 @@ func GetAllScUserMessage(c *[]ScUserMessage, params map[string]string, limitStr 
 
 func GetScUserMessage(c *ScUserMessage, key string) (int, error) {
 	query := `SELECT sc_user_message.* FROM sc_user_message WHERE sc_user_message.umessage_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -192,11 +191,11 @@ func UpdateScUserMessage(params map[string]string, where map[string]string) (int
 		}
 	}
 	query += condition
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -208,7 +207,7 @@ func UpdateScUserMessage(params map[string]string, where map[string]string) (int
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -242,10 +241,10 @@ func GetCountUserMessage(c *CountData, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -265,11 +264,11 @@ func UpdateScUserMessageByField(params map[string]string, field string, value st
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -281,7 +280,7 @@ func UpdateScUserMessageByField(params map[string]string, field string, value st
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -310,7 +309,7 @@ func CreateMultipleUserMessage(params []interface{}) (int, error) {
 			q += ","
 		}
 	}
-	log.Println("==========  ==========>>>", q)
+	// log.Println("==========  ==========>>>", q)
 	query, args, err := sqlx.In(q, params...)
 	if err != nil {
 		return http.StatusBadGateway, err
@@ -319,7 +318,7 @@ func CreateMultipleUserMessage(params []interface{}) (int, error) {
 	query = db.Db.Rebind(query)
 	_, err = db.Db.Query(query, args...)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
@@ -349,7 +348,7 @@ func CreateMultipleUserMessageFromUserNotif(params []interface{}) (int, error) {
 			q += ","
 		}
 	}
-	log.Println("==========  ==========>>>", q)
+	// log.Println("==========  ==========>>>", q)
 	query, args, err := sqlx.In(q, params...)
 	if err != nil {
 		return http.StatusBadGateway, err
@@ -358,7 +357,7 @@ func CreateMultipleUserMessageFromUserNotif(params []interface{}) (int, error) {
 	query = db.Db.Rebind(query)
 	_, err = db.Db.Query(query, args...)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil

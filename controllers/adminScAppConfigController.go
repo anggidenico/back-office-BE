@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func AdminGetListScAppConfig(c echo.Context) error {
@@ -27,7 +26,7 @@ func AdminGetListScAppConfig(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -43,7 +42,7 @@ func AdminGetListScAppConfig(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -59,7 +58,7 @@ func AdminGetListScAppConfig(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -79,7 +78,7 @@ func AdminGetListScAppConfig(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -99,11 +98,11 @@ func AdminGetListScAppConfig(c echo.Context) error {
 	status, err = models.AdminGetListScAppConfig(&config, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(config) < 1 {
-		log.Error("Config not found")
+		// log.Error("Config not found")
 		return lib.CustomError(http.StatusNotFound, "Config not found", "Config not found")
 	}
 
@@ -112,7 +111,7 @@ func AdminGetListScAppConfig(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetListScAppConfig(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -143,7 +142,7 @@ func AdminDeleteScAppConfig(c echo.Context) error {
 	keyStr := c.FormValue("app_config_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: app_config_key")
+		// log.Error("Missing required parameter: app_config_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: app_config_key", "Missing required parameter: app_config_key")
 	}
 
@@ -155,7 +154,7 @@ func AdminDeleteScAppConfig(c echo.Context) error {
 
 	_, err = models.UpdateScAppConfig(params)
 	if err != nil {
-		log.Error("Error delete sc_app_config")
+		// log.Error("Error delete sc_app_config")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -175,12 +174,12 @@ func AdminCreateScAppConfig(c echo.Context) error {
 
 	configTypeKey := c.FormValue("config_type_key")
 	if configTypeKey == "" {
-		log.Error("Missing required parameter: config_type_key")
+		// log.Error("Missing required parameter: config_type_key")
 		return lib.CustomError(http.StatusBadRequest, "config_type_key can not be blank", "config_type_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(configTypeKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: config_type_key")
+			// log.Error("Wrong input for parameter: config_type_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: config_type_key", "Wrong input for parameter: config_type_key")
 		}
 		params["config_type_key"] = configTypeKey
@@ -188,18 +187,18 @@ func AdminCreateScAppConfig(c echo.Context) error {
 
 	appConfigCode := c.FormValue("app_config_code")
 	if appConfigCode == "" {
-		log.Error("Missing required parameter: app_config_code")
+		// log.Error("Missing required parameter: app_config_code")
 		return lib.CustomError(http.StatusBadRequest, "app_config_code can not be blank", "app_config_code can not be blank")
 	} else {
 		//validate unique app_config_code
 		var countData models.CountData
 		status, err = models.CountScAppConfigValidateUnique(&countData, "app_config_code", appConfigCode, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: app_config_code")
+			// log.Error("Missing required parameter: app_config_code")
 			return lib.CustomError(http.StatusBadRequest, "app_config_code already used", "app_config_code already used")
 		}
 		params["app_config_code"] = appConfigCode
@@ -207,18 +206,18 @@ func AdminCreateScAppConfig(c echo.Context) error {
 
 	appConfigName := c.FormValue("app_config_name")
 	if appConfigName == "" {
-		log.Error("Missing required parameter: app_config_name")
+		// log.Error("Missing required parameter: app_config_name")
 		return lib.CustomError(http.StatusBadRequest, "app_config_name can not be blank", "app_config_name can not be blank")
 	} else {
 		//validate unique app_config_name
 		var countData models.CountData
 		status, err = models.CountScAppConfigValidateUnique(&countData, "app_config_name", appConfigName, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: app_config_name")
+			// log.Error("Missing required parameter: app_config_name")
 			return lib.CustomError(http.StatusBadRequest, "app_config_name already used", "app_config_name already used")
 		}
 		params["app_config_name"] = appConfigName
@@ -236,7 +235,7 @@ func AdminCreateScAppConfig(c echo.Context) error {
 
 	value := c.FormValue("app_config_value")
 	if value == "" {
-		log.Error("Missing required parameter: app_config_value")
+		// log.Error("Missing required parameter: app_config_value")
 		return lib.CustomError(http.StatusBadRequest, "app_config_value can not be blank", "app_config_value can not be blank")
 	}
 	params["app_config_value"] = value
@@ -245,7 +244,7 @@ func AdminCreateScAppConfig(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -258,7 +257,7 @@ func AdminCreateScAppConfig(c echo.Context) error {
 
 	status, err = models.CreateScAppConfig(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -279,18 +278,18 @@ func AdminUpdateScAppConfig(c echo.Context) error {
 
 	configKey := c.FormValue("app_config_key")
 	if configKey == "" {
-		log.Error("Missing required parameter: app_config_key")
+		// log.Error("Missing required parameter: app_config_key")
 		return lib.CustomError(http.StatusBadRequest, "app_config_key can not be blank", "app_config_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(configKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: app_config_key")
+			// log.Error("Wrong input for parameter: app_config_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: app_config_key", "Wrong input for parameter: app_config_key")
 		}
 		var config models.ScAppConfig
 		status, err = models.GetScAppConfig(&config, configKey)
 		if err != nil {
-			log.Error("Config not found")
+			// log.Error("Config not found")
 			return lib.CustomError(http.StatusBadRequest, "Config not found", "Config not found")
 		}
 		params["app_config_key"] = configKey
@@ -298,12 +297,12 @@ func AdminUpdateScAppConfig(c echo.Context) error {
 
 	configTypeKey := c.FormValue("config_type_key")
 	if configTypeKey == "" {
-		log.Error("Missing required parameter: config_type_key")
+		// log.Error("Missing required parameter: config_type_key")
 		return lib.CustomError(http.StatusBadRequest, "config_type_key can not be blank", "config_type_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(configTypeKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: config_type_key")
+			// log.Error("Wrong input for parameter: config_type_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: config_type_key", "Wrong input for parameter: config_type_key")
 		}
 		params["config_type_key"] = configTypeKey
@@ -311,18 +310,18 @@ func AdminUpdateScAppConfig(c echo.Context) error {
 
 	appConfigCode := c.FormValue("app_config_code")
 	if appConfigCode == "" {
-		log.Error("Missing required parameter: app_config_code")
+		// log.Error("Missing required parameter: app_config_code")
 		return lib.CustomError(http.StatusBadRequest, "app_config_code can not be blank", "app_config_code can not be blank")
 	} else {
 		//validate unique app_config_code
 		var countData models.CountData
 		status, err = models.CountScAppConfigValidateUnique(&countData, "app_config_code", appConfigCode, configKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: app_config_code")
+			// log.Error("Missing required parameter: app_config_code")
 			return lib.CustomError(http.StatusBadRequest, "app_config_code already used", "app_config_code already used")
 		}
 		params["app_config_code"] = appConfigCode
@@ -330,18 +329,18 @@ func AdminUpdateScAppConfig(c echo.Context) error {
 
 	appConfigName := c.FormValue("app_config_name")
 	if appConfigName == "" {
-		log.Error("Missing required parameter: app_config_name")
+		// log.Error("Missing required parameter: app_config_name")
 		return lib.CustomError(http.StatusBadRequest, "app_config_name can not be blank", "app_config_name can not be blank")
 	} else {
 		//validate unique app_config_name
 		var countData models.CountData
 		status, err = models.CountScAppConfigValidateUnique(&countData, "app_config_name", appConfigName, configKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: app_config_name")
+			// log.Error("Missing required parameter: app_config_name")
 			return lib.CustomError(http.StatusBadRequest, "app_config_name already used", "app_config_name already used")
 		}
 		params["app_config_name"] = appConfigName
@@ -359,7 +358,7 @@ func AdminUpdateScAppConfig(c echo.Context) error {
 
 	value := c.FormValue("app_config_value")
 	if value == "" {
-		log.Error("Missing required parameter: app_config_value")
+		// log.Error("Missing required parameter: app_config_value")
 		return lib.CustomError(http.StatusBadRequest, "app_config_value can not be blank", "app_config_value can not be blank")
 	}
 	params["app_config_value"] = value
@@ -368,7 +367,7 @@ func AdminUpdateScAppConfig(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -381,7 +380,7 @@ func AdminUpdateScAppConfig(c echo.Context) error {
 
 	status, err = models.UpdateScAppConfig(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -399,12 +398,12 @@ func AdminDetailScAppConfig(c echo.Context) error {
 
 	configKey := c.Param("app_config_key")
 	if configKey == "" {
-		log.Error("Missing required parameter: app_config_key")
+		// log.Error("Missing required parameter: app_config_key")
 		return lib.CustomError(http.StatusBadRequest, "app_config_key can not be blank", "app_config_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(configKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: app_config_key")
+			// log.Error("Wrong input for parameter: app_config_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: app_config_key", "Wrong input for parameter: app_config_key")
 		}
 	}
@@ -412,7 +411,7 @@ func AdminDetailScAppConfig(c echo.Context) error {
 	var config models.ScAppConfig
 	_, err = models.GetScAppConfig(&config, configKey)
 	if err != nil {
-		log.Error("Config not found")
+		// log.Error("Config not found")
 		return lib.CustomError(http.StatusBadRequest, "Config not found", "Config not found")
 	}
 

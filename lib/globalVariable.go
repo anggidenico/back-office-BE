@@ -1,9 +1,11 @@
 package lib
 
-//mail Template Name - mm_mail_master
+import "time"
+
+// mail Template Name - mm_mail_master
 var EMAIL_ACTIVATION string = "EMAIL-ACTIVATION"
 
-//MOTION-PAY LINKING API NAME
+// MOTION-PAY LINKING API NAME
 var MAX_AMOUNT_MOTION_PAY int64 = 5000000
 var REGISTRATION_PREMIUM_NO_OTP string = "REGISTRATION_PREMIUM_NO_OTP"
 var PATH_REGISTRATION_PREMIUM_NO_OTP string = "v1/merchants/users/registration/noauth/premium"
@@ -22,7 +24,7 @@ var STATUS_UNLINKED string = "UNLINKED"
 
 var PREMIUM string = "PREMIUM"
 
-//MOTION PAY - PAYMENT
+// MOTION PAY - PAYMENT
 var CREATE_ORDER string = "CREATE_ORDER"
 var PATH_CREATE_ORDER string = "v1/merchants/orders"
 
@@ -37,12 +39,12 @@ var PATH_ORDER_DETAIL string = "v1/merchants/orders"
 
 var PATH_GENERATE_TOKEN_PAYMENT string = "v1/auth/merchant"
 
-//ROLE GROUP
+// ROLE GROUP
 var ROLE_CS = "11"
 var ROLE_KYC = "12"
 var ROLE_FUND_ADMIN = "13"
 
-//PAYMENT METHOD LOOKUP
+// PAYMENT METHOD LOOKUP
 var PAYMENT_MOTION_PAY = "1"
 var PAYMENT_VIRTUAL_ACCOUNT = "287"
 var PAYMENT_TRANSFER_MANUAL = "10"
@@ -51,4 +53,7 @@ var UNSETTLED = "243"
 var SETTLED = "244"
 
 var TIMESTAMPFORMAT = "2006-01-02 15:04:05"
-var DATEFORMATONLY = "2006-01-02"
+var DATEONLYFORMAT = "2006-01-02"
+
+var TIMENOW_TIMESTAMPFORMAT = time.Now().Format(TIMESTAMPFORMAT)
+var TIMENOW_DATEONLYFORMAT = time.Now().Format(DATEONLYFORMAT)

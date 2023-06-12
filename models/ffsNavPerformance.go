@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -139,10 +138,10 @@ func GetAllFfsNavPerformance(c *[]FfsNavPerformance, limit uint64, offset uint64
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -169,10 +168,10 @@ func GetLastNavPerformanceIn(c *[]FfsNavPerformance, productKey []string) (int, 
 				ON t1.nav_perform_key = t2.nav_perform_key`
 	query := query2 + " WHERE t1.product_key IN(" + inQuery + ")"
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -228,10 +227,10 @@ func GetAllLastNavPerformance(c *[]FfsNavPerformance, params map[string]string) 
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -284,10 +283,10 @@ func GetPublicNavPerformance(c *[]PublicNavPerformance) (int, error) {
 			ORDER BY t4.rec_order, t1.product_key`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MsBankList struct {
@@ -83,10 +81,10 @@ func GetAllMsBank(c *[]MsBank, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -95,10 +93,10 @@ func GetAllMsBank(c *[]MsBank, params map[string]string) (int, error) {
 
 func GetMsBank(c *MsBank, key string) (int, error) {
 	query := `SELECT ms_bank.* FROM ms_bank WHERE ms_bank.bank_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -111,13 +109,13 @@ func GetMsBankIn(c *[]MsBank, value []string, field string) (int, error) {
 	query := "SELECT ms_bank.* FROM ms_bank WHERE ms_bank." + field + " IN (" + inQuery + ")"
 
 	// Main query
-	// log.Println("==================== QUERY NYA ADALAH : ====================")
-	log.Println("==========  ==========>>>", query)
-	// log.Println("=============================================================")
+	// // log.Println("==================== QUERY NYA ADALAH : ====================")
+	// log.Println("==========  ==========>>>", query)
+	// // log.Println("=============================================================")
 
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -205,10 +203,10 @@ func AdminGetListBank(c *[]ListBankAdmin, limit uint64, offset uint64, params ma
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -251,10 +249,10 @@ func CountAdminGetListBank(c *CountData, params map[string]string, searchLike st
 			WHERE rec_status = 1 ` + condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -277,11 +275,11 @@ func UpdateMsBank(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE bank_key = " + params["bank_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -289,7 +287,7 @@ func UpdateMsBank(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -311,17 +309,17 @@ func CreateMsBank(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -338,10 +336,10 @@ func CountMsBankValidateUnique(c *CountData, field string, value string, key str
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

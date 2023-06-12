@@ -2,7 +2,6 @@ package lib
 
 import (
 	"fmt"
-	"log"
 	"mf-bo-api/models"
 	"strconv"
 	"time"
@@ -90,12 +89,12 @@ func blast(notifType string) {
 
 					DataNotif := make(map[string]interface{})
 					DataNotif["category"] = "PROMO"
-					log.Println("=====================================")
-					log.Println(playerIds)
-					log.Println(heading)
-					log.Println(content)
-					log.Println(DataNotif)
-					log.Println("=====================================")
+					// log.Println("=====================================")
+					// log.Println(playerIds)
+					// log.Println(heading)
+					// log.Println(content)
+					// log.Println(DataNotif)
+					// log.Println("=====================================")
 					BlastAllNotificationHelper(playerIds, heading, content, DataNotif)
 				}
 			} else {

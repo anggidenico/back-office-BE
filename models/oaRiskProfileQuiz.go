@@ -10,7 +10,6 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type ParamsRiskProfileQuiz struct {
@@ -71,17 +70,17 @@ func CreateOaRiskProfileQuiz(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	ret, err := tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -103,7 +102,7 @@ func CreateMultipleOaRiskProfileQuiz(params []interface{}) (int, error) {
 			q += ","
 		}
 	}
-	log.Println("==========  ==========>>>", q)
+	// log.Println("==========  ==========>>>", q)
 	query, args, err := sqlx.In(q, params...)
 	if err != nil {
 		return http.StatusBadGateway, err
@@ -112,7 +111,7 @@ func CreateMultipleOaRiskProfileQuiz(params []interface{}) (int, error) {
 	query = db.Db.Rebind(query)
 	_, err = db.Db.Query(query, args...)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
@@ -132,10 +131,10 @@ func AdminGetOaRiskProfileQuizByOaRequestKey(c *[]AdminOaRiskProfileQuiz, key st
 			INNER JOIN cms_quiz_options AS cms_quiz_options ON cms_quiz_options.quiz_option_key = oa_risk_profile_quiz.quiz_option_key
 			INNER JOIN cms_quiz_header AS cms_quiz_header ON cms_quiz_header.quiz_header_key = cms_quiz_question.quiz_header_key
 			WHERE oa_risk_profile_quiz.rec_status = 1 AND oa_risk_profile_quiz.oa_request_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -178,10 +177,10 @@ func RiskProfileQuizIfNull(c *[]OaRiskProfileQuiz, oarequestkey uint64) (int, er
 	`
 
 	// Main query
-	log.Println("===== GET ALL OA RISK PROFILE QUIZ IF NULL ===== >>>", query)
+	// log.Println("===== GET ALL OA RISK PROFILE QUIZ IF NULL ===== >>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -232,10 +231,10 @@ func GetAllOaRiskProfileQuiz(c *[]OaRiskProfileQuiz, limit uint64, offset uint64
 	}
 
 	// Main query
-	log.Println("===== GET ALL OA RISK PROFILE QUIZ ===== >>>", query)
+	// log.Println("===== GET ALL OA RISK PROFILE QUIZ ===== >>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -257,11 +256,11 @@ func UpdateOaRiskProfileQuiz(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE risk_profile_quiz_key = " + params["risk_profile_quiz_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -273,7 +272,7 @@ func UpdateOaRiskProfileQuiz(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -297,11 +296,11 @@ func DeleteOaRiskProfileQuiz(params map[string]string, riskKey []string, request
 	} else {
 		query += " WHERE rec_status = 1 AND oa_request_key = '" + requestKey + "'"
 	}
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -313,7 +312,7 @@ func DeleteOaRiskProfileQuiz(params map[string]string, riskKey []string, request
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -321,10 +320,10 @@ func DeleteOaRiskProfileQuiz(params map[string]string, riskKey []string, request
 
 func GetOaRiskProfileQuiz(c *OaRiskProfileQuiz, key string, field string) (int, error) {
 	query := "SELECT oa_risk_profile_quiz.* FROM oa_risk_profile_quiz WHERE oa_risk_profile_quiz.rec_status = 1 AND oa_risk_profile_quiz." + field + " = " + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 

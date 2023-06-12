@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func AdminGetListScAppModuleDropdown(c echo.Context) error {
@@ -16,11 +15,11 @@ func AdminGetListScAppModuleDropdown(c echo.Context) error {
 	status, err := models.AdminGetListAppModuleDropdown(&appModule)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(appModule) < 1 {
-		log.Error("App Module not found")
+		// log.Error("App Module not found")
 		return lib.CustomError(http.StatusNotFound, "App Module not found", "App Module not found")
 	}
 

@@ -4,8 +4,6 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MsProductChannel struct {
@@ -74,10 +72,10 @@ func GetAllMsProductChannel(c *[]MsProductChannel, params map[string]string) (in
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -86,10 +84,10 @@ func GetAllMsProductChannel(c *[]MsProductChannel, params map[string]string) (in
 
 func GetMsProductChannel(c *MsProductChannel, key string) (int, error) {
 	query := `SELECT ms_product_channel.* FROM ms_product_channel WHERE ms_product_channel.prod_channel_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -104,10 +102,10 @@ func GetMsProductChannelIn(c *[]MsBank, value []string, field string) (int, erro
 	query := query2 + " WHERE ms_product_channel." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

@@ -4,8 +4,6 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type MsHoliday struct {
@@ -68,10 +66,10 @@ func GetAllMsHoliday(c *[]MsHoliday, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -80,10 +78,10 @@ func GetAllMsHoliday(c *[]MsHoliday, params map[string]string) (int, error) {
 
 func GetMsHoliday(c *MsHoliday, key string) (int, error) {
 	query := `SELECT ms_holiday.* FROM ms_holiday WHERE ms_holiday.rec_status = '1' AND ms_holiday.holiday_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -156,10 +154,10 @@ func AdminGetListHoliday(c *[]ListHoliday, limit uint64, offset uint64, params m
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -201,10 +199,10 @@ func CountAdminGetHoliday(c *CountData, params map[string]string, searchLike str
 			WHERE h.rec_status = 1` + condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -226,17 +224,17 @@ func CreateMsHoliday(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -258,11 +256,11 @@ func UpdateMsHoliday(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE holiday_key = " + params["holiday_key"]
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
@@ -270,7 +268,7 @@ func UpdateMsHoliday(params map[string]string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -288,10 +286,10 @@ func CountMsHolidayValidateUnique(c *CountData, field string, value string, key 
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -300,10 +298,10 @@ func CountMsHolidayValidateUnique(c *CountData, field string, value string, key 
 
 func GetHolidayStatus(c *MsHoliday, date string) (int, error) {
 	query := `SELECT ms_holiday.* FROM ms_holiday WHERE ms_holiday.rec_status = '1' AND ms_holiday.holiday_date = "` + date + `"`
-	log.Println("========== QUERY GET HOLIDAY STATUS ==========>>>", query)
+	// log.Println("========== QUERY GET HOLIDAY STATUS ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 

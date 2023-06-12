@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type AdminListAutoInvestRegistration struct {
@@ -102,10 +101,10 @@ func GetAdminListAutoInvestRegistration(c *[]AdminListAutoInvestRegistration, pa
 	query += condition + orderCondition + limitOffset
 
 	// Main query
-	log.Println("========== QUERY LIST AUTOINVEST ==========>>>", query)
+	// log.Println("========== QUERY LIST AUTOINVEST ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -152,10 +151,10 @@ func GetAdminCountListAutoInvestRegistration(c *CountData, params map[string]str
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -175,10 +174,10 @@ func AdminValidateAccAndiInvestDateExecute(c *CountData, accKey string, dateExec
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -271,10 +270,10 @@ func AdminGetDetailTrAutoinvestRegistration(c *DetailAutoinvestRegistration, key
 			AND pba.product_key = ta.product_key AND pba.rec_status = 1 AND pba.bank_account_purpose = 271 
 			WHERE a.rec_status = 1 AND ta.rec_status = 1 
 			AND c.rec_status = 1 AND a.autoinvest_key = ` + key
-	log.Println("========== QUERY GET AUTOINVEST REGIST DETAIL =========", query)
+	// log.Println("========== QUERY GET AUTOINVEST REGIST DETAIL =========", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 

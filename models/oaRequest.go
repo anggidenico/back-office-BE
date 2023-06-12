@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type OaRequest struct {
@@ -315,18 +314,18 @@ func CreateOaRequest(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -382,10 +381,10 @@ func GetAllOaRequest(c *[]OaRequest, limit uint64, offset uint64, nolimit bool, 
 	}
 
 	// Main query
-	log.Println("========== QUERY GET OA REQUEST ========== >>>", query)
+	// log.Println("========== QUERY GET OA REQUEST ========== >>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -443,10 +442,10 @@ func GetAllOaRequestIndividu(c *[]OaRequest, limit uint64, offset uint64, nolimi
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -455,10 +454,10 @@ func GetAllOaRequestIndividu(c *[]OaRequest, limit uint64, offset uint64, nolimi
 
 func GetOaRequest(c *OaRequest, key string) (int, error) {
 	query := `SELECT oa_request.* FROM oa_request WHERE oa_request.rec_status = 1 AND oa_request.oa_request_key = ` + key
-	log.Println("========== QUERY GET OA REQUEST ==========>>>", query)
+	// log.Println("========== QUERY GET OA REQUEST ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -493,10 +492,10 @@ func GetCountOaRequest(c *OaRequestCountData, params map[string]string) (int, er
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -533,10 +532,10 @@ func GetCountOaRequestIndividu(c *OaRequestCountData, params map[string]string, 
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -551,10 +550,10 @@ func GetOaRequestsIn(c *[]OaRequest, value []string, field string) (int, error) 
 	query := query2 + " WHERE oa_request.rec_status = 1 AND oa_request." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -577,12 +576,12 @@ func UpdateOaRequest(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE oa_request_key = " + params["oa_request_key"]
-	// log.Infoln("===================query update oa request===================")
-	log.Infoln(query)
+	// // log.Infoln("===================query update oa request===================")
+	// log.Infoln(query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -594,7 +593,7 @@ func UpdateOaRequest(params map[string]string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -660,10 +659,10 @@ func GetAllOaRequestApproval3(c *[]OaRequest, limit uint64, offset uint64,
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -740,10 +739,10 @@ func GetAllOaRequestDoTransaction(c *[]OaRequest, limit uint64, offset uint64, n
 	}
 
 	// Main query
-	log.Println("========== QUERY GetAllOaRequestDoTransaction ==========>>>", query)
+	// log.Println("========== QUERY GetAllOaRequestDoTransaction ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -801,10 +800,10 @@ func GetCountOaRequestDoTransaction(c *OaRequestCountData, params map[string]str
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -827,11 +826,11 @@ func UpdateOaRequestByKeyIn(params map[string]string, valueIn []string, fieldIn 
 	inQuery := strings.Join(valueIn, ",")
 	query += " WHERE oa_request." + fieldIn + " IN(" + inQuery + ")"
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -843,7 +842,7 @@ func UpdateOaRequestByKeyIn(params map[string]string, valueIn []string, fieldIn 
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -864,10 +863,10 @@ func GetTransactionBankInfoCustomerIn(c *[]AdminTransactionBankInfo, value []str
 	query += " GROUP BY oa.customer_key"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -891,10 +890,10 @@ func GetTransactionBankAccountInfoCustomerIn(c *[]AdminTransactionBankAccountInf
 	query += " GROUP BY mcb.customer_key"
 
 	// Main query
-	log.Println("========== QUERY GetTransactionBankAccountInfoCustomerIn ==========>>>", query)
+	// log.Println("========== QUERY GetTransactionBankAccountInfoCustomerIn ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -915,11 +914,11 @@ func UpdateOaRequestByFieldIn(params map[string]string, value []string, field st
 		i++
 	}
 	query += " WHERE " + field + " IN(" + inQuery + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -931,7 +930,7 @@ func UpdateOaRequestByFieldIn(params map[string]string, value []string, field st
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -950,10 +949,10 @@ func AdminGetAllOaByCustomerKey(c *[]OaCustomer, customerKey string) (int, error
 			WHERE o.rec_status = 1 AND o.customer_key = ` + customerKey
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -973,10 +972,10 @@ func AdminGetAllOaByOaKey(c *[]OaCustomer, requestKey string) (int, error) {
 			WHERE o.rec_status = 1 AND o.oa_request_key = ` + requestKey
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -998,10 +997,10 @@ func AdminGetLastHistoryOaRequest(c *OaRequestKeyLastHistory, customerKey string
 			ORDER BY rec_order DESC LIMIT 1`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -1079,10 +1078,10 @@ func GetDataRegisPremiumMotionPay(c *RegisPremiumMotionPay, userLoginKey string)
 			AND u.rec_status = 1 AND c.rec_status = 1 AND r.user_login_key = "` + userLoginKey + `"`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -1099,10 +1098,10 @@ func GetOaRequestInstitution(c *OaRequest, key string, branchKey string) (int, e
 	if branchKey != "" {
 		query += " AND o.branch_key = '" + branchKey + "'"
 	}
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -1126,10 +1125,10 @@ func GetOaInstitutionDoTransaction(c *[]OaRequest) (int, error) {
 			ORDER BY o.oa_request_key DESC`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -1157,10 +1156,10 @@ func GetOaDataDelete(c *[]OaDataDelete, oaStatus []string, oaType []string) (int
 			AND oa_status IN (` + inStatus + `) AND oa.oa_request_type IN (` + inType + `)`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -1176,10 +1175,10 @@ func AdminGetLastOaRequest(c *OaRequestKeyLastHistory, customerKey string) (int,
 			ORDER BY o.oa_request_key DESC LIMIT 1`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

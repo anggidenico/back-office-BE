@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"mf-bo-api/models"
 	"time"
-
-	log "github.com/sirupsen/logrus"
 )
 
 func DeleteUserBelumOASamaSekali() {
@@ -51,7 +49,7 @@ func DeleteDataOAAndUserBelumSelesaiOA(oaStatus []string, oaType []string, isDel
 			params["rec_modified_date"] = time.Now().Format(dateLayout)
 			_, err = models.UpdateScUserLoginByKeyIn(params, userIds, "user_login_key")
 			if err != nil {
-				log.Error("ERROR DELETE USER : " + err.Error())
+				// log.Error("ERROR DELETE USER : " + err.Error())
 			} else {
 				fmt.Println("DELETE USER DONE. Jumlah Data : ")
 				fmt.Println(len(userIds))
@@ -69,12 +67,12 @@ func DeleteDataOAAndUserBelumSelesaiOA(oaStatus []string, oaType []string, isDel
 		paramsOa["rec_modified_date"] = time.Now().Format(dateLayout)
 		_, err = models.UpdateOaRequestByKeyIn(paramsOa, oaIds, "oa_request_key")
 		if err != nil {
-			log.Error("Error update delete oa request")
+			// log.Error("Error update delete oa request")
 		}
 
 		_, err = models.UpdateOaPersonalDataByKeyIn(paramsOa, oaIds, "oa_request_key")
 		if err != nil {
-			log.Error("Error update delete oa personal data")
+			// log.Error("Error update delete oa personal data")
 		}
 	} else {
 		fmt.Println("NO DATA OA_REQUEST IDS")

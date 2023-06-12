@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 type TrTransactionSubRedmReportResponse struct {
@@ -85,10 +84,10 @@ func DailySubRedmReport(c *[]TrTransactionSubRedmReport, limit uint64, offset ui
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

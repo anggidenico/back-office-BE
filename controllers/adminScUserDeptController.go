@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func AdminGetListScUserDept(c echo.Context) error {
@@ -27,7 +26,7 @@ func AdminGetListScUserDept(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -43,7 +42,7 @@ func AdminGetListScUserDept(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -59,7 +58,7 @@ func AdminGetListScUserDept(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -81,7 +80,7 @@ func AdminGetListScUserDept(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	}
@@ -91,7 +90,7 @@ func AdminGetListScUserDept(c echo.Context) error {
 	var scUserDept []models.ScUserDept
 	status, err = models.GetAllScUserDept(&scUserDept, limit, offset, params, noLimit)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
@@ -129,7 +128,7 @@ func GetListScUserDeptAdmin(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -145,7 +144,7 @@ func GetListScUserDeptAdmin(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -161,7 +160,7 @@ func GetListScUserDeptAdmin(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -181,7 +180,7 @@ func GetListScUserDeptAdmin(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -205,11 +204,11 @@ func GetListScUserDeptAdmin(c echo.Context) error {
 	status, err = models.AdminGetListScUserDept(&userDept, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(userDept) < 1 {
-		log.Error("User Dept not found")
+		// log.Error("User Dept not found")
 		return lib.CustomError(http.StatusNotFound, "User Dept not found", "User Dept not found")
 	}
 
@@ -218,7 +217,7 @@ func GetListScUserDeptAdmin(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetListScUserDept(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -249,7 +248,7 @@ func AdminDeleteScUserDept(c echo.Context) error {
 	keyStr := c.FormValue("user_dept_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: user_dept_key")
+		// log.Error("Missing required parameter: user_dept_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: user_dept_key", "Missing required parameter: user_dept_key")
 	}
 
@@ -261,7 +260,7 @@ func AdminDeleteScUserDept(c echo.Context) error {
 
 	_, err = models.UpdateScUserDept(params)
 	if err != nil {
-		log.Error("Error delete sc_user_dept")
+		// log.Error("Error delete sc_user_dept")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -283,7 +282,7 @@ func AdminCreateUserDept(c echo.Context) error {
 	if userDeptParent != "" {
 		n, err := strconv.ParseUint(userDeptParent, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: user_dept_parent")
+			// log.Error("Wrong input for parameter: user_dept_parent")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: user_dept_parent", "Wrong input for parameter: user_dept_parent")
 		}
 		params["user_dept_parent"] = userDeptParent
@@ -291,18 +290,18 @@ func AdminCreateUserDept(c echo.Context) error {
 
 	userDeptCode := c.FormValue("user_dept_code")
 	if userDeptCode == "" {
-		log.Error("Missing required parameter: user_dept_code")
+		// log.Error("Missing required parameter: user_dept_code")
 		return lib.CustomError(http.StatusBadRequest, "user_dept_code can not be blank", "user_dept_code can not be blank")
 	} else {
 		//validate unique user_dept_code
 		var countData models.CountData
 		status, err = models.CountScUserDeptValidateUnique(&countData, "user_dept_code", userDeptCode, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: user_dept_code")
+			// log.Error("Missing required parameter: user_dept_code")
 			return lib.CustomError(http.StatusBadRequest, "user_dept_code already used", "user_dept_code already used")
 		}
 		params["user_dept_code"] = userDeptCode
@@ -310,18 +309,18 @@ func AdminCreateUserDept(c echo.Context) error {
 
 	userDeptName := c.FormValue("user_dept_name")
 	if userDeptName == "" {
-		log.Error("Missing required parameter: user_dept_name")
+		// log.Error("Missing required parameter: user_dept_name")
 		return lib.CustomError(http.StatusBadRequest, "user_dept_name can not be blank", "user_dept_name can not be blank")
 	} else {
 		//validate unique user_dept_name
 		var countData models.CountData
 		status, err = models.CountScUserDeptValidateUnique(&countData, "user_dept_name", userDeptName, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: user_dept_name")
+			// log.Error("Missing required parameter: user_dept_name")
 			return lib.CustomError(http.StatusBadRequest, "user_dept_name already used", "user_dept_name already used")
 		}
 		params["user_dept_name"] = userDeptName
@@ -339,12 +338,12 @@ func AdminCreateUserDept(c echo.Context) error {
 
 	rolePrivileges := c.FormValue("role_privileges")
 	if rolePrivileges == "" {
-		log.Error("Missing required parameter: role_privileges")
+		// log.Error("Missing required parameter: role_privileges")
 		return lib.CustomError(http.StatusBadRequest, "role_privileges can not be blank", "role_privileges can not be blank")
 	} else {
 		n, err := strconv.ParseUint(rolePrivileges, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: role_privileges")
+			// log.Error("Wrong input for parameter: role_privileges")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: role_privileges", "Wrong input for parameter: role_privileges")
 		}
 		params["role_privileges"] = rolePrivileges
@@ -354,7 +353,7 @@ func AdminCreateUserDept(c echo.Context) error {
 	if branchKey != "" {
 		n, err := strconv.ParseUint(branchKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 		params["branch_key"] = branchKey
@@ -364,7 +363,7 @@ func AdminCreateUserDept(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -377,7 +376,7 @@ func AdminCreateUserDept(c echo.Context) error {
 
 	status, err = models.CreateScUserDept(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -398,12 +397,12 @@ func AdminUpdateUserDept(c echo.Context) error {
 
 	userDeptKey := c.FormValue("user_dept_key")
 	if userDeptKey == "" {
-		log.Error("Missing required parameter: user_dept_key")
+		// log.Error("Missing required parameter: user_dept_key")
 		return lib.CustomError(http.StatusBadRequest, "user_dept_key can not be blank", "user_dept_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(userDeptKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: user_dept_key")
+			// log.Error("Wrong input for parameter: user_dept_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: user_dept_key", "Wrong input for parameter: user_dept_key")
 		}
 		params["user_dept_key"] = userDeptKey
@@ -413,7 +412,7 @@ func AdminUpdateUserDept(c echo.Context) error {
 	if userDeptParent != "" {
 		n, err := strconv.ParseUint(userDeptParent, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: user_dept_parent")
+			// log.Error("Wrong input for parameter: user_dept_parent")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: user_dept_parent", "Wrong input for parameter: user_dept_parent")
 		}
 		params["user_dept_parent"] = userDeptParent
@@ -421,18 +420,18 @@ func AdminUpdateUserDept(c echo.Context) error {
 
 	userDeptCode := c.FormValue("user_dept_code")
 	if userDeptCode == "" {
-		log.Error("Missing required parameter: user_dept_code")
+		// log.Error("Missing required parameter: user_dept_code")
 		return lib.CustomError(http.StatusBadRequest, "user_dept_code can not be blank", "user_dept_code can not be blank")
 	} else {
 		//validate unique user_dept_code
 		var countData models.CountData
 		status, err = models.CountScUserDeptValidateUnique(&countData, "user_dept_code", userDeptCode, userDeptKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: user_dept_code")
+			// log.Error("Missing required parameter: user_dept_code")
 			return lib.CustomError(http.StatusBadRequest, "user_dept_code already used", "user_dept_code already used")
 		}
 		params["user_dept_code"] = userDeptCode
@@ -440,18 +439,18 @@ func AdminUpdateUserDept(c echo.Context) error {
 
 	userDeptName := c.FormValue("user_dept_name")
 	if userDeptName == "" {
-		log.Error("Missing required parameter: user_dept_name")
+		// log.Error("Missing required parameter: user_dept_name")
 		return lib.CustomError(http.StatusBadRequest, "user_dept_name can not be blank", "user_dept_name can not be blank")
 	} else {
 		//validate unique user_dept_name
 		var countData models.CountData
 		status, err = models.CountScUserDeptValidateUnique(&countData, "user_dept_name", userDeptName, userDeptKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: user_dept_name")
+			// log.Error("Missing required parameter: user_dept_name")
 			return lib.CustomError(http.StatusBadRequest, "user_dept_name already used", "user_dept_name already used")
 		}
 		params["user_dept_name"] = userDeptName
@@ -469,12 +468,12 @@ func AdminUpdateUserDept(c echo.Context) error {
 
 	rolePrivileges := c.FormValue("role_privileges")
 	if rolePrivileges == "" {
-		log.Error("Missing required parameter: role_privileges")
+		// log.Error("Missing required parameter: role_privileges")
 		return lib.CustomError(http.StatusBadRequest, "role_privileges can not be blank", "role_privileges can not be blank")
 	} else {
 		n, err := strconv.ParseUint(rolePrivileges, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: role_privileges")
+			// log.Error("Wrong input for parameter: role_privileges")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: role_privileges", "Wrong input for parameter: role_privileges")
 		}
 		params["role_privileges"] = rolePrivileges
@@ -484,7 +483,7 @@ func AdminUpdateUserDept(c echo.Context) error {
 	if branchKey != "" {
 		n, err := strconv.ParseUint(branchKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 		params["branch_key"] = branchKey
@@ -494,7 +493,7 @@ func AdminUpdateUserDept(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -506,7 +505,7 @@ func AdminUpdateUserDept(c echo.Context) error {
 
 	status, err = models.UpdateScUserDept(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -523,12 +522,12 @@ func AdminDetailUserDept(c echo.Context) error {
 
 	userDeptKey := c.Param("user_dept_key")
 	if userDeptKey == "" {
-		log.Error("Missing required parameter: user_dept_key")
+		// log.Error("Missing required parameter: user_dept_key")
 		return lib.CustomError(http.StatusBadRequest, "user_dept_key can not be blank", "user_dept_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(userDeptKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: user_dept_key")
+			// log.Error("Wrong input for parameter: user_dept_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: user_dept_key", "Wrong input for parameter: user_dept_key")
 		}
 	}
@@ -536,7 +535,7 @@ func AdminDetailUserDept(c echo.Context) error {
 	var userDept models.ScUserDept
 	_, err = models.GetScUserDept(&userDept, userDeptKey)
 	if err != nil {
-		log.Error("User Dept not found")
+		// log.Error("User Dept not found")
 		return lib.CustomError(http.StatusBadRequest, "User Dept not found", "User Dept not found")
 	}
 

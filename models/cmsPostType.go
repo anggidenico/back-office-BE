@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -98,10 +97,10 @@ func GetAllCmsPostType(c *[]CmsPostType, limit uint64, offset uint64, params map
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -111,10 +110,10 @@ func GetAllCmsPostType(c *[]CmsPostType, limit uint64, offset uint64, params map
 func GetCmsPostType(c *CmsPostType, field string, value string) (int, error) {
 	query := "SELECT cms_post_type.* FROM cms_post_type WHERE cms_post_type." + field + " = ?"
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query, value)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -129,10 +128,10 @@ func GetCmsPostTypeIn(c *[]CmsPostType, value []string, field string) (int, erro
 	query := query2 + " WHERE cms_post_type." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

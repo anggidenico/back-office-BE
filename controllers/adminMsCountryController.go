@@ -11,7 +11,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetMsCountryList(c echo.Context) error {
@@ -25,11 +24,11 @@ func GetMsCountryList(c echo.Context) error {
 	var countryDB []models.MsCountry
 	status, err = models.GetAllMsCountry(&countryDB, params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(countryDB) < 1 {
-		log.Error("Data not found")
+		// log.Error("Data not found")
 		return lib.CustomError(http.StatusNotFound, "Data not found", "Data not found")
 	}
 	var responseData []models.MsCountryList
@@ -67,7 +66,7 @@ func AdminGetListMsCountry(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -83,7 +82,7 @@ func AdminGetListMsCountry(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -99,7 +98,7 @@ func AdminGetListMsCountry(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -131,7 +130,7 @@ func AdminGetListMsCountry(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -146,11 +145,11 @@ func AdminGetListMsCountry(c echo.Context) error {
 	status, err = models.AdminGetListCountry(&country, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(country) < 1 {
-		log.Error("Country Charges not found")
+		// log.Error("Country Charges not found")
 		return lib.CustomError(http.StatusNotFound, "Country Charges not found", "Country Charges not found")
 	}
 
@@ -159,7 +158,7 @@ func AdminGetListMsCountry(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetCountry(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -190,7 +189,7 @@ func AdminDeleteMsCountry(c echo.Context) error {
 	keyStr := c.FormValue("country_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: country_key")
+		// log.Error("Missing required parameter: country_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: country_key", "Missing required parameter: country_key")
 	}
 
@@ -202,7 +201,7 @@ func AdminDeleteMsCountry(c echo.Context) error {
 
 	_, err = models.UpdateMsCountry(params)
 	if err != nil {
-		log.Error("Error delete ms_bank")
+		// log.Error("Error delete ms_bank")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -222,22 +221,22 @@ func AdminCreateMsCountry(c echo.Context) error {
 
 	couCode := c.FormValue("cou_code")
 	if couCode == "" {
-		log.Error("Missing required parameter: cou_code")
+		// log.Error("Missing required parameter: cou_code")
 		return lib.CustomError(http.StatusBadRequest, "cou_code can not be blank", "cou_code can not be blank")
 	} else {
 		if len(couCode) > 5 {
-			log.Error("cou_code must maximal 5 character")
+			// log.Error("cou_code must maximal 5 character")
 			return lib.CustomError(http.StatusBadRequest, "cou_code must maximal 5 character", "cou_code must maximal 5 character")
 		}
 		//validate unique bank_code
 		var countData models.CountData
 		status, err = models.CountMsCountryValidateUnique(&countData, "cou_code", couCode, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: cou_code")
+			// log.Error("Missing required parameter: cou_code")
 			return lib.CustomError(http.StatusBadRequest, "cou_code already used", "cou_code already used")
 		}
 		params["cou_code"] = couCode
@@ -245,22 +244,22 @@ func AdminCreateMsCountry(c echo.Context) error {
 
 	couName := c.FormValue("cou_name")
 	if couName == "" {
-		log.Error("Missing required parameter: cou_name")
+		// log.Error("Missing required parameter: cou_name")
 		return lib.CustomError(http.StatusBadRequest, "cou_name can not be blank", "cou_name can not be blank")
 	} else {
 		if len(couName) > 50 {
-			log.Error("cou_name must maximal 50 character")
+			// log.Error("cou_name must maximal 50 character")
 			return lib.CustomError(http.StatusBadRequest, "cou_name must maximal 50 character", "cou_name must maximal 50 character")
 		}
 		//validate unique bank_code
 		var countData models.CountData
 		status, err = models.CountMsCountryValidateUnique(&countData, "cou_name", couName, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: cou_name")
+			// log.Error("Missing required parameter: cou_name")
 			return lib.CustomError(http.StatusBadRequest, "cou_name already used", "cou_name already used")
 		}
 		params["cou_name"] = couName
@@ -269,7 +268,7 @@ func AdminCreateMsCountry(c echo.Context) error {
 	shortName := c.FormValue("short_name")
 	if shortName != "" {
 		if len(shortName) > 30 {
-			log.Error("short_name must maximal 30 character")
+			// log.Error("short_name must maximal 30 character")
 			return lib.CustomError(http.StatusBadRequest, "short_name must maximal 30 character", "short_name must maximal 30 character")
 		}
 		params["short_name"] = shortName
@@ -277,11 +276,11 @@ func AdminCreateMsCountry(c echo.Context) error {
 
 	flagBase := c.FormValue("flag_base")
 	if flagBase == "" {
-		log.Error("Missing required parameter: flag_base")
+		// log.Error("Missing required parameter: flag_base")
 		return lib.CustomError(http.StatusBadRequest, "flag_base can not be blank", "flag_base can not be blank")
 	} else {
 		if flagBase != "1" && flagBase != "0" {
-			log.Error("Missing required parameter: flag_base")
+			// log.Error("Missing required parameter: flag_base")
 			return lib.CustomError(http.StatusBadRequest, "flag_base must 1 / 0", "flag_base must 1 / 0")
 		}
 		params["flag_base"] = flagBase
@@ -291,7 +290,7 @@ func AdminCreateMsCountry(c echo.Context) error {
 	if currencyKey != "" {
 		n, err := strconv.ParseUint(currencyKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: currency_key")
+			// log.Error("Wrong input for parameter: currency_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: currency_key", "Wrong input for parameter: currency_key")
 		}
 		params["currency_key"] = currencyKey
@@ -301,7 +300,7 @@ func AdminCreateMsCountry(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -314,7 +313,7 @@ func AdminCreateMsCountry(c echo.Context) error {
 
 	status, err = models.CreateMsCountry(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -337,33 +336,33 @@ func AdminUpdateMsCountry(c echo.Context) error {
 	if countryKey != "" {
 		n, err := strconv.ParseUint(countryKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: country_key")
+			// log.Error("Wrong input for parameter: country_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: country_key", "Wrong input for parameter: country_key")
 		}
 		params["country_key"] = countryKey
 	} else {
-		log.Error("Missing required parameter: country_key")
+		// log.Error("Missing required parameter: country_key")
 		return lib.CustomError(http.StatusBadRequest, "country_key can not be blank", "country_key can not be blank")
 	}
 
 	couCode := c.FormValue("cou_code")
 	if couCode == "" {
-		log.Error("Missing required parameter: cou_code")
+		// log.Error("Missing required parameter: cou_code")
 		return lib.CustomError(http.StatusBadRequest, "cou_code can not be blank", "cou_code can not be blank")
 	} else {
 		if len(couCode) > 5 {
-			log.Error("cou_code must maximal 5 character")
+			// log.Error("cou_code must maximal 5 character")
 			return lib.CustomError(http.StatusBadRequest, "cou_code must maximal 5 character", "cou_code must maximal 5 character")
 		}
 		//validate unique bank_code
 		var countData models.CountData
 		status, err = models.CountMsCountryValidateUnique(&countData, "cou_code", couCode, countryKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: cou_code")
+			// log.Error("Missing required parameter: cou_code")
 			return lib.CustomError(http.StatusBadRequest, "cou_code already used", "cou_code already used")
 		}
 		params["cou_code"] = couCode
@@ -371,22 +370,22 @@ func AdminUpdateMsCountry(c echo.Context) error {
 
 	couName := c.FormValue("cou_name")
 	if couName == "" {
-		log.Error("Missing required parameter: cou_name")
+		// log.Error("Missing required parameter: cou_name")
 		return lib.CustomError(http.StatusBadRequest, "cou_name can not be blank", "cou_name can not be blank")
 	} else {
 		if len(couName) > 50 {
-			log.Error("cou_name must maximal 50 character")
+			// log.Error("cou_name must maximal 50 character")
 			return lib.CustomError(http.StatusBadRequest, "cou_name must maximal 50 character", "cou_name must maximal 50 character")
 		}
 		//validate unique bank_code
 		var countData models.CountData
 		status, err = models.CountMsCountryValidateUnique(&countData, "cou_name", couName, countryKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: cou_name")
+			// log.Error("Missing required parameter: cou_name")
 			return lib.CustomError(http.StatusBadRequest, "cou_name already used", "cou_name already used")
 		}
 		params["cou_name"] = couName
@@ -395,7 +394,7 @@ func AdminUpdateMsCountry(c echo.Context) error {
 	shortName := c.FormValue("short_name")
 	if shortName != "" {
 		if len(shortName) > 30 {
-			log.Error("short_name must maximal 30 character")
+			// log.Error("short_name must maximal 30 character")
 			return lib.CustomError(http.StatusBadRequest, "short_name must maximal 30 character", "short_name must maximal 30 character")
 		}
 		params["short_name"] = shortName
@@ -403,11 +402,11 @@ func AdminUpdateMsCountry(c echo.Context) error {
 
 	flagBase := c.FormValue("flag_base")
 	if flagBase == "" {
-		log.Error("Missing required parameter: flag_base")
+		// log.Error("Missing required parameter: flag_base")
 		return lib.CustomError(http.StatusBadRequest, "flag_base can not be blank", "flag_base can not be blank")
 	} else {
 		if flagBase != "1" && flagBase != "0" {
-			log.Error("Missing required parameter: flag_base")
+			// log.Error("Missing required parameter: flag_base")
 			return lib.CustomError(http.StatusBadRequest, "flag_base must 1 / 0", "flag_base must 1 / 0")
 		}
 		params["flag_base"] = flagBase
@@ -417,7 +416,7 @@ func AdminUpdateMsCountry(c echo.Context) error {
 	if currencyKey != "" {
 		n, err := strconv.ParseUint(currencyKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: currency_key")
+			// log.Error("Wrong input for parameter: currency_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: currency_key", "Wrong input for parameter: currency_key")
 		}
 		params["currency_key"] = currencyKey
@@ -427,7 +426,7 @@ func AdminUpdateMsCountry(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -440,7 +439,7 @@ func AdminUpdateMsCountry(c echo.Context) error {
 
 	status, err = models.UpdateMsCountry(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -458,19 +457,19 @@ func AdminDetailMsCountry(c echo.Context) error {
 
 	countryKey := c.Param("country_key")
 	if countryKey == "" {
-		log.Error("Missing required parameter: country_key")
+		// log.Error("Missing required parameter: country_key")
 		return lib.CustomError(http.StatusBadRequest, "country_key can not be blank", "country_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(countryKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: country_key")
+			// log.Error("Wrong input for parameter: country_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: country_key", "Wrong input for parameter: country_key")
 		}
 	}
 	var country models.MsCountry
 	_, err = models.GetMsCountry(&country, countryKey)
 	if err != nil {
-		log.Error("Country not found")
+		// log.Error("Country not found")
 		return lib.CustomError(http.StatusBadRequest, "Country not found", "Country not found")
 	}
 

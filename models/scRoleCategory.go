@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -41,10 +40,10 @@ type ScRoleCategoryInfo struct {
 func GetScRoleCategory(c *ScRoleCategory, key string) (int, error) {
 	query := `SELECT sc_role_category.* FROM sc_role_category 
 				WHERE sc_role_category.rec_status = 1 AND sc_role_category.role_category_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -95,10 +94,10 @@ func GetAllScRoleCategory(c *[]ScRoleCategory, limit uint64, offset uint64, para
 	}
 
 	// Main query
-	log.Println("========== GetAllScRoleCategory ==========>>>", query)
+	// log.Println("========== GetAllScRoleCategory ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 

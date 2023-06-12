@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetListUserNotif(c echo.Context) error {
@@ -28,7 +27,7 @@ func GetListUserNotif(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -44,7 +43,7 @@ func GetListUserNotif(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -60,7 +59,7 @@ func GetListUserNotif(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -99,7 +98,7 @@ func GetListUserNotif(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -124,11 +123,11 @@ func GetListUserNotif(c echo.Context) error {
 	status, err = models.AdminGetAllUserNotif(&notifList, limit, offset, params, paramLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(notifList) < 1 {
-		log.Error("Notif User not found")
+		// log.Error("Notif User not found")
 		return lib.CustomError(http.StatusNotFound, "Notif User not found", "Notif User not found")
 	}
 
@@ -137,7 +136,7 @@ func GetListUserNotif(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetAllUserNotif(&countData, params, paramLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -173,11 +172,11 @@ func CreateAdminScUserNotif(c echo.Context) error {
 		if err == nil && strnotifcategory > 0 {
 			params["notif_category"] = notifcategory
 		} else {
-			log.Error("Wrong input for parameter: notif_category")
+			// log.Error("Wrong input for parameter: notif_category")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notif_category", "Missing required parameter: notif_category")
 		}
 	} else {
-		log.Error("Missing required parameter: notif_category cann't be blank")
+		// log.Error("Missing required parameter: notif_category cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notif_category cann't be blank", "Missing required parameter: notif_category cann't be blank")
 	}
 
@@ -186,7 +185,7 @@ func CreateAdminScUserNotif(c echo.Context) error {
 	if notifstart != "" {
 		params["notif_start"] = notifstart
 	} else {
-		log.Error("Missing required parameter: notif_start cann't be blank")
+		// log.Error("Missing required parameter: notif_start cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notif_start cann't be blank", "Missing required parameter: notif_start cann't be blank")
 	}
 
@@ -195,7 +194,7 @@ func CreateAdminScUserNotif(c echo.Context) error {
 	if notifend != "" {
 		params["notif_end"] = notifend
 	} else {
-		log.Error("Missing required parameter: notif_end cann't be blank")
+		// log.Error("Missing required parameter: notif_end cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notif_end cann't be blank", "Missing required parameter: notif_end cann't be blank")
 	}
 
@@ -204,7 +203,7 @@ func CreateAdminScUserNotif(c echo.Context) error {
 	if umessagesubject != "" {
 		params["umessage_subject"] = umessagesubject
 	} else {
-		log.Error("Missing required parameter: umessage_subject cann't be blank")
+		// log.Error("Missing required parameter: umessage_subject cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: umessage_subject cann't be blank", "Missing required parameter: umessage_subject cann't be blank")
 	}
 
@@ -213,7 +212,7 @@ func CreateAdminScUserNotif(c echo.Context) error {
 	if umessagebody != "" {
 		params["umessage_body"] = umessagebody
 	} else {
-		log.Error("Missing required parameter: umessage_body cann't be blank")
+		// log.Error("Missing required parameter: umessage_body cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: umessage_body cann't be blank", "Missing required parameter: umessage_body cann't be blank")
 	}
 
@@ -224,11 +223,11 @@ func CreateAdminScUserNotif(c echo.Context) error {
 		if err == nil && stralertnotiftype > 0 {
 			params["alert_notif_type"] = alertnotiftype
 		} else {
-			log.Error("Wrong input for parameter: alert_notif_type")
+			// log.Error("Wrong input for parameter: alert_notif_type")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: alert_notif_type", "Missing required parameter: alert_notif_type")
 		}
 	} else {
-		log.Error("Missing required parameter: alert_notif_type cann't be blank")
+		// log.Error("Missing required parameter: alert_notif_type cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: alert_notif_type cann't be blank", "Missing required parameter: alert_notif_type cann't be blank")
 	}
 
@@ -240,7 +239,7 @@ func CreateAdminScUserNotif(c echo.Context) error {
 
 	status, err = models.CreateScUserNotif(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -258,7 +257,7 @@ func DeleteUserNotif(c echo.Context) error {
 
 	notifHdrKey := c.FormValue("notif_hdr_key")
 	if notifHdrKey == "" {
-		log.Error("Missing required parameter: notif_hdr_key")
+		// log.Error("Missing required parameter: notif_hdr_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notif_hdr_key", "Missing required parameter: notif_hdr_key")
 	}
 
@@ -266,14 +265,14 @@ func DeleteUserNotif(c echo.Context) error {
 	if err == nil && keyCek > 0 {
 		params["notif_hdr_key"] = notifHdrKey
 	} else {
-		log.Error("Wrong input for parameter: notif_hdr_key")
+		// log.Error("Wrong input for parameter: notif_hdr_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notif_hdr_key", "Missing required parameter: notif_hdr_key")
 	}
 
 	var notif models.ScUserNotif
 	status, err := models.GetScUserNotif(&notif, notifHdrKey)
 	if err != nil {
-		log.Error("Notif not found")
+		// log.Error("Notif not found")
 		return lib.CustomError(status)
 	}
 
@@ -284,7 +283,7 @@ func DeleteUserNotif(c echo.Context) error {
 
 	status, err = models.UpdateScUserNotif(params)
 	if err != nil {
-		log.Error("Failed delete data: " + err.Error())
+		// log.Error("Failed delete data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed delete data")
 	}
 
@@ -310,11 +309,11 @@ func UpdateAdminScUserNotif(c echo.Context) error {
 		if err == nil && strnotifhdrkey > 0 {
 			params["notif_hdr_key"] = notifhdrkey
 		} else {
-			log.Error("Wrong input for parameter: notif_hdr_key")
+			// log.Error("Wrong input for parameter: notif_hdr_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notif_hdr_key", "Missing required parameter: notif_hdr_key")
 		}
 	} else {
-		log.Error("Missing required parameter: notif_hdr_key cann't be blank")
+		// log.Error("Missing required parameter: notif_hdr_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notif_hdr_key cann't be blank", "Missing required parameter: notif_hdr_key cann't be blank")
 	}
 
@@ -325,11 +324,11 @@ func UpdateAdminScUserNotif(c echo.Context) error {
 		if err == nil && strnotifcategory > 0 {
 			params["notif_category"] = notifcategory
 		} else {
-			log.Error("Wrong input for parameter: notif_category")
+			// log.Error("Wrong input for parameter: notif_category")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notif_category", "Missing required parameter: notif_category")
 		}
 	} else {
-		log.Error("Missing required parameter: notif_category cann't be blank")
+		// log.Error("Missing required parameter: notif_category cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notif_category cann't be blank", "Missing required parameter: notif_category cann't be blank")
 	}
 
@@ -338,7 +337,7 @@ func UpdateAdminScUserNotif(c echo.Context) error {
 	if notifstart != "" {
 		params["notif_start"] = notifstart
 	} else {
-		log.Error("Missing required parameter: notif_start cann't be blank")
+		// log.Error("Missing required parameter: notif_start cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notif_start cann't be blank", "Missing required parameter: notif_start cann't be blank")
 	}
 
@@ -347,7 +346,7 @@ func UpdateAdminScUserNotif(c echo.Context) error {
 	if notifend != "" {
 		params["notif_end"] = notifend
 	} else {
-		log.Error("Missing required parameter: notif_end cann't be blank")
+		// log.Error("Missing required parameter: notif_end cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: notif_end cann't be blank", "Missing required parameter: notif_end cann't be blank")
 	}
 
@@ -356,7 +355,7 @@ func UpdateAdminScUserNotif(c echo.Context) error {
 	if umessagesubject != "" {
 		params["umessage_subject"] = umessagesubject
 	} else {
-		log.Error("Missing required parameter: umessage_subject cann't be blank")
+		// log.Error("Missing required parameter: umessage_subject cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: umessage_subject cann't be blank", "Missing required parameter: umessage_subject cann't be blank")
 	}
 
@@ -365,7 +364,7 @@ func UpdateAdminScUserNotif(c echo.Context) error {
 	if umessagebody != "" {
 		params["umessage_body"] = umessagebody
 	} else {
-		log.Error("Missing required parameter: umessage_body cann't be blank")
+		// log.Error("Missing required parameter: umessage_body cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: umessage_body cann't be blank", "Missing required parameter: umessage_body cann't be blank")
 	}
 
@@ -376,11 +375,11 @@ func UpdateAdminScUserNotif(c echo.Context) error {
 		if err == nil && stralertnotiftype > 0 {
 			params["alert_notif_type"] = alertnotiftype
 		} else {
-			log.Error("Wrong input for parameter: alert_notif_type")
+			// log.Error("Wrong input for parameter: alert_notif_type")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: alert_notif_type", "Missing required parameter: alert_notif_type")
 		}
 	} else {
-		log.Error("Missing required parameter: alert_notif_type cann't be blank")
+		// log.Error("Missing required parameter: alert_notif_type cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: alert_notif_type cann't be blank", "Missing required parameter: alert_notif_type cann't be blank")
 	}
 
@@ -392,7 +391,7 @@ func UpdateAdminScUserNotif(c echo.Context) error {
 
 	status, err = models.UpdateScUserNotif(params)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 

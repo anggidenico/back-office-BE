@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetListBranchDropdown(c echo.Context) error {
@@ -23,11 +22,11 @@ func GetListBranchDropdown(c echo.Context) error {
 	status, err = models.GetMsBranchDropdown(&msBranch)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(msBranch) < 1 {
-		log.Error("Branch not found")
+		// log.Error("Branch not found")
 		return lib.CustomError(http.StatusNotFound, "Branch not found", "Branch not found")
 	}
 
@@ -54,7 +53,7 @@ func AdminGetListMsBranch(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -70,7 +69,7 @@ func AdminGetListMsBranch(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -86,7 +85,7 @@ func AdminGetListMsBranch(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -119,7 +118,7 @@ func AdminGetListMsBranch(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -134,11 +133,11 @@ func AdminGetListMsBranch(c echo.Context) error {
 	status, err = models.AdminGetListMsBranch(&branch, limit, offset, params, searchLike, noLimit)
 
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	if len(branch) < 1 {
-		log.Error("Branch not found")
+		// log.Error("Branch not found")
 		return lib.CustomError(http.StatusNotFound, "Branch not found", "Branch not found")
 	}
 
@@ -147,7 +146,7 @@ func AdminGetListMsBranch(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.CountAdminGetListMsBranch(&countData, params, searchLike)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -178,7 +177,7 @@ func AdminDeleteMsBranch(c echo.Context) error {
 	keyStr := c.FormValue("branch_key")
 	key, _ := strconv.ParseUint(keyStr, 10, 64)
 	if key == 0 {
-		log.Error("Missing required parameter: branch_key")
+		// log.Error("Missing required parameter: branch_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: branch_key", "Missing required parameter: branch_key")
 	}
 
@@ -190,7 +189,7 @@ func AdminDeleteMsBranch(c echo.Context) error {
 
 	_, err = models.UpdateMsBranch(params)
 	if err != nil {
-		log.Error("Error delete ms_branch")
+		// log.Error("Error delete ms_branch")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed delete data")
 	}
 
@@ -212,7 +211,7 @@ func AdminCreateMsBranch(c echo.Context) error {
 	if participanKey != "" {
 		n, err := strconv.ParseUint(participanKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: participant_key")
+			// log.Error("Wrong input for parameter: participant_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: participant_key", "Wrong input for parameter: participant_key")
 		}
 		params["participant_key"] = participanKey
@@ -220,18 +219,18 @@ func AdminCreateMsBranch(c echo.Context) error {
 
 	branchCode := c.FormValue("branch_code")
 	if branchCode == "" {
-		log.Error("Missing required parameter: branch_code")
+		// log.Error("Missing required parameter: branch_code")
 		return lib.CustomError(http.StatusBadRequest, "branch_code can not be blank", "branch_code can not be blank")
 	} else {
 		//validate unique branch_code
 		var countData models.CountData
 		status, err = models.CountMsBranchValidateUnique(&countData, "branch_code", branchCode, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: branch_code")
+			// log.Error("Missing required parameter: branch_code")
 			return lib.CustomError(http.StatusBadRequest, "branch_code already used", "branch_code already used")
 		}
 		params["branch_code"] = branchCode
@@ -239,18 +238,18 @@ func AdminCreateMsBranch(c echo.Context) error {
 
 	branchName := c.FormValue("branch_name")
 	if branchName == "" {
-		log.Error("Missing required parameter: branch_name")
+		// log.Error("Missing required parameter: branch_name")
 		return lib.CustomError(http.StatusBadRequest, "branch_name can not be blank", "branch_name can not be blank")
 	} else {
 		//validate unique branch_name
 		var countData models.CountData
 		status, err = models.CountMsBranchValidateUnique(&countData, "branch_name", branchName, "")
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: branch_name")
+			// log.Error("Missing required parameter: branch_name")
 			return lib.CustomError(http.StatusBadRequest, "branch_name already used", "branch_name already used")
 		}
 		params["branch_name"] = branchName
@@ -260,7 +259,7 @@ func AdminCreateMsBranch(c echo.Context) error {
 	if branchCategory != "" {
 		n, err := strconv.ParseUint(branchCategory, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_category")
+			// log.Error("Wrong input for parameter: branch_category")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_category", "Wrong input for parameter: branch_category")
 		}
 		params["branch_category"] = branchCategory
@@ -270,7 +269,7 @@ func AdminCreateMsBranch(c echo.Context) error {
 	if cityKey != "" {
 		n, err := strconv.ParseUint(cityKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: city_key")
+			// log.Error("Wrong input for parameter: city_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: city_key", "Wrong input for parameter: city_key")
 		}
 		params["city_key"] = cityKey
@@ -299,7 +298,7 @@ func AdminCreateMsBranch(c echo.Context) error {
 	branchPicPhoneno := c.FormValue("branch_pic_phoneno")
 	if branchPicPhoneno != "" {
 		if len(branchPicPhoneno) > 20 {
-			log.Error("branch_pic_phoneno must maximal 20 character")
+			// log.Error("branch_pic_phoneno must maximal 20 character")
 			return lib.CustomError(http.StatusBadRequest, "branch_pic_phoneno must maximal 20 character", "branch_pic_phoneno must maximal 20 character")
 		}
 		params["branch_pic_phoneno"] = branchPicPhoneno
@@ -308,7 +307,7 @@ func AdminCreateMsBranch(c echo.Context) error {
 	branchCostCenter := c.FormValue("branch_cost_center")
 	if branchCostCenter != "" {
 		if len(branchCostCenter) > 10 {
-			log.Error("branch_cost_center must maximal 10 character")
+			// log.Error("branch_cost_center must maximal 10 character")
 			return lib.CustomError(http.StatusBadRequest, "branch_cost_center must maximal 10 character", "branch_cost_center must maximal 10 character")
 		}
 		params["branch_cost_center"] = branchCostCenter
@@ -317,7 +316,7 @@ func AdminCreateMsBranch(c echo.Context) error {
 	branchProfitCenter := c.FormValue("branch_profit_center")
 	if branchProfitCenter != "" {
 		if len(branchProfitCenter) > 10 {
-			log.Error("branch_profit_center must maximal 10 character")
+			// log.Error("branch_profit_center must maximal 10 character")
 			return lib.CustomError(http.StatusBadRequest, "branch_profit_center must maximal 10 character", "branch_profit_center must maximal 10 character")
 		}
 		params["branch_profit_center"] = branchProfitCenter
@@ -327,7 +326,7 @@ func AdminCreateMsBranch(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -340,7 +339,7 @@ func AdminCreateMsBranch(c echo.Context) error {
 
 	status, err = models.CreateMsBranch(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -361,18 +360,18 @@ func AdminUpdateMsBranch(c echo.Context) error {
 
 	branchKey := c.FormValue("branch_key")
 	if branchKey == "" {
-		log.Error("Missing required parameter: branch_key")
+		// log.Error("Missing required parameter: branch_key")
 		return lib.CustomError(http.StatusBadRequest, "branch_key can not be blank", "branch_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(branchKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 		var brnch models.MsBranch
 		status, err = models.GetMsBranch(&brnch, branchKey)
 		if err != nil {
-			log.Error("Config not found")
+			// log.Error("Config not found")
 			return lib.CustomError(http.StatusBadRequest, "Config not found", "Config not found")
 		}
 		params["branch_key"] = branchKey
@@ -382,7 +381,7 @@ func AdminUpdateMsBranch(c echo.Context) error {
 	if participanKey != "" {
 		n, err := strconv.ParseUint(participanKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: participant_key")
+			// log.Error("Wrong input for parameter: participant_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: participant_key", "Wrong input for parameter: participant_key")
 		}
 		params["participant_key"] = participanKey
@@ -390,18 +389,18 @@ func AdminUpdateMsBranch(c echo.Context) error {
 
 	branchCode := c.FormValue("branch_code")
 	if branchCode == "" {
-		log.Error("Missing required parameter: branch_code")
+		// log.Error("Missing required parameter: branch_code")
 		return lib.CustomError(http.StatusBadRequest, "branch_code can not be blank", "branch_code can not be blank")
 	} else {
 		//validate unique branch_code
 		var countData models.CountData
 		status, err = models.CountMsBranchValidateUnique(&countData, "branch_code", branchCode, branchKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: branch_code")
+			// log.Error("Missing required parameter: branch_code")
 			return lib.CustomError(http.StatusBadRequest, "branch_code already used", "branch_code already used")
 		}
 		params["branch_code"] = branchCode
@@ -409,18 +408,18 @@ func AdminUpdateMsBranch(c echo.Context) error {
 
 	branchName := c.FormValue("branch_name")
 	if branchName == "" {
-		log.Error("Missing required parameter: branch_name")
+		// log.Error("Missing required parameter: branch_name")
 		return lib.CustomError(http.StatusBadRequest, "branch_name can not be blank", "branch_name can not be blank")
 	} else {
 		//validate unique branch_name
 		var countData models.CountData
 		status, err = models.CountMsBranchValidateUnique(&countData, "branch_name", branchName, branchKey)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) > int(0) {
-			log.Error("Missing required parameter: branch_name")
+			// log.Error("Missing required parameter: branch_name")
 			return lib.CustomError(http.StatusBadRequest, "branch_name already used", "branch_name already used")
 		}
 		params["branch_name"] = branchName
@@ -430,7 +429,7 @@ func AdminUpdateMsBranch(c echo.Context) error {
 	if branchCategory != "" {
 		n, err := strconv.ParseUint(branchCategory, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_category")
+			// log.Error("Wrong input for parameter: branch_category")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_category", "Wrong input for parameter: branch_category")
 		}
 		params["branch_category"] = branchCategory
@@ -440,7 +439,7 @@ func AdminUpdateMsBranch(c echo.Context) error {
 	if cityKey != "" {
 		n, err := strconv.ParseUint(cityKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: city_key")
+			// log.Error("Wrong input for parameter: city_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: city_key", "Wrong input for parameter: city_key")
 		}
 		params["city_key"] = cityKey
@@ -469,7 +468,7 @@ func AdminUpdateMsBranch(c echo.Context) error {
 	branchPicPhoneno := c.FormValue("branch_pic_phoneno")
 	if branchPicPhoneno != "" {
 		if len(branchPicPhoneno) > 20 {
-			log.Error("branch_pic_phoneno must maximal 20 character")
+			// log.Error("branch_pic_phoneno must maximal 20 character")
 			return lib.CustomError(http.StatusBadRequest, "branch_pic_phoneno must maximal 20 character", "branch_pic_phoneno must maximal 20 character")
 		}
 		params["branch_pic_phoneno"] = branchPicPhoneno
@@ -478,7 +477,7 @@ func AdminUpdateMsBranch(c echo.Context) error {
 	branchCostCenter := c.FormValue("branch_cost_center")
 	if branchCostCenter != "" {
 		if len(branchCostCenter) > 10 {
-			log.Error("branch_cost_center must maximal 10 character")
+			// log.Error("branch_cost_center must maximal 10 character")
 			return lib.CustomError(http.StatusBadRequest, "branch_cost_center must maximal 10 character", "branch_cost_center must maximal 10 character")
 		}
 		params["branch_cost_center"] = branchCostCenter
@@ -487,7 +486,7 @@ func AdminUpdateMsBranch(c echo.Context) error {
 	branchProfitCenter := c.FormValue("branch_profit_center")
 	if branchProfitCenter != "" {
 		if len(branchProfitCenter) > 10 {
-			log.Error("branch_profit_center must maximal 10 character")
+			// log.Error("branch_profit_center must maximal 10 character")
 			return lib.CustomError(http.StatusBadRequest, "branch_profit_center must maximal 10 character", "branch_profit_center must maximal 10 character")
 		}
 		params["branch_profit_center"] = branchProfitCenter
@@ -497,7 +496,7 @@ func AdminUpdateMsBranch(c echo.Context) error {
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: rec_order")
+			// log.Error("Wrong input for parameter: rec_order")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
@@ -510,7 +509,7 @@ func AdminUpdateMsBranch(c echo.Context) error {
 
 	status, err = models.UpdateMsBranch(params)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 
@@ -528,12 +527,12 @@ func AdminDetailMsBranch(c echo.Context) error {
 
 	branchKey := c.Param("branch_key")
 	if branchKey == "" {
-		log.Error("Missing required parameter: branch_key")
+		// log.Error("Missing required parameter: branch_key")
 		return lib.CustomError(http.StatusBadRequest, "branch_key can not be blank", "branch_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(branchKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: branch_key")
+			// log.Error("Wrong input for parameter: branch_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: branch_key", "Wrong input for parameter: branch_key")
 		}
 	}
@@ -541,7 +540,7 @@ func AdminDetailMsBranch(c echo.Context) error {
 	var branch models.MsBranch
 	_, err = models.GetMsBranch(&branch, branchKey)
 	if err != nil {
-		log.Error("Branch not found")
+		// log.Error("Branch not found")
 		return lib.CustomError(http.StatusBadRequest, "Branch not found", "Branch not found")
 	}
 

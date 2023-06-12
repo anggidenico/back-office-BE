@@ -10,7 +10,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func AdminDetailAccountStatementCustomerProduct(c echo.Context) error {
@@ -19,12 +18,12 @@ func AdminDetailAccountStatementCustomerProduct(c echo.Context) error {
 
 	customerKey := c.QueryParam("customer_key")
 	if customerKey == "" {
-		log.Error("Missing required parameter: customer_key")
+		// log.Error("Missing required parameter: customer_key")
 		return lib.CustomError(http.StatusBadRequest, "customer_key can not be blank", "customer_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(customerKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: customer_key")
+			// log.Error("Wrong input for parameter: customer_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: customer_key", "Wrong input for parameter: customer_key")
 		}
 	}
@@ -32,7 +31,7 @@ func AdminDetailAccountStatementCustomerProduct(c echo.Context) error {
 	var customer models.HeaderCustomerDetailAccountStatement
 	_, err = models.GetHeaderCustomerDetailAccountStatement(&customer, customerKey)
 	if err != nil {
-		log.Error("Customer not found")
+		// log.Error("Customer not found")
 		return lib.CustomError(http.StatusBadRequest, "Customer not found", "Customer not found")
 	}
 
@@ -41,13 +40,13 @@ func AdminDetailAccountStatementCustomerProduct(c echo.Context) error {
 
 	datefrom = c.QueryParam("date_from")
 	if datefrom == "" {
-		log.Error("Missing required parameter: date_from")
+		// log.Error("Missing required parameter: date_from")
 		return lib.CustomError(http.StatusBadRequest, "date_from can not be blank", "date_from can not be blank")
 	}
 
 	dateto = c.QueryParam("date_to")
 	if dateto == "" {
-		log.Error("Missing required parameter: date_to")
+		// log.Error("Missing required parameter: date_to")
 		return lib.CustomError(http.StatusBadRequest, "date_to can not be blank", "date_to can not be blank")
 	}
 	layoutISO := "2006-01-02"
@@ -95,7 +94,7 @@ func AdminDetailAccountStatementCustomerProduct(c echo.Context) error {
 
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data transaction")
 		}
 	}
@@ -486,12 +485,12 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 
 	customerKey := c.QueryParam("customer_key")
 	if customerKey == "" {
-		log.Error("Missing required parameter: menu_key")
+		// log.Error("Missing required parameter: menu_key")
 		return lib.CustomError(http.StatusBadRequest, "menu_key can not be blank", "menu_key can not be blank")
 	} else {
 		n, err := strconv.ParseUint(customerKey, 10, 64)
 		if err != nil || n == 0 {
-			log.Error("Wrong input for parameter: menu_key")
+			// log.Error("Wrong input for parameter: menu_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: menu_key", "Wrong input for parameter: menu_key")
 		}
 	}
@@ -499,7 +498,7 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 	var customer models.HeaderCustomerDetailAccountStatement
 	_, err = models.GetHeaderCustomerDetailAccountStatement(&customer, customerKey)
 	if err != nil {
-		log.Error("Customer not found")
+		// log.Error("Customer not found")
 		return lib.CustomError(http.StatusBadRequest, "Customer not found", "Customer not found")
 	}
 
@@ -508,13 +507,13 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 
 	datefrom = c.QueryParam("date_from")
 	if datefrom == "" {
-		log.Error("Missing required parameter: date_from")
+		// log.Error("Missing required parameter: date_from")
 		return lib.CustomError(http.StatusBadRequest, "date_from can not be blank", "date_from can not be blank")
 	}
 
 	dateto = c.QueryParam("date_to")
 	if dateto == "" {
-		log.Error("Missing required parameter: date_to")
+		// log.Error("Missing required parameter: date_to")
 		return lib.CustomError(http.StatusBadRequest, "date_to can not be blank", "date_to can not be blank")
 	}
 	layoutISO := "2006-01-02"
@@ -562,7 +561,7 @@ func AdminDetailAccountStatementCustomerAgent(c echo.Context) error {
 
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data transaction")
 		}
 	}

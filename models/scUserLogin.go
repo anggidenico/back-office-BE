@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type ScUserLoginRegister struct {
@@ -168,10 +166,10 @@ func GetAllScUserLogin(c *[]ScUserLogin, limit uint64, offset uint64, params map
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -180,10 +178,10 @@ func GetAllScUserLogin(c *[]ScUserLogin, limit uint64, offset uint64, params map
 
 func GetScUserLogin(c *ScUserLogin, email string) (int, error) {
 	query := `SELECT sc_user_login.* WHERE sc_user_login.ulogin_email = ` + email
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusNotFound, err
 	}
 
@@ -205,17 +203,17 @@ func CreateScUserLogin(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -237,21 +235,21 @@ func UpdateScUserLogin(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE user_login_key = " + params["user_login_key"]
-	log.Println("========== QUERY UPDATE SC USER LOGIN ==========>>>", query)
+	// log.Println("========== QUERY UPDATE SC USER LOGIN ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	// var ret sql.Result
 	_, err = tx.Exec(query)
 
-	// log.Infoln("========== query dan parameter upload image ==========")
-	log.Println("========== QUERY UPDATE SC USER LOGIN ==========", query)
-	// log.Infoln("========================================")
-	// log.Infoln(params)
-	// log.Infoln("========================================")
+	// // log.Infoln("========== query dan parameter upload image ==========")
+	// log.Println("========== QUERY UPDATE SC USER LOGIN ==========", query)
+	// // log.Infoln("========================================")
+	// // log.Infoln(params)
+	// // log.Infoln("========================================")
 
 	//banyak transaction di DB ke lock, sementara di disabled dlu
 	// row, _ := ret.RowsAffected()
@@ -262,7 +260,7 @@ func UpdateScUserLogin(params map[string]string) (int, error) {
 	// }
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -277,10 +275,10 @@ func GetScUserLoginIn(c *[]ScUserLogin, value []string, field string) (int, erro
 	query := query2 + " WHERE sc_user_login." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -289,10 +287,10 @@ func GetScUserLoginIn(c *[]ScUserLogin, value []string, field string) (int, erro
 
 func GetScUserLoginByKey(c *ScUserLogin, key string) (int, error) {
 	query := `SELECT sc_user_login.* FROM sc_user_login WHERE sc_user_login.rec_status = 1 AND sc_user_login.user_login_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -301,10 +299,10 @@ func GetScUserLoginByKey(c *ScUserLogin, key string) (int, error) {
 
 func GetScUserLoginByCustomerKey(c *ScUserLogin, key string) (int, error) {
 	query := `SELECT sc_user_login.* FROM sc_user_login WHERE sc_user_login.rec_status = 1 AND sc_user_login.customer_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -404,10 +402,10 @@ func AdminGetAllScUserLogin(c *[]AdminListScUserLogin, limit uint64, offset uint
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -459,10 +457,10 @@ func AdminCountDataGetAllScUserlogin(c *CountData, params map[string]string, sea
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -506,10 +504,10 @@ func AdminGetValidateUniqueInsertUpdateScUserLogin(c *CountData, paramsOr map[st
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -544,10 +542,10 @@ func GetCountScUserLogin(c *CountData, params map[string]string) (int, error) {
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -628,10 +626,10 @@ func GetAllScUserLoginByNameOrEmail(c *[]ScUserLogin, limit uint64, offset uint6
 	}
 
 	// Main query
-	log.Info("========= QUERY LOGIN ============", query)
+	// log.Info("========= QUERY LOGIN ============", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -653,18 +651,18 @@ func CreateScUserLoginReturnKey(params map[string]string) (int, error, string) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -677,10 +675,10 @@ func GetUserLocked(c *[]UserLoginKeyLocked) (int, error) {
 			FROM sc_user_login 
 			WHERE ulogin_locked = 1 AND rec_status = 1
 			AND DATE_ADD(locked_date, INTERVAL 1 HOUR) < NOW()`
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -703,11 +701,11 @@ func UpdateScUserLoginByKeyIn(params map[string]string, valueIn []string, fieldI
 	inQuery := strings.Join(valueIn, ",")
 	query += " WHERE sc_user_login." + fieldIn + " IN(" + inQuery + ")"
 
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -719,7 +717,7 @@ func UpdateScUserLoginByKeyIn(params map[string]string, valueIn []string, fieldI
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -735,10 +733,10 @@ func AdminGetAllUserBlastPromo(c *[]UserBlastPromo) (int, error) {
 			WHERE u.user_category_key = 1 AND u.rec_status = 1 AND u.token_notif IS NOT NULL`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -756,10 +754,10 @@ func ValidateUniqueData(c *CountData, field string, value string, userLoginKey *
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -778,10 +776,10 @@ func CheckCreatePin(c *CountData, userLoginKey string) (int, error) {
 			AND u.user_login_key = '` + userLoginKey + `' GROUP BY u.user_login_key`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -793,7 +791,7 @@ func SetNullTokenNotif(tokenNotif string) (int, error) {
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -801,7 +799,7 @@ func SetNullTokenNotif(tokenNotif string) (int, error) {
 
 	if err != nil {
 		tx.Rollback()
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
@@ -810,10 +808,10 @@ func SetNullTokenNotif(tokenNotif string) (int, error) {
 
 func GetScUserKey(c *ScUserLogin, key string) (int, error) {
 	query := `SELECT sc_user_login.* FROM sc_user_login WHERE sc_user_login.user_login_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -835,17 +833,17 @@ func CreateScUserLoginWithReturnPK(params map[string]string) (int, error, string
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err, "0"
 	}
 	ret, err := tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err, "0"
 	}
 	lastID, _ := ret.LastInsertId()
@@ -869,7 +867,7 @@ func UpdateDeleteUserNotOA(days string) (int, error) {
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -881,7 +879,7 @@ func UpdateDeleteUserNotOA(days string) (int, error) {
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil

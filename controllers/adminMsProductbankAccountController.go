@@ -12,7 +12,6 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/shopspring/decimal"
-	log "github.com/sirupsen/logrus"
 )
 
 func GetListProductBankAccountAdmin(c echo.Context) error {
@@ -22,7 +21,7 @@ func GetListProductBankAccountAdmin(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -36,7 +35,7 @@ func GetListProductBankAccountAdmin(c echo.Context) error {
 				limit = config.LimitQuery
 			}
 		} else {
-			log.Error("Limit should be number")
+			// log.Error("Limit should be number")
 			return lib.CustomError(http.StatusBadRequest, "Limit should be number", "Limit should be number")
 		}
 	} else {
@@ -52,7 +51,7 @@ func GetListProductBankAccountAdmin(c echo.Context) error {
 				page = 1
 			}
 		} else {
-			log.Error("Page should be number")
+			// log.Error("Page should be number")
 			return lib.CustomError(http.StatusBadRequest, "Page should be number", "Page should be number")
 		}
 	} else {
@@ -68,7 +67,7 @@ func GetListProductBankAccountAdmin(c echo.Context) error {
 	if noLimitStr != "" {
 		noLimit, err = strconv.ParseBool(noLimitStr)
 		if err != nil {
-			log.Error("Nolimit parameter should be true/false")
+			// log.Error("Nolimit parameter should be true/false")
 			return lib.CustomError(http.StatusBadRequest, "Nolimit parameter should be true/false", "Nolimit parameter should be true/false")
 		}
 	} else {
@@ -108,7 +107,7 @@ func GetListProductBankAccountAdmin(c echo.Context) error {
 				params["orderType"] = orderType
 			}
 		} else {
-			log.Error("Wrong input for parameter order_by")
+			// log.Error("Wrong input for parameter order_by")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
@@ -129,7 +128,7 @@ func GetListProductBankAccountAdmin(c echo.Context) error {
 		if err == nil && productkeyCek > 0 {
 			params["p.product_key"] = productkey
 		} else {
-			log.Error("Wrong input for parameter: product_key")
+			// log.Error("Wrong input for parameter: product_key")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 		}
 	}
@@ -138,7 +137,7 @@ func GetListProductBankAccountAdmin(c echo.Context) error {
 	var productBankAccountList []models.AdminMsProductBankAccountList
 	status, err = models.AdminGetAllMsProductBankAccount(&productBankAccountList, limit, offset, params, noLimit, searchData)
 	if err != nil {
-		log.Error(err.Error())
+		// log.Error(err.Error())
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 	}
 
@@ -147,7 +146,7 @@ func GetListProductBankAccountAdmin(c echo.Context) error {
 	if limit > 0 {
 		status, err = models.AdminCountDataGetAllMsProductBankAccount(&countData, params, searchData)
 		if err != nil {
-			log.Error(err.Error())
+			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
 		if int(countData.CountData) < int(limit) {
@@ -178,7 +177,7 @@ func GetProductBankAccountDetailAdmin(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	keyStr := c.Param("key")
@@ -228,7 +227,7 @@ func GetProductBankAccountDetailAdmin(c echo.Context) error {
 		status, err = models.GetGenLookupIn(&lookupProductBank, lookupIds, "lookup_key")
 		if err != nil {
 			if err != sql.ErrNoRows {
-				log.Error(err.Error())
+				// log.Error(err.Error())
 				return lib.CustomError(status, err.Error(), "Failed get data")
 			}
 		}
@@ -256,7 +255,7 @@ func GetProductBankAccountDetailAdmin(c echo.Context) error {
 	if err != nil {
 		return lib.CustomError(http.StatusNotFound)
 	} else {
-		log.Println("hahahah")
+		// log.Println("hahahah")
 		var b models.MsBankList
 		b.BankKey = bank.BankKey
 		b.BankCode = bank.BankCode
@@ -278,7 +277,7 @@ func GetProductBankAccountDetailAdmin(c echo.Context) error {
 	if err != nil {
 		return lib.CustomError(http.StatusNotFound)
 	} else {
-		log.Println("hahahah")
+		// log.Println("hahahah")
 		var c models.MsCurrencyInfo
 		c.CurrencyKey = curr.CurrencyKey
 		c.Code = curr.Code
@@ -325,7 +324,7 @@ func DeleteProductBankAccountAdmin(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -333,7 +332,7 @@ func DeleteProductBankAccountAdmin(c echo.Context) error {
 
 	key := c.FormValue("key")
 	if key == "" {
-		log.Error("Missing required parameter: key")
+		// log.Error("Missing required parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
@@ -341,7 +340,7 @@ func DeleteProductBankAccountAdmin(c echo.Context) error {
 	if err == nil && keyCek > 0 {
 		params["prod_bankacc_key"] = key
 	} else {
-		log.Error("Wrong input for parameter: key")
+		// log.Error("Wrong input for parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
@@ -359,7 +358,7 @@ func DeleteProductBankAccountAdmin(c echo.Context) error {
 
 	status, err = models.UpdateMsProductBankAccount(params)
 	if err != nil {
-		log.Error("Failed update request data: " + err.Error())
+		// log.Error("Failed update request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed update data")
 	}
 
@@ -372,7 +371,7 @@ func DeleteProductBankAccountAdmin(c echo.Context) error {
 		paramsBA["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 		status, err = models.UpdateMsBankAccount(paramsBA)
 		if err != nil {
-			log.Error("Failed update request data: " + err.Error())
+			// log.Error("Failed update request data: " + err.Error())
 			return lib.CustomError(status, err.Error(), "failed update data")
 		}
 	}
@@ -392,7 +391,7 @@ func CreateAdminMsProductBankAccount(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -402,35 +401,35 @@ func CreateAdminMsProductBankAccount(c echo.Context) error {
 	//product_key
 	productkey := c.FormValue("product_key")
 	if productkey == "" {
-		log.Error("Missing required parameter: product_key cann't be blank")
+		// log.Error("Missing required parameter: product_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key cann't be blank", "Missing required parameter: product_key cann't be blank")
 	}
 	strproductkey, err := strconv.ParseUint(productkey, 10, 64)
 	if err == nil && strproductkey > 0 {
 		paramsProBankAcc["product_key"] = productkey
 	} else {
-		log.Error("Wrong input for parameter: product_key")
+		// log.Error("Wrong input for parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
 	//bank_key
 	bankkey := c.FormValue("bank_key")
 	if bankkey == "" {
-		log.Error("Missing required parameter: bank_key cann't be blank")
+		// log.Error("Missing required parameter: bank_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_key cann't be blank", "Missing required parameter: bank_key cann't be blank")
 	}
 	strbankkey, err := strconv.ParseUint(bankkey, 10, 64)
 	if err == nil && strbankkey > 0 {
 		paramsBankAcc["bank_key"] = bankkey
 	} else {
-		log.Error("Wrong input for parameter: bank_key")
+		// log.Error("Wrong input for parameter: bank_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_key", "Missing required parameter: bank_key")
 	}
 
 	//account_no
 	accountno := c.FormValue("account_no")
 	if accountno == "" {
-		log.Error("Missing required parameter: account_no cann't be blank")
+		// log.Error("Missing required parameter: account_no cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: account_no cann't be blank", "Missing required parameter: account_no cann't be blank")
 	}
 	paramsBankAcc["account_no"] = accountno
@@ -438,7 +437,7 @@ func CreateAdminMsProductBankAccount(c echo.Context) error {
 	//account_holder_name
 	accountholdername := c.FormValue("account_holder_name")
 	if accountholdername == "" {
-		log.Error("Missing required parameter: account_holder_name cann't be blank")
+		// log.Error("Missing required parameter: account_holder_name cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: account_holder_name cann't be blank", "Missing required parameter: account_holder_name cann't be blank")
 	}
 	paramsBankAcc["account_holder_name"] = accountholdername
@@ -452,28 +451,28 @@ func CreateAdminMsProductBankAccount(c echo.Context) error {
 	//currency_key
 	currencykey := c.FormValue("currency_key")
 	if currencykey == "" {
-		log.Error("Missing required parameter: currency_key cann't be blank")
+		// log.Error("Missing required parameter: currency_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: currency_key cann't be blank", "Missing required parameter: currency_key cann't be blank")
 	}
 	strcurrencykey, err := strconv.ParseUint(currencykey, 10, 64)
 	if err == nil && strcurrencykey > 0 {
 		paramsBankAcc["currency_key"] = currencykey
 	} else {
-		log.Error("Wrong input for parameter: currency_key")
+		// log.Error("Wrong input for parameter: currency_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: currency_key", "Missing required parameter: currency_key")
 	}
 
 	//bank_account_type
 	bankaccounttype := c.FormValue("bank_account_type")
 	if bankaccounttype == "" {
-		log.Error("Missing required parameter: bank_account_type cann't be blank")
+		// log.Error("Missing required parameter: bank_account_type cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_type cann't be blank", "Missing required parameter: bank_account_type cann't be blank")
 	}
 	strbankaccounttype, err := strconv.ParseUint(bankaccounttype, 10, 64)
 	if err == nil && strbankaccounttype > 0 {
 		paramsBankAcc["bank_account_type"] = bankaccounttype
 	} else {
-		log.Error("Wrong input for parameter: bank_account_type")
+		// log.Error("Wrong input for parameter: bank_account_type")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_type", "Missing required parameter: bank_account_type")
 	}
 
@@ -488,7 +487,7 @@ func CreateAdminMsProductBankAccount(c echo.Context) error {
 	//bank_account_name
 	bankaccountname := c.FormValue("bank_account_name")
 	if bankaccountname == "" {
-		log.Error("Missing required parameter: bank_account_name cann't be blank")
+		// log.Error("Missing required parameter: bank_account_name cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_name cann't be blank", "Missing required parameter: bank_account_name cann't be blank")
 	}
 	paramsProBankAcc["bank_account_name"] = bankaccountname
@@ -496,14 +495,14 @@ func CreateAdminMsProductBankAccount(c echo.Context) error {
 	//bank_account_type
 	bankaccountpurpose := c.FormValue("bank_account_purpose")
 	if bankaccountpurpose == "" {
-		log.Error("Missing required parameter: bank_account_purpose cann't be blank")
+		// log.Error("Missing required parameter: bank_account_purpose cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_purpose cann't be blank", "Missing required parameter: bank_account_purpose cann't be blank")
 	}
 	strbankaccountpurpose, err := strconv.ParseUint(bankaccountpurpose, 10, 64)
 	if err == nil && strbankaccountpurpose > 0 {
 		paramsProBankAcc["bank_account_purpose"] = bankaccountpurpose
 	} else {
-		log.Error("Wrong input for parameter: bank_account_purpose")
+		// log.Error("Wrong input for parameter: bank_account_purpose")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_purpose", "Missing required parameter: bank_account_purpose")
 	}
 
@@ -516,7 +515,7 @@ func CreateAdminMsProductBankAccount(c echo.Context) error {
 	//save bank account
 	status, err, lastID := models.CreateMsBankAccount(paramsBankAcc)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -528,7 +527,7 @@ func CreateAdminMsProductBankAccount(c echo.Context) error {
 	paramsProBankAcc["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 	status, err = models.CreateMsProductBankAccount(paramsProBankAcc)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -547,7 +546,7 @@ func UpdateAdminMsProductBankAccount(c echo.Context) error {
 
 	errorAuth := initAuthHoIt()
 	if errorAuth != nil {
-		log.Error("User Autorizer")
+		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
@@ -557,14 +556,14 @@ func UpdateAdminMsProductBankAccount(c echo.Context) error {
 	//key /prod_bankacc_key
 	key := c.FormValue("key")
 	if key == "" {
-		log.Error("Missing required parameter: key cann't be blank")
+		// log.Error("Missing required parameter: key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key cann't be blank", "Missing required parameter: key cann't be blank")
 	}
 	strkey, err := strconv.ParseUint(key, 10, 64)
 	if err == nil && strkey > 0 {
 		paramsProBankAcc["prod_bankacc_key"] = key
 	} else {
-		log.Error("Wrong input for parameter: key")
+		// log.Error("Wrong input for parameter: key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
@@ -578,35 +577,35 @@ func UpdateAdminMsProductBankAccount(c echo.Context) error {
 	//product_key
 	productkey := c.FormValue("product_key")
 	if productkey == "" {
-		log.Error("Missing required parameter: product_key cann't be blank")
+		// log.Error("Missing required parameter: product_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key cann't be blank", "Missing required parameter: product_key cann't be blank")
 	}
 	strproductkey, err := strconv.ParseUint(productkey, 10, 64)
 	if err == nil && strproductkey > 0 {
 		paramsProBankAcc["product_key"] = productkey
 	} else {
-		log.Error("Wrong input for parameter: product_key")
+		// log.Error("Wrong input for parameter: product_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_key", "Missing required parameter: product_key")
 	}
 
 	//bank_key
 	bankkey := c.FormValue("bank_key")
 	if bankkey == "" {
-		log.Error("Missing required parameter: bank_key cann't be blank")
+		// log.Error("Missing required parameter: bank_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_key cann't be blank", "Missing required parameter: bank_key cann't be blank")
 	}
 	strbankkey, err := strconv.ParseUint(bankkey, 10, 64)
 	if err == nil && strbankkey > 0 {
 		paramsBankAcc["bank_key"] = bankkey
 	} else {
-		log.Error("Wrong input for parameter: bank_key")
+		// log.Error("Wrong input for parameter: bank_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_key", "Missing required parameter: bank_key")
 	}
 
 	//account_no
 	accountno := c.FormValue("account_no")
 	if accountno == "" {
-		log.Error("Missing required parameter: account_no cann't be blank")
+		// log.Error("Missing required parameter: account_no cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: account_no cann't be blank", "Missing required parameter: account_no cann't be blank")
 	}
 	paramsBankAcc["account_no"] = accountno
@@ -614,7 +613,7 @@ func UpdateAdminMsProductBankAccount(c echo.Context) error {
 	//account_holder_name
 	accountholdername := c.FormValue("account_holder_name")
 	if accountholdername == "" {
-		log.Error("Missing required parameter: account_holder_name cann't be blank")
+		// log.Error("Missing required parameter: account_holder_name cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: account_holder_name cann't be blank", "Missing required parameter: account_holder_name cann't be blank")
 	}
 	paramsBankAcc["account_holder_name"] = accountholdername
@@ -628,28 +627,28 @@ func UpdateAdminMsProductBankAccount(c echo.Context) error {
 	//currency_key
 	currencykey := c.FormValue("currency_key")
 	if currencykey == "" {
-		log.Error("Missing required parameter: currency_key cann't be blank")
+		// log.Error("Missing required parameter: currency_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: currency_key cann't be blank", "Missing required parameter: currency_key cann't be blank")
 	}
 	strcurrencykey, err := strconv.ParseUint(currencykey, 10, 64)
 	if err == nil && strcurrencykey > 0 {
 		paramsBankAcc["currency_key"] = currencykey
 	} else {
-		log.Error("Wrong input for parameter: currency_key")
+		// log.Error("Wrong input for parameter: currency_key")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: currency_key", "Missing required parameter: currency_key")
 	}
 
 	//bank_account_type
 	bankaccounttype := c.FormValue("bank_account_type")
 	if bankaccounttype == "" {
-		log.Error("Missing required parameter: bank_account_type cann't be blank")
+		// log.Error("Missing required parameter: bank_account_type cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_type cann't be blank", "Missing required parameter: bank_account_type cann't be blank")
 	}
 	strbankaccounttype, err := strconv.ParseUint(bankaccounttype, 10, 64)
 	if err == nil && strbankaccounttype > 0 {
 		paramsBankAcc["bank_account_type"] = bankaccounttype
 	} else {
-		log.Error("Wrong input for parameter: bank_account_type")
+		// log.Error("Wrong input for parameter: bank_account_type")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_type", "Missing required parameter: bank_account_type")
 	}
 
@@ -662,7 +661,7 @@ func UpdateAdminMsProductBankAccount(c echo.Context) error {
 	//bank_account_name
 	bankaccountname := c.FormValue("bank_account_name")
 	if bankaccountname == "" {
-		log.Error("Missing required parameter: bank_account_name cann't be blank")
+		// log.Error("Missing required parameter: bank_account_name cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_name cann't be blank", "Missing required parameter: bank_account_name cann't be blank")
 	}
 	paramsProBankAcc["bank_account_name"] = bankaccountname
@@ -670,14 +669,14 @@ func UpdateAdminMsProductBankAccount(c echo.Context) error {
 	//bank_account_type
 	bankaccountpurpose := c.FormValue("bank_account_purpose")
 	if bankaccountpurpose == "" {
-		log.Error("Missing required parameter: bank_account_purpose cann't be blank")
+		// log.Error("Missing required parameter: bank_account_purpose cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_purpose cann't be blank", "Missing required parameter: bank_account_purpose cann't be blank")
 	}
 	strbankaccountpurpose, err := strconv.ParseUint(bankaccountpurpose, 10, 64)
 	if err == nil && strbankaccountpurpose > 0 {
 		paramsProBankAcc["bank_account_purpose"] = bankaccountpurpose
 	} else {
-		log.Error("Wrong input for parameter: bank_account_purpose")
+		// log.Error("Wrong input for parameter: bank_account_purpose")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_purpose", "Missing required parameter: bank_account_purpose")
 	}
 
@@ -691,7 +690,7 @@ func UpdateAdminMsProductBankAccount(c echo.Context) error {
 	//save update bank account
 	status, err = models.UpdateMsBankAccount(paramsBankAcc)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 
@@ -700,7 +699,7 @@ func UpdateAdminMsProductBankAccount(c echo.Context) error {
 	paramsProBankAcc["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 	status, err = models.UpdateMsProductBankAccount(paramsProBankAcc)
 	if err != nil {
-		log.Error("Failed create request data: " + err.Error())
+		// log.Error("Failed create request data: " + err.Error())
 		return lib.CustomError(status, err.Error(), "failed input data")
 	}
 

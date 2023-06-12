@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 
@@ -36,7 +35,7 @@ type MsCustomerBankAccount struct {
 
 type MsCustomerBankAccountInfo struct {
 	CustBankaccKey uint64  `db:"cust_bankacc_key" json:"cust_bankacc_key"`
-	BankKey        string  `db:"bank_key" json:"bank_key"`
+	BankKey        uint64  `db:"bank_key" json:"bank_key"`
 	BankName       string  `db:"bank_name" json:"bank_name"`
 	AccountNo      string  `db:"account_no" json:"account_no"`
 	AccountName    string  `db:"account_name" json:"account_name"`
@@ -62,17 +61,17 @@ func CreateMsCustomerBankAccount(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	_, err = tx.Exec(query, bindvars...)
 	tx.Commit()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -81,6 +80,7 @@ func CreateMsCustomerBankAccount(params map[string]string) (int, error) {
 func GetAllMsCustomerBankAccountTransaction(c *[]MsCustomerBankAccountInfo, customerKey string) (int, error) {
 	query2 := `SELECT 
 				ba.cust_bankacc_key AS cust_bankacc_key, 
+				bank.bank_key,
 				bank.bank_fullname AS bank_name, 
 				b.account_no AS account_no, 
 				b.account_holder_name AS account_name,
@@ -91,10 +91,10 @@ func GetAllMsCustomerBankAccountTransaction(c *[]MsCustomerBankAccountInfo, cust
 	query := query2 + " WHERE ba.rec_status = 1 AND ba.customer_key = '" + customerKey + "' ORDER BY ba.flag_priority DESC"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -115,10 +115,10 @@ func GetMsCustomerBankAccountTransactionByKey(c *MsCustomerBankAccountInfo, cust
 	query := query2 + " WHERE ba.rec_status = 1 AND ba.cust_bankacc_key = '" + custBankKey + "'"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -161,10 +161,10 @@ func GetAllMsCustomerBankAccount(c *[]MsCustomerBankAccount, params map[string]s
 	query += condition
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -182,10 +182,10 @@ func CheckMsBankAccountPengkinianData(c *CheckBankAccountPengkinianData, custome
 			limit 1`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -205,10 +205,10 @@ func GetMsCustomerBankAccountTransactionByCustBankaccKey(c *MsCustomerBankAccoun
 	query := query2 + " WHERE ba.rec_status = 1 AND ba.cust_bankacc_key = '" + custBankaccKey + "'"
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -228,11 +228,11 @@ func UpdateDataByField(params map[string]string, field string, value string) (in
 		i++
 	}
 	query += " WHERE rec_status = '1' AND " + field + " = '" + value + "'"
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 	var ret sql.Result
@@ -244,7 +244,7 @@ func UpdateDataByField(params map[string]string, field string, value string) (in
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
@@ -275,19 +275,19 @@ func CreateMultipleMsCustomerBankkAccount(params []interface{}) (int, error) {
 	query = db.Db.Rebind(query)
 	_, err = db.Db.Query(query, args...)
 	if err != nil {
-		log.Println(err.Error())
+		// log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
-	log.Println("========== QUERY BULK INSERT MS CUSTOMER BANK ACCOUNT ==========", query)
+	// log.Println("========== QUERY BULK INSERT MS CUSTOMER BANK ACCOUNT ==========", query)
 	return http.StatusOK, nil
 }
 
 func GetMsCustomerBankAccount(c *MsCustomerBankAccount, key string) (int, error) {
 	query := `SELECT ms_customer_bank_account.* FROM ms_customer_bank_account WHERE ms_customer_bank_account.cust_bankacc_key = ` + key
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusNotFound, err
 	}
 
@@ -321,10 +321,10 @@ func GetCustomerBankAccountSinvest(c *[]CustomerBankAccountSinvest, customerKey 
 			AND cb.customer_key = "` + customerKey + `"`
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err)
+		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
