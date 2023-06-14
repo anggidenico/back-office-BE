@@ -1,6 +1,7 @@
 package models
 
 import (
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -245,5 +246,30 @@ func UpdateMsFileWithIn(params map[string]string, value []string, field string) 
 		return http.StatusBadRequest, err
 	}
 	tx.Commit()
+	return http.StatusOK, nil
+}
+
+type MsFileModels struct {
+	FileKey uint64 `db:"file_key" json:"file_key"`
+	// RefFkKey    uint64 `db:"ref_fk_key" json:"ref_fk_key"`
+	// RefFkDomain string `db:"ref_fk_domain" json:"ref_fk_domain"`
+	FilePath string `db:"file_path" json:"file_path"`
+}
+
+func GetMsFileDataWithCondition(c *[]MsFileModels, params map[string]string) (int, error) {
+
+	query := `SELECT t1.file_key, t1.file_path FROM ms_file t1 WHERE t1.rec_status = 1`
+	if valueMap, ok := params["ref_fk_key"]; ok {
+		query += ` AND t1.ref_fk_key = ` + valueMap
+	}
+	if valueMap, ok := params["ref_fk_domain"]; ok {
+		query += ` AND t1.ref_fk_domain = "` + valueMap + `"`
+	}
+	err := db.Db.Select(c, query)
+	if err != nil {
+		log.Println(err)
+		return http.StatusBadGateway, err
+	}
+
 	return http.StatusOK, nil
 }

@@ -280,6 +280,7 @@ type AdminTransactionDetail struct {
 	TransCalcMethod             *uint64                              `json:"trans_calc_method,omitempty"`
 	NavDateReal                 string                               `json:"nav_date_real,omitempty"`
 	TransSource                 *string                              `json:"trans_source,omitempty"`
+	TransEntry                  *decimal.Decimal                     `json:"trans_entry,omitempty"`
 }
 
 type DownloadFormatExcelList struct {

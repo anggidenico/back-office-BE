@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"log"
 	"math"
 	"mf-bo-api/config"
 	"mf-bo-api/lib"
@@ -2386,6 +2387,85 @@ func UpdateTransactionSubscription(c echo.Context) error {
 
 	transRemark := c.FormValue("trans_remarks")
 	params["trans_remarks"] = transRemark
+
+	uploadMsFile := make(map[string]string)
+	uploadMsFile["rec_status"] = "1"
+	uploadMsFile["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	uploadMsFile["rec_created_by"] = lib.Profile.Name
+	uploadMsFile["ref_fk_domain"] = "tr_transaction"
+	uploadMsFile["ref_fk_key"] = transactionKey
+
+	var fls []models.MsFileModels
+	prmGetFile := make(map[string]string)
+	prmGetFile["ref_fk_domain"] = "tr_transaction"
+	prmGetFile["ref_fk_key"] = transactionKey
+	status, err = models.GetMsFileDataWithCondition(&fls, prmGetFile)
+	if len(fls) <= 0 {
+		var file1 *multipart.FileHeader
+		file1, err = c.FormFile("transfer_pic1")
+		if file1 != nil {
+			extension := filepath.Ext(file1.Filename)
+			filename := lib.RandStringBytesMaskImprSrc(20)
+			err = lib.UploadImage(file1, config.BasePathImage+"/images/user/"+strconv.FormatUint(lib.Profile.UserID, 10)+"/transfer/"+filename+extension)
+			if err != nil {
+				log.Println(err)
+				return lib.CustomError(http.StatusInternalServerError)
+			}
+			uploadMsFile["file_name"] = filename
+			uploadMsFile["file_ext"] = extension
+			uploadMsFile["file_path"] = "/images/user/" + strconv.FormatUint(lib.Profile.UserID, 10) + "/transfer/" + filename + extension
+			status, err, _ = models.CreateMsFile(uploadMsFile)
+			if err != nil {
+				// log.Error(err.Error())
+				return lib.CustomError(status, err.Error(), "Failed update data")
+			}
+		}
+
+		var file2 *multipart.FileHeader
+		file2, err = c.FormFile("transfer_pic2")
+		if file2 != nil {
+			extension := filepath.Ext(file2.Filename)
+			filename := lib.RandStringBytesMaskImprSrc(20)
+			err = lib.UploadImage(file2, config.BasePathImage+"/images/user/"+strconv.FormatUint(lib.Profile.UserID, 10)+"/transfer/"+filename+extension)
+			if err != nil {
+				log.Println(err)
+				return lib.CustomError(http.StatusInternalServerError)
+			}
+			uploadMsFile["file_name"] = filename
+			uploadMsFile["file_ext"] = extension
+			uploadMsFile["file_path"] = "/images/user/" + strconv.FormatUint(lib.Profile.UserID, 10) + "/transfer/" + filename + extension
+			status, err, _ = models.CreateMsFile(uploadMsFile)
+			if err != nil {
+				// log.Error(err.Error())
+				return lib.CustomError(status, err.Error(), "Failed update data")
+			}
+		}
+
+		var file3 *multipart.FileHeader
+		file3, err = c.FormFile("transfer_pic3")
+		if file3 != nil {
+			extension := filepath.Ext(file3.Filename)
+			filename := lib.RandStringBytesMaskImprSrc(20)
+			err = lib.UploadImage(file3, config.BasePathImage+"/images/user/"+strconv.FormatUint(lib.Profile.UserID, 10)+"/transfer/"+filename+extension)
+			if err != nil {
+				log.Println(err)
+				return lib.CustomError(http.StatusInternalServerError)
+			}
+			uploadMsFile["file_name"] = filename
+			uploadMsFile["file_ext"] = extension
+			uploadMsFile["file_path"] = "/images/user/" + strconv.FormatUint(lib.Profile.UserID, 10) + "/transfer/" + filename + extension
+			status, err, _ = models.CreateMsFile(uploadMsFile)
+			if err != nil {
+				// log.Error(err.Error())
+				return lib.CustomError(status, err.Error(), "Failed update data")
+			}
+		}
+		// var file2 *multipart.FileHeader
+		// file2, err = c.FormFile("transfer_pic2")
+
+		// var file3 *multipart.FileHeader
+		// file3, err = c.FormFile("transfer_pic3")
+	}
 
 	dateLayout := "2006-01-02 15:04:05"
 	strIDUserLogin := strconv.FormatUint(lib.Profile.UserID, 10)

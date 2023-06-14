@@ -4308,6 +4308,7 @@ func DetailTransaksiInquiry(c echo.Context) error {
 			responseData.FlagNewSub = true
 		}
 	}
+	responseData.TransEntry = &transaction.TransEntry
 	responseData.TransFeePercent = transaction.TransFeePercent
 	responseData.TransFeeAmount = transaction.TransFeeAmount
 	responseData.ChargesFeeAmount = transaction.ChargesFeeAmount
