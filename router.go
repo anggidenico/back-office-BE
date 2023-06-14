@@ -468,6 +468,7 @@ func printUrlMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		log.Println("=== 2. TIME ==> ", lib.TIMENOW_TIMESTAMPFORMAT_2)
 		log.Println("=== 3. IP CLIENT ==> ", c.RealIP())
 		log.Println("=== 4. USER AGENT ==> ", c.Request().UserAgent())
+		log.Println("================================================================================")
 
 		return next(c)
 	}
