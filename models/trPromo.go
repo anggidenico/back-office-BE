@@ -44,6 +44,7 @@ type TrPromo struct {
 	RecAttributeID1       *string         `db:"rec_attribute_id1"       json:"rec_attribute_id1"`
 	RecAttributeID2       *string         `db:"rec_attribute_id2"       json:"rec_attribute_id2"`
 	RecAttributeID3       *string         `db:"rec_attribute_id3"       json:"rec_attribute_id3"`
+	AlertNotifType        *uint64         `db:"alert_notif_type" json:"alert_notif_type"`
 }
 
 type TrPromoData struct {
