@@ -2362,7 +2362,7 @@ func UpdateTransactionSubscription(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: payment_method", "Missing required parameter: payment_method")
 	}
 
-	bankStr := c.FormValue("bank_transaction")
+	bankStr := c.FormValue("prod_bankacc_key")
 	if bankStr != "" {
 		bankKey, err := strconv.ParseUint(bankStr, 10, 64)
 		if err != nil || bankKey == 0 {
@@ -2384,6 +2384,18 @@ func UpdateTransactionSubscription(c echo.Context) error {
 		// log.Error("Missing required parameter: bank_transaction")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: cust_bankacc_key", "Missing required parameter: cust_bankacc_key")
 	}
+
+	transEntry := c.FormValue("trans_entry")
+	if transEntry == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: trans_entry", "Missing required parameter: trans_entry")
+	}
+	params["trans_entry"] = transEntry
+
+	stampFeeAmount := c.FormValue("stamp_fee_amount")
+	if stampFeeAmount == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: stamp_fee_amount", "Missing required parameter: stamp_fee_amount")
+	}
+	params["stamp_fee_amount"] = stampFeeAmount
 
 	transRemark := c.FormValue("trans_remarks")
 	params["trans_remarks"] = transRemark

@@ -88,11 +88,9 @@ func router() *echo.Echo {
 	admin.GET("/transaction/inquiry/:key", controllers.DetailTransaksiInquiry).Name = "DetailTransaksiInquiry"
 	admin.POST("/transactioncorrection", controllers.ProsesCorrection).Name = "ProsesCorrection"
 	admin.GET("/transactionstamps", controllers.GetTransactionStampsAdmin).Name = "GetTransactionStamps"
-	//Admin Transaction type
 	admin.GET("/transactiontypelist", controllers.GetTransactionType).Name = "GetTransactionType"
-
-	//Admin Transaction status
 	admin.GET("/transactionstatuslist", controllers.GetTransactionStatus).Name = "GetTransactionStatus"
+	admin.GET("/transactionothersfee", controllers.GetTransactionOthersFee)
 
 	//Admin Product
 	admin.GET("/productlist", controllers.GetListProductAdmin).Name = "GetListProductAdmin"
