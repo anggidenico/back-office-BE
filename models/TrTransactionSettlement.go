@@ -313,6 +313,7 @@ func UpdateTrTransactionSettlementByField(params map[string]string, value string
 	ret, err = tx.Exec(query)
 	row, _ := ret.RowsAffected()
 	tx.Commit()
+	log.Println(query)
 	if row > 0 {
 	} else {
 		return http.StatusNotFound, err
