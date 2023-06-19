@@ -309,11 +309,11 @@ func UpdateTrTransactionSettlementByField(params map[string]string, value string
 		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
+	log.Println(query)
 	var ret sql.Result
 	ret, err = tx.Exec(query)
 	row, _ := ret.RowsAffected()
 	tx.Commit()
-	log.Println(query)
 	if row > 0 {
 	} else {
 		return http.StatusNotFound, err
