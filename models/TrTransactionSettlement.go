@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -317,7 +318,7 @@ func UpdateTrTransactionSettlementByField(params map[string]string, value string
 		return http.StatusNotFound, err
 	}
 	if err != nil {
-		// log.Error(err)
+		log.Println(err.Error())
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
