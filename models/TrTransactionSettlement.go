@@ -297,11 +297,12 @@ func UpdateTrTransactionSettlementByField(params map[string]string, value string
 	for key, value := range params {
 		if key != "transaction_key" {
 			query += key + " = '" + value + "'"
+
+			if (len(params) - 2) > i {
+				query += ", "
+			}
+			i++
 		}
-		if (len(params) - 1) > i {
-			query += ", "
-		}
-		i++
 
 	}
 
@@ -313,9 +314,11 @@ func UpdateTrTransactionSettlementByField(params map[string]string, value string
 		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
+
 	jsonStr, err := json.Marshal(params)
 	log.Println(string(jsonStr))
 	log.Println(query)
+
 	var ret sql.Result
 	ret, err = tx.Exec(query)
 	row, _ := ret.RowsAffected()
