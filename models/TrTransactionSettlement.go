@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -294,13 +295,16 @@ func UpdateTrTransactionSettlementByField(params map[string]string, value string
 	// Get params
 	i := 0
 	for key, value := range params {
-		query += key + " = '" + value + "'"
+		if key != "transaction_key" {
+			query += key + " = '" + value + "'"
 
-		if (len(params) - 1) > i {
-			query += ", "
+			if (len(params) - 1) > i {
+				query += ", "
+			}
+			i++
 		}
-		i++
 	}
+
 	query += " WHERE " + field + " = " + value
 	// log.Println("==========  ==========>>>", query)
 
@@ -309,6 +313,8 @@ func UpdateTrTransactionSettlementByField(params map[string]string, value string
 		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
+	jsonStr, err := json.Marshal(params)
+	log.Println(jsonStr)
 	log.Println(query)
 	var ret sql.Result
 	ret, err = tx.Exec(query)
