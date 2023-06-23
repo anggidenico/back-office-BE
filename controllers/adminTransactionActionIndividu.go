@@ -2683,7 +2683,7 @@ func UpdateTransactionSubscription(c echo.Context) error {
 	settlementParams["settled_status"] = "244"
 	settlementParams["target_bank_account_key"] = bankStr
 	settlementParams["settle_channel"] = "323"
-	settlementParams["settle_payment_method"] = "10"
+	settlementParams["settle_payment_method"] = paymentStr
 	settlementParams["expired_date"] = time.Now().Format(dateLayout)
 	settlementParams["rec_status"] = "1"
 	settlementParams["rec_created_date"] = time.Now().Format(dateLayout)
