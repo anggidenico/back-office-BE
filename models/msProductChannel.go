@@ -108,6 +108,5 @@ func GetMsProductChannelIn(c *[]MsBank, value []string, field string) (int, erro
 		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
-
 	return http.StatusOK, nil
 }
