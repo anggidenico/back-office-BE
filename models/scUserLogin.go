@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -626,7 +627,7 @@ func GetAllScUserLoginByNameOrEmail(c *[]ScUserLogin, limit uint64, offset uint6
 	}
 
 	// Main query
-	// log.Info("========= QUERY LOGIN ============", query)
+	log.Println("========= login ============", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Error(err)
