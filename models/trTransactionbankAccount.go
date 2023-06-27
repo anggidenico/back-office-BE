@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
@@ -83,7 +84,7 @@ func UpdateTrTransactionBankAccount(params map[string]string, value string, fiel
 		i++
 	}
 	query += " WHERE " + field + " = " + value
-	// log.Println("==========  ==========>>>", query)
+	log.Println("========== UpdateTrTransactionBankAccount ==========>>>", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
