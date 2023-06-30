@@ -13,27 +13,28 @@ import (
 )
 
 type CustomerProductModel struct {
-	AccKey           uint64  `db:"acc_key" json:"acc_key"`
-	CustomerKey      uint64  `db:"customer_key"  json:"customer_key"`
-	UnitHolderIdno   string  `db:"unit_holder_idno" json:"unit_holder_idno"`
-	CustomerName     string  `db:"customer_name" json:"customer_name"`
-	SidNo            *string `db:"sid_no" json:"sid_no"`
-	FundTypeKey      uint64  `db:"fund_type_key"   json:"fund_type_key"`
-	ProductKey       uint64  `db:"product_key"   json:"product_key"`
-	ProductName      string  `db:"product_name"  json:"product_name"`
-	AccountNo        *string `db:"account_no"  json:"account_no"`
-	AccountName      *string `db:"account_name"  json:"account_name"`
-	IFUANo           *string `db:"ifua_no"  json:"ifua_no"`
-	SuspendSubFlag   bool    `db:"suspend_sub_flag" json:"suspend_sub_flag"`
-	SuspendSubReason *string `db:"suspend_sub_reason" json:"suspend_sub_reason"`
-	SuspendSubDate   *string `db:"suspend_sub_date" json:"suspend_sub_date"`
-	SuspendRedFlag   bool    `db:"suspend_red_flag" json:"suspend_red_flag"`
-	SuspendRedReason *string `db:"suspend_red_reason" json:"suspend_red_reason"`
-	SuspendRedDate   *string `db:"suspend_red_date" json:"suspend_red_date"`
-	CurrencyKey      *uint64 `db:"currency_key" json:"currency_key"`
-	SettlementPeriod *uint64 `db:"settlement_period" json:"settlement_period"`
-	MinRedAmount decimal.Decimal `db:"min_red_amount" json:"min_red_amount"`
-	MinSubAmount decimal.Decimal `db:"min_sub_amount" json:"min_sub_amount"`
+	AccKey           uint64          `db:"acc_key" json:"acc_key"`
+	CustomerKey      uint64          `db:"customer_key"  json:"customer_key"`
+	UnitHolderIdno   string          `db:"unit_holder_idno" json:"unit_holder_idno"`
+	CustomerName     string          `db:"customer_name" json:"customer_name"`
+	SidNo            *string         `db:"sid_no" json:"sid_no"`
+	FundTypeKey      uint64          `db:"fund_type_key"   json:"fund_type_key"`
+	ProductKey       uint64          `db:"product_key"   json:"product_key"`
+	ProductName      string          `db:"product_name"  json:"product_name"`
+	AccountNo        *string         `db:"account_no"  json:"account_no"`
+	AccountName      *string         `db:"account_name"  json:"account_name"`
+	IFUANo           *string         `db:"ifua_no"  json:"ifua_no"`
+	SuspendSubFlag   bool            `db:"suspend_sub_flag" json:"suspend_sub_flag"`
+	SuspendSubReason *string         `db:"suspend_sub_reason" json:"suspend_sub_reason"`
+	SuspendSubDate   *string         `db:"suspend_sub_date" json:"suspend_sub_date"`
+	SuspendRedFlag   bool            `db:"suspend_red_flag" json:"suspend_red_flag"`
+	SuspendRedReason *string         `db:"suspend_red_reason" json:"suspend_red_reason"`
+	SuspendRedDate   *string         `db:"suspend_red_date" json:"suspend_red_date"`
+	CurrencyKey      *uint64         `db:"currency_key" json:"currency_key"`
+	SettlementPeriod *uint64         `db:"settlement_period" json:"settlement_period"`
+	MinRedAmount     decimal.Decimal `db:"min_red_amount" json:"min_red_amount"`
+	MinSubAmount     decimal.Decimal `db:"min_sub_amount" json:"min_sub_amount"`
+	RiskProfileName  string          `db:"risk_profile_name" json:"risk_profile_name"`
 }
 
 func GetCustomerProductList(c *[]CustomerProductModel, CustomerKey string, FundTypeKey string) (int, error) {
@@ -55,9 +56,11 @@ func GetCustomerProductList(c *[]CustomerProductModel, CustomerKey string, FundT
 	, p.settlement_period
 	, p.min_red_amount
 	, p.min_sub_amount
+	, rp.risk_name AS risk_profile_name
 	FROM tr_account ta
 	INNER JOIN ms_customer c ON (c.customer_key=ta.customer_key AND c.rec_status=1)
 	INNER JOIN ms_product p ON (p.product_key = ta.product_key AND p.rec_status=1 AND p.flag_enabled = 1)
+	INNER JOIN ms_risk_profile rp ON rp.risk_profile_key = p.risk_profile_key
 	WHERE ta.rec_status = 1`
 
 	query += ` AND ta.customer_key = ` + CustomerKey
