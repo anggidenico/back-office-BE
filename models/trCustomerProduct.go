@@ -32,6 +32,8 @@ type CustomerProductModel struct {
 	SuspendRedDate   *string `db:"suspend_red_date" json:"suspend_red_date"`
 	CurrencyKey      *uint64 `db:"currency_key" json:"currency_key"`
 	SettlementPeriod *uint64 `db:"settlement_period" json:"settlement_period"`
+	MinRedAmount decimal.Decimal `db:"min_red_amount" json:"min_red_amount"`
+	MinSubAmount decimal.Decimal `db:"min_sub_amount" json:"min_sub_amount"`
 }
 
 func GetCustomerProductList(c *[]CustomerProductModel, CustomerKey string, FundTypeKey string) (int, error) {
@@ -51,6 +53,8 @@ func GetCustomerProductList(c *[]CustomerProductModel, CustomerKey string, FundT
 	, ta.red_suspend_reason AS suspend_red_reason
 	, p.currency_key
 	, p.settlement_period
+	, p.min_red_amount
+	, p.min_sub_amount
 	FROM tr_account ta
 	INNER JOIN ms_customer c ON (c.customer_key=ta.customer_key AND c.rec_status=1)
 	INNER JOIN ms_product p ON (p.product_key = ta.product_key AND p.rec_status=1 AND p.flag_enabled = 1)
