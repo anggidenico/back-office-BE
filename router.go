@@ -219,7 +219,7 @@ func router() *echo.Echo {
 	//redemption
 	admin.GET("/transaction/redemption", controllers.GetTransactionRedemption).Name = "GetTransactionRedemption"
 	// admin.GET("/product/redemption/:customer_key", controllers.AdminGetProductRedemption).Name = "AdminGetProductRedemption"
-	admin.GET("/product/redemption", controllers.AdminGetProductListCanRedeem).Name = "AdminGetProductRedemption"
+	admin.GET("/product/redemption", controllers.AdminGetProductListCanRedeem)
 	admin.GET("/transaction/customerbankredemption/:customer_key", controllers.GetCustomerBankAccountRedemption).Name = "GetCustomerBankAccountRedemption"
 	admin.GET("/metode-perhitungan", controllers.GetMetodePerhitungan).Name = "GetMetodePerhitungan"
 	admin.POST("/createtransaction/redemption", controllers.CreateTransactionRedemption).Name = "CreateTransactionRedemption"
