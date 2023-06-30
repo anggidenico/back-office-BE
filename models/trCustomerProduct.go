@@ -1,10 +1,13 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/shopspring/decimal"
 )
@@ -125,4 +128,153 @@ func GetCustomerBalance(c *CustomerBalanceModel, customer_key uint64, product_ke
 	}
 
 	return http.StatusOK, nil
+}
+
+type NavModel struct {
+	ProductKey    uint32          `db:"product_key" json:"product_key"`
+	NavDate       string          `db:"nav_date" json:"nav_date"`
+	NavValue      decimal.Decimal `db:"nav_value" json:"nav_value"`
+	ProdAumTotal  decimal.Decimal `db:"prod_aum_total" json:"prod_aum_total"`
+	ProdUnitTotal decimal.Decimal `db:"prod_unit_total" json:"prod_unit_total"`
+}
+
+func GetLastNAV(c *NavModel, product_key uint64) (int, error) {
+	query := `SELECT 
+		a.product_key, 
+		cast(a.nav_date as DATE) AS nav_date, 
+		a.nav_value, 
+		a.prod_aum_total, 
+		a.prod_unit_total 
+	FROM tr_nav a
+	INNER JOIN (
+		SELECT 
+			m.product_key, 
+			MAX(m.nav_date) AS nav_date
+		FROM tr_nav m
+		WHERE m.rec_status = 1 AND m.nav_status = 234 and m.publish_mode=236
+		AND m.product_key = %v
+		GROUP BY m.product_key
+	) b ON (a.product_key=b.product_key AND cast(a.nav_date AS DATE)=cast(b.nav_date AS DATE))
+	WHERE a.rec_status = 1 AND a.nav_status = 234 AND a.publish_mode = 236
+	AND a.product_key = %v
+	ORDER BY a.rec_order;`
+
+	s_sql := fmt.Sprintf(query, product_key, product_key)
+	// // log.Println("========== GetLastNAV ==========>>>", s_sql)
+
+	err := db.Db.Get(c, s_sql)
+	if err != nil {
+		// log.Println(err)
+		return http.StatusBadGateway, err
+	}
+
+	return http.StatusOK, nil
+
+}
+
+func GetHolidayByDate(c *[]ListHoliday, p_date time.Time) (int, error) {
+	layout := "2006-01-02"
+	str_date := p_date.Format(layout)
+	query := `SELECT holiday_key, stock_market, CAST(a.holiday_date AS DATE) AS holiday_date, holiday_name 
+	FROM ms_holiday a 
+	WHERE a.rec_status = 1 
+	AND a.stock_market = 272 
+	AND CAST(a.holiday_date AS DATE) = '%v'`
+	s_sql := fmt.Sprintf(query, str_date)
+	err := db.Db.Select(c, s_sql)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			return http.StatusBadGateway, err
+		}
+	}
+	return http.StatusOK, nil
+}
+
+func IsHoliday(p_date time.Time) (bool, error) {
+	weekday := p_date.Weekday()
+	if weekday == time.Saturday || weekday == time.Sunday {
+		return true, nil
+	}
+	var db_row []ListHoliday
+	_, err := GetHolidayByDate(&db_row, p_date)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			return false, err
+		}
+	}
+	if len(db_row) > 0 {
+		return true, nil
+	}
+	return false, nil
+}
+
+func FnAddDate(p_date time.Time, n_day int) (time.Time, error) {
+	n_add := 0
+	if n_day > 0 {
+		n_add = 1
+	} else if n_day < 0 {
+		n_add = -1
+	} else {
+		n_add = 0
+	}
+	var err error
+	var bHoliday bool
+	new_date := p_date
+	i_loop := n_day
+	if i_loop == 0 {
+		err = nil
+	}
+	for i_loop != 0 {
+		new_date = new_date.AddDate(0, 0, n_add)
+		bHoliday, err = IsHoliday(new_date)
+		if !bHoliday { //loop terus jika masi libur sampai ketemu hari kerja (bukan libur).
+			i_loop = i_loop - n_add
+			if i_loop == 0 {
+				err = nil
+			}
+		}
+	}
+	return new_date, err
+}
+
+func CekInProcessByUnit(productKey uint64, customerKey uint64) decimal.Decimal {
+	result := decimal.NewFromInt(0)
+	var unit_amount *decimal.Decimal
+
+	query := `SELECT sum(t1.trans_unit) FROM tr_transaction t1 WHERE t1.rec_status = 1 AND t1.trans_type_key IN (2,3) 
+	AND t1.trans_status_key IN (2,4,5,6,7,8) AND t1.trans_source IN (143,144)`
+	prevDate, _ := FnAddDate(time.Now(), -1)
+	query += ` AND CAST(t1.trans_date AS DATE) >= "` + prevDate.Format("2006-01-02") + `" 
+	AND CAST(t1.trans_date AS DATE) <= "` + time.Now().Format("2006-01-02") + `" 
+	AND t1.customer_key = ` + strconv.FormatUint(customerKey, 10) + ` AND t1.product_key = ` + strconv.FormatUint(productKey, 10)
+
+	err := db.Db.Get(&unit_amount, query)
+	if err != nil {
+	}
+
+	if unit_amount == nil || (unit_amount != nil && unit_amount.Cmp(decimal.NewFromInt(0)) <= 0) {
+		var nominal_amount *decimal.Decimal
+		query2 := `SELECT sum(t1.trans_amount)
+		FROM tr_transaction t1
+		WHERE t1.rec_status = 1 AND t1.trans_type_key IN (2,3) 
+		AND t1.trans_status_key IN (2,4,5,6,7,8)
+		AND t1.trans_source IN (143,144)`
+		query2 += ` AND CAST(t1.trans_date AS DATE) >= "` + prevDate.Format("2006-01-02") + `" AND CAST(t1.trans_date AS DATE) <= "` + time.Now().Format("2006-01-02") + `" 
+		AND t1.customer_key = ` + strconv.FormatUint(customerKey, 10) + ` AND t1.product_key = ` + strconv.FormatUint(productKey, 10)
+		err := db.Db.Get(&nominal_amount, query2)
+		if err != nil {
+		}
+		if nominal_amount != nil {
+			var getNav NavModel
+			_, err = GetLastNAV(&getNav, productKey)
+			if err != nil {
+			}
+			re := nominal_amount.Div(getNav.NavValue)
+			result = re
+		}
+	} else {
+		result = *unit_amount
+	}
+
+	return result
 }
