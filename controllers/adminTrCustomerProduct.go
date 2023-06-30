@@ -51,6 +51,7 @@ func AdminGetProductListCanRedeem(c echo.Context) error {
 				maps1["balance"] = avls.Mul(getNav.NavValue)
 				maps1["available_units"] = avls
 				maps1["min_redeem_amount"] = CustProd.MinRedAmount
+				maps1["risk_profile_name"] = CustProd.RiskProfileName
 				rData = append(rData, maps1)
 			}
 		}
