@@ -1441,20 +1441,20 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 
 		strUserLoginKey := strconv.FormatUint(*oareq.UserLoginKey, 10)
 
-		if oareq.CustomerKey == nil {
-			//UPDATE SC_USER_LOGIN
-			paramsScUserLogin := make(map[string]string)
-			paramsScUserLogin["user_login_key"] = strUserLoginKey
-			paramsScUserLogin["rec_status"] = "0"
-			paramsScUserLogin["rec_deleted_date"] = time.Now().Format(dateLayout)
-			paramsScUserLogin["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+		// if oareq.CustomerKey == nil {
+		// 	//UPDATE SC_USER_LOGIN
+		// 	paramsScUserLogin := make(map[string]string)
+		// 	paramsScUserLogin["user_login_key"] = strUserLoginKey
+		// 	paramsScUserLogin["rec_status"] = "0"
+		// 	paramsScUserLogin["rec_deleted_date"] = time.Now().Format(dateLayout)
+		// 	paramsScUserLogin["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 
-			_, err = models.UpdateScUserLogin(paramsScUserLogin)
-			if err != nil {
-				// log.Error("Error update user data")
-				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
-			}
-		}
+		// 	_, err = models.UpdateScUserLogin(paramsScUserLogin)
+		// 	if err != nil {
+		// 		// log.Error("Error update user data")
+		// 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
+		// 	}
+		// }
 
 		//create user message
 		paramsUserMessage := make(map[string]string)
