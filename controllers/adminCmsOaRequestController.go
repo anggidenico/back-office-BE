@@ -612,7 +612,8 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 		}
 
 		if oapersonal.RecImage1 != nil && *oapersonal.RecImage1 != "" {
-			path := dir + "signature/" + *oapersonal.RecImage1
+			// path := dir + "signature/" + *oapersonal.RecImage1
+			path := dir + *oapersonal.RecImage1
 			responseData.Signature = &path
 		}
 
