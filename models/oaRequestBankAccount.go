@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -144,7 +143,7 @@ func GetOaRequestBankByField(c *[]OaRequestByField, field string, value string) 
 
 	// Main query
 	// // log.Infoln("==================== query get bank account ====================")
-	log.Println(query)
+	// log.Println(query)
 	// // log.Infoln("==========================================================")
 	err := db.Db.Select(c, query)
 	if err != nil {
