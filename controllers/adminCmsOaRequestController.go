@@ -948,12 +948,14 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 						}
 					}
 
-					var city models.MsCity
-					_, err = models.GetMsCityByParent(&city, strconv.FormatUint(*p.KabupatenKey, 10))
-					if err != nil {
-						// log.Error(err.Error())
-					} else {
-						responseData.DomicileAddress.Provinsi = &city.CityName
+					if p.KabupatenKey != nil {
+						var city models.MsCity
+						_, err = models.GetMsCityByParent(&city, strconv.FormatUint(*p.KabupatenKey, 10))
+						if err != nil {
+							// log.Error(err.Error())
+						} else {
+							responseData.DomicileAddress.Provinsi = &city.CityName
+						}
 					}
 				}
 			}
