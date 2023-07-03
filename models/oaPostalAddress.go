@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -124,13 +125,10 @@ func UpdateOaPostalAddress(params map[string]string) (int, error) {
 
 func GetOaPostalAddressIn(c *[]OaPostalAddress, value []string, field string) (int, error) {
 	inQuery := strings.Join(value, ",")
-	query2 := `SELECT
-				oa_postal_address.* FROM 
-				oa_postal_address `
-	query := query2 + " WHERE oa_postal_address." + field + " IN(" + inQuery + ")"
+	query := `SELECT oa_postal_address.* FROM oa_postal_address WHERE oa_postal_address.` + field + ` IN(` + inQuery + `)`
 
 	// Main query
-	// log.Println("==========  ==========>>>", query)
+	log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)

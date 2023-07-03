@@ -193,10 +193,8 @@ func CreateOaPersonalData(params map[string]string) (int, error, string) {
 }
 
 func GetOaPersonalDataByOaRequestKey(c *OaPersonalData, key string) (int, error) {
-	query := `SELECT oa_personal_data.* 
-			FROM oa_personal_data 
-			WHERE oa_personal_data.oa_request_key = ` + key +
-		` order by oa_personal_data.personal_data_key DESC LIMIT 1`
+	query := `SELECT oa_personal_data.* FROM oa_personal_data WHERE oa_personal_data.oa_request_key = ` + key +
+		` ORDER BY oa_personal_data.personal_data_key DESC LIMIT 1`
 	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
