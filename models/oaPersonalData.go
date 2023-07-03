@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	_ "database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -214,7 +215,7 @@ func GetOaPersonalDataIn(c *[]OaPersonalData, value []string, field string) (int
 	query := query2 + " WHERE oa_personal_data." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	// log.Println("==========  ==========>>>", query)
+	log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
