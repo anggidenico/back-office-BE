@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	_ "database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -95,9 +94,7 @@ type OaPersonalData struct {
 }
 
 func GetAllOaPersonalData(c *[]OaPersonalData, limit uint64, offset uint64, params map[string]string, nolimit bool) (int, error) {
-	query := `SELECT
-              oa_personal_data.* FROM 
-			  oa_personal_data`
+	query := `SELECT oa_personal_data.* FROM oa_personal_data`
 	var present bool
 	var whereClause []string
 	var condition string
@@ -207,13 +204,11 @@ func GetOaPersonalDataByOaRequestKey(c *OaPersonalData, key string) (int, error)
 
 func GetOaPersonalDataIn(c *[]OaPersonalData, value []string, field string) (int, error) {
 	inQuery := strings.Join(value, ",")
-	query2 := `SELECT
-				oa_personal_data.* FROM 
-				oa_personal_data `
+	query2 := `SELECT oa_personal_data.* FROM oa_personal_data `
 	query := query2 + " WHERE oa_personal_data." + field + " IN(" + inQuery + ")"
 
 	// Main query
-	log.Println(query)
+	// log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)

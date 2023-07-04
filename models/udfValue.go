@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
@@ -91,9 +92,7 @@ func DeleteUdfValue(field string, value string, valueIn []string) (int, error) {
 }
 
 func GetAllUdfValue(c *[]UdfValue, params map[string]string) (int, error) {
-	query := `SELECT
-				u.*
-			  FROM udf_value as u 
+	query := `SELECT u.* FROM udf_value as u 
 			  INNER JOIN udf_info as ui ON ui.udf_info_key = u.udf_info_key AND ui.rec_status = 1`
 	var present bool
 	var whereClause []string
@@ -127,11 +126,7 @@ func GetAllUdfValue(c *[]UdfValue, params map[string]string) (int, error) {
 	}
 	query += condition
 
-	// Main query
-	// // log.Infoln("=============================QUERY GET UDF VALUE=================================")
-	// log.Infoln(query)
-	// // log.Infoln("==============================================================")
-
+	log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
