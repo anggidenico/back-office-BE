@@ -52,7 +52,7 @@ type OaRequest struct {
 	RecAttributeID1   *string `db:"rec_attribute_id1"          json:"rec_attribute_id1"`
 	RecAttributeID2   *string `db:"rec_attribute_id2"          json:"rec_attribute_id2"`
 	RecAttributeID3   *string `db:"rec_attribute_id3"          json:"rec_attribute_id3"`
-	SiteReferer       *string `db:"site_referer" json:"site_referer"`
+	SiteReferer       *uint64 `db:"site_referer" json:"site_referer"`
 }
 
 type OaRequestListResponse struct {

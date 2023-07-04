@@ -527,7 +527,6 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 	date, _ = time.Parse(layout, oareq.OaEntryEnd)
 	responseData.OaEntryEnd = date.Format(newLayout)
 	responseData.SalesCode = oareq.SalesCode
-	responseData.SiteReferer = oareq.SiteReferer
 
 	var oaRequestLookupIds []string
 
@@ -579,6 +578,12 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 	if oareq.Oastatus != nil {
 		if n, ok := gData[*oareq.Oastatus]; ok {
 			responseData.Oastatus = *n.LkpName
+		}
+	}
+
+	if oareq.SiteReferer != nil {
+		if n, ok := gData[*oareq.SiteReferer]; ok {
+			responseData.SiteReferer = n.LkpName
 		}
 	}
 
