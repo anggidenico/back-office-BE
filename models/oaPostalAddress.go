@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -128,7 +127,7 @@ func GetOaPostalAddressIn(c *[]OaPostalAddress, value []string, field string) (i
 	query := `SELECT oa_postal_address.* FROM oa_postal_address WHERE oa_postal_address.` + field + ` IN(` + inQuery + `)`
 
 	// Main query
-	log.Println(query)
+	// log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
