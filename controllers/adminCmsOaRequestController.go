@@ -527,6 +527,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 	date, _ = time.Parse(layout, oareq.OaEntryEnd)
 	responseData.OaEntryEnd = date.Format(newLayout)
 	responseData.SalesCode = oareq.SalesCode
+	responseData.SiteReferer = oareq.SiteReferer
 
 	var oaRequestLookupIds []string
 
