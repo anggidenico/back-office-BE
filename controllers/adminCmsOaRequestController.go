@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"html/template"
+	"log"
 	"math"
 	"mf-bo-api/config"
 	"mf-bo-api/db"
@@ -2360,7 +2361,7 @@ func sendEmailApproveOa(fullName string, email string) {
 
 	t, err := t.ParseFiles(config.BasePath + "/mail/email-sukses-verifikasi.html")
 	if err != nil {
-		// log.Println(err)
+		log.Println(err.Error())
 	}
 
 	var tpl bytes.Buffer
@@ -2371,7 +2372,7 @@ func sendEmailApproveOa(fullName string, email string) {
 		}{
 			Name:    fullName,
 			FileUrl: config.ImageUrl + "/images/mail"}); err != nil {
-		// log.Println(err)
+		log.Println(err.Error())
 	}
 
 	result := tpl.String()
