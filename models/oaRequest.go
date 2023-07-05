@@ -93,6 +93,8 @@ type OaRequestDetailResponse struct {
 	PlaceBirth                 string               `json:"place_birth"`
 	MaritalStatus              *string              `json:"marital_status"`
 	PepStatus                  *string              `json:"pep_status"`
+	PepName                    *string              `json:"pep_name"`
+	PepPosition                *string              `json:"pep_position"`
 	SalesCode                  *string              `json:"sales_code"`
 	PhoneHome                  *string              `json:"phone_home"`
 	Religion                   *string              `json:"religion"`
