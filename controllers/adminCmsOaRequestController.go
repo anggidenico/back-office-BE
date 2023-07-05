@@ -3162,6 +3162,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 				responseData.PepStatus = n.LkpName
 			}
 		}
+		responseData.PepName = oapersonal.PepName
 
 		var country models.MsCountry
 
