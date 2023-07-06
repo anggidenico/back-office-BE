@@ -757,3 +757,26 @@ func UpdateAdminTrNav(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 
 }
+
+func GetNavPrice(c echo.Context) error {
+	productKey := c.QueryParam("product_key")
+	if productKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing product_key", "Missing product_key")
+	}
+	navDate := c.QueryParam("nav_date")
+	if navDate == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing nav_date", "Missing nav_date")
+	}
+
+	var trNav models.TrNav
+	_, err := models.GetNavByProductKeyAndNavDate(&trNav, productKey, navDate)
+	if err != nil {
+		return lib.CustomError(http.StatusBadGateway, err.Error(), err.Error())
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = trNav
+	return c.JSON(http.StatusOK, response)
+}
