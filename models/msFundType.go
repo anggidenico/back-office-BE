@@ -29,6 +29,7 @@ type MsFundType struct {
 	FunTypeNameAlt    *string `db:"fund_type_name_alt" json:"fund_type_name_alt"`
 	FundTypeDesc      *string `db:"fund_type_desc"        json:"fund_type_desc"`
 	ShowHome          uint8   `db:"show_home"             json:"show_home"`
+	ShowOnboard       uint8   `db:"show_onboard" json:"show_onboard"`
 	RecOrder          *uint64 `db:"rec_order"             json:"rec_order"`
 	RecStatus         uint8   `db:"rec_status"            json:"rec_status"`
 	RecCreatedDate    *string `db:"rec_created_date"      json:"rec_created_date"`
