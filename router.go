@@ -176,6 +176,7 @@ func router() *echo.Echo {
 	admin.POST("/nav/delete", controllers.DeleteNavAdmin).Name = "DeleteNavAdmin"
 	admin.POST("/nav/create", controllers.CreateAdminTrNav).Name = "CreateAdminTrNav"
 	admin.POST("/nav/update", controllers.UpdateAdminTrNav).Name = "UpdateAdminTrNav"
+	admin.GET("/get-nav-price", controllers.GetNavPrice)
 
 	//Admin NAV
 	admin.GET("/menu", controllers.GetListMenuLogin).Name = "GetListMenuLogin"
