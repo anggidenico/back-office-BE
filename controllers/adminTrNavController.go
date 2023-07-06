@@ -759,6 +759,7 @@ func UpdateAdminTrNav(c echo.Context) error {
 }
 
 func GetNavPrice(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
 	productKey := c.QueryParam("product_key")
 	if productKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing product_key", "Missing product_key")

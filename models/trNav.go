@@ -236,7 +236,7 @@ func GetTrNavByProductKeyAndNavDate(c *[]TrNav, productKey string, navDate strin
 }
 
 func GetNavByProductKeyAndNavDate(c *TrNav, productKey string, navDate string) (int, error) {
-	query := `SELECT tr_nav.* FROM tr_nav WHERE tr_nav.rec_status = 1 AND tr_nav.product_key = ` + productKey + `' AND tr_nav.nav_date = '` + navDate + `'`
+	query := `SELECT t1.* FROM tr_nav t1 WHERE t1.rec_status = 1 AND t1.product_key = ` + productKey + ` AND t1.nav_date = "` + navDate + `"`
 
 	// Main query
 	// log.Println("==========  ==========>>>", query)
