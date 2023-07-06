@@ -759,6 +759,7 @@ func UpdateAdminTrNav(c echo.Context) error {
 }
 
 func GetNavPrice(c echo.Context) error {
+	// log.Println("SINI")
 	decimal.MarshalJSONWithoutQuotes = true
 	productKey := c.QueryParam("product_key")
 	if productKey == "" {
