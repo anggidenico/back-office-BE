@@ -3609,7 +3609,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 			}
 			if ed, ok := udfVal[10]; ok { //10 = OCCUP_POSITION
 				if ed.UdfValues != nil {
-					responseData.JobOther = ed.UdfValues
+					responseData.JobPositionOther = ed.UdfValues
 				}
 			}
 			if ed, ok := udfVal[8]; ok { //8 = RELATION_OCCUPATION
