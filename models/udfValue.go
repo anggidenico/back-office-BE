@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
@@ -126,7 +125,7 @@ func GetAllUdfValue(c *[]UdfValue, params map[string]string) (int, error) {
 	}
 	query += condition
 
-	log.Println(query)
+	// log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
