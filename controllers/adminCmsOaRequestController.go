@@ -3607,17 +3607,17 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 					responseData.BeneficialRelationOther = ed.UdfValues
 				}
 			}
-			if ed, ok := udfVal[8]; ok { //8 = OCCUP_POSITION
+			if ed, ok := udfVal[10]; ok { //10 = OCCUP_POSITION
 				if ed.UdfValues != nil {
 					responseData.PositionOther = ed.UdfValues
 				}
 			}
-			if ed, ok := udfVal[9]; ok { //9 = RELATION_OCCUPATION
+			if ed, ok := udfVal[8]; ok { //8 = RELATION_OCCUPATION
 				if ed.UdfValues != nil {
 					responseData.Relation.RelationOccupationOther = ed.UdfValues
 				}
 			}
-			if ed, ok := udfVal[10]; ok { //10 = RELATION_BUSINESS_FIELDS
+			if ed, ok := udfVal[9]; ok { //9 = RELATION_BUSINESS_FIELDS
 				if ed.UdfValues != nil {
 					responseData.Relation.RelationBusinessFieldOther = ed.UdfValues
 				}
