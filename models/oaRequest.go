@@ -165,10 +165,12 @@ type BankAccount struct {
 }
 
 type Relation struct {
-	RelationType           *string `json:"relation_type"`
-	RelationFullName       *string `json:"relation_full_name"`
-	RelationOccupation     *string `json:"relation_occupation"`
-	RelationBusinessFields *string `json:"relation_business_fields"`
+	RelationType               *string `json:"relation_type"`
+	RelationFullName           *string `json:"relation_full_name"`
+	RelationOccupation         *string `json:"relation_occupation"`
+	RelationBusinessFields     *string `json:"relation_business_fields"`
+	RelationOccupationOther    *string `json:"relation_occupation_other,omitempty"`
+	RelationBusinessFieldOther *string `json:"relation_business_fields_other,omitempty"`
 }
 
 type Emergency struct {

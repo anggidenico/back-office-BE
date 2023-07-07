@@ -640,6 +640,8 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 		responseData.MotherMaidenName = oapersonal.MotherMaidenName
 		responseData.BeneficialFullName = oapersonal.BeneficialFullName
 		responseData.RelationFullName = oapersonal.RelationFullName
+		responseData.PepName = oapersonal.PepName
+		responseData.PepPosition = oapersonal.PepPosition
 
 		//mapping gen lookup
 		var personalDataLookupIds []string
@@ -3612,12 +3614,12 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 			}
 			if ed, ok := udfVal[9]; ok { //9 = RELATION_OCCUPATION
 				if ed.UdfValues != nil {
-					responseData.RelationOccupationOther = ed.UdfValues
+					responseData.Relation.RelationOccupationOther = ed.UdfValues
 				}
 			}
 			if ed, ok := udfVal[10]; ok { //10 = RELATION_BUSINESS_FIELDS
 				if ed.UdfValues != nil {
-					responseData.RelationBusinessFieldOther = ed.UdfValues
+					responseData.Relation.RelationBusinessFieldOther = ed.UdfValues
 				}
 			}
 		}
