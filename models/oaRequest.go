@@ -137,14 +137,15 @@ type OaRequestDetailResponse struct {
 	BankRequest                *[]OaRequestByField  `json:"bank_request"`
 	ReligionOther              *string              `json:"religion_other,omitempty"`
 	EducationOther             *string              `json:"education_other,omitempty"`
-	JobOther                   *string              `json:"job_other,omitempty"`
-	BusinessFieldOther         *string              `json:"business_field_other,omitempty"`
-	FundSourceOther            *string              `json:"fund_source_other,omitempty"`
-	ObjectivesOther            *string              `json:"objectives_other,omitempty"`
+	JobOther                   *string              `json:"occup_job_other,omitempty"`
+	JobPositionOther           *string              `json:"occup_position_other"`
+	BusinessFieldOther         *string              `json:"occup_business_fields_other,omitempty"`
+	FundSourceOther            *string              `json:"sourceof_fund_other,omitempty"`
+	ObjectivesOther            *string              `json:"invesment_objectives_other,omitempty"`
 	BeneficialRelationOther    *string              `json:"beneficial_relation_other,omitempty"`
 	PositionOther              *string              `json:"position_other,omitempty"`
 	RelationOccupationOther    *string              `json:"relation_occupation_other,omitempty"`
-	RelationBusinessFieldOther *string              `json:"relation_business_field_other,omitempty"`
+	RelationBusinessFieldOther *string              `json:"relation_business_fields_other,omitempty"`
 	SiteReferer                *string              `json:"site_referer"`
 }
 
