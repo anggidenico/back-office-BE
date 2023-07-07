@@ -1260,9 +1260,9 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 		responseData.JobOther = nil
 		responseData.EducationOther = nil
 		responseData.BusinessFieldOther = nil
-		responseData.RelationBusinessFieldOther = nil
-		responseData.RelationOccupationOther = nil
-		responseData.PositionOther = nil
+		// responseData.RelationBusinessFieldOther = nil
+		// responseData.RelationOccupationOther = nil
+		// responseData.PositionOther = nil
 		responseData.BeneficialRelationOther = nil
 		responseData.ObjectivesOther = nil
 		responseData.FundSourceOther = nil
@@ -1316,7 +1316,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 			}
 			if ed, ok := udfVal[10]; ok { //10 = OCCUP_POSITION
 				if ed.UdfValues != nil {
-					responseData.PositionOther = ed.UdfValues
+					responseData.JobPositionOther = ed.UdfValues
 				}
 			}
 			if ed, ok := udfVal[8]; ok { //8 = RELATION_OCCUPATION
@@ -3553,9 +3553,9 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 		responseData.JobOther = nil
 		responseData.EducationOther = nil
 		responseData.BusinessFieldOther = nil
-		responseData.RelationBusinessFieldOther = nil
-		responseData.RelationOccupationOther = nil
-		responseData.PositionOther = nil
+		// responseData.RelationBusinessFieldOther = nil
+		// responseData.RelationOccupationOther = nil
+		// responseData.PositionOther = nil
 		responseData.BeneficialRelationOther = nil
 		responseData.ObjectivesOther = nil
 		responseData.FundSourceOther = nil
@@ -3609,7 +3609,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 			}
 			if ed, ok := udfVal[10]; ok { //10 = OCCUP_POSITION
 				if ed.UdfValues != nil {
-					responseData.PositionOther = ed.UdfValues
+					responseData.JobOther = ed.UdfValues
 				}
 			}
 			if ed, ok := udfVal[8]; ok { //8 = RELATION_OCCUPATION
