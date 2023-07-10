@@ -2868,7 +2868,7 @@ func UpdateTransactionRedemption(c echo.Context) error {
 
 	nominalTersedia := balance.Unit.Mul(navDB[0].NavValue).Truncate(0)
 
-	metodePerhitungan := c.FormValue("metode_perhitungan")
+	metodePerhitungan := c.FormValue("entry_mode")
 	if metodePerhitungan != "" {
 		if metodePerhitungan == "1" { //all unit
 			params["flag_redempt_all"] = "1"
@@ -2965,7 +2965,7 @@ func UpdateTransactionRedemption(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: metode_perhitungan", "Missing required parameter: metode_perhitungan")
 	}
 
-	bankStr := c.FormValue("bank_redemption")
+	bankStr := c.FormValue("cust_bankacc_key")
 	if bankStr != "" {
 		bankKey, err := strconv.ParseUint(bankStr, 10, 64)
 		if err != nil || bankKey == 0 {
