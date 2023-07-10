@@ -2977,6 +2977,14 @@ func UpdateTransactionRedemption(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_redemption", "Missing required parameter: bank_redemption")
 	}
 
+	navDate := c.FormValue("nav_date")
+	if navDate == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: nav_date", "Missing required parameter: nav_date")
+
+	} else {
+		params["nav_date"] = navDate
+	}
+
 	transRemark := c.FormValue("trans_remarks")
 	params["trans_remarks"] = transRemark
 
