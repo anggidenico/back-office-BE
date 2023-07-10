@@ -2031,24 +2031,24 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 
 		if oareq.CustomerKey == nil { //NEW OA -> delete sc_user_login
 			//UPDATE SC_USER_LOGIN
-			paramsScUserLogin := make(map[string]string)
-			paramsScUserLogin["user_login_key"] = strUserLoginKey
-			paramsScUserLogin["rec_status"] = "0"
-			paramsScUserLogin["rec_deleted_date"] = time.Now().Format(dateLayout)
-			paramsScUserLogin["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+			// paramsScUserLogin := make(map[string]string)
+			// paramsScUserLogin["user_login_key"] = strUserLoginKey
+			// paramsScUserLogin["rec_status"] = "0"
+			// paramsScUserLogin["rec_deleted_date"] = time.Now().Format(dateLayout)
+			// paramsScUserLogin["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 
-			_, err = models.UpdateScUserLogin(paramsScUserLogin)
-			if err != nil {
-				tx.Rollback()
-				// log.Error("Error update user login delete")
-				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
-			}
+			// _, err = models.UpdateScUserLogin(paramsScUserLogin)
+			// if err != nil {
+			// 	tx.Rollback()
+			// 	// log.Error("Error update user login delete")
+			// 	return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
+			// }
 
-			_, err = models.UpdateScUserLogin(paramsScUserLogin)
-			if err != nil {
-				// log.Error("Error update user data")
-				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
-			}
+			// _, err = models.UpdateScUserLogin(paramsScUserLogin)
+			// if err != nil {
+			// 	// log.Error("Error update user data")
+			// 	return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
+			// }
 		}
 		//Sent Email Reject ke customer
 		SentEmailRejectOaPengkinianToCustomer(oareq, oapersonal, check2notes)
