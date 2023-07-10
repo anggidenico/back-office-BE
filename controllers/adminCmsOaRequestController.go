@@ -21,6 +21,7 @@ import (
 )
 
 func initAuthCs() error {
+	log.Println("initAuthCs")
 	var roleKeyCs uint64
 	roleKeyCs = 11
 
@@ -31,6 +32,8 @@ func initAuthCs() error {
 }
 
 func initAuthKyc() error {
+	log.Println("initAuthKyc")
+
 	var roleKeyKyc uint64
 	roleKeyKyc = 12
 
@@ -41,6 +44,8 @@ func initAuthKyc() error {
 }
 
 func initAuthFundAdmin() error {
+	log.Println("initAuthFundAdmin")
+
 	var roleKeyFundAdmin uint64
 	roleKeyFundAdmin = 13
 
@@ -52,6 +57,8 @@ func initAuthFundAdmin() error {
 }
 
 func initAuthCsKyc() error {
+	log.Println("initAuthCsKyc")
+
 	var roleKeyCs uint64
 	roleKeyCs = 11
 	var roleKeyKyc uint64
@@ -64,6 +71,8 @@ func initAuthCsKyc() error {
 }
 
 func initAuthCsKycFundAdmin() error {
+	log.Println("initAuthCsKycFundAdmin")
+
 	var roleKeyCs uint64
 	roleKeyCs = 11
 	var roleKeyKyc uint64
