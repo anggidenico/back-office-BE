@@ -2734,18 +2734,18 @@ func UpdateTransactionRedemption(c echo.Context) error {
 			// log.Error("Trans Ststus Key bukan correction")
 			return lib.CustomError(http.StatusBadRequest, "Transaksi tidak ditemukan", "Transaksi tidak ditemukan")
 		}
-		if trans.RecCreatedBy != nil {
-			var usr models.ScUserLogin
-			status, err = models.GetScUserKey(&usr, *trans.RecCreatedBy)
-			if err == nil {
-				if usr.UserCategoryKey != uint64(1) {
-					if *trans.RecCreatedBy != strconv.FormatUint(lib.Profile.UserID, 10) {
-						// log.Error("User Transaksi tidak sama dengan user akses update")
-						return lib.CustomError(http.StatusBadRequest, "User Not Allowed to access this page", "User Not Allowed to access this page")
-					}
-				}
-			}
-		}
+		// if trans.RecCreatedBy != nil {
+		// 	var usr models.ScUserLogin
+		// 	status, err = models.GetScUserKey(&usr, *trans.RecCreatedBy)
+		// 	if err == nil {
+		// 		if usr.UserCategoryKey != uint64(1) {
+		// 			if *trans.RecCreatedBy != strconv.FormatUint(lib.Profile.UserID, 10) {
+		// 				// log.Error("User Transaksi tidak sama dengan user akses update")
+		// 				return lib.CustomError(http.StatusBadRequest, "User Not Allowed to access this page", "User Not Allowed to access this page")
+		// 			}
+		// 		}
+		// 	}
+		// }
 	}
 	params["transaction_key"] = transactionKey
 
