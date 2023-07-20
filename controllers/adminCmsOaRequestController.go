@@ -2959,6 +2959,11 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 			oaRequestLookupIds = append(oaRequestLookupIds, strconv.FormatUint(*oareq.OaRiskLevel, 10))
 		}
 	}
+	if oareq.SiteReferer != nil {
+		if _, ok := lib.Find(oaRequestLookupIds, strconv.FormatUint(*oareq.SiteReferer, 10)); !ok {
+			oaRequestLookupIds = append(oaRequestLookupIds, strconv.FormatUint(*oareq.SiteReferer, 10))
+		}
+	}
 
 	//gen lookup oa request
 	var lookupOaReq []models.GenLookup
@@ -2992,6 +2997,12 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 	if oareq.Oastatus != nil {
 		if n, ok := gData[*oareq.Oastatus]; ok {
 			responseData.Oastatus = *n.LkpName
+		}
+	}
+
+	if oareq.SiteReferer != nil {
+		if n, ok := gData[*oareq.SiteReferer]; ok {
+			responseData.SiteReferer = n.LkpName
 		}
 	}
 
@@ -3041,6 +3052,8 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 		responseData.MotherMaidenName = oapersonal.MotherMaidenName
 		responseData.BeneficialFullName = oapersonal.BeneficialFullName
 		responseData.RelationFullName = oapersonal.RelationFullName
+		responseData.PepName = oapersonal.PepName
+		responseData.PepPosition = oapersonal.PepPosition
 
 		//mapping gen lookup
 		var personalDataLookupIds []string
