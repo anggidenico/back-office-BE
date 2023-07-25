@@ -3435,6 +3435,8 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 		//set bank_request
 		var accBank []models.OaRequestByField
 		status, err = models.GetOaRequestBankByField(&accBank, "oa_request_key", strconv.FormatUint(oareq.OaRequestKey, 10))
+		log.Println(accBank)
+		log.Println(err)
 		if err != nil {
 			responseData.BankRequest = nil
 		} else {
