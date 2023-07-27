@@ -43,7 +43,7 @@ type ScUserLogin struct {
 	UloginFailedCount    uint64  `db:"ulogin_failed_count"       json:"ulogin_failed_count"`
 	LastAccess           *string `db:"last_access"               json:"last_access"`
 	AcceptLoginTnc       uint8   `db:"accept_login_tnc"          json:"accept_login_tnc"`
-	AllowedSharingLogin  uint8   `db:"allowed_sharing_login"     json:"allowed_sharing_login"`
+	AllowedSharingLogin  *uint8  `db:"allowed_sharing_login"     json:"allowed_sharing_login"`
 	TokenNotif           *string `db:"token_notif"               json:"token_notif"`
 	LastUpdateTokenNotif *string `db:"last_update_token_notif"   json:"last_update_token_notif"`
 	LockedDate           *string `db:"locked_date"               json:"locked_date"`

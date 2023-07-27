@@ -2959,6 +2959,11 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 			oaRequestLookupIds = append(oaRequestLookupIds, strconv.FormatUint(*oareq.OaRiskLevel, 10))
 		}
 	}
+	if oareq.SiteReferer != nil {
+		if _, ok := lib.Find(oaRequestLookupIds, strconv.FormatUint(*oareq.SiteReferer, 10)); !ok {
+			oaRequestLookupIds = append(oaRequestLookupIds, strconv.FormatUint(*oareq.SiteReferer, 10))
+		}
+	}
 
 	//gen lookup oa request
 	var lookupOaReq []models.GenLookup
@@ -2992,6 +2997,12 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 	if oareq.Oastatus != nil {
 		if n, ok := gData[*oareq.Oastatus]; ok {
 			responseData.Oastatus = *n.LkpName
+		}
+	}
+
+	if oareq.SiteReferer != nil {
+		if n, ok := gData[*oareq.SiteReferer]; ok {
+			responseData.SiteReferer = n.LkpName
 		}
 	}
 
@@ -3031,7 +3042,7 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 		}
 
 		if oapersonal.RecImage1 != nil && *oapersonal.RecImage1 != "" {
-			path := dir + "signature/" + *oapersonal.RecImage1
+			path := dir + *oapersonal.RecImage1
 			responseData.Signature = &path
 		}
 
@@ -3041,6 +3052,8 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 		responseData.MotherMaidenName = oapersonal.MotherMaidenName
 		responseData.BeneficialFullName = oapersonal.BeneficialFullName
 		responseData.RelationFullName = oapersonal.RelationFullName
+		responseData.PepName = oapersonal.PepName
+		responseData.PepPosition = oapersonal.PepPosition
 
 		//mapping gen lookup
 		var personalDataLookupIds []string
@@ -3364,7 +3377,9 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 					}
 
 					var city models.MsCity
-					_, err = models.GetMsCityByParent(&city, strconv.FormatUint(*p.KabupatenKey, 10))
+					if p.KabupatenKey != nil {
+						_, err = models.GetMsCityByParent(&city, strconv.FormatUint(*p.KabupatenKey, 10))
+					}
 					if err != nil {
 						// log.Error(err.Error())
 					} else {
@@ -3420,6 +3435,8 @@ func ResultOaPersonalData(keyStr string, c echo.Context, isHistory bool) error {
 		//set bank_request
 		var accBank []models.OaRequestByField
 		status, err = models.GetOaRequestBankByField(&accBank, "oa_request_key", strconv.FormatUint(oareq.OaRequestKey, 10))
+		log.Println(accBank)
+		log.Println(err)
 		if err != nil {
 			responseData.BankRequest = nil
 		} else {
