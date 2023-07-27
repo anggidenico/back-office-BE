@@ -131,7 +131,7 @@ func AdminGetOaRiskProfileQuizByOaRequestKey(c *[]AdminOaRiskProfileQuiz, key st
 			INNER JOIN cms_quiz_options AS cms_quiz_options ON cms_quiz_options.quiz_option_key = oa_risk_profile_quiz.quiz_option_key
 			INNER JOIN cms_quiz_header AS cms_quiz_header ON cms_quiz_header.quiz_header_key = cms_quiz_question.quiz_header_key
 			WHERE oa_risk_profile_quiz.rec_status = 1 AND oa_risk_profile_quiz.oa_request_key = ` + key +
-		` ORDER BY oa_risk_profile_quiz.risk_profile_quiz_key DESC LIMIT 1`
+		` ORDER BY oa_risk_profile_quiz.risk_profile_quiz_key DESC`
 	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
