@@ -1935,6 +1935,14 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 			}
 
+			paramOaUpdate := make(map[string]string)
+			paramOaUpdate["oa_request_key"] = oarequestkey
+			paramOaUpdate["oa_status"] = "261" // Customer_Build
+			_, err = models.UpdateOaRequest(paramOaUpdate)
+			if err != nil {
+				log.Println(err.Error())
+			}
+
 		}
 
 		//delete all ms_customer_bank_account by customer
@@ -2055,6 +2063,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 		lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
 
 		tx.Commit()
+
 	}
 
 	var response lib.Response
