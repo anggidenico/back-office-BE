@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -57,19 +56,17 @@ type OaRequest struct {
 }
 
 type OaRequestListResponse struct {
-	OaRequestKey uint64 `json:"oa_request_key"`
-	// OaEntryStart string `json:"oa_entry_start"`
-	// OaEntryEnd   string `json:"oa_entry_end"`
-	Oastatus     string `json:"oa_status"`
-	EmailAddress string `json:"email_address"`
-	PhoneNumber  string `json:"phone_mobile"`
-	DateBirth    string `json:"date_birth"`
-	FullName     string `json:"full_name"`
-	IDCardNo     string `json:"idcard_no"`
-	OaDate       string `json:"oa_date"`
-	CreatedBy    string `json:"created_by"`
-	Branch       string `json:"branch"`
-	Agent        string `json:"agent"`
+	OaRequestKey uint64 `db:"oa_request_key" json:"oa_request_key"`
+	Oastatus     string `db:"oa_status" json:"oa_status"`
+	EmailAddress string `db:"email_address" json:"email_address"`
+	PhoneNumber  string `db:"phone_mobile" json:"phone_mobile"`
+	DateBirth    string `db:"date_birth" json:"date_birth"`
+	FullName     string `db:"full_name" json:"full_name"`
+	IDCardNo     string `db:"idcard_no" json:"idcard_no"`
+	OaDate       string `db:"oa_date" json:"oa_date"`
+	CreatedBy    string `db:"created_by" json:"created_by"`
+	Branch       string `db:"branch" json:"branch"`
+	Agent        string `db:"agent" json:"agent"`
 }
 
 type OaRequestCountData struct {
@@ -449,7 +446,7 @@ func GetAllOaRequestIndividu(c *[]OaRequest, limit uint64, offset uint64, nolimi
 	}
 
 	// Main query
-	log.Println("==========  ==========>>>", query)
+	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
