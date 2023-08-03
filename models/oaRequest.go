@@ -56,17 +56,18 @@ type OaRequest struct {
 }
 
 type OaRequestListResponse struct {
-	OaRequestKey uint64 `db:"oa_request_key" json:"oa_request_key"`
-	Oastatus     string `db:"oa_status" json:"oa_status"`
-	EmailAddress string `db:"email_address" json:"email_address"`
-	PhoneNumber  string `db:"phone_mobile" json:"phone_mobile"`
-	DateBirth    string `db:"date_birth" json:"date_birth"`
-	FullName     string `db:"full_name" json:"full_name"`
-	IDCardNo     string `db:"idcard_no" json:"idcard_no"`
-	OaDate       string `db:"oa_date" json:"oa_date"`
-	CreatedBy    string `db:"created_by" json:"created_by"`
-	Branch       string `db:"branch" json:"branch"`
-	Agent        string `db:"agent" json:"agent"`
+	OaRequestKey uint64  `db:"oa_request_key" json:"oa_request_key"`
+	CustomerKey  *uint64 `db:"customer_key" json:"customer_key"`
+	Oastatus     string  `db:"oa_status" json:"oa_status"`
+	EmailAddress string  `db:"email_address" json:"email_address"`
+	PhoneNumber  string  `db:"phone_mobile" json:"phone_mobile"`
+	DateBirth    string  `db:"date_birth" json:"date_birth"`
+	FullName     string  `db:"full_name" json:"full_name"`
+	IDCardNo     string  `db:"idcard_no" json:"idcard_no"`
+	OaDate       string  `db:"oa_date" json:"oa_date"`
+	CreatedBy    string  `db:"created_by" json:"created_by"`
+	Branch       string  `db:"branch" json:"branch"`
+	Agent        string  `db:"agent" json:"agent"`
 }
 
 type OaRequestCountData struct {

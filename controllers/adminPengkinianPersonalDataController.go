@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -11,19 +10,18 @@ import (
 	"github.com/labstack/echo"
 )
 
-func GetNewOAList(c echo.Context) error {
+func GetPengkinianPersonalDataList(c echo.Context) error {
 	errorAuth := initAuthCsKyc()
 	if errorAuth != nil {
 		return lib.CustomError(http.StatusUnauthorized, "You not allowed to access this page", "You not allowed to access this page")
 	}
 	var err error
 	// var status int
-	RequestType := uint64(127)
-
 	var responseData []models.OaRequestListResponse
 
+	RequestType := uint64(296)
+
 	limitStr := c.QueryParam("limit")
-	log.Println(limitStr)
 	var limit uint64
 	if limitStr != "" {
 		limit, err = strconv.ParseUint(limitStr, 10, 64)
@@ -57,12 +55,16 @@ func GetNewOAList(c echo.Context) error {
 		// responseData = getList
 		for _, getData := range getList {
 			respData := getData
-			layout := "02 January 2006 15:04"
-			layoutDateBirth := "02 January 2006"
+
+			layout := "02 Jan 2006 15:04"
+			layoutDateBirth := "02 Jan 2006"
+
 			t1, _ := time.Parse(lib.TIMESTAMPFORMAT, getData.DateBirth)
 			respData.DateBirth = t1.Format(layoutDateBirth)
+
 			t2, _ := time.Parse(lib.TIMESTAMPFORMAT, getData.OaDate)
 			respData.OaDate = t2.Format(layout)
+
 			responseData = append(responseData, respData)
 		}
 	} else {
@@ -80,4 +82,15 @@ func GetNewOAList(c echo.Context) error {
 
 }
 
+func GetPengkinianPersonalDataDetails(c echo.Context) error {
 
+	
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = nil
+
+	return c.JSON(http.StatusOK, response)
+}

@@ -459,6 +459,12 @@ func router() *echo.Echo {
 	admin.GET("/bankproduct/:product_key", controllers.GetBankProductSubscription).Name = "GetBankProductSubscription"
 	admin.GET("/bankcustomer/:customer_key", controllers.GetCustomerBankAccountRedemption).Name = "GetCustomerBankAccountRedemption"
 
+	//==================================================== NEW ENDPOINT ======================================================================
+
+	admin.GET("/new-oarequest-list", controllers.GetNewOAList)
+	admin.GET("/pengkinian-personal-data-list", controllers.GetPengkinianPersonalDataList)
+	admin.GET("/pengkinian-details/:key", controllers.GetPengkinianPersonalDataDetails)
+
 	return e
 }
 
