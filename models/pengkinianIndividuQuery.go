@@ -52,14 +52,10 @@ type PengkinianPersonalDataResponse struct {
 	BeneficialFullName     *string                 `db:"beneficial_full_name" json:"beneficial_full_name"`
 	RelationFullName       *string                 `db:"relation_full_name" json:"relation_full_name"`
 	IdCardAddress          *string                 `db:"idcard_address" json:"idcard_address"`
-	IdCardProvinceAlter    *string                 `db:"idcard_province_alter" json:"idcard_province_alter"`
-	IdCardCityAlter        *string                 `db:"idcard_city_alter" json:"idcard_city_alter"`
 	IdCardProvince         *string                 `db:"idcard_province" json:"idcard_province"`
 	IdCardCity             *string                 `db:"idcard_city" json:"idcard_city"`
 	IdCardPostalCode       *string                 `db:"idcard_postal_code" json:"idcard_postal_code"`
 	DomicileAddress        *string                 `db:"domicile_address" json:"domicile_address"`
-	DomicileProvinceAlter  *string                 `db:"domicile_province_alter" json:"domicile_province_alter"`
-	DomicileCityAlter      *string                 `db:"domicile_city_alter" json:"domicile_city_alter"`
 	DomicileProvince       *string                 `db:"domicile_province" json:"domicile_province"`
 	DomicileCity           *string                 `db:"domicile_city" json:"domicile_city"`
 	DomicilePostalCode     *string                 `db:"domicile_postal_code" json:"domicile_postal_code"`
@@ -74,6 +70,11 @@ type PengkinianPersonalDataResponse struct {
 	Agent                  *string                 `db:"agent" json:"agent"`
 	Branch                 *string                 `db:"branch" json:"branch"`
 	BankAccount            *[]OaRequestBankDetails `db:"bank_account_request" json:"bank_account_request"`
+	// IdCardProvinceAlter    *string                 `db:"idcard_province_alter" json:"idcard_province_alter"`
+	// IdCardCityAlter        *string                 `db:"idcard_city_alter" json:"idcard_city_alter"`
+	// DomicileProvinceAlter  *string                 `db:"domicile_province_alter" json:"domicile_province_alter"`
+	// DomicileCityAlter      *string                 `db:"domicile_city_alter" json:"domicile_city_alter"`
+
 }
 
 type PengkinianPersonalDataModels struct {

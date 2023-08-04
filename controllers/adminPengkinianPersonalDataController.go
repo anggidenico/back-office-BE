@@ -102,7 +102,7 @@ func GetPengkinianPersonalDataDetails(c echo.Context) error {
 	err = models.GetPengkinianBankAccount(&getBankAccount, oaRequestKey)
 	if err != nil {
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
-	}    
+	}
 	responseData.BankAccount = &getBankAccount
 
 	responseData.Agent = getPersonalData.Agent
@@ -114,10 +114,8 @@ func GetPengkinianPersonalDataDetails(c echo.Context) error {
 	responseData.DateBirth = getPersonalData.DateBirth
 	responseData.DomicileAddress = getPersonalData.DomicileAddress
 	responseData.DomicileCity = getPersonalData.DomicileCity
-	responseData.DomicileCityAlter = getPersonalData.DomicileCityAlter
 	responseData.DomicilePostalCode = getPersonalData.DomicilePostalCode
 	responseData.DomicileProvince = getPersonalData.DomicileProvince
-	responseData.DomicileProvinceAlter = getPersonalData.DomicileProvinceAlter
 	responseData.Education = getPersonalData.Education
 	responseData.EmergencyFullName = getPersonalData.EmergencyFullName
 	responseData.EmergencyPhoneNo = getPersonalData.EmergencyPhoneNo
@@ -126,7 +124,6 @@ func GetPengkinianPersonalDataDetails(c echo.Context) error {
 	responseData.Gender = getPersonalData.Gender
 	responseData.IdCardAddress = getPersonalData.IdCardAddress
 	responseData.IdCardCity = getPersonalData.IdCardCity
-	responseData.IdCardCityAlter = getPersonalData.IdCardCityAlter
 	responseData.IdCardPostalCode = getPersonalData.IdCardPostalCode
 	responseData.IdCardProvince = getPersonalData.IdCardProvince
 	responseData.IdCardType = getPersonalData.IdCardType
