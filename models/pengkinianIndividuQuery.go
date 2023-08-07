@@ -174,7 +174,7 @@ func GetLastActiveOaKeyByNewOaKey(NewOaRequestKey string) *string {
 
 func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key string) error {
 
-	query := `SELECT t1.user_login_key, t2.personal_data_key
+	query := `SELECT t1.user_login_key, t2.personal_data_key,
 	t1.oa_request_key, ortype.lkp_name AS oa_request_type, 
 	orlv.lkp_name AS oa_risk_level,t1.oa_entry_start, t1.oa_entry_end, 
 	orst.lkp_name AS oa_status, t2.email_address, t2.phone_mobile, t2.phone_home,
