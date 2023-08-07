@@ -20,7 +20,7 @@ func GetNewOAList(c echo.Context) error {
 	// var status int
 	RequestType := uint64(127)
 
-	var responseData []models.OaRequestListResponse
+	var responseData []models.PengkinianListResponse
 
 	limitStr := c.QueryParam("limit")
 	log.Println(limitStr)
@@ -51,7 +51,7 @@ func GetNewOAList(c echo.Context) error {
 		offset = limit * (page - 1)
 	}
 
-	var getList []models.OaRequestListResponse
+	var getList []models.PengkinianListResponse
 	pagination := models.GetOARequestIndividuListQuery(&getList, RequestType, lib.Profile.RoleKey, limit, offset)
 	if len(getList) > 0 {
 		// responseData = getList
@@ -59,8 +59,13 @@ func GetNewOAList(c echo.Context) error {
 			respData := getData
 			layout := "02 January 2006 15:04"
 			layoutDateBirth := "02 January 2006"
-			t1, _ := time.Parse(lib.TIMESTAMPFORMAT, getData.DateBirth)
-			respData.DateBirth = t1.Format(layoutDateBirth)
+
+			if getData.DateBirth != nil {
+				t1, _ := time.Parse(lib.TIMESTAMPFORMAT, *getData.DateBirth)
+				dateBirth := t1.Format(layoutDateBirth)
+				respData.DateBirth = &dateBirth
+			}
+
 			t2, _ := time.Parse(lib.TIMESTAMPFORMAT, getData.OaDate)
 			respData.OaDate = t2.Format(layout)
 			responseData = append(responseData, respData)
@@ -79,5 +84,3 @@ func GetNewOAList(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 
 }
-
-

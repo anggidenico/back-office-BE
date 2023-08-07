@@ -5,6 +5,10 @@ import (
 	"mf-bo-api/db"
 )
 
+type PengkinianPersonalDataCompareResponse struct {
+	Old PengkinianPersonalDataResponse `json:"old"`
+	New PengkinianPersonalDataResponse `json:"new"`
+}
 type OaRequestBankDetails struct {
 	BankAccountKey  *uint64 `db:"bank_account_key" json:"bank_account_key"`
 	BankKey         *uint64 `db:"bank_key" json:"bank_key"`
@@ -30,6 +34,7 @@ type PengkinianPersonalDataResponse struct {
 	FullName               *string                 `db:"full_name" json:"full_name"`
 	Nationality            *string                 `db:"nationality" json:"nationality"`
 	IdCardType             *string                 `db:"idcard_type" json:"idcard_type"`
+	IdCardNo               *string                 `db:"idcard_no" json:"idcard_no"`
 	Gender                 *string                 `db:"gender" json:"gender"`
 	Religion               *string                 `db:"religion" json:"religion"`
 	Education              *string                 `db:"education" json:"education"`
@@ -69,12 +74,8 @@ type PengkinianPersonalDataResponse struct {
 	SiteReferrer           *string                 `db:"site_referrer" json:"site_referrer"`
 	Agent                  *string                 `db:"agent" json:"agent"`
 	Branch                 *string                 `db:"branch" json:"branch"`
+	SignatureImage         *string                 `db:"signature_image" json:"signature_image"`
 	BankAccount            *[]OaRequestBankDetails `db:"bank_account_request" json:"bank_account_request"`
-	// IdCardProvinceAlter    *string                 `db:"idcard_province_alter" json:"idcard_province_alter"`
-	// IdCardCityAlter        *string                 `db:"idcard_city_alter" json:"idcard_city_alter"`
-	// DomicileProvinceAlter  *string                 `db:"domicile_province_alter" json:"domicile_province_alter"`
-	// DomicileCityAlter      *string                 `db:"domicile_city_alter" json:"domicile_city_alter"`
-
 }
 
 type PengkinianPersonalDataModels struct {
@@ -93,6 +94,7 @@ type PengkinianPersonalDataModels struct {
 	FullName               *string `db:"full_name" json:"full_name"`
 	Nationality            *string `db:"nationality" json:"nationality"`
 	IdCardType             *string `db:"idcard_type" json:"idcard_type"`
+	IdCardNo               *string `db:"idcard_no" json:"idcard_no"`
 	Gender                 *string `db:"gender" json:"gender"`
 	Religion               *string `db:"religion" json:"religion"`
 	Education              *string `db:"education" json:"education"`
@@ -136,6 +138,26 @@ type PengkinianPersonalDataModels struct {
 	SiteReferrer           *string `db:"site_referrer" json:"site_referrer"`
 	Agent                  *string `db:"agent" json:"agent"`
 	Branch                 *string `db:"branch" json:"branch"`
+	SignatureImage         *string `db:"signature_image" json:"signature_image"`
+}
+
+func GetLastActiveOaKeyByNewOaKey(NewOaRequestKey string) *string {
+	queryGetUloginKey := `SELECT user_login_key FROM oa_request WHERE rec_status = 1 AND oa_request_key = ` + NewOaRequestKey
+	var UloginKey string
+	err := db.Db.Get(&UloginKey, queryGetUloginKey)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	query := `SELECT oa_request_key FROM oa_request WHERE rec_status = 1 AND oa_request_type IN(127,296) AND oa_status IN(261,262) 
+	AND user_login_key = ` + UloginKey + ` AND oa_request_key != ` + NewOaRequestKey + ` ORDER BY oa_request_key DESC LIMIT 1`
+	var results *string
+	err = db.Db.Get(&results, query)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	return results
 }
 
 func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key string) error {
@@ -145,7 +167,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	orlv.lkp_name AS oa_risk_level,t1.oa_entry_start, t1.oa_entry_end, 
 	orst.lkp_name AS oa_status, t2.email_address, t2.phone_mobile, t2.phone_home,
 	t2.place_birth, t2.date_birth, t2.full_name, msco.country_name AS nationality, 
-	idtype.lkp_name AS idcard_type, gend.lkp_name AS gender, rel.lkp_name AS religion, 
+	idtype.lkp_name AS idcard_type, t2.idcard_no, gend.lkp_name AS gender, rel.lkp_name AS religion, 
 	edu.lkp_name AS education, mar.lkp_name AS marital_status, pep.lkp_name AS pep_status, 
 	t2.pep_name, t2.pep_position, t1.sales_code, t2.pic_ktp, t2.pic_selfie_ktp, 
 	jobz.lkp_name AS occup_job, t2.occup_company, posit.lkp_name AS occup_position,
@@ -162,7 +184,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	rlt.lkp_name AS relation_type, job.lkp_name AS relation_occupation, 
 	bfi.lkp_name AS relation_business_fields, emr.lkp_name AS emergency_relation,
 	t2.emergency_full_name, t2.emergency_phone_no, rfr.lkp_name AS site_referrer, t5.agent_name AS agent, 
-	t6.branch_name AS branch
+	t6.branch_name AS branch, t2.rec_image1 AS signature_image
 
 	FROM oa_request t1
 	LEFT JOIN oa_personal_data t2 ON t2.oa_request_key = t1.oa_request_key
@@ -201,7 +223,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	WHERE t1.rec_status = 1  AND t2.rec_status = 1 AND t1.oa_request_key = ` + oa_request_key
 
 	// EXECUTE DATANYA
-	log.Println(query)
+	log.Println("QUERY GetPersonalDataOnlyQuery =>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err.Error())

@@ -7,14 +7,29 @@ import (
 	"strconv"
 )
 
-func GetOARequestIndividuListQuery(c *[]OaRequestListResponse, requestType uint64, backOfficeRole uint64, limit uint64, offset uint64) int {
+type PengkinianListResponse struct {
+	OaRequestKey uint64  `db:"oa_request_key" json:"oa_request_key"`
+	CustomerKey  *uint64 `db:"customer_key" json:"customer_key"`
+	Oastatus     string  `db:"oa_status" json:"oa_status"`
+	EmailAddress *string `db:"email_address" json:"email_address"`
+	PhoneNumber  *string `db:"phone_mobile" json:"phone_mobile"`
+	DateBirth    *string `db:"date_birth" json:"date_birth"`
+	FullName     *string `db:"full_name" json:"full_name"`
+	IDCardNo     *string `db:"idcard_no" json:"idcard_no"`
+	OaDate       string  `db:"oa_date" json:"oa_date"`
+	CreatedBy    string  `db:"created_by" json:"created_by"`
+	Branch       *string `db:"branch" json:"branch"`
+	Agent        *string `db:"agent" json:"agent"`
+}
+
+func GetOARequestIndividuListQuery(c *[]PengkinianListResponse, requestType uint64, backOfficeRole uint64, limit uint64, offset uint64) int {
 	query := `SELECT t1.oa_request_key, t2.lkp_name AS oa_status, t3.email_address, t3.phone_mobile, 
 	t3.date_birth, t3.full_name, t3.idcard_no, t1.oa_entry_start AS oa_date, 
 	t4.ulogin_email AS email_address,t4.ulogin_name AS created_by, t5.agent_name AS agent, 
 	t6.branch_name AS branch, t4.customer_key
 	FROM oa_request t1
 	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
-	INNER JOIN oa_personal_data t3 ON t1.oa_request_key = t3.oa_request_key
+	LEFT JOIN oa_personal_data t3 ON t1.oa_request_key = t3.oa_request_key
 	INNER JOIN sc_user_login t4 ON t4.user_login_key = t1.user_login_key
 	INNER JOIN ms_agent t5 ON t5.agent_key = t1.agent_key 
 	INNER JOIN ms_branch t6 ON t6.branch_key = t1.branch_key
@@ -22,7 +37,7 @@ func GetOARequestIndividuListQuery(c *[]OaRequestListResponse, requestType uint6
 
 	queryPage := `SELECT count(*) FROM oa_request t1
 	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
-	INNER JOIN oa_personal_data t3 ON t1.oa_request_key = t3.oa_request_key
+	LEFT JOIN oa_personal_data t3 ON t1.oa_request_key = t3.oa_request_key
 	INNER JOIN sc_user_login t4 ON t4.user_login_key = t1.user_login_key
 	INNER JOIN ms_agent t5 ON t5.agent_key = t1.agent_key 
 	INNER JOIN ms_branch t6 ON t6.branch_key = t1.branch_key
