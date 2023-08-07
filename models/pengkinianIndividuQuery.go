@@ -79,66 +79,78 @@ type PengkinianPersonalDataResponse struct {
 }
 
 type PengkinianPersonalDataModels struct {
-	UserLoginKey           uint64  `db:"user_login_key" json:"user_login_key"`
-	OaRequestKey           uint64  `db:"oa_request_key" json:"oa_request_key"`
-	OaRequestType          string  `db:"oa_request_type" json:"oa_request_type"`
-	OaRiskLevel            *string `db:"oa_risk_level" json:"oa_risk_level"`
-	OaEntryStart           *string `db:"oa_entry_start" json:"oa_entry_start"`
-	OaEntryEnd             *string `db:"oa_entry_end" json:"oa_entry_end"`
-	OaStatus               *string `db:"oa_status" json:"oa_status"`
-	EmailAddress           *string `db:"email_address" json:"email_address"`
-	PhoneMobile            *string `db:"phone_mobile" json:"phone_mobile"`
-	PhoneHome              *string `db:"phone_home" json:"phone_home"`
-	PlaceBirth             *string `db:"place_birth" json:"place_birth"`
-	DateBirth              *string `db:"date_birth" json:"date_birth"`
-	FullName               *string `db:"full_name" json:"full_name"`
-	Nationality            *string `db:"nationality" json:"nationality"`
-	IdCardType             *string `db:"idcard_type" json:"idcard_type"`
-	IdCardNo               *string `db:"idcard_no" json:"idcard_no"`
-	Gender                 *string `db:"gender" json:"gender"`
-	Religion               *string `db:"religion" json:"religion"`
-	Education              *string `db:"education" json:"education"`
-	MaritalStatus          *string `db:"marital_status" json:"marital_status"`
-	PepStatus              *string `db:"pep_status" json:"pep_status"`
-	PepName                *string `db:"pep_name" json:"pep_name"`
-	PepPosition            *string `db:"pep_position" json:"pep_position"`
-	SalesCode              *string `db:"sales_code" json:"sales_code"`
-	PicKtp                 *string `db:"pic_ktp" json:"pic_ktp"`
-	PicSelfieKtp           *string `db:"pic_selfie_ktp" json:"pic_selfie_ktp"`
-	OccupJob               *string `db:"occup_job" json:"occup_job"`
-	OccupCompany           *string `db:"occup_company" json:"occup_company"`
-	OccupPosition          *string `db:"occup_position" json:"occup_position"`
-	OccupBusinessFields    *string `db:"occup_business_fields" json:"occup_business_fields"`
-	AnnualIncome           *string `db:"annual_income" json:"annual_income"`
-	SourceOfFund           *string `db:"sourceof_fund" json:"sourceof_fund"`
-	InvesmentObjectives    *string `db:"invesment_objectives" json:"invesment_objectives"`
-	MotherMaidenName       *string `db:"mother_maiden_name" json:"mother_maiden_name"`
-	BeneficialRelation     *string `db:"beneficial_relation" json:"beneficial_relation"`
-	BeneficialFullName     *string `db:"beneficial_full_name" json:"beneficial_full_name"`
-	RelationFullName       *string `db:"relation_full_name" json:"relation_full_name"`
-	IdCardAddress          *string `db:"idcard_address" json:"idcard_address"`
-	IdCardProvinceAlter    *string `db:"idcard_province_alter" json:"idcard_province_alter"`
-	IdCardCityAlter        *string `db:"idcard_city_alter" json:"idcard_city_alter"`
-	IdCardProvince         *string `db:"idcard_province" json:"idcard_province"`
-	IdCardCity             *string `db:"idcard_city" json:"idcard_city"`
-	IdCardPostalCode       *string `db:"idcard_postal_code" json:"idcard_postal_code"`
-	DomicileAddress        *string `db:"domicile_address" json:"domicile_address"`
-	DomicileProvinceAlter  *string `db:"domicile_province_alter" json:"domicile_province_alter"`
-	DomicileCityAlter      *string `db:"domicile_city_alter" json:"domicile_city_alter"`
-	DomicileProvince       *string `db:"domicile_province" json:"domicile_province"`
-	DomicileCity           *string `db:"domicile_city" json:"domicile_city"`
-	DomicilePostalCode     *string `db:"domicile_postal_code" json:"domicile_postal_code"`
-	OccupAddress           *string `db:"occup_address" json:"occup_address"`
-	RelationType           *string `db:"relation_type" json:"relation_type"`
-	RelationOccupation     *string `db:"relation_occupation" json:"relation_occupation"`
-	RelationBusinessFields *string `db:"relation_business_fields" json:"relation_business_fields"`
-	EmergencyRelation      *string `db:"emergency_relation" json:"emergency_relation"`
-	EmergencyFullName      *string `db:"emergency_full_name" json:"emergency_full_name"`
-	EmergencyPhoneNo       *string `db:"emergency_phone_no" json:"emergency_phone_no"`
-	SiteReferrer           *string `db:"site_referrer" json:"site_referrer"`
-	Agent                  *string `db:"agent" json:"agent"`
-	Branch                 *string `db:"branch" json:"branch"`
-	SignatureImage         *string `db:"signature_image" json:"signature_image"`
+	PersonalDataKey           uint64  `db:"personal_data_key" json:"personal_data_key"`
+	UserLoginKey              uint64  `db:"user_login_key" json:"user_login_key"`
+	OaRequestKey              uint64  `db:"oa_request_key" json:"oa_request_key"`
+	OaRequestType             string  `db:"oa_request_type" json:"oa_request_type"`
+	OaRiskLevel               *string `db:"oa_risk_level" json:"oa_risk_level"`
+	OaEntryStart              *string `db:"oa_entry_start" json:"oa_entry_start"`
+	OaEntryEnd                *string `db:"oa_entry_end" json:"oa_entry_end"`
+	OaStatus                  *string `db:"oa_status" json:"oa_status"`
+	EmailAddress              *string `db:"email_address" json:"email_address"`
+	PhoneMobile               *string `db:"phone_mobile" json:"phone_mobile"`
+	PhoneHome                 *string `db:"phone_home" json:"phone_home"`
+	PlaceBirth                *string `db:"place_birth" json:"place_birth"`
+	DateBirth                 *string `db:"date_birth" json:"date_birth"`
+	FullName                  *string `db:"full_name" json:"full_name"`
+	Nationality               *string `db:"nationality" json:"nationality"`
+	IdCardType                *string `db:"idcard_type" json:"idcard_type"`
+	IdCardNo                  *string `db:"idcard_no" json:"idcard_no"`
+	Gender                    *string `db:"gender" json:"gender"`
+	Religion                  *string `db:"religion" json:"religion"`
+	ReligionKey               *uint64 `db:"religion_key" json:"religion_key"`
+	Education                 *string `db:"education" json:"education"`
+	EducationKey              *uint64 `db:"education_key" json:"education_key"`
+	MaritalStatus             *string `db:"marital_status" json:"marital_status"`
+	PepStatus                 *string `db:"pep_status" json:"pep_status"`
+	PepName                   *string `db:"pep_name" json:"pep_name"`
+	PepPosition               *string `db:"pep_position" json:"pep_position"`
+	SalesCode                 *string `db:"sales_code" json:"sales_code"`
+	PicKtp                    *string `db:"pic_ktp" json:"pic_ktp"`
+	PicSelfieKtp              *string `db:"pic_selfie_ktp" json:"pic_selfie_ktp"`
+	OccupJob                  *string `db:"occup_job" json:"occup_job"`
+	OccupJobKey               *uint64 `db:"occup_job_key" json:"occup_job_key"`
+	OccupCompany              *string `db:"occup_company" json:"occup_company"`
+	OccupPosition             *string `db:"occup_position" json:"occup_position"`
+	OccupPositionKey          *uint64 `db:"occup_position_key" json:"occup_position_key"`
+	OccupBusinessFields       *string `db:"occup_business_fields" json:"occup_business_fields"`
+	OccupBusinessFieldsKey    *uint64 `db:"occup_business_fields_key" json:"occup_business_fields_key"`
+	AnnualIncome              *string `db:"annual_income" json:"annual_income"`
+	AnnualIncomeKey           *uint64 `db:"annual_income_key" json:"annual_income_key"`
+	SourceOfFund              *string `db:"sourceof_fund" json:"sourceof_fund"`
+	SourceOfFundKey           *uint64 `db:"sourceof_fund_key" json:"sourceof_fund_key"`
+	InvesmentObjectives       *string `db:"invesment_objectives" json:"invesment_objectives"`
+	InvesmentObjectivesKey    *uint64 `db:"invesment_objectives_key" json:"invesment_objectives_key"`
+	MotherMaidenName          *string `db:"mother_maiden_name" json:"mother_maiden_name"`
+	BeneficialRelation        *string `db:"beneficial_relation" json:"beneficial_relation"`
+	BeneficialRelationKey     *uint64 `db:"beneficial_relation_key" json:"beneficial_relation_key"`
+	BeneficialFullName        *string `db:"beneficial_full_name" json:"beneficial_full_name"`
+	RelationFullName          *string `db:"relation_full_name" json:"relation_full_name"`
+	IdCardAddress             *string `db:"idcard_address" json:"idcard_address"`
+	IdCardProvinceAlter       *string `db:"idcard_province_alter" json:"idcard_province_alter"`
+	IdCardCityAlter           *string `db:"idcard_city_alter" json:"idcard_city_alter"`
+	IdCardProvince            *string `db:"idcard_province" json:"idcard_province"`
+	IdCardCity                *string `db:"idcard_city" json:"idcard_city"`
+	IdCardPostalCode          *string `db:"idcard_postal_code" json:"idcard_postal_code"`
+	DomicileAddress           *string `db:"domicile_address" json:"domicile_address"`
+	DomicileProvinceAlter     *string `db:"domicile_province_alter" json:"domicile_province_alter"`
+	DomicileCityAlter         *string `db:"domicile_city_alter" json:"domicile_city_alter"`
+	DomicileProvince          *string `db:"domicile_province" json:"domicile_province"`
+	DomicileCity              *string `db:"domicile_city" json:"domicile_city"`
+	DomicilePostalCode        *string `db:"domicile_postal_code" json:"domicile_postal_code"`
+	OccupAddress              *string `db:"occup_address" json:"occup_address"`
+	RelationType              *string `db:"relation_type" json:"relation_type"`
+	RelationOccupation        *string `db:"relation_occupation" json:"relation_occupation"`
+	RelationOccupationKey     *uint64 `db:"relation_occupation_key" json:"relation_occupation_key"`
+	RelationBusinessFields    *string `db:"relation_business_fields" json:"relation_business_fields"`
+	RelationBusinessFieldsKey *uint64 `db:"relation_business_fields_key" json:"relation_business_fields_key"`
+	EmergencyRelation         *string `db:"emergency_relation" json:"emergency_relation"`
+	EmergencyFullName         *string `db:"emergency_full_name" json:"emergency_full_name"`
+	EmergencyPhoneNo          *string `db:"emergency_phone_no" json:"emergency_phone_no"`
+	SiteReferrer              *string `db:"site_referrer" json:"site_referrer"`
+	Agent                     *string `db:"agent" json:"agent"`
+	Branch                    *string `db:"branch" json:"branch"`
+	SignatureImage            *string `db:"signature_image" json:"signature_image"`
 }
 
 func GetLastActiveOaKeyByNewOaKey(NewOaRequestKey string) *string {
@@ -162,7 +174,7 @@ func GetLastActiveOaKeyByNewOaKey(NewOaRequestKey string) *string {
 
 func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key string) error {
 
-	query := `SELECT t1.user_login_key,
+	query := `SELECT t1.user_login_key, t2.personal_data_key
 	t1.oa_request_key, ortype.lkp_name AS oa_request_type, 
 	orlv.lkp_name AS oa_risk_level,t1.oa_entry_start, t1.oa_entry_end, 
 	orst.lkp_name AS oa_status, t2.email_address, t2.phone_mobile, t2.phone_home,
@@ -184,7 +196,12 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	rlt.lkp_name AS relation_type, job.lkp_name AS relation_occupation, 
 	bfi.lkp_name AS relation_business_fields, emr.lkp_name AS emergency_relation,
 	t2.emergency_full_name, t2.emergency_phone_no, rfr.lkp_name AS site_referrer, t5.agent_name AS agent, 
-	t6.branch_name AS branch, t2.rec_image1 AS signature_image
+	t6.branch_name AS branch, t2.rec_image1 AS signature_image, t2.occup_job AS occup_job_key, 
+	t2.occup_position AS occup_position_key, t2.occup_business_fields AS occup_business_fields_key,
+	t2.annual_income AS annual_income_key, t2.sourceof_fund AS sourceof_fund_key, 
+	t2.invesment_objectives AS invesment_objectives_key, t2.relation_occupation AS relation_occupation_key,
+	t2.relation_business_fields AS relation_business_fields_key, t2.religion AS religion_key, t2.education AS education_key
+	t2.beneficial_relation AS beneficial_relation_key
 
 	FROM oa_request t1
 	LEFT JOIN oa_personal_data t2 ON t2.oa_request_key = t1.oa_request_key

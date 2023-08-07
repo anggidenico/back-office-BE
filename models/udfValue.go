@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
@@ -215,4 +216,16 @@ func UpdateDeleteUdfValue(params map[string]string, valueIn []string, fieldIn st
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
+}
+
+func GetUdfValueData(UdfInfoKey string, RowDataKey string) *string {
+	query := `SELECT t1.udf_values FROM udf_value t1 WHERE t1.udf_info_key = ` + UdfInfoKey + ` AND t1.row_data_key = ` + RowDataKey + ` 
+	ORDER BY t1.udf_value_key DESC LIMIT 1`
+	var values *string
+	err := db.Db.Get(&values, query)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	return values
 }

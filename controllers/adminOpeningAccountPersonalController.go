@@ -17,7 +17,6 @@ func GetNewOAList(c echo.Context) error {
 		return lib.CustomError(http.StatusUnauthorized, "You not allowed to access this page", "You not allowed to access this page")
 	}
 	var err error
-	// var status int
 	RequestType := uint64(127)
 
 	var responseData []models.PengkinianListResponse

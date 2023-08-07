@@ -464,6 +464,7 @@ func router() *echo.Echo {
 	admin.GET("/new-oarequest-list", controllers.GetNewOAList)
 	admin.GET("/pengkinian-personal-data-list", controllers.GetPengkinianPersonalDataList)
 	admin.GET("/pengkinian-personal-data-details/:key", controllers.GetPengkinianPersonalDataDetails)
+	admin.GET("/pengkinian-risk-profile-list", controllers.GetPengkinianRiskProfileList)
 
 	return e
 }
