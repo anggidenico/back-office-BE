@@ -200,7 +200,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	t2.occup_position AS occup_position_key, t2.occup_business_fields AS occup_business_fields_key,
 	t2.annual_income AS annual_income_key, t2.sourceof_fund AS sourceof_fund_key, 
 	t2.invesment_objectives AS invesment_objectives_key, t2.relation_occupation AS relation_occupation_key,
-	t2.relation_business_fields AS relation_business_fields_key, t2.religion AS religion_key, t2.education AS education_key
+	t2.relation_business_fields AS relation_business_fields_key, t2.religion AS religion_key, t2.education AS education_key,
 	t2.beneficial_relation AS beneficial_relation_key
 
 	FROM oa_request t1
