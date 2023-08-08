@@ -123,12 +123,22 @@ func GetThePersonalDataDetails(OaRequestKey string) models.PengkinianPersonalDat
 	}
 	OaData.BankAccount = &getBankAccount
 
+	layout := "02 Jan 2006 15:04"
+	layout2 := "02 Jan 2006"
+
+	ts, _ := time.Parse(lib.TIMESTAMPFORMAT, *getPersonalData.DateBirth)
+	DateBirth := ts.Format(layout2)
+	t1, _ := time.Parse(lib.TIMESTAMPFORMAT, *getPersonalData.OaEntryStart)
+	EntryStart := t1.Format(layout)
+	t2, _ := time.Parse(lib.TIMESTAMPFORMAT, *getPersonalData.OaEntryEnd)
+	EntryEnd := t2.Format(layout)
+
 	OaData.Agent = getPersonalData.Agent
 	OaData.AnnualIncome = getPersonalData.AnnualIncome
 	OaData.BeneficialFullName = getPersonalData.BeneficialFullName
 	OaData.BeneficialRelation = getPersonalData.BeneficialRelation
 	OaData.Branch = getPersonalData.Branch
-	OaData.DateBirth = getPersonalData.DateBirth
+	OaData.DateBirth = &DateBirth
 	OaData.DomicileAddress = getPersonalData.DomicileAddress
 	OaData.DomicileCity = getPersonalData.DomicileCity
 	OaData.DomicilePostalCode = getPersonalData.DomicilePostalCode
@@ -150,8 +160,8 @@ func GetThePersonalDataDetails(OaRequestKey string) models.PengkinianPersonalDat
 	OaData.MaritalStatus = getPersonalData.MaritalStatus
 	OaData.MotherMaidenName = getPersonalData.MotherMaidenName
 	OaData.Nationality = getPersonalData.Nationality
-	OaData.OaEntryEnd = getPersonalData.OaEntryEnd
-	OaData.OaEntryStart = getPersonalData.OaEntryStart
+	OaData.OaEntryEnd = &EntryEnd
+	OaData.OaEntryStart = &EntryStart
 	OaData.OaRequestKey = getPersonalData.OaRequestKey
 	OaData.OaRequestType = getPersonalData.OaRequestType
 	OaData.OaRiskLevel = getPersonalData.OaRiskLevel
