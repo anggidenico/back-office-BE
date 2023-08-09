@@ -92,9 +92,7 @@ func GetPengkinianRiskProfileDetails(c echo.Context) error {
 	}
 
 	QnA_Array := models.GetQuizQuestionAnswerQuery(OaRequestKey)
-	if len(QnA_Array) > 0 {
-		responseData.RiskProfileQuizAnswer = QnA_Array
-	}
+	responseData.RiskProfileQuizAnswer = QnA_Array
 
 	QuizResult := models.GetRiskProfileQuizResult(OaRequestKey)
 	responseData.RiskProfileQuizResult = QuizResult
