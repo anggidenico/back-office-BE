@@ -17,11 +17,11 @@ type RiskProfileQuizAnswerModels struct {
 }
 
 type RiskProfileQuizResultModels struct {
-	ScoreResult    uint64 `db:"score_result"`
-	RiskName       string `db:"risk_name"`
-	RiskDesc       string `db:"risk_desc"`
-	RiskCode       string `db:"risk_code"`
-	RiskProfileKey uint64 `db:"risk_profile_key"`
+	ScoreResult    uint64 `db:"score_result" json:"score_result"`
+	RiskName       string `db:"risk_name" json:"risk_name"`
+	RiskDesc       string `db:"risk_desc" json:"risk_desk"`
+	RiskCode       string `db:"risk_code" json:"risk_code"`
+	RiskProfileKey uint64 `db:"risk_profile_key" json:"risk_profile_key"`
 }
 
 func GetQuizQuestionAnswerQuery(OaRequestKey string) []RiskProfileQuizAnswerModels {
