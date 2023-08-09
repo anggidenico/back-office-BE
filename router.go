@@ -479,7 +479,7 @@ func printUrlMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		log.Println(c.Request().URL, "|", c.Request().UserAgent(), "|", c.RealIP())
 		if c.Request().Method == "POST" {
 			aa, _ := c.FormParams()
-			log.Println(aa)
+			log.Println(aa.Encode())
 		}
 
 		return next(c)

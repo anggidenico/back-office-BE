@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 
@@ -279,7 +278,7 @@ func CreateMultipleMsCustomerBankkAccount(params []interface{}) (int, error) {
 		// log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
-	log.Println(query)
+	// log.Println(query)
 	return http.StatusOK, nil
 }
 

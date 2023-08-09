@@ -32,7 +32,7 @@ func initAuthCs() error {
 }
 
 func initAuthKyc() error {
-	log.Println("initAuthKyc")
+	// log.Println("initAuthKyc")
 
 	var roleKeyKyc uint64
 	roleKeyKyc = 12
