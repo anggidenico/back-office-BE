@@ -9,8 +9,8 @@ import (
 	"time"
 
 	crytporand "crypto/rand"
-	"crypto/tls"
 
+	"github.com/labstack/gommon/log"
 	"gopkg.in/gomail.v2"
 )
 
@@ -94,29 +94,31 @@ func IsValidEmail(email string) bool {
 }
 
 func SendEmail(mailer *gomail.Message) error {
-	if config.EmailFromPassword == "" {
-		d := &gomail.Dialer{Host: config.EmailSMTPHost, Port: int(config.EmailSMTPPort)}
-		d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-		if err := d.DialAndSend(mailer); err != nil {
-			// log.Error("Error send email no passwor")
-			// log.Error(err)
-			return err
-		}
-	} else {
-		dialer := gomail.NewDialer(
-			config.EmailSMTPHost,
-			int(config.EmailSMTPPort),
-			config.EmailFrom,
-			config.EmailFromPassword,
-		)
-		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-		err := dialer.DialAndSend(mailer)
-		if err != nil {
-			// log.Error("Error send email with password")
-			// log.Error(err)
-			return err
-		}
+	// if config.EmailFromPassword == "" {
+	// 	d := &gomail.Dialer{Host: config.EmailSMTPHost, Port: int(config.EmailSMTPPort)}
+	// 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	// 	if err := d.DialAndSend(mailer); err != nil {
+	// 		// log.Error("Error send email no passwor")
+	// 		// log.Error(err)
+	// 		return err
+	// 	}
+	// } else {
+	mailer.SetHeader("From", mailer.FormatAddress(config.MF_EmailFrom, config.MF_EmailFromDisplay))
+
+	xPort, _ := strconv.ParseInt(config.MF_EmailSMTPPort, 10, 32)
+	dialer := gomail.NewDialer(
+		config.MF_EmailSMTPHost,
+		int(xPort),
+		config.MF_EmailDomainAuth,
+		config.MF_EmailFromPassword,
+	)
+	//dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	if err := dialer.DialAndSend(mailer); err != nil {
+		log.Error("Error send email using ", config.MF_EmailFrom)
+		log.Error(err.Error())
+		return err
 	}
+	// }
 	return nil
 }
 

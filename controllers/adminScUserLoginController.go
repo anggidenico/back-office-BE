@@ -919,7 +919,7 @@ func ChangePasswordUser(c echo.Context) error {
 	//send email to user
 	bodyEmail := "<p>Password Baru anda : <b>" + password + "<b><p/> <br/> <p>Login dengan password diatas dan ganti password anda dengan password baru.<p/>"
 	mailer := gomail.NewMessage()
-	mailer.SetHeader("From", config.EmailFrom)
+	// mailer.SetHeader("From", config.EmailFrom)
 	mailer.SetHeader("To", scUserLogin.UloginEmail)
 	mailer.SetHeader("Subject", "[MotionFunds] Change Password")
 	mailer.SetBody("text/html", bodyEmail)
@@ -1300,7 +1300,7 @@ func AdminChangePasswordUserLogin(c echo.Context) error {
 	if config.Envi == "PROD" {
 		//send email to user
 		mailer := gomail.NewMessage()
-		mailer.SetHeader("From", config.EmailFrom)
+		// mailer.SetHeader("From", config.EmailFrom)
 		mailer.SetHeader("To", scUserLogin.UloginEmail)
 		mailer.SetHeader("Subject", "[MotionFunds] Change Password")
 		mailer.SetBody("text/html", "<p>Password berhasil diubah.<p/><p>Apabila kamu tidak merasa mengganti password dengan password baru, segera hubungi admin MotionFunds.<p/>")
@@ -1427,7 +1427,7 @@ func AdminChangeDataUserLogin(c echo.Context) error {
 	if config.Envi == "PROD" {
 		//send email to user
 		mailer := gomail.NewMessage()
-		mailer.SetHeader("From", config.EmailFrom)
+		// mailer.SetHeader("From", config.EmailFrom)
 		mailer.SetHeader("To", email)
 		mailer.SetHeader("Subject", "[MotionFunds] Change Password")
 		mailer.SetBody("text/html", "<p>Data berhasil diubah.<p/><p>Apabila kamu tidak merasa mengganti data dengan data baru, segera hubungi admin MotionFunds.<p/>")
@@ -1654,7 +1654,7 @@ func UpdateAuthScUserLogin(c echo.Context) error {
 		result := tpl.String()
 
 		mailer := gomail.NewMessage()
-		mailer.SetHeader("From", config.EmailFrom)
+		// mailer.SetHeader("From", config.EmailFrom)
 		mailer.SetHeader("To", email)
 		mailer.SetHeader("Subject", "[MotionFunds] Verifikasi Email Kamu")
 		mailer.SetBody("text/html", result)

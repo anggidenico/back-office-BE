@@ -1653,7 +1653,7 @@ func SendEmailRejected(strCustomerKey string, strIDUserLogin string,
 	result := tpl.String()
 
 	mailer := gomail.NewMessage()
-	mailer.SetHeader("From", config.EmailFrom)
+	// mailer.SetHeader("From", config.EmailFrom)
 	mailer.SetHeader("To", userLogin.UloginEmail)
 	mailer.SetHeader("Subject", subject)
 	mailer.SetBody("text/html", result)
@@ -3406,7 +3406,7 @@ func sendEmailTransactionPosted(
 		result := tpl.String()
 
 		mailer := gomail.NewMessage()
-		mailer.SetHeader("From", config.EmailFrom)
+		// mailer.SetHeader("From", config.EmailFrom)
 		mailer.SetHeader("To", userLogin.UloginEmail)
 		mailer.SetHeader("Subject", subject)
 		mailer.SetBody("text/html", result)
@@ -5055,7 +5055,7 @@ func SentEmailTransactionToBackOffice(transactionKey string, roleKey string) {
 						result := tpl.String()
 
 						mailer := gomail.NewMessage()
-						mailer.SetHeader("From", config.EmailFrom)
+						// mailer.SetHeader("From", config.EmailFrom)
 						mailer.SetHeader("To", scLogin.UloginEmail)
 						mailer.SetHeader("Subject", subject)
 						mailer.SetBody("text/html", result)
@@ -5202,7 +5202,7 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 						result := tpl.String()
 
 						mailer := gomail.NewMessage()
-						mailer.SetHeader("From", config.EmailFrom)
+						// mailer.SetHeader("From", config.EmailFrom)
 						mailer.SetHeader("To", scLogin.UloginEmail)
 						mailer.SetHeader("Subject", subject)
 						mailer.SetBody("text/html", result)
@@ -5271,7 +5271,7 @@ func SentEmailTransactionToBackOfficeAndSales(transactionKey string, roleKey str
 		result := tpl.String()
 
 		mailer := gomail.NewMessage()
-		mailer.SetHeader("From", config.EmailFrom)
+		// mailer.SetHeader("From", config.EmailFrom)
 		mailer.SetHeader("To", *transaction.SalesEmail)
 		mailer.SetHeader("Subject", subject)
 		mailer.SetBody("text/html", result)
@@ -5400,7 +5400,7 @@ func SentEmailTransactionRejectToSales(transactionKey string, notes string) {
 		result := tpl.String()
 
 		mailer := gomail.NewMessage()
-		mailer.SetHeader("From", config.EmailFrom)
+		// mailer.SetHeader("From", config.EmailFrom)
 		mailer.SetHeader("To", *transaction.SalesEmail)
 		mailer.SetHeader("Subject", subject)
 		mailer.SetBody("text/html", result)
@@ -5556,7 +5556,7 @@ func SentEmailTransactionToBackOfficeWithDb(transactionKey string, roleKey strin
 							// log.Println(result)
 
 							mailer := gomail.NewMessage()
-							mailer.SetHeader("From", config.EmailFrom)
+							// mailer.SetHeader("From", config.EmailFrom)
 							mailer.SetHeader("To", scLogin.UloginEmail)
 							mailer.SetHeader("Subject", subject)
 							mailer.SetBody("text/html", result)
@@ -5725,7 +5725,7 @@ func SentEmailTransactionInstitutionRejectBackOfficeToUserCcSales(
 				result := tpl.String()
 
 				mailer := gomail.NewMessage()
-				mailer.SetHeader("From", config.EmailFrom)
+				// mailer.SetHeader("From", config.EmailFrom)
 
 				addresses := make([]string, len(userTujuan))
 				for i, scLogin := range userTujuan {
@@ -5741,11 +5741,12 @@ func SentEmailTransactionInstitutionRejectBackOfficeToUserCcSales(
 					mailer.SetAddressHeader("Cc", *transaction.SalesEmail, *transaction.Sales)
 				}
 
+				xPort, _ := strconv.ParseInt(config.MF_EmailSMTPPort, 10, 32)
 				dialer := gomail.NewDialer(
-					config.EmailSMTPHost,
-					int(config.EmailSMTPPort),
-					config.EmailFrom,
-					config.EmailFromPassword,
+					config.MF_EmailSMTPHost,
+					int(xPort),
+					config.MF_EmailFrom,
+					config.MF_EmailFromPassword,
 				)
 				dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
@@ -5848,7 +5849,7 @@ func SentEmailTransactionInstitutionPostingBackOfficeToUserCcSales(
 				result := tpl.String()
 
 				mailer := gomail.NewMessage()
-				mailer.SetHeader("From", config.EmailFrom)
+				// mailer.SetHeader("From", config.EmailFrom)
 
 				addresses := make([]string, len(userTujuan))
 				for i, scLogin := range userTujuan {

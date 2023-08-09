@@ -535,7 +535,7 @@ func SentEmailInstitusiOaPengkinianToBackOfficeSales(
 							result := tpl.String()
 
 							mailer := gomail.NewMessage()
-							mailer.SetHeader("From", config.EmailFrom)
+							// mailer.SetHeader("From", config.EmailFrom)
 							mailer.SetHeader("To", scLogin.UloginEmail)
 							mailer.SetHeader("Subject", subject)
 							mailer.SetBody("text/html", result)
@@ -596,7 +596,7 @@ func SentEmailInstitusiOaPengkinianToBackOfficeSales(
 						result := tpl.String()
 
 						mailer := gomail.NewMessage()
-						mailer.SetHeader("From", config.EmailFrom)
+						// mailer.SetHeader("From", config.EmailFrom)
 						mailer.SetHeader("To", *agent.AgentEmail)
 						mailer.SetHeader("Subject", subject)
 						mailer.SetBody("text/html", result)
@@ -672,7 +672,7 @@ func SentEmailOaApprovePicInstitutionCcSales(
 						result := tpl.String()
 
 						mailer := gomail.NewMessage()
-						mailer.SetHeader("From", config.EmailFrom)
+						// mailer.SetHeader("From", config.EmailFrom)
 						mailer.SetHeader("To", *pipeline.PicEmailAddress)
 
 						var agentKey string
@@ -782,7 +782,7 @@ func SentEmailOaRejectPicInstitutionCcSales(
 						result := tpl.String()
 
 						mailer := gomail.NewMessage()
-						mailer.SetHeader("From", config.EmailFrom)
+						// mailer.SetHeader("From", config.EmailFrom)
 						mailer.SetHeader("To", *pipeline.PicEmailAddress)
 
 						var agentKey string
@@ -897,7 +897,7 @@ func SentEmailOaRejectToSales(
 				result := tpl.String()
 
 				mailer := gomail.NewMessage()
-				mailer.SetHeader("From", config.EmailFrom)
+				// mailer.SetHeader("From", config.EmailFrom)
 				mailer.SetHeader("To", *agent.AgentEmail)
 				mailer.SetHeader("Subject", subject)
 				mailer.SetBody("text/html", result)

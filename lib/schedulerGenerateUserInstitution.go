@@ -185,7 +185,7 @@ func sendEmail(email string, token string) error {
 	result := tpl.String()
 
 	mailer := gomail.NewMessage()
-	mailer.SetHeader("From", config.EmailFrom)
+	// mailer.SetHeader("From", config.EmailFrom)
 	mailer.SetHeader("To", email)
 	mailer.SetHeader("Subject", "[MotionFunds] Verifikasi Email Kamu")
 	mailer.SetBody("text/html", result)

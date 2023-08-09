@@ -157,7 +157,7 @@ func sentEmailCustomerTransaksiVaMandiriSebelumExpired(transaction models.Detail
 		result := tpl.String()
 
 		mailer := gomail.NewMessage()
-		mailer.SetHeader("From", config.EmailFrom)
+		// mailer.SetHeader("From", config.EmailFrom)
 		mailer.SetHeader("To", transaction.UloginEmail)
 		mailer.SetHeader("Subject", subject)
 		mailer.SetBody("text/html", result)

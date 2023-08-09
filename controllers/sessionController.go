@@ -171,7 +171,7 @@ func Register(c echo.Context) error {
 	result := tpl.String()
 
 	mailer := gomail.NewMessage()
-	mailer.SetHeader("From", config.EmailFrom)
+	// mailer.SetHeader("From", config.EmailFrom)
 	mailer.SetHeader("To", email)
 	mailer.SetHeader("Subject", "[MotionFunds] Verifikasi Email Kamu")
 	mailer.SetBody("text/html", result)
@@ -757,7 +757,7 @@ func ResendVerification(c echo.Context) error {
 		result := tpl.String()
 
 		mailer := gomail.NewMessage()
-		mailer.SetHeader("From", config.EmailFrom)
+		// mailer.SetHeader("From", config.EmailFrom)
 		mailer.SetHeader("To", email)
 		mailer.SetHeader("Subject", "[MotionFunds] Verifikasi Email Kamu")
 		mailer.SetBody("text/html", result)
@@ -885,7 +885,7 @@ func ForgotPassword(c echo.Context) error {
 	result := tpl.String()
 
 	mailer := gomail.NewMessage()
-	mailer.SetHeader("From", config.EmailFrom)
+	// mailer.SetHeader("From", config.EmailFrom)
 	mailer.SetHeader("To", email)
 	mailer.SetHeader("Subject", "[MotionFunds] Lupa Kata Sandi")
 	mailer.SetBody("text/html", result)
@@ -1286,7 +1286,7 @@ func ChangePassword(c echo.Context) error {
 	result := tpl.String()
 
 	mailer := gomail.NewMessage()
-	mailer.SetHeader("From", config.EmailFrom)
+	// mailer.SetHeader("From", config.EmailFrom)
 	mailer.SetHeader("To", accountData.UloginEmail)
 	mailer.SetHeader("Subject", "[MotionFunds] Berhasil Merubah Kata Sandi")
 	mailer.SetBody("text/html", result)
@@ -1813,7 +1813,7 @@ func ChangeForgotPassword(c echo.Context) error {
 	result := tpl.String()
 
 	mailer := gomail.NewMessage()
-	mailer.SetHeader("From", config.EmailFrom)
+	// mailer.SetHeader("From", config.EmailFrom)
 	mailer.SetHeader("To", accountData.UloginEmail)
 	mailer.SetHeader("Subject", "[MotionFunds] Berhasil Merubah Kata Sandi")
 	mailer.SetBody("text/html", result)
@@ -2127,7 +2127,7 @@ func ForgotPin(c echo.Context) error {
 	result := tpl.String()
 
 	mailer := gomail.NewMessage()
-	mailer.SetHeader("From", config.EmailFrom)
+	// mailer.SetHeader("From", config.EmailFrom)
 	mailer.SetHeader("To", lib.Profile.Email)
 	mailer.SetHeader("Subject", "[MotionFunds] Lupa PIN")
 	mailer.SetBody("text/html", result)

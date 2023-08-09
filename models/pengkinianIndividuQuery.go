@@ -250,7 +250,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	return nil
 }
 
-func GetPengkinianBankAccount(c *[]OaRequestBankDetails, oaRequestKey string) error {
+func GetOaRequestBankAccountNew(c *[]OaRequestBankDetails, oaRequestKey string) error {
 	query := `SELECT 
 	a2.bank_key,
 	a2.bank_account_key, 

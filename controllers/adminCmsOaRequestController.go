@@ -2399,7 +2399,7 @@ func sendEmailApproveOa(fullName string, email string) {
 	result := tpl.String()
 
 	mailer := gomail.NewMessage()
-	mailer.SetHeader("From", config.EmailFrom)
+	// mailer.SetHeader("From", config.EmailFrom)
 	mailer.SetHeader("To", email)
 	mailer.SetHeader("Subject", "[MotionFunds] Pembukaan Rekening Kamu telah Disetujui")
 	mailer.SetBody("text/html", result)
@@ -3735,7 +3735,7 @@ func SentEmailOaPengkinianToBackOffice(
 						result := tpl.String()
 
 						mailer := gomail.NewMessage()
-						mailer.SetHeader("From", config.EmailFrom)
+						// mailer.SetHeader("From", config.EmailFrom)
 						mailer.SetHeader("To", scLogin.UloginEmail)
 						mailer.SetHeader("Subject", subject)
 						mailer.SetBody("text/html", result)
@@ -3825,7 +3825,7 @@ func SentEmailOaPengkinianToSales(
 					result := tpl.String()
 
 					mailer := gomail.NewMessage()
-					mailer.SetHeader("From", config.EmailFrom)
+					// mailer.SetHeader("From", config.EmailFrom)
 					mailer.SetHeader("To", *agent.AgentEmail)
 					mailer.SetHeader("Subject", subject)
 					mailer.SetBody("text/html", result)
@@ -3908,7 +3908,7 @@ func SentEmailRejectOaPengkinianToCustomer(
 				result := tpl.String()
 
 				mailer := gomail.NewMessage()
-				mailer.SetHeader("From", config.EmailFrom)
+				// mailer.SetHeader("From", config.EmailFrom)
 				mailer.SetHeader("To", userLogin.UloginEmail)
 				mailer.SetHeader("Subject", subject)
 				mailer.SetBody("text/html", result)

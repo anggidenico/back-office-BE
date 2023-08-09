@@ -465,6 +465,7 @@ func router() *echo.Echo {
 	admin.GET("/pengkinian-personal-data-list", controllers.GetPengkinianPersonalDataList)
 	admin.GET("/pengkinian-personal-data-details/:key", controllers.GetPengkinianPersonalDataDetails)
 	admin.GET("/pengkinian-risk-profile-list", controllers.GetPengkinianRiskProfileList)
+	admin.GET("/pengkinian-risk_profile-details/:key", controllers.GetPengkinianRiskProfileDetails)
 
 	return e
 }
@@ -480,7 +481,6 @@ func printUrlMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			aa, _ := c.FormParams()
 			log.Println(aa)
 		}
-		log.Println("==========================================================================")
 
 		return next(c)
 	}

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -11,18 +10,16 @@ import (
 	"github.com/labstack/echo"
 )
 
-func GetNewOAList(c echo.Context) error {
+func GetPengkinianRiskProfileList(c echo.Context) error {
 	errorAuth := initAuthCsKyc()
 	if errorAuth != nil {
 		return lib.CustomError(http.StatusUnauthorized, "You not allowed to access this page", "You not allowed to access this page")
 	}
 	var err error
-	RequestType := uint64(127)
-
 	var responseData []models.PengkinianListResponse
+	RequestType := uint64(128) // PENGKINIAN RISK PROFILE
 
 	limitStr := c.QueryParam("limit")
-	log.Println(limitStr)
 	var limit uint64
 	if limitStr != "" {
 		limit, err = strconv.ParseUint(limitStr, 10, 64)
@@ -56,8 +53,9 @@ func GetNewOAList(c echo.Context) error {
 		// responseData = getList
 		for _, getData := range getList {
 			respData := getData
-			layout := "02 January 2006 15:04"
-			layoutDateBirth := "02 January 2006"
+
+			layout := "02 Jan 2006 15:04"
+			layoutDateBirth := "02 Jan 2006"
 
 			if getData.DateBirth != nil {
 				t1, _ := time.Parse(lib.TIMESTAMPFORMAT, *getData.DateBirth)
@@ -67,6 +65,7 @@ func GetNewOAList(c echo.Context) error {
 
 			t2, _ := time.Parse(lib.TIMESTAMPFORMAT, getData.OaDate)
 			respData.OaDate = t2.Format(layout)
+
 			responseData = append(responseData, respData)
 		}
 	} else {
@@ -83,3 +82,27 @@ func GetNewOAList(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
+func GetPengkinianRiskProfileDetails(c echo.Context) error {
+	// var err error
+	var responseData models.RiskProfileDetailResponse
+
+	OaRequestKey := c.Param("key")
+	if OaRequestKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing: oaRequestKey")
+	}
+
+	QnA_Array := models.GetQuizQuestionAnswerQuery(OaRequestKey)
+	if len(QnA_Array) > 0 {
+		responseData.RiskProfileQuizAnswer = QnA_Array
+	}
+
+	QuizResult := models.GetRiskProfileQuizResult(OaRequestKey)
+	responseData.RiskProfileQuizResult = QuizResult
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = responseData
+	return c.JSON(http.StatusOK, response)
+}

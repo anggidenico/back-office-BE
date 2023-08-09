@@ -1273,7 +1273,7 @@ func mailSubscriptionAutoInvest(params map[string]string) error {
 	result := tpl.String()
 
 	mailer := gomail.NewMessage()
-	mailer.SetHeader("From", config.EmailFrom)
+	// mailer.SetHeader("From", config.EmailFrom)
 	mailer.SetHeader("To", params["email_customer"])
 	mailer.SetHeader("Subject", "[MotionFunds] "+subject)
 	mailer.SetBody("text/html", result)

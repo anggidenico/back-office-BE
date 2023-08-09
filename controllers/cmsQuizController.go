@@ -231,7 +231,7 @@ func PostQuizAnswer(c echo.Context) error {
 		result := tpl.String()
 
 		mailer := gomail.NewMessage()
-		mailer.SetHeader("From", config.EmailFrom)
+		// mailer.SetHeader("From", config.EmailFrom)
 		mailer.SetHeader("To", lib.Profile.Email)
 		mailer.SetHeader("Subject", "[MotionFunds] Pembukaan Rekening Kamu sedang Diproses")
 		mailer.SetBody("text/html", result)
@@ -280,7 +280,7 @@ func PostQuizAnswer(c echo.Context) error {
 		result := tpl.String()
 
 		mailer := gomail.NewMessage()
-		mailer.SetHeader("From", config.EmailFrom)
+		// mailer.SetHeader("From", config.EmailFrom)
 		mailer.SetHeader("To", lib.Profile.Email)
 		mailer.SetHeader("Subject", "[MotionFunds] Pengkinian Data Kamu sedang Diproses")
 		mailer.SetBody("text/html", result)
