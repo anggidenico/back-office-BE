@@ -52,7 +52,7 @@ func GetOARequestIndividuListQuery(c *[]PengkinianListResponse, requestType uint
 		queryPage += ` AND t1.oa_status = 259`
 	}
 
-	log.Println(limit)
+	// log.Println(limit)
 	if limit > 0 {
 		query += " LIMIT " + strconv.FormatUint(limit, 10)
 		if offset > 0 {
@@ -61,7 +61,7 @@ func GetOARequestIndividuListQuery(c *[]PengkinianListResponse, requestType uint
 	}
 
 	// EXECUTE DATANYA
-	log.Println(query)
+	// log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())
@@ -70,7 +70,7 @@ func GetOARequestIndividuListQuery(c *[]PengkinianListResponse, requestType uint
 	// EXECUTE PAGING
 	var pagination int
 	var count uint64
-	log.Println(queryPage)
+	// log.Println(queryPage)
 	err = db.Db.Get(&count, queryPage)
 	if err != nil {
 		log.Println(err.Error())

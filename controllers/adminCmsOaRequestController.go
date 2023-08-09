@@ -57,7 +57,7 @@ func initAuthFundAdmin() error {
 }
 
 func initAuthCsKyc() error {
-	log.Println("initAuthCsKyc")
+	// log.Println("initAuthCsKyc")
 
 	var roleKeyCs uint64
 	roleKeyCs = 11
@@ -71,7 +71,7 @@ func initAuthCsKyc() error {
 }
 
 func initAuthCsKycFundAdmin() error {
-	log.Println("initAuthCsKycFundAdmin")
+	// log.Println("initAuthCsKycFundAdmin")
 
 	var roleKeyCs uint64
 	roleKeyCs = 11
