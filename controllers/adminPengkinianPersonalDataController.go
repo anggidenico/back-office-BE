@@ -69,8 +69,6 @@ func GetPengkinianPersonalDataList(c echo.Context) error {
 
 			responseData = append(responseData, respData)
 		}
-	} else {
-		return lib.CustomError(http.StatusNotFound, "No Data", "No Data")
 	}
 
 	var response lib.ResponseWithPagination
@@ -170,7 +168,7 @@ func GetThePersonalDataDetails(OaRequestKey string) models.PengkinianPersonalDat
 	OaData.OccupBusinessFields = getPersonalData.OccupBusinessFields
 	OaData.OccupCompany = getPersonalData.OccupCompany
 	OaData.OccupJob = getPersonalData.OccupJob
-	OaData.OccupPosition = getPersonalData.OccupJob
+	OaData.OccupPosition = getPersonalData.OccupPosition
 	OaData.PepName = getPersonalData.PepName
 	OaData.PepPosition = getPersonalData.PepPosition
 	OaData.PepStatus = getPersonalData.PepStatus
@@ -243,4 +241,3 @@ func GetThePersonalDataDetails(OaRequestKey string) models.PengkinianPersonalDat
 
 	return OaData
 }
-

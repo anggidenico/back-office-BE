@@ -57,8 +57,6 @@ func GetPengkinianRiskProfileList(c echo.Context) error {
 			respData.OaDate = t2.Format(layout)
 			responseData = append(responseData, respData)
 		}
-	} else {
-		return lib.CustomError(http.StatusNotFound, "No Data", "No Data")
 	}
 
 	var response lib.ResponseWithPagination
@@ -87,6 +85,9 @@ func GetPengkinianRiskProfileDetails(c echo.Context) error {
 
 	QuizResult := models.GetRiskProfileQuizResult(OaRequestKey)
 	responseData.RiskProfileQuizResult = QuizResult
+
+	responseData.Cif = QuizResult.Cif
+	responseData.FullName = QuizResult.FullName
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK

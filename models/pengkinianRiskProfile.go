@@ -10,12 +10,16 @@ import (
 type RiskProfileListModels struct {
 	OaRequestKey uint64 `db:"oa_request_key" json:"oa_request_key"`
 	CustomerKey  uint64 `db:"customer_key" json:"customer_key"`
+	Cif          string `db:"cif" json:"cif"`
+	FullName     string `db:"full_name" json:"full_name"`
 	Email        string `db:"email_address" json:"email_address"`
 	OaStatus     string `db:"oa_status" json:"oa_status"`
 	OaDate       string `db:"oa_date" json:"oa_date"`
 }
 
 type RiskProfileDetailResponse struct {
+	Cif                   string                        `json:"cif"`
+	FullName              string                        `json:"full_name"`
 	RiskProfileQuizAnswer []RiskProfileQuizAnswerModels `json:"risk_profile_quiz_answer"`
 	RiskProfileQuizResult RiskProfileQuizResultModels   `json:"risk_profile_quiz_result"`
 }
@@ -27,6 +31,8 @@ type RiskProfileQuizAnswerModels struct {
 }
 
 type RiskProfileQuizResultModels struct {
+	Cif            string `db:"cif" json:"cif"`
+	FullName       string `db:"full_name" json:"full_name"`
 	ScoreResult    uint64 `db:"score_result" json:"score_result"`
 	RiskName       string `db:"risk_name" json:"risk_name"`
 	RiskDesc       string `db:"risk_desc" json:"risk_desk"`
@@ -35,17 +41,19 @@ type RiskProfileQuizResultModels struct {
 }
 
 func GetPengkinianRiskProfileListQuery(c *[]RiskProfileListModels, backOfficeRole uint64, limit uint64, offset uint64) int {
-	query := `SELECT t1.oa_request_key, t4.customer_key, t4.ulogin_email AS email_address, 
-	t2.lkp_name AS oa_status,  t1.oa_entry_start AS oa_date
+	query := `SELECT t1.oa_request_key, t4.customer_key, t3.ulogin_email AS email_address, 
+	t2.lkp_name AS oa_status,  t1.oa_entry_start AS oa_date, t4.unit_holder_idno AS cif, t4.full_name
 	FROM oa_request t1
 	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
-	INNER JOIN sc_user_login t4 ON t4.user_login_key = t1.user_login_key
+	INNER JOIN sc_user_login t3 ON t3.user_login_key = t1.user_login_key
+	INNER JOIN ms_customer t4 ON t4.customer_key = t3.customer_key
 	WHERE t1.rec_status = 1 AND t1.oa_request_type = 128`
 
 	queryPage := `SELECT count(*) 
 	FROM oa_request t1
 	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
-	INNER JOIN sc_user_login t4 ON t4.user_login_key = t1.user_login_key
+	INNER JOIN sc_user_login t3 ON t3.user_login_key = t1.user_login_key
+	INNER JOIN ms_customer t4 ON t4.customer_key = t3.customer_key
 	WHERE t1.rec_status = 1 AND t1.oa_request_type = 128`
 
 	if backOfficeRole == 11 {
@@ -99,7 +107,8 @@ func GetQuizQuestionAnswerQuery(OaRequestKey string) []RiskProfileQuizAnswerMode
 	INNER JOIN oa_risk_profile_quiz t2 ON t1.oa_request_key = t2.oa_request_key
 	INNER JOIN cms_quiz_question t3 ON t2.quiz_question_key = t3.quiz_question_key
 	INNER JOIN cms_quiz_options t4 ON t2.quiz_option_key = t4.quiz_option_key
-	WHERE t1.rec_status = 1 AND t2.rec_status = 1 AND t2.oa_request_key = ` + OaRequestKey
+	WHERE t1.rec_status = 1 AND t2.rec_status = 1 AND t2.oa_request_key = ` + OaRequestKey + `
+	ORDER BY t3.quiz_question_key ASC`
 	var result []RiskProfileQuizAnswerModels
 	err := db.Db.Select(&result, query)
 	if err != nil {
@@ -109,10 +118,13 @@ func GetQuizQuestionAnswerQuery(OaRequestKey string) []RiskProfileQuizAnswerMode
 }
 
 func GetRiskProfileQuizResult(OaRequestKey string) RiskProfileQuizResultModels {
-	query := `SELECT t2.score_result, t3.risk_name, t3.risk_desc, t3.risk_code, t3.risk_profile_key
+	query := `SELECT t2.score_result, t3.risk_name, t3.risk_desc, t3.risk_code, t3.risk_profile_key,
+	t5.unit_holder_idno AS cif, t5.full_name
 	FROM oa_request t1 
 	INNER JOIN oa_risk_profile t2 ON t2.oa_request_key = t1.oa_request_key
 	INNER JOIN ms_risk_profile t3 ON t3.risk_profile_key = t2.risk_profile_key
+	INNER JOIN sc_user_login t4 ON t1.user_login_key = t4.user_login_key
+	INNER JOIN ms_customer t5 ON t4.customer_key = t5.customer_key
 	WHERE t1.rec_status = 1 AND t2.rec_status = 1 AND t2.oa_request_key = ` + OaRequestKey + `
 	ORDER BY t1.oa_request_key DESC LIMIT 1`
 	var result RiskProfileQuizResultModels
