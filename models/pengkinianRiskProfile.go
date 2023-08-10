@@ -2,8 +2,18 @@ package models
 
 import (
 	"log"
+	"math"
 	"mf-bo-api/db"
+	"strconv"
 )
+
+type RiskProfileListModels struct {
+	OaRequestKey uint64 `db:"oa_request_key" json:"oa_request_key"`
+	CustomerKey  uint64 `db:"customer_key" json:"customer_key"`
+	Email        string `db:"email_address" json:"email_address"`
+	OaStatus     string `db:"oa_status" json:"oa_status"`
+	OaDate       string `db:"oa_date" json:"oa_date"`
+}
 
 type RiskProfileDetailResponse struct {
 	RiskProfileQuizAnswer []RiskProfileQuizAnswerModels `json:"risk_profile_quiz_answer"`
@@ -22,6 +32,65 @@ type RiskProfileQuizResultModels struct {
 	RiskDesc       string `db:"risk_desc" json:"risk_desk"`
 	RiskCode       string `db:"risk_code" json:"risk_code"`
 	RiskProfileKey uint64 `db:"risk_profile_key" json:"risk_profile_key"`
+}
+
+func GetPengkinianRiskProfileListQuery(c *[]RiskProfileListModels, backOfficeRole uint64, limit uint64, offset uint64) int {
+	query := `SELECT t1.oa_request_key, t4.customer_key, t4.ulogin_email AS email_address, 
+	t2.lkp_name AS oa_status,  t1.oa_entry_start AS oa_date
+	FROM oa_request t1
+	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
+	INNER JOIN sc_user_login t4 ON t4.user_login_key = t1.user_login_key
+	WHERE t1.rec_status = 1 AND t1.oa_request_type = 128`
+
+	queryPage := `SELECT count(*) 
+	FROM oa_request t1
+	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
+	INNER JOIN sc_user_login t4 ON t4.user_login_key = t1.user_login_key
+	WHERE t1.rec_status = 1 AND t1.oa_request_type = 128`
+
+	if backOfficeRole == 11 {
+		query += ` AND t1.oa_status = 258`
+		queryPage += ` AND t1.oa_status = 258`
+	}
+	if backOfficeRole == 12 {
+		query += ` AND t1.oa_status = 259`
+		queryPage += ` AND t1.oa_status = 259`
+	}
+
+	// log.Println(limit)
+	if limit > 0 {
+		query += " LIMIT " + strconv.FormatUint(limit, 10)
+		if offset > 0 {
+			query += " OFFSET " + strconv.FormatUint(offset, 10)
+		}
+	}
+
+	// EXECUTE DATANYA
+	log.Println(query)
+	err := db.Db.Select(c, query)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	// EXECUTE PAGING
+	var pagination int
+	var count uint64
+	// log.Println(queryPage)
+	err = db.Db.Get(&count, queryPage)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	if limit > 0 {
+		if count < limit {
+			pagination = 1
+		} else {
+			calc := math.Ceil(float64(count) / float64(limit))
+			pagination = int(calc)
+		}
+	}
+
+	return pagination
 }
 
 func GetQuizQuestionAnswerQuery(OaRequestKey string) []RiskProfileQuizAnswerModels {

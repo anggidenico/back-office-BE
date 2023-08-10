@@ -16,8 +16,7 @@ func GetPengkinianRiskProfileList(c echo.Context) error {
 		return lib.CustomError(http.StatusUnauthorized, "You not allowed to access this page", "You not allowed to access this page")
 	}
 	var err error
-	var responseData []models.PengkinianListResponse
-	RequestType := uint64(128) // PENGKINIAN RISK PROFILE
+	var responseData []models.RiskProfileListModels
 
 	limitStr := c.QueryParam("limit")
 	var limit uint64
@@ -47,25 +46,15 @@ func GetPengkinianRiskProfileList(c echo.Context) error {
 		offset = limit * (page - 1)
 	}
 
-	var getList []models.PengkinianListResponse
-	pagination := models.GetOARequestIndividuListQuery(&getList, RequestType, lib.Profile.RoleKey, limit, offset)
+	var getList []models.RiskProfileListModels
+	pagination := models.GetPengkinianRiskProfileListQuery(&getList, lib.Profile.RoleKey, limit, offset)
 	if len(getList) > 0 {
 		// responseData = getList
 		for _, getData := range getList {
 			respData := getData
-
 			layout := "02 Jan 2006 15:04"
-			layoutDateBirth := "02 Jan 2006"
-
-			if getData.DateBirth != nil {
-				t1, _ := time.Parse(lib.TIMESTAMPFORMAT, *getData.DateBirth)
-				dateBirth := t1.Format(layoutDateBirth)
-				respData.DateBirth = &dateBirth
-			}
-
 			t2, _ := time.Parse(lib.TIMESTAMPFORMAT, getData.OaDate)
 			respData.OaDate = t2.Format(layout)
-
 			responseData = append(responseData, respData)
 		}
 	} else {
