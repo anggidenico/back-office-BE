@@ -1,6 +1,6 @@
 package lib
 
-//oa_status oa_request
+// oa_status oa_request
 var OA_ENTRIED int64 = 258
 var CS_APPROVED int64 = 259
 var KYC_APPROVED int64 = 260
@@ -10,17 +10,20 @@ var DRAFT int64 = 444
 
 var USER_CAT_BRANCH int64 = 3
 
-//ROLE GROUP
+// ROLE GROUP
 var ROLE_INSTITUTION_MAKER = "17"
 var ROLE_INSTITUTION_CHECKER = "18"
 var ROLE_INSTITUTION_RELEASER = "19"
 
-//OA_REQ_TYPE
+// OA_REQ_TYPE
 var OA_REQ_TYPE_NEW = "127"
 var OA_REQ_TYPE_PENGKINIAN_DATA = "296"
 var OA_REQ_TYPE_PENGKINIAN_RISIKO = "128"
+var OA_REQ_TYPE_NEW_INT = 127
+var OA_REQ_TYPE_PENGKINIAN_DATA_INT = 296
+var OA_REQ_TYPE_PENGKINIAN_RISIKO_INT = 128
 
-//path
+// path
 var INST_FILE_PATH = "/images/institution/files"
 
 var MAX_FILE_SIZE = 2000000 //2MB

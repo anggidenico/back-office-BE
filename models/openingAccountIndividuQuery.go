@@ -28,20 +28,24 @@ func GetOARequestIndividuListQuery(c *[]PengkinianListResponse, requestType uint
 	t4.ulogin_email AS email_address,t4.ulogin_name AS created_by, t5.agent_name AS agent, 
 	t6.branch_name AS branch, t4.customer_key
 	FROM oa_request t1
-	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
-	LEFT JOIN oa_personal_data t3 ON t1.oa_request_key = t3.oa_request_key
-	INNER JOIN sc_user_login t4 ON t4.user_login_key = t1.user_login_key
+	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key `
+	if requestType != 128 {
+		query += `INNER JOIN oa_personal_data t3 ON t1.oa_request_key = t3.oa_request_key AND t3.rec_status = 1`
+	}
+	query += ` INNER JOIN sc_user_login t4 ON t4.user_login_key = t1.user_login_key
 	INNER JOIN ms_agent t5 ON t5.agent_key = t1.agent_key 
 	INNER JOIN ms_branch t6 ON t6.branch_key = t1.branch_key
-	WHERE t1.rec_status = 1 AND t3.rec_status = 1 AND t1.oa_request_type = ` + strconv.FormatUint(requestType, 10)
+	WHERE t1.rec_status = 1 AND t1.oa_request_type = ` + strconv.FormatUint(requestType, 10)
 
 	queryPage := `SELECT count(*) FROM oa_request t1
-	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
-	LEFT JOIN oa_personal_data t3 ON t1.oa_request_key = t3.oa_request_key
-	INNER JOIN sc_user_login t4 ON t4.user_login_key = t1.user_login_key
+	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key `
+	if requestType != 128 {
+		queryPage += `INNER JOIN oa_personal_data t3 ON t1.oa_request_key = t3.oa_request_key AND t3.rec_status = 1`
+	}
+	queryPage += ` INNER JOIN sc_user_login t4 ON t4.user_login_key = t1.user_login_key
 	INNER JOIN ms_agent t5 ON t5.agent_key = t1.agent_key 
 	INNER JOIN ms_branch t6 ON t6.branch_key = t1.branch_key
-	WHERE t1.rec_status = 1 AND t3.rec_status = 1 AND t1.oa_request_type = ` + strconv.FormatUint(requestType, 10)
+	WHERE t1.rec_status = 1 AND t1.oa_request_type = ` + strconv.FormatUint(requestType, 10)
 
 	if backOfficeRole == 11 {
 		query += ` AND t1.oa_status = 258`
@@ -61,7 +65,7 @@ func GetOARequestIndividuListQuery(c *[]PengkinianListResponse, requestType uint
 	}
 
 	// EXECUTE DATANYA
-	// log.Println(query)
+	log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())
