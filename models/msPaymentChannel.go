@@ -22,7 +22,7 @@ type MsPaymentChannel struct {
 	FeeMinValue         *decimal.Decimal `db:"fee_min_value"            json:"fee_min_value"`
 	FeeMaxValue         *decimal.Decimal `db:"fee_max_value"            json:"fee_max_value"`
 	FixedAmountFee      *decimal.Decimal `db:"fixed_amount_fee"         json:"fixed_amount_fee"`
-	FixedDmrFee         *decimal.Decimal `db:"fixed_dmr_fee"			json:"fixed_dmr_fee"`
+	FixedDmrFee         *decimal.Decimal `db:"fixed_dmr_fee" json:"fixed_dmr_fee"`
 	PgTnc               *string          `db:"pg_tnc"                   json:"pg_tnc"`
 	PgRemarks           *string          `db:"pg_remarks"               json:"pg_remarks"`
 	PaymentLoginUrl     *string          `db:"payment_login_url"        json:"payment_login_url"`

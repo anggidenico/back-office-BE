@@ -1,6 +1,10 @@
 package controllers
 
 import (
+	"bytes"
+	"html/template"
+	"log"
+	"mf-bo-api/config"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -8,6 +12,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
+	"gopkg.in/gomail.v2"
 )
 
 func GetPengkinianRiskProfileList(c echo.Context) error {
@@ -95,4 +100,40 @@ func GetPengkinianRiskProfileDetails(c echo.Context) error {
 	response.Status.MessageClient = "OK"
 	response.Data = responseData
 	return c.JSON(http.StatusOK, response)
+}
+
+func SendEmailRejectRiskProfilePengkinianToCustomer(EmailTo string, Nama string) error {
+	var err error
+
+	paramEmail := make(map[string]string)
+	paramEmail["FileUrl"] = config.ImageUrl + "/images/mail"
+	paramEmail["Nama"] = Nama
+	paramEmail["Judul"] = "Pengkinian Data Kamu Belum Dapat Disetujui"
+	paramEmail["Keterangan"] = "Pengkinian Data yang kamu ajukan belum dapat dapat disetujui"
+
+	emailTemplate := "email-pengkinian-risk-profile-rejected.html"
+	t := template.New(emailTemplate)
+	t, err = t.ParseFiles(config.BasePath + "/mail/" + emailTemplate)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	var tpl bytes.Buffer
+	err = t.Execute(&tpl, paramEmail)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	result := tpl.String()
+
+	mailer := gomail.NewMessage()
+	mailer.SetHeader("To", EmailTo)
+	mailer.SetHeader("Subject", paramEmail["Judul"])
+	mailer.SetBody("text/html", result)
+
+	err = lib.SendEmail(mailer)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	return err
 }

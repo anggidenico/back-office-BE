@@ -82,4 +82,3 @@ func GetNewOAList(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, response)
 }
-

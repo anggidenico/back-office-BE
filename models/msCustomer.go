@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -779,8 +780,10 @@ func GetCustomerDetailPersonalData(c *CustomerDetailPersonalData, customerKey st
 					ELSE "Ya"
 				END) AS cif_suspend_flag
 			FROM ms_customer AS c 
-			INNER JOIN (SELECT MAX(oa_request_key) AS oa_request_key, customer_key FROM oa_request WHERE rec_status = 1 GROUP BY customer_key) 
-			AS t2 ON c.customer_key = t2.customer_key
+			INNER JOIN (
+				SELECT MAX(oa_request_key) AS oa_request_key, customer_key 
+				FROM oa_request WHERE oa_request_type IN (127,296) rec_status = 1 GROUP BY customer_key
+			) AS t2 ON c.customer_key = t2.customer_key
 			INNER JOIN oa_request AS r ON c.customer_key = r.customer_key AND r.oa_request_key = t2.oa_request_key
 			INNER JOIN oa_personal_data AS pd ON pd.oa_request_key = r.oa_request_key
 			WHERE c.rec_status = 1 AND c.customer_key = ` + customerKey
@@ -1139,4 +1142,50 @@ func AdminGetCustomerIndividuByCustomerKey(c *CustomerIndividuInquiry, requestKe
 	}
 
 	return http.StatusOK, nil
+}
+
+type GetCustomerDetail struct {
+	UserLoginKey uint64  `db:"user_login_key" json:"user_login_key"`
+	CustomerKey  uint64  `db:"customer_key" json:"customer_key"`
+	OaRequestKey uint64  `db:"oa_request_key" json:"oa_request_key"`
+	FullName     string  `db:"full_name" json:"full_name"`
+	Email        *string `db:"email" json:"email"`
+	Phone        *string `db:"phone" json:"phone"`
+	Cif          *string `db:"cif" json:"cif"`
+	Sid          *string `db:"sid" json:"sid"`
+}
+
+func GetCustomerDetailWithParams(param map[string]string) GetCustomerDetail {
+	query := `SELECT t2.user_login_key, c.customer_key, t2.oa_request_key, pd.full_name ,t2.email, t2.phone, 
+	c.unit_holder_idno AS cif, c.sid_no AS sid
+	FROM ms_customer AS c 
+	INNER JOIN (
+		SELECT b2.user_login_key, MAX(b1.oa_request_key) AS oa_request_key, 
+		b1.customer_key, b2.ulogin_email AS email, b2.ulogin_mobileno AS phone
+		FROM oa_request b1 
+		INNER JOIN sc_user_login b2 ON b2.user_login_key = b1.user_login_key
+		WHERE b1.oa_request_type IN (127,296) AND b1.rec_status = 1 GROUP BY b1.customer_key
+	) AS t2 ON c.customer_key = t2.customer_key
+	INNER JOIN oa_personal_data AS pd ON pd.oa_request_key = t2.oa_request_key
+	WHERE c.rec_status = 1`
+
+	if valueMap, ok := param["oa_request_key"]; ok {
+		query += ` AND t2.oa_request_key = ` + valueMap
+	}
+
+	if valueMap, ok := param["customer_key"]; ok {
+		query += ` AND t2.customer_key = ` + valueMap
+	}
+
+	if valueMap, ok := param["user_login_key"]; ok {
+		query += ` AND t2.user_login_key = ` + valueMap
+	}
+
+	var result GetCustomerDetail
+	err := db.Db.Get(&result, query)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	return result
 }

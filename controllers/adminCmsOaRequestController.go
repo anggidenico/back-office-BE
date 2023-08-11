@@ -1437,97 +1437,93 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 
 	// log.Info("Success update approved CS")
 
-	var oapersonal models.OaPersonalData
-	strKeyOa := strconv.FormatUint(oareq.OaRequestKey, 10)
-	status, err = models.GetOaPersonalDataByOaRequestKey(&oapersonal, strKeyOa)
-	if err != nil {
-		// log.Error("Error Personal Data not Found")
-		return lib.CustomError(status, err.Error(), "Personal data not found")
-	}
-
-	if oastatus == "259" { //jika approve
-		//sent email to all KYC
-		SentEmailOaPengkinianToBackOffice(oareq, oapersonal, "12")
-	} else {
-		//update personal data -> delete
-		paramsPersonalDataDelete := make(map[string]string)
-		paramsPersonalDataDelete["personal_data_key"] = strconv.FormatUint(oapersonal.PersonalDataKey, 10)
-		paramsPersonalDataDelete["rec_status"] = "0"
-		paramsPersonalDataDelete["rec_deleted_date"] = time.Now().Format(dateLayout)
-		paramsPersonalDataDelete["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-
-		_, err = models.UpdateOaPersonalData(paramsPersonalDataDelete)
+	if *oareq.OaRequestType != uint64(lib.OA_REQ_TYPE_PENGKINIAN_RISIKO_INT) {
+		var oapersonal models.OaPersonalData
+		strKeyOa := strconv.FormatUint(oareq.OaRequestKey, 10)
+		status, err = models.GetOaPersonalDataByOaRequestKey(&oapersonal, strKeyOa)
 		if err != nil {
-			// log.Error("Error update personal data delete")
-			return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
+			// log.Error("Error Personal Data not Found")
+			return lib.CustomError(status, err.Error(), "Personal data not found")
 		}
 
-		strUserLoginKey := strconv.FormatUint(*oareq.UserLoginKey, 10)
+		if oastatus == "259" { //jika approve
 
-		// if oareq.CustomerKey == nil {
-		// 	//UPDATE SC_USER_LOGIN
-		// 	paramsScUserLogin := make(map[string]string)
-		// 	paramsScUserLogin["user_login_key"] = strUserLoginKey
-		// 	paramsScUserLogin["rec_status"] = "0"
-		// 	paramsScUserLogin["rec_deleted_date"] = time.Now().Format(dateLayout)
-		// 	paramsScUserLogin["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-
-		// 	_, err = models.UpdateScUserLogin(paramsScUserLogin)
-		// 	if err != nil {
-		// 		// log.Error("Error update user data")
-		// 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
-		// 	}
-		// }
-
-		//create user message
-		paramsUserMessage := make(map[string]string)
-		paramsUserMessage["umessage_type"] = "245"
-		if oareq.UserLoginKey != nil {
-			paramsUserMessage["umessage_recipient_key"] = strUserLoginKey
 		} else {
-			paramsUserMessage["umessage_recipient_key"] = "0"
-		}
-		paramsUserMessage["umessage_receipt_date"] = time.Now().Format(dateLayout)
-		paramsUserMessage["flag_read"] = "0"
-		paramsUserMessage["umessage_sender_key"] = strKey
-		paramsUserMessage["umessage_sent_date"] = time.Now().Format(dateLayout)
-		paramsUserMessage["flag_sent"] = "1"
-		var subject, body string
-		if *oareq.OaRequestType == uint64(127) {
-			subject = "Pembukaan Rekening kamu ditolak"
-			body = check1notes + " Silakan menghubungi Customer Service untuk informasi lebih lanjut."
-		} else {
-			if *oareq.OaRequestType == uint64(128) {
-				subject = "Pengkinian Profile Risiko kamu ditolak"
+			strUserLoginKey := strconv.FormatUint(*oareq.UserLoginKey, 10)
+
+			paramsUserMessage := make(map[string]string)
+			paramsUserMessage["umessage_type"] = "245"
+			if oareq.UserLoginKey != nil {
+				paramsUserMessage["umessage_recipient_key"] = strUserLoginKey
+			} else {
+				paramsUserMessage["umessage_recipient_key"] = "0"
+			}
+			paramsUserMessage["umessage_receipt_date"] = time.Now().Format(dateLayout)
+			paramsUserMessage["flag_read"] = "0"
+			paramsUserMessage["umessage_sender_key"] = strKey
+			paramsUserMessage["umessage_sent_date"] = time.Now().Format(dateLayout)
+			paramsUserMessage["flag_sent"] = "1"
+			var subject, body string
+			if *oareq.OaRequestType == uint64(127) {
+				subject = "Pembukaan Rekening kamu ditolak"
 				body = check1notes + " Silakan menghubungi Customer Service untuk informasi lebih lanjut."
 			} else {
-				subject = "Pengkinian Data kamu ditolak"
-				body = check1notes + " Silakan menghubungi Customer Service untuk informasi lebih lanjut."
+				if *oareq.OaRequestType == uint64(128) {
+					subject = "Pengkinian Profile Risiko kamu ditolak"
+					body = check1notes + " Silakan menghubungi Customer Service untuk informasi lebih lanjut."
+				} else {
+					subject = "Pengkinian Data kamu ditolak"
+					body = check1notes + " Silakan menghubungi Customer Service untuk informasi lebih lanjut."
+				}
+			}
+			paramsUserMessage["umessage_body"] = body
+			paramsUserMessage["umessage_subject"] = subject
+			paramsUserMessage["umessage_category"] = "248"
+			paramsUserMessage["flag_archieved"] = "0"
+			paramsUserMessage["archieved_date"] = time.Now().Format(dateLayout)
+			paramsUserMessage["rec_status"] = "1"
+			paramsUserMessage["rec_created_date"] = time.Now().Format(dateLayout)
+			paramsUserMessage["rec_created_by"] = strKey
+
+			status, err = models.CreateScUserMessage(paramsUserMessage)
+			if err != nil {
+				log.Println(err.Error())
+			}
+
+			if *oareq.OaRequestType != uint64(lib.OA_REQ_TYPE_PENGKINIAN_RISIKO_INT) {
+				//update personal data -> delete
+				paramsPersonalDataDelete := make(map[string]string)
+				paramsPersonalDataDelete["personal_data_key"] = strconv.FormatUint(oapersonal.PersonalDataKey, 10)
+				paramsPersonalDataDelete["rec_status"] = "0"
+				paramsPersonalDataDelete["rec_deleted_date"] = time.Now().Format(dateLayout)
+				paramsPersonalDataDelete["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+
+				_, err = models.UpdateOaPersonalData(paramsPersonalDataDelete)
+				if err != nil {
+					// log.Error("Error update personal data delete")
+					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
+				}
+				SentEmailRejectOaPengkinianToCustomer(oareq, oapersonal, check1notes)
+
+			} else {
+
+				getCust := make(map[string]string)
+				getCust["oa_request_key"] = oarequestkey
+				customerData := models.GetCustomerDetailWithParams(getCust)
+				err = SendEmailRejectRiskProfilePengkinianToCustomer(*customerData.Email, customerData.FullName)
+				if err != nil {
+					log.Println(err.Error())
+				}
+
 			}
 		}
-		paramsUserMessage["umessage_body"] = body
-		paramsUserMessage["umessage_subject"] = subject
-		paramsUserMessage["umessage_category"] = "248"
-		paramsUserMessage["flag_archieved"] = "0"
-		paramsUserMessage["archieved_date"] = time.Now().Format(dateLayout)
-		paramsUserMessage["rec_status"] = "1"
-		paramsUserMessage["rec_created_date"] = time.Now().Format(dateLayout)
-		paramsUserMessage["rec_created_by"] = strKey
-
-		status, err = models.CreateScUserMessage(paramsUserMessage)
-		if err != nil {
-			// log.Error("Error create user message")
-		}
-		//Sent Email Reject ke customer
-		SentEmailRejectOaPengkinianToCustomer(oareq, oapersonal, check1notes)
-		lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
 	}
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = ""
+	response.Data = nil
 	return c.JSON(http.StatusOK, response)
 }
 
