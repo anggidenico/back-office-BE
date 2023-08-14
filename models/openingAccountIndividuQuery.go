@@ -20,15 +20,17 @@ type PengkinianListResponse struct {
 	CreatedBy    string  `db:"created_by" json:"created_by"`
 	Branch       *string `db:"branch" json:"branch"`
 	Agent        *string `db:"agent" json:"agent"`
+	OaSource     *string `db:"oa_source" json:"oa_source"`
 }
 
 func GetOARequestIndividuListQuery(c *[]PengkinianListResponse, requestType uint64, backOfficeRole uint64, limit uint64, offset uint64) int {
 	query := `SELECT t1.oa_request_key, t2.lkp_name AS oa_status, t3.email_address, t3.phone_mobile, 
 	t3.date_birth, t3.full_name, t3.idcard_no, t1.oa_entry_start AS oa_date, 
 	t4.ulogin_email AS email_address,t4.ulogin_name AS created_by, t5.agent_name AS agent, 
-	t6.branch_name AS branch, t4.customer_key
+	t6.branch_name AS branch, t4.customer_key, t7.lkp_name AS oa_source
 	FROM oa_request t1
 	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
+	INNER JOIN gen_lookup t7 ON t1.oa_source = t7.lookup_key
 	INNER JOIN oa_personal_data t3 ON t1.oa_request_key = t3.oa_request_key AND t3.rec_status = 1
 	INNER JOIN sc_user_login t4 ON t4.user_login_key = t1.user_login_key
 	INNER JOIN ms_agent t5 ON t5.agent_key = t1.agent_key 
@@ -38,6 +40,7 @@ func GetOARequestIndividuListQuery(c *[]PengkinianListResponse, requestType uint
 	queryPage := `SELECT count(*) 
 	FROM oa_request t1
 	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
+	INNER JOIN gen_lookup t7 ON t1.oa_source = t7.lookup_key
 	INNER JOIN oa_personal_data t3 ON t1.oa_request_key = t3.oa_request_key AND t3.rec_status = 1
 	INNER JOIN sc_user_login t4 ON t4.user_login_key = t1.user_login_key
 	INNER JOIN ms_agent t5 ON t5.agent_key = t1.agent_key 

@@ -8,13 +8,14 @@ import (
 )
 
 type RiskProfileListModels struct {
-	OaRequestKey uint64 `db:"oa_request_key" json:"oa_request_key"`
-	CustomerKey  uint64 `db:"customer_key" json:"customer_key"`
-	Cif          string `db:"cif" json:"cif"`
-	FullName     string `db:"full_name" json:"full_name"`
-	Email        string `db:"email_address" json:"email_address"`
-	OaStatus     string `db:"oa_status" json:"oa_status"`
-	OaDate       string `db:"oa_date" json:"oa_date"`
+	OaRequestKey uint64  `db:"oa_request_key" json:"oa_request_key"`
+	CustomerKey  uint64  `db:"customer_key" json:"customer_key"`
+	Cif          string  `db:"cif" json:"cif"`
+	FullName     string  `db:"full_name" json:"full_name"`
+	Email        string  `db:"email_address" json:"email_address"`
+	OaStatus     string  `db:"oa_status" json:"oa_status"`
+	OaDate       string  `db:"oa_date" json:"oa_date"`
+	OaSource     *string `db:"oa_source" json:"oa_source"`
 }
 
 type RiskProfileDetailResponse struct {
@@ -42,9 +43,11 @@ type RiskProfileQuizResultModels struct {
 
 func GetPengkinianRiskProfileListQuery(c *[]RiskProfileListModels, backOfficeRole uint64, limit uint64, offset uint64) int {
 	query := `SELECT t1.oa_request_key, t4.customer_key, t3.ulogin_email AS email_address, 
-	t2.lkp_name AS oa_status,  t1.oa_entry_start AS oa_date, t4.unit_holder_idno AS cif, t4.full_name
+	t2.lkp_name AS oa_status,  t1.oa_entry_start AS oa_date, t4.unit_holder_idno AS cif, 
+	t4.full_name, t5.lkp_name AS oa_source
 	FROM oa_request t1
 	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
+	LEFT JOIN gen_lookup t5 ON t1.oa_source = t5.lookup_key
 	INNER JOIN sc_user_login t3 ON t3.user_login_key = t1.user_login_key
 	INNER JOIN ms_customer t4 ON t4.customer_key = t3.customer_key
 	WHERE t1.rec_status = 1 AND t1.oa_request_type = 128`
@@ -52,6 +55,7 @@ func GetPengkinianRiskProfileListQuery(c *[]RiskProfileListModels, backOfficeRol
 	queryPage := `SELECT count(*) 
 	FROM oa_request t1
 	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
+	LEFT JOIN gen_lookup t5 ON t1.oa_source = t5.lookup_key
 	INNER JOIN sc_user_login t3 ON t3.user_login_key = t1.user_login_key
 	INNER JOIN ms_customer t4 ON t4.customer_key = t3.customer_key
 	WHERE t1.rec_status = 1 AND t1.oa_request_type = 128`

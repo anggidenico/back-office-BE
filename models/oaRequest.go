@@ -68,6 +68,7 @@ type OaRequestListResponse struct {
 	CreatedBy    string  `db:"created_by" json:"created_by"`
 	Branch       string  `db:"branch" json:"branch"`
 	Agent        string  `db:"agent" json:"agent"`
+	OaSource     string  `db:"oa_source" json:"oa_source"`
 }
 
 type OaRequestCountData struct {

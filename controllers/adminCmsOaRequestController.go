@@ -21,7 +21,7 @@ import (
 )
 
 func initAuthCs() error {
-	log.Println("initAuthCs")
+	// log.Println("initAuthCs")
 	var roleKeyCs uint64
 	roleKeyCs = 11
 
@@ -44,7 +44,7 @@ func initAuthKyc() error {
 }
 
 func initAuthFundAdmin() error {
-	log.Println("initAuthFundAdmin")
+	// log.Println("initAuthFundAdmin")
 
 	var roleKeyFundAdmin uint64
 	roleKeyFundAdmin = 13
@@ -227,6 +227,12 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 			}
 		}
 
+		if oareq.OaSource != nil {
+			if _, ok := lib.Find(lookupIds, strconv.FormatUint(*oareq.OaSource, 10)); !ok {
+				lookupIds = append(lookupIds, strconv.FormatUint(*oareq.OaSource, 10))
+			}
+		}
+
 		if _, ok := lib.Find(oaRequestIds, strconv.FormatUint(oareq.OaRequestKey, 10)); !ok {
 			oaRequestIds = append(oaRequestIds, strconv.FormatUint(oareq.OaRequestKey, 10))
 		}
@@ -332,6 +338,12 @@ func GetOaRequestListAdmin(c echo.Context, oaRequestType string) error {
 		if oareq.Oastatus != nil {
 			if n, ok := gData[*oareq.Oastatus]; ok {
 				data.Oastatus = *n.LkpName
+			}
+		}
+
+		if oareq.OaSource != nil {
+			if n, ok := gData[*oareq.OaSource]; ok {
+				data.OaSource = *n.LkpName
 			}
 		}
 
