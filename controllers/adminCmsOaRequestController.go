@@ -2075,7 +2075,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 	} else { // JIKA REQUEST TIPE PENGKINIAN RISK PROFILE
 
 		if oastatus == "260" { //JIKA REQUEST DI APPROVE
-
+			log.Println("pengkinian risk profile aprrove")
 			paramOaUpdate := make(map[string]string)
 			paramOaUpdate["oa_request_key"] = oarequestkey
 			paramOaUpdate["oa_status"] = "261" // Customer_Build
@@ -2129,6 +2129,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			}
 
 		} else {
+			log.Println("pengkinian risk profile reject")
 
 			paramsUserMessage := make(map[string]string)
 			paramsUserMessage["umessage_type"] = "245"
