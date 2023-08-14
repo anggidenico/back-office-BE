@@ -1446,9 +1446,7 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 			return lib.CustomError(status, err.Error(), "Personal data not found")
 		}
 
-		if oastatus == "259" { //jika approve
-
-		} else {
+		if oastatus != "259" {
 			strUserLoginKey := strconv.FormatUint(*oareq.UserLoginKey, 10)
 
 			paramsUserMessage := make(map[string]string)
@@ -1510,6 +1508,16 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 				getCust := make(map[string]string)
 				getCust["oa_request_key"] = oarequestkey
 				customerData := models.GetCustomerDetailWithParams(getCust)
+
+				sendOneSignal := make(map[string]string)
+				sendOneSignal["token_notif"] = *customerData.TokenNotif
+				sendOneSignal["phone_number"] = *customerData.Phone
+				sendOneSignal["description"] = subject
+				err = lib.CreateNotifOneSignal(sendOneSignal)
+				if err != nil {
+					log.Println(err.Error())
+				}
+
 				err = SendEmailRejectRiskProfilePengkinianToCustomer(*customerData.Email, customerData.FullName)
 				if err != nil {
 					log.Println(err.Error())
@@ -1654,144 +1662,250 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 	}
 	// log.Info("Success update approved Compliance Transaction")
 
-	var oapersonal models.OaPersonalData
-	strKeyOa := strconv.FormatUint(oareq.OaRequestKey, 10)
-	status, err = models.GetOaPersonalDataByOaRequestKey(&oapersonal, strKeyOa)
-	if err != nil {
-		tx.Rollback()
-		// log.Error("Error Personal Data not Found")
-		return lib.CustomError(status, err.Error(), "Personal data not found")
-	}
+	if *oareq.OaRequestType != uint64(lib.OA_REQ_TYPE_PENGKINIAN_RISIKO_INT) {
 
-	if oastatus == "260" {
+		var oapersonal models.OaPersonalData
+		strKeyOa := strconv.FormatUint(oareq.OaRequestKey, 10)
+		status, err = models.GetOaPersonalDataByOaRequestKey(&oapersonal, strKeyOa)
+		if err != nil {
+			tx.Rollback()
+			// log.Error("Error Personal Data not Found")
+			return lib.CustomError(status, err.Error(), "Personal data not found")
+		}
 
-		var customerKey string
+		if oastatus == "260" { // JIKA APPROVE
 
-		if oareq.CustomerKey == nil { //NEW OA
-			//create customer
+			var customerKey string
 
-			paramsCustomer := make(map[string]string)
-			paramsCustomer["id_customer"] = "0"
+			if oareq.CustomerKey == nil { //NEW OA
+				//create customer
 
-			year, month, _ := time.Now().Date()
+				paramsCustomer := make(map[string]string)
+				paramsCustomer["id_customer"] = "0"
 
-			var customer models.MsCustomer
-			tahun := strconv.FormatUint(uint64(year), 10)
-			bulan := strconv.FormatUint(uint64(month), 10)
-			if len(bulan) == 1 {
-				bulan = "0" + bulan
-			}
-			unitHolderLike := tahun + bulan
-			status, err = models.GetLastUnitHolder(&customer, unitHolderLike)
-			if err != nil {
-				paramsCustomer["unit_holder_idno"] = unitHolderLike + "000001"
-			} else {
-				dgt := customer.UnitHolderIDno[len(customer.UnitHolderIDno)-6:]
-				productKeyCek, _ := strconv.ParseUint(dgt, 10, 64)
-				hasil := strconv.FormatUint(productKeyCek+1, 10)
-				if len(hasil) == 1 {
-					hasil = "00000" + hasil
-				} else if len(hasil) == 2 {
-					hasil = "0000" + hasil
-				} else if len(hasil) == 3 {
-					hasil = "000" + hasil
-				} else if len(hasil) == 4 {
-					hasil = "00" + hasil
-				} else if len(hasil) == 5 {
-					hasil = "0" + hasil
+				year, month, _ := time.Now().Date()
+
+				var customer models.MsCustomer
+				tahun := strconv.FormatUint(uint64(year), 10)
+				bulan := strconv.FormatUint(uint64(month), 10)
+				if len(bulan) == 1 {
+					bulan = "0" + bulan
+				}
+				unitHolderLike := tahun + bulan
+				status, err = models.GetLastUnitHolder(&customer, unitHolderLike)
+				if err != nil {
+					paramsCustomer["unit_holder_idno"] = unitHolderLike + "000001"
+				} else {
+					dgt := customer.UnitHolderIDno[len(customer.UnitHolderIDno)-6:]
+					productKeyCek, _ := strconv.ParseUint(dgt, 10, 64)
+					hasil := strconv.FormatUint(productKeyCek+1, 10)
+					if len(hasil) == 1 {
+						hasil = "00000" + hasil
+					} else if len(hasil) == 2 {
+						hasil = "0000" + hasil
+					} else if len(hasil) == 3 {
+						hasil = "000" + hasil
+					} else if len(hasil) == 4 {
+						hasil = "00" + hasil
+					} else if len(hasil) == 5 {
+						hasil = "0" + hasil
+					}
+
+					resultData := unitHolderLike + hasil
+					paramsCustomer["unit_holder_idno"] = resultData
 				}
 
-				resultData := unitHolderLike + hasil
-				paramsCustomer["unit_holder_idno"] = resultData
-			}
+				paramsCustomer["full_name"] = oapersonal.FullName
+				paramsCustomer["investor_type"] = "263"
+				paramsCustomer["customer_category"] = "265"
+				paramsCustomer["cif_suspend_flag"] = "0"
 
-			paramsCustomer["full_name"] = oapersonal.FullName
-			paramsCustomer["investor_type"] = "263"
-			paramsCustomer["customer_category"] = "265"
-			paramsCustomer["cif_suspend_flag"] = "0"
-
-			if oareq.BranchKey == nil {
-				paramsCustomer["openacc_branch_key"] = "1"
-			} else {
-				paramsCustomer["openacc_branch_key"] = strconv.FormatUint(*oareq.BranchKey, 10)
-			}
-
-			if oareq.AgentKey == nil {
-				paramsCustomer["openacc_agent_key"] = "1"
-			} else {
-				paramsCustomer["openacc_agent_key"] = strconv.FormatUint(*oareq.AgentKey, 10)
-			}
-
-			paramsCustomer["openacc_date"] = time.Now().Format(dateLayout)
-			paramsCustomer["flag_employee"] = "0"
-			paramsCustomer["flag_group"] = "0"
-			paramsCustomer["merging_flag"] = "0"
-			paramsCustomer["rec_status"] = "1"
-			paramsCustomer["rec_created_date"] = time.Now().Format(dateLayout)
-			paramsCustomer["rec_created_by"] = strKey
-
-			sliceName := strings.Fields(oapersonal.FullName)
-
-			if len(sliceName) > 0 {
-				if len(sliceName) == 1 {
-					paramsCustomer["first_name"] = sliceName[0]
-					paramsCustomer["last_name"] = sliceName[0]
+				if oareq.BranchKey == nil {
+					paramsCustomer["openacc_branch_key"] = "1"
+				} else {
+					paramsCustomer["openacc_branch_key"] = strconv.FormatUint(*oareq.BranchKey, 10)
 				}
-				if len(sliceName) == 2 {
-					paramsCustomer["first_name"] = sliceName[0]
-					paramsCustomer["last_name"] = sliceName[1]
+
+				if oareq.AgentKey == nil {
+					paramsCustomer["openacc_agent_key"] = "1"
+				} else {
+					paramsCustomer["openacc_agent_key"] = strconv.FormatUint(*oareq.AgentKey, 10)
 				}
-				if len(sliceName) > 2 {
-					ln := len(sliceName)
-					paramsCustomer["first_name"] = sliceName[0]
-					paramsCustomer["middle_name"] = sliceName[1]
-					lastName := strings.Join(sliceName[2:ln], " ")
-					paramsCustomer["last_name"] = lastName
+
+				paramsCustomer["openacc_date"] = time.Now().Format(dateLayout)
+				paramsCustomer["flag_employee"] = "0"
+				paramsCustomer["flag_group"] = "0"
+				paramsCustomer["merging_flag"] = "0"
+				paramsCustomer["rec_status"] = "1"
+				paramsCustomer["rec_created_date"] = time.Now().Format(dateLayout)
+				paramsCustomer["rec_created_by"] = strKey
+
+				sliceName := strings.Fields(oapersonal.FullName)
+
+				if len(sliceName) > 0 {
+					if len(sliceName) == 1 {
+						paramsCustomer["first_name"] = sliceName[0]
+						paramsCustomer["last_name"] = sliceName[0]
+					}
+					if len(sliceName) == 2 {
+						paramsCustomer["first_name"] = sliceName[0]
+						paramsCustomer["last_name"] = sliceName[1]
+					}
+					if len(sliceName) > 2 {
+						ln := len(sliceName)
+						paramsCustomer["first_name"] = sliceName[0]
+						paramsCustomer["middle_name"] = sliceName[1]
+						lastName := strings.Join(sliceName[2:ln], " ")
+						paramsCustomer["last_name"] = lastName
+					}
 				}
-			}
 
-			strNationality := strconv.FormatUint(oapersonal.Nationality, 10)
-			if strNationality == "97" {
-				paramsCustomer["fatca_status"] = "278"
-			} else if strNationality == "225" {
-				paramsCustomer["fatca_status"] = "279"
-			} else {
-				paramsCustomer["fatca_status"] = "280"
-			}
+				strNationality := strconv.FormatUint(oapersonal.Nationality, 10)
+				if strNationality == "97" {
+					paramsCustomer["fatca_status"] = "278"
+				} else if strNationality == "225" {
+					paramsCustomer["fatca_status"] = "279"
+				} else {
+					paramsCustomer["fatca_status"] = "280"
+				}
 
-			status, err, requestID := models.CreateMsCustomer(paramsCustomer)
-			// log.Println("========== PARAMETER  INSERT CUSTOMER ==========>>>", paramsCustomer)
-			if err != nil {
-				tx.Rollback()
-				// log.Error("Error create customer", err.Error())
-				return lib.CustomError(status, err.Error(), "failed input data")
-			} else {
-				// log.Println("========== BERHASIL CREATE KE MS CUSTOMER ========== ")
-			}
-			request, err := strconv.ParseUint(requestID, 10, 64)
-			if request == 0 {
-				tx.Rollback()
-				// log.Error("Failed create customer")
-				return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
-			}
+				status, err, requestID := models.CreateMsCustomer(paramsCustomer)
+				// log.Println("========== PARAMETER  INSERT CUSTOMER ==========>>>", paramsCustomer)
+				if err != nil {
+					tx.Rollback()
+					// log.Error("Error create customer", err.Error())
+					return lib.CustomError(status, err.Error(), "failed input data")
+				} else {
+					// log.Println("========== BERHASIL CREATE KE MS CUSTOMER ========== ")
+				}
+				request, err := strconv.ParseUint(requestID, 10, 64)
+				if request == 0 {
+					tx.Rollback()
+					// log.Error("Failed create customer")
+					return lib.CustomError(http.StatusBadGateway, "failed input data", "failed input data")
+				}
 
-			customerKey = requestID
+				customerKey = requestID
 
-			paramOaUpdate := make(map[string]string)
-			paramOaUpdate["customer_key"] = requestID
-			paramOaUpdate["oa_request_key"] = oarequestkey
-			paramOaUpdate["oa_status"] = "261" // Customer_Build
+				paramOaUpdate := make(map[string]string)
+				paramOaUpdate["customer_key"] = requestID
+				paramOaUpdate["oa_request_key"] = oarequestkey
+				paramOaUpdate["oa_status"] = "261" // Customer_Build
 
-			_, err = models.UpdateOaRequest(paramOaUpdate)
-			// log.Println("========== PARAMETER UPDATE OA REQUEST ==========>>>", paramOaUpdate)
-			if err != nil {
-				tx.Rollback()
-				// log.Error("Error update oa request", err.Error())
-				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
-			} else {
-				// log.Println("========== BERHASIL UPDATE OA REQUEST ========== ")
+				_, err = models.UpdateOaRequest(paramOaUpdate)
+				if err != nil {
+					tx.Rollback()
+					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
+				} else {
+					// log.Println("========== BERHASIL UPDATE OA REQUEST ========== ")
 
-				//create user message
+					//create user message
+					paramsUserMessage := make(map[string]string)
+					paramsUserMessage["umessage_type"] = "245"
+					strUserLoginKey := strconv.FormatUint(*oareq.UserLoginKey, 10)
+					if oareq.UserLoginKey != nil {
+						paramsUserMessage["umessage_recipient_key"] = strUserLoginKey
+					} else {
+						paramsUserMessage["umessage_recipient_key"] = "0"
+					}
+					paramsUserMessage["umessage_receipt_date"] = time.Now().Format(dateLayout)
+					paramsUserMessage["flag_read"] = "0"
+					paramsUserMessage["umessage_sender_key"] = strKey
+					paramsUserMessage["umessage_sent_date"] = time.Now().Format(dateLayout)
+					paramsUserMessage["flag_sent"] = "1"
+					subject := "Selamat! Pembukaan Rekening telah Disetujui"
+					body := "Saat ini akun kamu sudah aktif dan bisa melakukan transaksi. Yuk mulai investasi sekarang juga."
+					paramsUserMessage["umessage_subject"] = subject
+					paramsUserMessage["umessage_body"] = body
+					paramsUserMessage["umessage_category"] = "248"
+					paramsUserMessage["flag_archieved"] = "0"
+					paramsUserMessage["archieved_date"] = time.Now().Format(dateLayout)
+					paramsUserMessage["rec_status"] = "1"
+					paramsUserMessage["rec_created_date"] = time.Now().Format(dateLayout)
+					paramsUserMessage["rec_created_by"] = strKey
+
+					status, err = models.CreateScUserMessage(paramsUserMessage)
+					if err != nil {
+						tx.Rollback()
+						// log.Error("Error create user message", err.Error())
+						return lib.CustomError(status, err.Error(), "failed input data")
+					}
+					getCust := make(map[string]string)
+					getCust["oa_request_key"] = oarequestkey
+					customerData := models.GetCustomerDetailWithParams(getCust)
+					sendOneSignal := make(map[string]string)
+					if customerData.TokenNotif != nil {
+						sendOneSignal["token_notif"] = *customerData.TokenNotif
+					}
+					sendOneSignal["phone_number"] = *customerData.Phone
+					sendOneSignal["description"] = subject
+					err = lib.CreateNotifOneSignal(sendOneSignal)
+					if err != nil {
+						log.Println(err.Error())
+					}
+					// lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
+
+					//update sc user login
+					paramsUserLogin := make(map[string]string)
+					paramsUserLogin["customer_key"] = requestID
+					paramsUserLogin["rec_modified_date"] = time.Now().Format(dateLayout)
+					paramsUserLogin["rec_modified_by"] = strKey
+					paramsUserLogin["role_key"] = "1"
+					strUserLoginKeyOa := strconv.FormatUint(*oareq.UserLoginKey, 10)
+					paramsUserLogin["user_login_key"] = strUserLoginKeyOa
+					_, err = models.UpdateScUserLogin(paramsUserLogin)
+					// log.Println("========== PARAMETER UPDATE SC USER LOGIN ==========>>>", paramsUserLogin)
+					if err != nil {
+						tx.Rollback()
+						// log.Error("Error update oa request", err.Error())
+						return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
+					} else {
+						// log.Println("========== BERHASIL INSERT CUSTOMER_KEY KE OA_REQUEST ==========")
+					}
+
+					//create agent customer
+					paramsAgentCustomer := make(map[string]string)
+					paramsAgentCustomer["customer_key"] = requestID
+					paramsAgentCustomer["agent_key"] = "1"
+					if oareq.SalesCode != nil {
+						var agent models.MsAgent
+						var salcode string
+						salcode = *oareq.SalesCode
+						status, err = models.GetMsAgentByField(&agent, salcode, "agent_code")
+						if err == nil {
+							paramsAgentCustomer["agent_key"] = strconv.FormatUint(agent.AgentKey, 10)
+						}
+					}
+
+					paramsAgentCustomer["rec_status"] = "1"
+					paramsAgentCustomer["eff_date"] = oareq.OaEntryStart
+					paramsAgentCustomer["rec_created_date"] = time.Now().Format(dateLayout)
+					paramsAgentCustomer["rec_created_by"] = strKey
+					status, err = models.CreateMsAgentCustomer(paramsAgentCustomer)
+					if err != nil {
+						tx.Rollback()
+						// log.Error("Error create agent customer")
+						return lib.CustomError(status, err.Error(), "failed input data")
+					}
+
+					tx.Commit()
+
+					// // log.Info("Success create customer")
+
+					//send email to customer
+					var userData models.ScUserLogin
+					status, err = models.GetScUserLoginByCustomerKey(&userData, requestID)
+					if err == nil {
+						sendEmailApproveOa(oapersonal.FullName, userData.UloginEmail)
+					}
+
+					//sent email to all fund admin
+					SentEmailOaPengkinianToBackOffice(oareq, oapersonal, "13")
+				}
+
+			} else { // PENGKINIAN PERSONAL DATA
+
+				customerKey = strconv.FormatUint(*oareq.CustomerKey, 10)
 				paramsUserMessage := make(map[string]string)
 				paramsUserMessage["umessage_type"] = "245"
 				strUserLoginKey := strconv.FormatUint(*oareq.UserLoginKey, 10)
@@ -1805,8 +1919,8 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 				paramsUserMessage["umessage_sender_key"] = strKey
 				paramsUserMessage["umessage_sent_date"] = time.Now().Format(dateLayout)
 				paramsUserMessage["flag_sent"] = "1"
-				subject := "Selamat! Pembukaan Rekening telah Disetujui"
-				body := "Saat ini akun kamu sudah aktif dan bisa melakukan transaksi. Yuk mulai investasi sekarang juga."
+				subject := "Selamat! Pengkinian Data telah Disetujui"
+				body := "Saat ini pengkinian data kamu sudah disetujui. Yuk investasi sekarang juga."
 				paramsUserMessage["umessage_subject"] = subject
 				paramsUserMessage["umessage_body"] = body
 				paramsUserMessage["umessage_category"] = "248"
@@ -1819,70 +1933,89 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 				status, err = models.CreateScUserMessage(paramsUserMessage)
 				if err != nil {
 					tx.Rollback()
-					// log.Error("Error create user message", err.Error())
+					// log.Error("Error create user message")
 					return lib.CustomError(status, err.Error(), "failed input data")
 				}
-				lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
+				// lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
 
-				//update sc user login
-				paramsUserLogin := make(map[string]string)
-				paramsUserLogin["customer_key"] = requestID
-				paramsUserLogin["rec_modified_date"] = time.Now().Format(dateLayout)
-				paramsUserLogin["rec_modified_by"] = strKey
-				paramsUserLogin["role_key"] = "1"
-				strUserLoginKeyOa := strconv.FormatUint(*oareq.UserLoginKey, 10)
-				paramsUserLogin["user_login_key"] = strUserLoginKeyOa
-				_, err = models.UpdateScUserLogin(paramsUserLogin)
-				// log.Println("========== PARAMETER UPDATE SC USER LOGIN ==========>>>", paramsUserLogin)
+				//UPDATE SC_USER_LOGIN
+				paramsScUserLogin := make(map[string]string)
+				paramsScUserLogin["user_login_key"] = strUserLoginKey
+				paramsScUserLogin["ulogin_name"] = oapersonal.EmailAddress
+				paramsScUserLogin["ulogin_full_name"] = oapersonal.EmailAddress
+				paramsScUserLogin["ulogin_email"] = oapersonal.EmailAddress
+				paramsScUserLogin["ulogin_mobileno"] = oapersonal.PhoneMobile
+				paramsScUserLogin["rec_modified_date"] = time.Now().Format(dateLayout)
+				paramsScUserLogin["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+
+				_, err = models.UpdateScUserLogin(paramsScUserLogin)
 				if err != nil {
-					tx.Rollback()
-					// log.Error("Error update oa request", err.Error())
+					// log.Error("Error update user data")
 					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
-				} else {
-					// log.Println("========== BERHASIL INSERT CUSTOMER_KEY KE OA_REQUEST ==========")
 				}
 
-				//create agent customer
-				paramsAgentCustomer := make(map[string]string)
-				paramsAgentCustomer["customer_key"] = requestID
-				paramsAgentCustomer["agent_key"] = "1"
-				if oareq.SalesCode != nil {
-					var agent models.MsAgent
-					var salcode string
-					salcode = *oareq.SalesCode
-					status, err = models.GetMsAgentByField(&agent, salcode, "agent_code")
-					if err == nil {
-						paramsAgentCustomer["agent_key"] = strconv.FormatUint(agent.AgentKey, 10)
-					}
-				}
-
-				paramsAgentCustomer["rec_status"] = "1"
-				paramsAgentCustomer["eff_date"] = oareq.OaEntryStart
-				paramsAgentCustomer["rec_created_date"] = time.Now().Format(dateLayout)
-				paramsAgentCustomer["rec_created_by"] = strKey
-				status, err = models.CreateMsAgentCustomer(paramsAgentCustomer)
+				paramOaUpdate := make(map[string]string)
+				paramOaUpdate["oa_request_key"] = oarequestkey
+				paramOaUpdate["oa_status"] = "261" // Customer_Build
+				_, err = models.UpdateOaRequest(paramOaUpdate)
 				if err != nil {
 					tx.Rollback()
-					// log.Error("Error create agent customer")
+					log.Println(err.Error())
+				}
+
+			}
+
+			//delete all ms_customer_bank_account by customer
+			deleteParam := make(map[string]string)
+			deleteParam["rec_status"] = "0"
+			deleteParam["rec_modified_date"] = time.Now().Format(dateLayout)
+			deleteParam["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+			deleteParam["rec_deleted_date"] = time.Now().Format(dateLayout)
+			deleteParam["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+			_, err = models.UpdateDataByField(deleteParam, "customer_key", customerKey)
+			if err != nil {
+				// log.Error("Error delete all ms_customer_bank_account")
+			}
+			//create all ms_customer_bank_account by oa_req_key
+			var accBank []models.OaRequestByField
+			status, err = models.GetOaRequestBankByField(&accBank, "oa_request_key", strconv.FormatUint(oareq.OaRequestKey, 10))
+			if err != nil {
+				// log.Error(err.Error())
+			}
+			if len(accBank) > 0 {
+				var bindVarMsBank []interface{}
+				for _, value := range accBank {
+					var row []string
+					row = append(row, customerKey)                                  //customer_key
+					row = append(row, strconv.FormatUint(value.BankAccountKey, 10)) //bank_account_key
+					row = append(row, strconv.FormatUint(value.FlagPriority, 10))   //flag_priority
+					row = append(row, *value.AccountHolderName)                     //bank_account_name
+					row = append(row, "1")                                          //rec_status
+					row = append(row, time.Now().Format(dateLayout))                //rec_created_date
+					row = append(row, strconv.FormatUint(lib.Profile.UserID, 10))   //rec_created_by
+					bindVarMsBank = append(bindVarMsBank, row)
+				}
+				_, err = models.CreateMultipleMsCustomerBankkAccount(bindVarMsBank)
+				if err != nil {
+					// log.Error("========== FAILED CREATE MS CUSTOMER BANK ACCOUNT ==========" + err.Error())
 					return lib.CustomError(status, err.Error(), "failed input data")
 				}
-
-				tx.Commit()
-
-				// // log.Info("Success create customer")
-
-				//send email to customer
-				var userData models.ScUserLogin
-				status, err = models.GetScUserLoginByCustomerKey(&userData, requestID)
-				if err == nil {
-					sendEmailApproveOa(oapersonal.FullName, userData.UloginEmail)
-				}
-
-				//sent email to all fund admin
-				SentEmailOaPengkinianToBackOffice(oareq, oapersonal, "13")
 			}
-		} else { //create user message
-			customerKey = strconv.FormatUint(*oareq.CustomerKey, 10)
+
+		} else { // JIKA REJECT
+
+			paramsPersonalDataDelete := make(map[string]string)
+			paramsPersonalDataDelete["personal_data_key"] = strconv.FormatUint(oapersonal.PersonalDataKey, 10)
+			paramsPersonalDataDelete["rec_status"] = "0"
+			paramsPersonalDataDelete["rec_deleted_date"] = time.Now().Format(dateLayout)
+			paramsPersonalDataDelete["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+			_, err = models.UpdateOaPersonalData(paramsPersonalDataDelete)
+			if err != nil {
+				tx.Rollback()
+				// log.Error("Error update personal data delete")
+				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
+			}
+
 			paramsUserMessage := make(map[string]string)
 			paramsUserMessage["umessage_type"] = "245"
 			strUserLoginKey := strconv.FormatUint(*oareq.UserLoginKey, 10)
@@ -1896,8 +2029,77 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			paramsUserMessage["umessage_sender_key"] = strKey
 			paramsUserMessage["umessage_sent_date"] = time.Now().Format(dateLayout)
 			paramsUserMessage["flag_sent"] = "1"
-			subject := "Selamat! Pengkinian Data telah Disetujui"
-			body := "Saat ini pengkinian data kamu sudah disetujui. Yuk investasi sekarang juga."
+			var subject string
+			body := check2notes + " Silakan menghubungi Customer Service untuk informasi lebih lanjut."
+			paramsUserMessage["umessage_body"] = body
+			if oareq.CustomerKey == nil { //NEW OA
+				paramsUserMessage["umessage_subject"] = "Pembukaan Rekening kamu ditolak"
+				subject = "Pembukaan Rekening kamu ditolak"
+			} else {
+				paramsUserMessage["umessage_subject"] = "Pengkinian Data kamu ditolak"
+				subject = "Pengkinian Data kamu ditolak"
+			}
+			log.Println(subject)
+			paramsUserMessage["umessage_body"] = body
+			paramsUserMessage["umessage_category"] = "248"
+			paramsUserMessage["flag_archieved"] = "0"
+			paramsUserMessage["archieved_date"] = time.Now().Format(dateLayout)
+			paramsUserMessage["rec_status"] = "1"
+			paramsUserMessage["rec_created_date"] = time.Now().Format(dateLayout)
+			paramsUserMessage["rec_created_by"] = strKey
+			status, err = models.CreateScUserMessage(paramsUserMessage)
+			if err != nil {
+				tx.Rollback()
+				// log.Error("Error create user message")
+			}
+
+			SentEmailRejectOaPengkinianToCustomer(oareq, oapersonal, check2notes)
+			getCust := make(map[string]string)
+			getCust["oa_request_key"] = oarequestkey
+			customerData := models.GetCustomerDetailWithParams(getCust)
+			sendOneSignal := make(map[string]string)
+			if customerData.TokenNotif != nil {
+				sendOneSignal["token_notif"] = *customerData.TokenNotif
+			}
+			sendOneSignal["phone_number"] = *customerData.Phone
+			sendOneSignal["description"] = subject
+			err = lib.CreateNotifOneSignal(sendOneSignal)
+			if err != nil {
+				log.Println(err.Error())
+			}
+			// lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
+		}
+
+		tx.Commit()
+
+	} else { // JIKA REQUEST TIPE PENGKINIAN RISK PROFILE
+
+		if oastatus == "260" { //JIKA REQUEST DI APPROVE
+
+			paramOaUpdate := make(map[string]string)
+			paramOaUpdate["oa_request_key"] = oarequestkey
+			paramOaUpdate["oa_status"] = "261" // Customer_Build
+			_, err = models.UpdateOaRequest(paramOaUpdate)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+			}
+
+			subject := "Selamat! pengkinian profil risiko telah disetujui"
+			body := "Saat ini pengkinian profil risiko kamu sudah disetujui. Yuk investasi sekarang juga."
+			paramsUserMessage := make(map[string]string)
+			paramsUserMessage["umessage_type"] = "245"
+			strUserLoginKey := strconv.FormatUint(*oareq.UserLoginKey, 10)
+			if oareq.UserLoginKey != nil {
+				paramsUserMessage["umessage_recipient_key"] = strUserLoginKey
+			} else {
+				paramsUserMessage["umessage_recipient_key"] = "0"
+			}
+			paramsUserMessage["umessage_receipt_date"] = time.Now().Format(dateLayout)
+			paramsUserMessage["flag_read"] = "0"
+			paramsUserMessage["umessage_sender_key"] = strKey
+			paramsUserMessage["umessage_sent_date"] = time.Now().Format(dateLayout)
+			paramsUserMessage["flag_sent"] = "1"
 			paramsUserMessage["umessage_subject"] = subject
 			paramsUserMessage["umessage_body"] = body
 			paramsUserMessage["umessage_category"] = "248"
@@ -1906,159 +2108,74 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			paramsUserMessage["rec_status"] = "1"
 			paramsUserMessage["rec_created_date"] = time.Now().Format(dateLayout)
 			paramsUserMessage["rec_created_by"] = strKey
-
 			status, err = models.CreateScUserMessage(paramsUserMessage)
 			if err != nil {
-				tx.Rollback()
-				// log.Error("Error create user message")
-				return lib.CustomError(status, err.Error(), "failed input data")
+				// tx.Rollback()
+				log.Println(err.Error())
 			}
-			lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
 
-			//UPDATE SC_USER_LOGIN
-			paramsScUserLogin := make(map[string]string)
-			paramsScUserLogin["user_login_key"] = strUserLoginKey
-			paramsScUserLogin["ulogin_name"] = oapersonal.EmailAddress
-			paramsScUserLogin["ulogin_full_name"] = oapersonal.EmailAddress
-			paramsScUserLogin["ulogin_email"] = oapersonal.EmailAddress
-			paramsScUserLogin["ulogin_mobileno"] = oapersonal.PhoneMobile
-			paramsScUserLogin["rec_modified_date"] = time.Now().Format(dateLayout)
-			paramsScUserLogin["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-
-			_, err = models.UpdateScUserLogin(paramsScUserLogin)
+			getCust := make(map[string]string)
+			getCust["oa_request_key"] = oarequestkey
+			customerData := models.GetCustomerDetailWithParams(getCust)
+			sendOneSignal := make(map[string]string)
+			if customerData.TokenNotif != nil {
+				sendOneSignal["token_notif"] = *customerData.TokenNotif
+			}
+			sendOneSignal["phone_number"] = *customerData.Phone
+			sendOneSignal["description"] = subject
+			err = lib.CreateNotifOneSignal(sendOneSignal)
 			if err != nil {
-				// log.Error("Error update user data")
-				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
+				log.Println(err.Error())
 			}
 
-			paramOaUpdate := make(map[string]string)
-			paramOaUpdate["oa_request_key"] = oarequestkey
-			paramOaUpdate["oa_status"] = "261" // Customer_Build
-			_, err = models.UpdateOaRequest(paramOaUpdate)
+		} else {
+
+			paramsUserMessage := make(map[string]string)
+			paramsUserMessage["umessage_type"] = "245"
+			strUserLoginKey := strconv.FormatUint(*oareq.UserLoginKey, 10)
+			if oareq.UserLoginKey != nil {
+				paramsUserMessage["umessage_recipient_key"] = strUserLoginKey
+			} else {
+				paramsUserMessage["umessage_recipient_key"] = "0"
+			}
+			paramsUserMessage["umessage_receipt_date"] = time.Now().Format(dateLayout)
+			paramsUserMessage["flag_read"] = "0"
+			paramsUserMessage["umessage_sender_key"] = strKey
+			paramsUserMessage["umessage_sent_date"] = time.Now().Format(dateLayout)
+			paramsUserMessage["flag_sent"] = "1"
+			var subject string
+			subject = "Pengkinian Data kamu ditolak"
+			body := check2notes + " Silakan menghubungi Customer Service untuk informasi lebih lanjut."
+			paramsUserMessage["umessage_body"] = body
+			paramsUserMessage["umessage_subject"] = "Pengkinian Data kamu ditolak"
+			paramsUserMessage["umessage_body"] = body
+			paramsUserMessage["umessage_category"] = "248"
+			paramsUserMessage["flag_archieved"] = "0"
+			paramsUserMessage["archieved_date"] = time.Now().Format(dateLayout)
+			paramsUserMessage["rec_status"] = "1"
+			paramsUserMessage["rec_created_date"] = time.Now().Format(dateLayout)
+			paramsUserMessage["rec_created_by"] = strKey
+			status, err = models.CreateScUserMessage(paramsUserMessage)
+			if err != nil {
+				// tx.Rllback()
+				log.Println(err.Error())
+			}
+
+			getCust := make(map[string]string)
+			getCust["oa_request_key"] = oarequestkey
+			customerData := models.GetCustomerDetailWithParams(getCust)
+			sendOneSignal := make(map[string]string)
+			if customerData.TokenNotif != nil {
+				sendOneSignal["token_notif"] = *customerData.TokenNotif
+			}
+			sendOneSignal["phone_number"] = *customerData.Phone
+			sendOneSignal["description"] = subject
+			err = lib.CreateNotifOneSignal(sendOneSignal)
 			if err != nil {
 				log.Println(err.Error())
 			}
 
 		}
-
-		//delete all ms_customer_bank_account by customer
-		deleteParam := make(map[string]string)
-		deleteParam["rec_status"] = "0"
-		deleteParam["rec_modified_date"] = time.Now().Format(dateLayout)
-		deleteParam["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-		deleteParam["rec_deleted_date"] = time.Now().Format(dateLayout)
-		deleteParam["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-		_, err = models.UpdateDataByField(deleteParam, "customer_key", customerKey)
-		if err != nil {
-			// log.Error("Error delete all ms_customer_bank_account")
-		}
-		//create all ms_customer_bank_account by oa_req_key
-		var accBank []models.OaRequestByField
-		status, err = models.GetOaRequestBankByField(&accBank, "oa_request_key", strconv.FormatUint(oareq.OaRequestKey, 10))
-		if err != nil {
-			// log.Error(err.Error())
-		}
-		if len(accBank) > 0 {
-			var bindVarMsBank []interface{}
-			for _, value := range accBank {
-				var row []string
-				row = append(row, customerKey)                                  //customer_key
-				row = append(row, strconv.FormatUint(value.BankAccountKey, 10)) //bank_account_key
-				row = append(row, strconv.FormatUint(value.FlagPriority, 10))   //flag_priority
-				row = append(row, *value.AccountHolderName)                     //bank_account_name
-				row = append(row, "1")                                          //rec_status
-				row = append(row, time.Now().Format(dateLayout))                //rec_created_date
-				row = append(row, strconv.FormatUint(lib.Profile.UserID, 10))   //rec_created_by
-				bindVarMsBank = append(bindVarMsBank, row)
-			}
-			_, err = models.CreateMultipleMsCustomerBankkAccount(bindVarMsBank)
-			if err != nil {
-				// log.Error("========== FAILED CREATE MS CUSTOMER BANK ACCOUNT ==========" + err.Error())
-				return lib.CustomError(status, err.Error(), "failed input data")
-			}
-		}
-	} else { //reject
-		//create user message
-		paramsUserMessage := make(map[string]string)
-		paramsUserMessage["umessage_type"] = "245"
-		strUserLoginKey := strconv.FormatUint(*oareq.UserLoginKey, 10)
-		if oareq.UserLoginKey != nil {
-			paramsUserMessage["umessage_recipient_key"] = strUserLoginKey
-		} else {
-			paramsUserMessage["umessage_recipient_key"] = "0"
-		}
-		paramsUserMessage["umessage_receipt_date"] = time.Now().Format(dateLayout)
-		paramsUserMessage["flag_read"] = "0"
-		paramsUserMessage["umessage_sender_key"] = strKey
-		paramsUserMessage["umessage_sent_date"] = time.Now().Format(dateLayout)
-		paramsUserMessage["flag_sent"] = "1"
-		var subject string
-		body := check2notes + " Silakan menghubungi Customer Service untuk informasi lebih lanjut."
-		paramsUserMessage["umessage_body"] = body
-		if oareq.CustomerKey == nil { //NEW OA
-			paramsUserMessage["umessage_subject"] = "Pembukaan Rekening kamu ditolak"
-			subject = "Pembukaan Rekening kamu ditolak"
-		} else {
-			paramsUserMessage["umessage_subject"] = "Pengkinian Data kamu ditolak"
-			subject = "Pengkinian Data kamu ditolak"
-		}
-		paramsUserMessage["umessage_body"] = body
-		paramsUserMessage["umessage_category"] = "248"
-		paramsUserMessage["flag_archieved"] = "0"
-		paramsUserMessage["archieved_date"] = time.Now().Format(dateLayout)
-		paramsUserMessage["rec_status"] = "1"
-		paramsUserMessage["rec_created_date"] = time.Now().Format(dateLayout)
-		paramsUserMessage["rec_created_by"] = strKey
-
-		status, err = models.CreateScUserMessage(paramsUserMessage)
-		if err != nil {
-			tx.Rollback()
-			// log.Error("Error create user message")
-		}
-		lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
-
-		//SET REC STATUS = 0, oa_request, oa_personal_data,
-		//delete OA = udah di atas
-		//delete personal data
-		paramsPersonalDataDelete := make(map[string]string)
-		paramsPersonalDataDelete["personal_data_key"] = strconv.FormatUint(oapersonal.PersonalDataKey, 10)
-		paramsPersonalDataDelete["rec_status"] = "0"
-		paramsPersonalDataDelete["rec_deleted_date"] = time.Now().Format(dateLayout)
-		paramsPersonalDataDelete["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-
-		_, err = models.UpdateOaPersonalData(paramsPersonalDataDelete)
-		if err != nil {
-			tx.Rollback()
-			// log.Error("Error update personal data delete")
-			return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
-		}
-
-		if oareq.CustomerKey == nil { //NEW OA -> delete sc_user_login
-			//UPDATE SC_USER_LOGIN
-			// paramsScUserLogin := make(map[string]string)
-			// paramsScUserLogin["user_login_key"] = strUserLoginKey
-			// paramsScUserLogin["rec_status"] = "0"
-			// paramsScUserLogin["rec_deleted_date"] = time.Now().Format(dateLayout)
-			// paramsScUserLogin["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-
-			// _, err = models.UpdateScUserLogin(paramsScUserLogin)
-			// if err != nil {
-			// 	tx.Rollback()
-			// 	// log.Error("Error update user login delete")
-			// 	return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
-			// }
-
-			// _, err = models.UpdateScUserLogin(paramsScUserLogin)
-			// if err != nil {
-			// 	// log.Error("Error update user data")
-			// 	return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
-			// }
-		}
-		//Sent Email Reject ke customer
-		SentEmailRejectOaPengkinianToCustomer(oareq, oapersonal, check2notes)
-		lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
-
-		tx.Commit()
 
 	}
 

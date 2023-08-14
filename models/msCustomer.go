@@ -1153,18 +1153,21 @@ type GetCustomerDetail struct {
 	Phone        *string `db:"phone" json:"phone"`
 	Cif          *string `db:"cif" json:"cif"`
 	Sid          *string `db:"sid" json:"sid"`
+	TokenNotif   *string `db:"token_notif" json:"token_notif"`
 }
 
 func GetCustomerDetailWithParams(param map[string]string) GetCustomerDetail {
 	query := `SELECT t2.user_login_key, c.customer_key, t2.oa_request_key, pd.full_name ,t2.email, t2.phone, 
-	c.unit_holder_idno AS cif, c.sid_no AS sid
+	c.unit_holder_idno AS cif, c.sid_no AS sid, t2.token_notif
 	FROM ms_customer AS c 
 	INNER JOIN (
 		SELECT b2.user_login_key, MAX(b1.oa_request_key) AS oa_request_key, 
-		b1.customer_key, b2.ulogin_email AS email, b2.ulogin_mobileno AS phone
+		b1.customer_key, b2.ulogin_email AS email, b2.ulogin_mobileno AS phone,
+		b2.token_notif
 		FROM oa_request b1 
 		INNER JOIN sc_user_login b2 ON b2.user_login_key = b1.user_login_key
-		WHERE b1.oa_request_type IN (127,296) AND b1.rec_status = 1 GROUP BY b1.customer_key
+		WHERE b1.oa_request_type IN (127,296) AND b1.oa_status IN (260,261,262) 
+		AND b1.rec_status = 1 GROUP BY b1.customer_key
 	) AS t2 ON c.customer_key = t2.customer_key
 	INNER JOIN oa_personal_data AS pd ON pd.oa_request_key = t2.oa_request_key
 	WHERE c.rec_status = 1`
@@ -1182,6 +1185,7 @@ func GetCustomerDetailWithParams(param map[string]string) GetCustomerDetail {
 	}
 
 	var result GetCustomerDetail
+	log.Println("GetCustomerDetailWithParams", query)
 	err := db.Db.Get(&result, query)
 	if err != nil {
 		log.Println(err.Error())

@@ -1,9 +1,14 @@
 package lib
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"mf-bo-api/config"
 	"mf-bo-api/models"
+	"net/http"
+	"strings"
 
 	"github.com/tbalthazar/onesignal-go"
 )
@@ -97,4 +102,76 @@ func BlastAllNotificationHelper(playerIDs []string, heading string, content stri
 		return createRes
 	}
 	return createRes
+}
+
+func CreateNotifOneSignal(params map[string]string) error { // INI YANG DIPAKE UNTUK HIT ONESIGNAL
+	curlParam := make(map[string]interface{})
+
+	var TokenNotif string
+	if valueMap, ok := params["token_notif"]; ok {
+		TokenNotif = valueMap
+	} else {
+		return fmt.Errorf("missing token_notif")
+	}
+
+	var PhoneNumber string
+	if valueMap, ok := params["phone_number"]; ok {
+		PhoneNumber = valueMap
+	} else {
+		return fmt.Errorf("missing phone_number")
+	}
+
+	var Description string
+	if valueMap, ok := params["description"]; ok {
+		Description = valueMap
+	} else {
+		return fmt.Errorf("missing description")
+	}
+
+	if TokenNotif != "" {
+		include_player_id := [...]string{TokenNotif}
+		curlParam["include_player_ids"] = include_player_id
+	}
+	external_user_id := [...]string{PhoneNumber}
+	included_segments := [...]string{"Active User"}
+	contentsMap := make(map[string]string)
+	contentsMap["en"] = Description
+
+	curlParam["app_id"] = config.OneSignalAppID
+	curlParam["include_external_user_ids"] = external_user_id
+	curlParam["chanel_for_external_user_ids"] = "push"
+	curlParam["included_segments"] = included_segments
+	curlParam["contents"] = contentsMap
+
+	jsonString, err := json.Marshal(curlParam)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	log.Println("HIT ONESIGNAL WITH PARAMETER:", string(jsonString))
+
+	payload := strings.NewReader(string(jsonString))
+	url := "https://onesignal.com/api/v1/notifications"
+	req, err := http.NewRequest("POST", url, payload)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	req.Header.Add("accept", "application/json")
+	req.Header.Add("content-type", "application/json")
+	req.Header.Add("Authorization", "Basic "+config.OneSignalAppKey)
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	defer res.Body.Close()
+	_, err = io.ReadAll(res.Body)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	return nil
 }
