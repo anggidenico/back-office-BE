@@ -1506,7 +1506,7 @@ func UpdateStatusApprovalCS(c echo.Context) error {
 			} else {
 
 				getCust := make(map[string]string)
-				getCust["oa_request_key"] = oarequestkey
+				getCust["user_login_key"] = strconv.FormatUint(*oareq.UserLoginKey, 10)
 				customerData := models.GetCustomerDetailWithParams(getCust)
 
 				sendOneSignal := make(map[string]string)
@@ -1831,7 +1831,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 						return lib.CustomError(status, err.Error(), "failed input data")
 					}
 					getCust := make(map[string]string)
-					getCust["oa_request_key"] = oarequestkey
+					getCust["user_login_key"] = strconv.FormatUint(*oareq.UserLoginKey, 10)
 					customerData := models.GetCustomerDetailWithParams(getCust)
 					sendOneSignal := make(map[string]string)
 					if customerData.TokenNotif != nil {
@@ -2055,7 +2055,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 
 			SentEmailRejectOaPengkinianToCustomer(oareq, oapersonal, check2notes)
 			getCust := make(map[string]string)
-			getCust["oa_request_key"] = oarequestkey
+			getCust["user_login_key"] = strconv.FormatUint(*oareq.UserLoginKey, 10)
 			customerData := models.GetCustomerDetailWithParams(getCust)
 			sendOneSignal := make(map[string]string)
 			if customerData.TokenNotif != nil {
@@ -2115,7 +2115,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			}
 
 			getCust := make(map[string]string)
-			getCust["oa_request_key"] = oarequestkey
+			getCust["user_login_key"] = strconv.FormatUint(*oareq.UserLoginKey, 10)
 			customerData := models.GetCustomerDetailWithParams(getCust)
 			sendOneSignal := make(map[string]string)
 			if customerData.TokenNotif != nil {
@@ -2162,7 +2162,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 			}
 
 			getCust := make(map[string]string)
-			getCust["oa_request_key"] = oarequestkey
+			getCust["user_login_key"] = strconv.FormatUint(*oareq.UserLoginKey, 10)
 			customerData := models.GetCustomerDetailWithParams(getCust)
 			sendOneSignal := make(map[string]string)
 			if customerData.TokenNotif != nil {

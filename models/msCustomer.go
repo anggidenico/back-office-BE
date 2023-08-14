@@ -1172,9 +1172,9 @@ func GetCustomerDetailWithParams(param map[string]string) GetCustomerDetail {
 	INNER JOIN oa_personal_data AS pd ON pd.oa_request_key = t2.oa_request_key
 	WHERE c.rec_status = 1`
 
-	if valueMap, ok := param["oa_request_key"]; ok {
-		query += ` AND t2.oa_request_key = ` + valueMap
-	}
+	// if valueMap, ok := param["oa_request_key"]; ok {
+	// 	query += ` AND t2.oa_request_key = ` + valueMap
+	// }
 
 	if valueMap, ok := param["customer_key"]; ok {
 		query += ` AND t2.customer_key = ` + valueMap
