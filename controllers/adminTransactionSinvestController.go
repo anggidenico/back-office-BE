@@ -41,6 +41,7 @@ func DownloadTransactionFormatSinvest(c echo.Context) error {
 	var transTypeKeySubRed []string
 	transTypeKeySubRed = append(transTypeKeySubRed, "1")
 	transTypeKeySubRed = append(transTypeKeySubRed, "2")
+	transTypeKeySubRed = append(transTypeKeySubRed, "13")
 
 	var transTypeKeySwitch []string
 	transTypeKeySwitch = append(transTypeKeySwitch, "4")
@@ -209,7 +210,7 @@ func DownloadTransactionFormatSinvest(c echo.Context) error {
 			strTransTypeKey := strconv.FormatUint(trSubRed.TransTypeKey, 10)
 
 			subred.AmountNominal = ""
-			if strTransTypeKey == "1" { //SUB
+			if strTransTypeKey == "1" || strTransTypeKey == "13" { //SUB
 				if trSubRed.TransAmount.Cmp(zero) == 1 {
 					// strTransAmount := fmt.Sprintf("%.2f", trSubRed.TransAmount)
 					subred.AmountNominal = trSubRed.TransAmount.String()

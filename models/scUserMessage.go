@@ -65,29 +65,19 @@ type ScUserMessage struct {
 
 func CreateScUserMessage(params map[string]string) (int, error) {
 	query := "INSERT INTO sc_user_message"
-	// Get params
 	var fields, values string
 	var bindvars []interface{}
 	for key, value := range params {
 		fields += key + ", "
-		values += "?, "
+		values += " '" + value + "', "
 		bindvars = append(bindvars, value)
 	}
 	fields = fields[:(len(fields) - 2)]
 	values = values[:(len(values) - 2)]
 
-	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	// log.Println("==========  ==========>>>", query)
 
-	tx, err := db.Db.Begin()
-	if err != nil {
-		// log.Error(err)
-		return http.StatusBadGateway, err
-	}
-
-	_, err = tx.Exec(query, bindvars...)
-	tx.Commit()
+	_, err := db.Db.Exec(query)
 	if err != nil {
 		// log.Error(err)
 		return http.StatusBadRequest, err

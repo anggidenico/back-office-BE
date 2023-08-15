@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
+	"log"
 	"math"
 	"mf-bo-api/config"
 	"mf-bo-api/lib"
@@ -3011,7 +3012,7 @@ func ProsesPosting(c echo.Context) error {
 		// strAvgNav := fmt.Sprintf("%g", countAvgNavBalance)
 		paramsBalance["avg_nav"] = countAvgNavBalance.String()
 		//end calculate avg_nag tr_balance
-
+		log.Println("CreateTrBalance")
 		status, err := models.CreateTrBalance(paramsBalance)
 		if err != nil {
 			// log.Error(err.Error())
@@ -3086,6 +3087,7 @@ func ProsesPosting(c echo.Context) error {
 				paramsBalance["rec_status"] = "1"
 				paramsBalance["rec_created_date"] = time.Now().Format(dateLayout)
 				paramsBalance["rec_created_by"] = strIDUserLogin
+				log.Println("CreateTrBalance")
 				status, err := models.CreateTrBalance(paramsBalance)
 				if err != nil {
 					// log.Error(err.Error())
@@ -3103,7 +3105,7 @@ func ProsesPosting(c echo.Context) error {
 	params["posted_date"] = time.Now().Format(dateLayout)
 	params["rec_modified_by"] = strIDUserLogin
 	params["rec_modified_date"] = time.Now().Format(dateLayout)
-
+	log.Println("UpdateTrTransaction")
 	_, err = models.UpdateTrTransaction(params)
 	if err != nil {
 		// log.Error("Error update tr transaction")
@@ -3182,9 +3184,20 @@ func ProsesPosting(c echo.Context) error {
 					// log.Error("Error create user message")
 					return lib.CustomError(status, err.Error(), "failed input data user message")
 				}
-				lib.CreateNotifCustomerFromAdminByUserLoginKey(strUserLoginKey, subject, body, "TRANSACTION")
-
 				sendEmailTransactionPosted(transaction, transactionConf, userLogin, strCustomerKey, strTransTypeKey)
+				getCust := make(map[string]string)
+				getCust["customer_key"] = strCustomerKey
+				customerData := models.GetCustomerDetailWithParams(getCust)
+				sendOneSignal := make(map[string]string)
+				if customerData.TokenNotif != nil {
+					sendOneSignal["token_notif"] = *customerData.TokenNotif
+				}
+				sendOneSignal["phone_number"] = *customerData.Phone
+				sendOneSignal["description"] = subject
+				err = lib.CreateNotifOneSignal(sendOneSignal)
+				if err != nil {
+					log.Println(err.Error())
+				}
 			} else if customer.InvestorType == "264" { //institusi
 				SentEmailTransactionInstitutionPostingBackOfficeToUserCcSales(transactionkey, strCustomerKey)
 			}

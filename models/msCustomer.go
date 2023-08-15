@@ -1184,6 +1184,7 @@ func GetCustomerDetailWithParams(param map[string]string) GetCustomerDetail {
 		query += ` AND t2.user_login_key = ` + valueMap
 	}
 
+
 	var result GetCustomerDetail
 	log.Println("GetCustomerDetailWithParams", query)
 	err := db.Db.Get(&result, query)
