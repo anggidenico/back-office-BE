@@ -1606,19 +1606,6 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_request_key", "Wrong input for parameter: oa_request_key")
 	}
 
-	oarisklevel := c.FormValue("oa_risk_level")
-	if oarisklevel == "" {
-		// log.Error("Missing required parameter: oa_risk_level")
-		return lib.CustomError(http.StatusBadRequest)
-	}
-	n, err = strconv.ParseUint(oarisklevel, 10, 64)
-	if err == nil && n > 0 {
-		params["oa_risk_level"] = oarisklevel
-	} else {
-		// log.Error("Wrong input for parameter: oa_risk_level")
-		return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_risk_level", "Wrong input for parameter: oa_risk_level")
-	}
-
 	params["check2_date"] = time.Now().Format(dateLayout)
 	params["rec_modified_date"] = time.Now().Format(dateLayout)
 	params["rec_modified_by"] = strKey
@@ -1636,6 +1623,22 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 	status, err = models.GetOaRequest(&oareq, oarequestkey)
 	if err != nil {
 		return lib.CustomError(status)
+	}
+
+	oarisklevel := c.FormValue("oa_risk_level")
+
+	if *oareq.OaRequestType != uint64(lib.OA_REQ_TYPE_PENGKINIAN_RISIKO_INT) {
+		if oarisklevel == "" {
+			// log.Error("Missing required parameter: oa_risk_level")
+			return lib.CustomError(http.StatusBadRequest)
+		}
+		n, err = strconv.ParseUint(oarisklevel, 10, 64)
+		if err == nil && n > 0 {
+			params["oa_risk_level"] = oarisklevel
+		} else {
+			// log.Error("Wrong input for parameter: oa_risk_level")
+			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: oa_risk_level", "Wrong input for parameter: oa_risk_level")
+		}
 	}
 
 	strOaKey := strconv.FormatUint(*oareq.Oastatus, 10)
