@@ -958,7 +958,7 @@ func GetTransactionDetail(c echo.Context) error {
 	if transaction.RiskWaiver > 0 {
 		responseData.RiskWaiver = true
 	}
-	responseData.FileUploadDate = transaction.FileUploadDate
+	// responseData.FileUploadDate = transaction.FileUploadDate
 	responseData.ProceedDate = transaction.ProceedDate
 	responseData.ProceedAmount = transaction.ProceedAmount
 	responseData.SentDate = transaction.SentDate
@@ -1207,19 +1207,17 @@ func GetTransactionDetail(c echo.Context) error {
 		}
 	}
 
-	paramsFile := make(map[string]string)
-	paramsFile["ref_fk_key"] = strconv.FormatUint(transaction.TransactionKey, 10)
-	paramsFile["ref_fk_domain"] = "tr_transaction"
-	paramsFile["rec_status"] = "1"
-	var filez []models.MsFile
-	_, err = models.GetAllMsFile(&filez, 100, 100, paramsFile, true)
-	// // log.Println("========== jumlah record ==========", len(filez))
-	if len(filez) > 0 {
-		// log.Println("========== sudah upload bukti trf ==========")
-		for _, fl := range filez {
-			aa := config.ImageUrl + *fl.FilePath
+	prmGetFile := make(map[string]string)
+	prmGetFile["ref_fk_domain"] = "tr_transaction"
+	prmGetFile["ref_fk_key"] = strTrKey
+	var fls []models.MsFileModels
+	status, err = models.GetMsFileDataWithCondition(&fls, prmGetFile)
+	if len(fls) > 0 {
+		for _, fl := range fls {
+			aa := config.ImageUrl + fl.FilePath
 			responseData.UrlUpload = append(responseData.UrlUpload, &aa)
 		}
+		responseData.FileUploadDate = &fls[0].RecCreatedDate
 	}
 
 	var response lib.Response
