@@ -77,6 +77,7 @@ func GetPengkinianRiskProfileList(c echo.Context) error {
 func GetPengkinianRiskProfileDetails(c echo.Context) error {
 	// var err error
 	var responseData models.RiskProfileDetailResponse
+	layout := "02 Jan 2006 15:04"
 
 	OaRequestKey := c.Param("key")
 	if OaRequestKey == "" {
@@ -91,9 +92,11 @@ func GetPengkinianRiskProfileDetails(c echo.Context) error {
 	QuizResult := models.GetRiskProfileQuizResult(OaRequestKey)
 	responseData.RiskProfileQuizResult = QuizResult
 
+	t2, _ := time.Parse(lib.TIMESTAMPFORMAT, QuizResult.OaDate)
+	OaDate := t2.Format(layout)
+	responseData.OaDate = OaDate
 	responseData.Cif = QuizResult.Cif
 	responseData.FullName = QuizResult.FullName
-	responseData.OaDate = QuizResult.OaDate
 	responseData.OaSource = QuizResult.OaSource
 	responseData.OaStatus = QuizResult.OaStatus
 
