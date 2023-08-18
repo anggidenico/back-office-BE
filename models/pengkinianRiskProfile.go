@@ -21,6 +21,9 @@ type RiskProfileListModels struct {
 type RiskProfileDetailResponse struct {
 	Cif                   string                        `json:"cif"`
 	FullName              string                        `json:"full_name"`
+	OaStatus              string                        `json:"oa_status"`
+	OaDate                string                        `json:"oa_date"`
+	OaSource              *string                       `json:"oa_source"`
 	RiskProfileQuizAnswer []RiskProfileQuizAnswerModels `json:"risk_profile_quiz_answer"`
 	RiskProfileQuizResult RiskProfileQuizResultModels   `json:"risk_profile_quiz_result"`
 }
@@ -32,13 +35,16 @@ type RiskProfileQuizAnswerModels struct {
 }
 
 type RiskProfileQuizResultModels struct {
-	Cif            string `db:"cif" json:"cif"`
-	FullName       string `db:"full_name" json:"full_name"`
-	ScoreResult    uint64 `db:"score_result" json:"score_result"`
-	RiskName       string `db:"risk_name" json:"risk_name"`
-	RiskDesc       string `db:"risk_desc" json:"risk_desk"`
-	RiskCode       string `db:"risk_code" json:"risk_code"`
-	RiskProfileKey uint64 `db:"risk_profile_key" json:"risk_profile_key"`
+	OaStatus       string  `db:"oa_status" json:"oa_status"`
+	OaDate         string  `db:"oa_date" json:"oa_date"`
+	OaSource       *string `db:"oa_source" json:"oa_source"`
+	Cif            string  `db:"cif" json:"cif"`
+	FullName       string  `db:"full_name" json:"full_name"`
+	ScoreResult    uint64  `db:"score_result" json:"score_result"`
+	RiskName       string  `db:"risk_name" json:"risk_name"`
+	RiskDesc       string  `db:"risk_desc" json:"risk_desk"`
+	RiskCode       string  `db:"risk_code" json:"risk_code"`
+	RiskProfileKey uint64  `db:"risk_profile_key" json:"risk_profile_key"`
 }
 
 func GetPengkinianRiskProfileListQuery(c *[]RiskProfileListModels, backOfficeRole uint64, limit uint64, offset uint64) int {
@@ -123,8 +129,11 @@ func GetQuizQuestionAnswerQuery(OaRequestKey string) []RiskProfileQuizAnswerMode
 
 func GetRiskProfileQuizResult(OaRequestKey string) RiskProfileQuizResultModels {
 	query := `SELECT t2.score_result, t3.risk_name, t3.risk_desc, t3.risk_code, t3.risk_profile_key,
-	t5.unit_holder_idno AS cif, t5.full_name
-	FROM oa_request t1 
+	t5.unit_holder_idno AS cif, t5.full_name, src.lkp_name AS oa_source, t1.oa_entry_start AS oa_date, 
+	stt.lkp_name AS oa_status
+	FROM oa_request t1
+	LEFT JOIN gen_lookup src ON t1.oa_source = src.lookup_key
+	LEFT JOIN gen_lookup stt ON t1.oa_status = stt.lookup_key
 	INNER JOIN oa_risk_profile t2 ON t2.oa_request_key = t1.oa_request_key
 	INNER JOIN ms_risk_profile t3 ON t3.risk_profile_key = t2.risk_profile_key
 	INNER JOIN sc_user_login t4 ON t1.user_login_key = t4.user_login_key
