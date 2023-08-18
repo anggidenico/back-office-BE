@@ -183,6 +183,7 @@ func GetThePersonalDataDetails(OaRequestKey string) models.PengkinianPersonalDat
 	OaData.SalesCode = getPersonalData.SalesCode
 	OaData.SiteReferrer = getPersonalData.SiteReferrer
 	OaData.SourceOfFund = getPersonalData.SourceOfFund
+	OaData.OaSource = getPersonalData.OaSource
 
 	PersonalDataKey := strconv.FormatUint(getPersonalData.PersonalDataKey, 10)
 

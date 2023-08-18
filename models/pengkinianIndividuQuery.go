@@ -26,6 +26,7 @@ type PengkinianPersonalDataResponse struct {
 	OaEntryStart           *string                 `db:"oa_entry_start" json:"oa_entry_start"`
 	OaEntryEnd             *string                 `db:"oa_entry_end" json:"oa_entry_end"`
 	OaStatus               *string                 `db:"oa_status" json:"oa_status"`
+	OaSource               *string                 `db:"oa_source" json:"oa_source"`
 	EmailAddress           *string                 `db:"email_address" json:"email_address"`
 	PhoneMobile            *string                 `db:"phone_mobile" json:"phone_mobile"`
 	PhoneHome              *string                 `db:"phone_home" json:"phone_home"`
@@ -87,6 +88,7 @@ type PengkinianPersonalDataModels struct {
 	OaEntryStart              *string `db:"oa_entry_start" json:"oa_entry_start"`
 	OaEntryEnd                *string `db:"oa_entry_end" json:"oa_entry_end"`
 	OaStatus                  *string `db:"oa_status" json:"oa_status"`
+	OaSource                  *string `db:"oa_source" json:"oa_source"`
 	EmailAddress              *string `db:"email_address" json:"email_address"`
 	PhoneMobile               *string `db:"phone_mobile" json:"phone_mobile"`
 	PhoneHome                 *string `db:"phone_home" json:"phone_home"`
@@ -201,7 +203,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	t2.annual_income AS annual_income_key, t2.sourceof_fund AS sourceof_fund_key, 
 	t2.invesment_objectives AS invesment_objectives_key, t2.relation_occupation AS relation_occupation_key,
 	t2.relation_business_fields AS relation_business_fields_key, t2.religion AS religion_key, t2.education AS education_key,
-	t2.beneficial_relation AS beneficial_relation_key
+	t2.beneficial_relation AS beneficial_relation_key, src.lkp_name AS oa_source
 
 	FROM oa_request t1
 	LEFT JOIN oa_personal_data t2 ON t2.oa_request_key = t1.oa_request_key
@@ -236,6 +238,8 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	LEFT JOIN gen_lookup orst ON orst.lookup_key = t1.oa_status
 	LEFT JOIN gen_lookup bnr ON bnr.lookup_key = t2.beneficial_relation
 	LEFT JOIN gen_lookup pep ON pep.lookup_key = t2.pep_status
+	LEFT JOIN gen_lookup src ON src.lookup_key = t2.oa_source
+
 	
 	WHERE t1.rec_status = 1  AND t2.rec_status = 1 AND t1.oa_request_key = ` + oa_request_key
 
