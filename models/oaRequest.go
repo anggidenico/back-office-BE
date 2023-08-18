@@ -148,6 +148,7 @@ type OaRequestDetailResponse struct {
 	// RelationOccupationOther    *string              `json:"relation_occupation_other,omitempty"`
 	// RelationBusinessFieldOther *string              `json:"relation_business_fields_other,omitempty"`
 	SiteReferer *string `json:"site_referer"`
+	OaSource    *string `json:"oa_sourced"`
 }
 
 type Address struct {
