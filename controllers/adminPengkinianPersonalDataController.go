@@ -123,13 +123,22 @@ func GetThePersonalDataDetails(OaRequestKey string) models.PengkinianPersonalDat
 
 	layout := "02 Jan 2006 15:04"
 	layout2 := "02 Jan 2006"
+	var DateBirth string
+	var EntryStart string
+	var EntryEnd string
 
-	ts, _ := time.Parse(lib.TIMESTAMPFORMAT, *getPersonalData.DateBirth)
-	DateBirth := ts.Format(layout2)
-	t1, _ := time.Parse(lib.TIMESTAMPFORMAT, *getPersonalData.OaEntryStart)
-	EntryStart := t1.Format(layout)
-	t2, _ := time.Parse(lib.TIMESTAMPFORMAT, *getPersonalData.OaEntryEnd)
-	EntryEnd := t2.Format(layout)
+	if getPersonalData.DateBirth != nil {
+		ts, _ := time.Parse(lib.TIMESTAMPFORMAT, *getPersonalData.DateBirth)
+		DateBirth = ts.Format(layout2)
+	}
+	if getPersonalData.OaEntryStart != nil {
+		t1, _ := time.Parse(lib.TIMESTAMPFORMAT, *getPersonalData.OaEntryStart)
+		EntryStart = t1.Format(layout)
+	}
+	if getPersonalData.OaEntryEnd != nil {
+		t2, _ := time.Parse(lib.TIMESTAMPFORMAT, *getPersonalData.OaEntryEnd)
+		EntryEnd = t2.Format(layout)
+	}
 
 	OaData.Agent = getPersonalData.Agent
 	OaData.AnnualIncome = getPersonalData.AnnualIncome
