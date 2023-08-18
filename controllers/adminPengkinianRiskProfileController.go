@@ -93,6 +93,9 @@ func GetPengkinianRiskProfileDetails(c echo.Context) error {
 
 	responseData.Cif = QuizResult.Cif
 	responseData.FullName = QuizResult.FullName
+	responseData.OaDate = QuizResult.OaDate
+	responseData.OaSource = QuizResult.OaSource
+	responseData.OaStatus = QuizResult.OaStatus
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
