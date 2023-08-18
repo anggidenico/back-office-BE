@@ -572,7 +572,11 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 			oaRequestLookupIds = append(oaRequestLookupIds, strconv.FormatUint(*oareq.SiteReferer, 10))
 		}
 	}
-
+	if oareq.OaSource != nil {
+		if _, ok := lib.Find(oaRequestLookupIds, strconv.FormatUint(*oareq.OaSource, 10)); !ok {
+			oaRequestLookupIds = append(oaRequestLookupIds, strconv.FormatUint(*oareq.OaSource, 10))
+		}
+	}
 	//gen lookup oa request
 	var lookupOaReq []models.GenLookup
 	if len(oaRequestLookupIds) > 0 {
