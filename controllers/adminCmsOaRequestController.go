@@ -2061,7 +2061,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 				paramsUserMessage["umessage_subject"] = "Pengkinian Data kamu ditolak"
 				subject = "Pengkinian Data kamu ditolak"
 			}
-			log.Println(subject)
+			// log.Println(subject)
 			paramsUserMessage["umessage_body"] = body
 			paramsUserMessage["umessage_category"] = "248"
 			paramsUserMessage["flag_archieved"] = "0"

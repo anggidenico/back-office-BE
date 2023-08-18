@@ -84,7 +84,7 @@ func GetPengkinianRiskProfileListQuery(c *[]RiskProfileListModels, backOfficeRol
 	}
 
 	// EXECUTE DATANYA
-	log.Println(query)
+	// log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())

@@ -268,7 +268,7 @@ func GetOaRequestBankAccountNew(c *[]OaRequestBankDetails, oaRequestKey string) 
 	INNER JOIN ms_bank a3 ON a2.bank_key = a3.bank_key 
 	WHERE a1.rec_status = 1 AND a1.oa_request_key = ` + oaRequestKey
 
-	log.Println(query)
+	// log.Println(query)
 
 	err := db.Db.Select(c, query)
 	if err != nil {
