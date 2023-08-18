@@ -238,7 +238,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	LEFT JOIN gen_lookup orst ON orst.lookup_key = t1.oa_status
 	LEFT JOIN gen_lookup bnr ON bnr.lookup_key = t2.beneficial_relation
 	LEFT JOIN gen_lookup pep ON pep.lookup_key = t2.pep_status
-	LEFT JOIN gen_lookup src ON src.lookup_key = t2.oa_source
+	LEFT JOIN gen_lookup src ON src.lookup_key = t1.oa_source
 
 	
 	WHERE t1.rec_status = 1  AND t2.rec_status = 1 AND t1.oa_request_key = ` + oa_request_key
