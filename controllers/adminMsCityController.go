@@ -155,7 +155,7 @@ func AdminGetListMsCity(c echo.Context) error {
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter order_by", "Wrong input for parameter order_by")
 		}
 	} else {
-		params["orderBy"] = "c.city_level"
+		params["orderBy"] = "c.city_key"
 		params["orderType"] = "ASC"
 	}
 
