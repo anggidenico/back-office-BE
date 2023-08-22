@@ -204,7 +204,7 @@ func AdminGetListCity(c *[]ListCity, limit uint64, offset uint64, params map[str
 	query += orderCondition + limitOffset
 
 	// Main query
-	log.Println("AdminGetListCity", query)
+	// log.Println("AdminGetListCity", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())
