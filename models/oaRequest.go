@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -399,8 +400,7 @@ func GetAllOaRequest(c *[]OaRequest, limit uint64, offset uint64, nolimit bool, 
 }
 
 func GetAllOaRequestIndividu(c *[]OaRequest, limit uint64, offset uint64, nolimit bool, params map[string]string, userID string) (int, error) {
-	query := `SELECT
-              oa_request.*
+	query := `SELECT oa_request.*
 			  FROM oa_request AS oa_request 
 			  INNER JOIN oa_personal_data AS pd ON pd.oa_request_key = oa_request.oa_request_key AND pd.rec_status = 1 
 			  WHERE oa_request.rec_created_by != "` + userID + `"`
@@ -449,7 +449,7 @@ func GetAllOaRequestIndividu(c *[]OaRequest, limit uint64, offset uint64, nolimi
 	}
 
 	// Main query
-	// log.Println("GetAllOaRequestIndividu", query)
+	log.Println("GetAllOaRequestIndividu", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
