@@ -135,7 +135,7 @@ func GetMsCityByParent(c *MsCity, key string) (int, error) {
 
 type ListCity struct {
 	CurrRateKey uint64  `db:"city_key"            json:"city_key"`
-	CouName     string  `db:"cou_name"            json:"cou_name"`
+	CouName     string  `db:"country_name"            json:"country_name"`
 	CityParent  *string `db:"city_parent"         json:"city_parent"`
 	CityName    string  `db:"city_name"           json:"city_name"`
 	CityCode    string  `db:"city_code"           json:"city_code"`
@@ -179,7 +179,7 @@ func AdminGetListCity(c *[]ListCity, limit uint64, offset uint64, params map[str
 
 	query := `SELECT 
 				c.city_key,
-				cou.cou_name,
+				cou.country_name,
 				par.city_name AS city_parent,
 				c.city_name,
 				c.city_code,
