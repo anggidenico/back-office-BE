@@ -207,7 +207,7 @@ func AdminGetListCity(c *[]ListCity, limit uint64, offset uint64, params map[str
 	log.Println("AdminGetListCity", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		// log.Println(err)
+		log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
 
@@ -237,7 +237,7 @@ func CountAdminGetCity(c *CountData, params map[string]string, searchLike string
 
 	if searchLike != "" {
 		condition += " AND"
-		condition += " (cou.cou_name like '%" + searchLike + "%' OR"
+		condition += " (cou.country_name like '%" + searchLike + "%' OR"
 		condition += " par.city_name like '%" + searchLike + "%' OR"
 		condition += " c.city_name like '%" + searchLike + "%' OR"
 		condition += " c.city_code like '%" + searchLike + "%' OR"
