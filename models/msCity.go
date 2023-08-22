@@ -178,7 +178,7 @@ func AdminGetListCity(c *[]ListCity, limit uint64, offset uint64, params map[str
 		condition += " c.postal_code like '%" + searchLike + "%')"
 	}
 
-	query := `SELECT c.city_key, cou.country_name, par.city_name AS city_parent,c.city_name, c.city_code, cl.lkp_name AS city_level, c.postal_code 
+	query := `SELECT c.city_key, cou.country_name, par.city_name AS city_parent, c.city_name, c.city_code, cl.lkp_name AS city_level, c.postal_code 
 	FROM ms_city AS c
 	LEFT JOIN ms_country cou ON cou.country_key = c.country_key
 	LEFT JOIN ms_city par ON par.city_key = c.parent_key AND par.rec_status = '1'
