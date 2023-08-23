@@ -155,8 +155,8 @@ func AdminGetListCountry(c *[]ListCountry, limit uint64, offset uint64, params m
 
 	if searchLike != "" {
 		condition += " AND"
-		condition += " (c.cou_code like '%" + searchLike + "%' OR"
-		condition += " c.cou_name like '%" + searchLike + "%' OR"
+		condition += " (c.country_code like '%" + searchLike + "%' OR"
+		condition += " c.country_name like '%" + searchLike + "%' OR"
 		condition += " cur.code like '%" + searchLike + "%' OR"
 		condition += " cur.name like '%" + searchLike + "%' OR"
 		condition += " cur.symbol like '%" + searchLike + "%')"
@@ -164,8 +164,8 @@ func AdminGetListCountry(c *[]ListCountry, limit uint64, offset uint64, params m
 
 	query := `SELECT 
 				c.country_key,
-				c.cou_code,
-				c.cou_name,
+				c.country_code,
+				c.country_name,
 				cur.code AS currency_code,
 				cur.name AS currency_name,
 				cur.symbol AS currency_symbol 
@@ -225,8 +225,8 @@ func CountAdminGetCountry(c *CountData, params map[string]string, searchLike str
 
 	if searchLike != "" {
 		condition += " AND"
-		condition += " (c.cou_code like '%" + searchLike + "%' OR"
-		condition += " c.cou_name like '%" + searchLike + "%' OR"
+		condition += " (c.country_code like '%" + searchLike + "%' OR"
+		condition += " c.country_name like '%" + searchLike + "%' OR"
 		condition += " cur.code like '%" + searchLike + "%' OR"
 		condition += " cur.name like '%" + searchLike + "%' OR"
 		condition += " cur.symbol like '%" + searchLike + "%')"
