@@ -122,8 +122,8 @@ func GetMsCountry(c *MsCountry, key string) (int, error) {
 
 type ListCountry struct {
 	CountryKey     uint64  `db:"country_key"            json:"country_key"`
-	CouCode        string  `db:"cou_code"               json:"cou_code"`
-	CouName        string  `db:"cou_name"               json:"cou_name"`
+	CouCode        string  `db:"country_code"               json:"country_code"`
+	CouName        string  `db:"country_name"               json:"country_name"`
 	CurrencyCode   *string `db:"currency_code"          json:"currency_code"`
 	CurrencyName   *string `db:"currency_name"          json:"currency_name"`
 	CurrencySymbol *string `db:"currency_symbol"        json:"currency_symbol"`
