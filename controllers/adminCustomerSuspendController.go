@@ -190,16 +190,16 @@ func AdminSuspendUnsuspendCustomer(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: customer_key", "Missing required parameter: customer_key")
 	}
 
-	reason := c.FormValue("reason")
-	if reason == "" {
-		// log.Error("Missing required parameter: reason")
-		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: reason", "Missing required parameter: reason")
-	}
-
 	suspendFlag := c.FormValue("suspend_flag")
 	if suspendFlag == "" {
 		// log.Error("Missing required parameter: suspend_flag")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: suspend_flag", "Missing required parameter: suspend_flag")
+	}
+
+	reason := c.FormValue("reason")
+	if suspendFlag == "1" && reason == "" {
+		// log.Error("Missing required parameter: reason")
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: reason", "Missing required parameter: reason")
 	}
 
 	var cus models.MsCustomer
