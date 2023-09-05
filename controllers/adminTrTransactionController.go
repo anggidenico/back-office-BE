@@ -2396,8 +2396,8 @@ func UploadExcelConfirmation(c echo.Context) error {
 			}
 
 			// Generate filename
-			var filename string
-			filename = lib.RandStringBytesMaskImprSrc(20)
+			//var filename string
+			filename := lib.RandStringBytesMaskImprSrc(20)
 			// log.Println("Generate filename:", filename)
 			// Upload image and move to proper directory
 			err = lib.UploadImage(file, config.BasePath+"/transaksi_upload/confirmation/"+filename+extension)
@@ -2434,7 +2434,6 @@ func UploadExcelConfirmation(c echo.Context) error {
 
 				// log.Println(navDate)
 				// log.Println(transactionDate)
-
 				if iDTransaction == "" {
 					break
 				}
@@ -2637,15 +2636,15 @@ func UploadExcelConfirmation(c echo.Context) error {
 				params["rec_created_date"] = time.Now().Format(dateLayout)
 				params["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 
-				if (strTransTypeKey == "2") || (strTransTypeKey == "3") { // REDM
+				if (strTransTypeKey == "2") || (strTransTypeKey == "3") { // REDM --> AVG_NAV ambil dari trBalance LAST
 					var avgNav models.AvgNav
 					_, err = models.GetLastAvgNavTrBalanceCustomerByProductKey(&avgNav, strCustomerKey, strProductKey)
 					if err != nil {
 						params["avg_nav"] = "0"
 					} else {
 						if avgNav.AvgNav != nil {
-							var avgAvg *decimal.Decimal
-							avgAvg = avgNav.AvgNav
+							//var avgAvg *decimal.Decimal
+							avgAvg := avgNav.AvgNav
 							params["avg_nav"] = avgAvg.String()
 						} else {
 							params["avg_nav"] = "0"
@@ -2692,8 +2691,9 @@ func UploadExcelConfirmation(c echo.Context) error {
 				}
 
 				//3. create tr_transaction_fifo
-
-				if (strTransTypeKey == "1") || (strTransTypeKey == "4") { // SUB / switchin
+				if strTransTypeKey == "1" ||
+					strTransTypeKey == "13" ||
+					strTransTypeKey == "4" { // SUB | TOPUP |  switchin
 					paramsFifo := make(map[string]string)
 					paramsFifo["trans_conf_sub_key"] = trConfirmationID
 					if transaction.AcaKey != nil {
@@ -2928,12 +2928,11 @@ func ProsesPosting(c echo.Context) error {
 
 	if strTransStatusKey != "8" {
 		// log.Error("User Autorizer")
-		return lib.CustomError(http.StatusBadRequest)
+		return lib.CustomError(http.StatusBadRequest, "Invalid transaction status. transaction_status="+strTransStatusKey, "Invalid transaction status")
 	}
 
 	dateLayout := "2006-01-02 15:04:05"
 	strIDUserLogin := strconv.FormatUint(lib.Profile.UserID, 10)
-
 	strTransTypeKey := strconv.FormatUint(transaction.TransTypeKey, 10)
 
 	var transactionConf models.TrTransactionConfirmation
@@ -2941,7 +2940,7 @@ func ProsesPosting(c echo.Context) error {
 	_, err = models.GetTrTransactionConfirmationByTransactionKey(&transactionConf, strTransactionKey)
 	if err != nil {
 		// log.Error(err.Error())
-		return lib.CustomError(http.StatusBadRequest)
+		return lib.CustomError(http.StatusBadRequest, "GetTrTransactionConfirmationByTransactionKey:"+err.Error(), "Err GetTrTransactionConfirmationByTransactionKey")
 	}
 
 	var trBalanceCustomer []models.TrBalanceCustomerProduk
@@ -2965,7 +2964,7 @@ func ProsesPosting(c echo.Context) error {
 	// strTransUnit := fmt.Sprintf("%g", transactionConf.ConfirmedUnit)
 
 	//create tr_balance
-	if (strTransTypeKey == "1") || (strTransTypeKey == "4") { // SUB & SWIN
+	if strTransTypeKey == "1" || strTransTypeKey == "13" || strTransTypeKey == "4" { // SUB & SWIN
 		paramsBalance := make(map[string]string)
 		strAcaKey := strconv.FormatUint(*transaction.AcaKey, 10)
 		paramsBalance["aca_key"] = strAcaKey
@@ -2993,11 +2992,11 @@ func ProsesPosting(c echo.Context) error {
 
 		//avg nav balance last
 		avgNavLast := zero
-		var avgNav models.AvgNav
-		_, err = models.GetLastAvgNavTrBalanceCustomerByProductKey(&avgNav, strCustomerKey, strProductKey)
+		var avgNavMod models.AvgNav
+		_, err = models.GetLastAvgNavTrBalanceCustomerByProductKey(&avgNavMod, strCustomerKey, strProductKey)
 		if err == nil {
-			if avgNav.AvgNav != nil {
-				avgNavLast = *avgNav.AvgNav
+			if avgNavMod.AvgNav != nil {
+				avgNavLast = *avgNavMod.AvgNav
 			}
 		}
 
@@ -3006,9 +3005,9 @@ func ProsesPosting(c echo.Context) error {
 
 		balanceUnitSumAll := balanceUnitSum.Add(transactionConf.ConfirmedUnit)
 
-		countAvgNavBalance := variable1.Add(variable2).Div(balanceUnitSumAll)
+		newAvgNavValue := variable1.Add(variable2).Div(balanceUnitSumAll)
 		// strAvgNav := fmt.Sprintf("%g", countAvgNavBalance)
-		paramsBalance["avg_nav"] = countAvgNavBalance.String()
+		paramsBalance["avg_nav"] = newAvgNavValue.String()
 		//end calculate avg_nag tr_balance
 		log.Println("CreateTrBalance")
 		status, err := models.CreateTrBalance(paramsBalance)
@@ -3069,7 +3068,7 @@ func ProsesPosting(c echo.Context) error {
 				paramsBalance["avg_nav"] = avgNavLast.String()
 
 				var balance models.TrBalance
-				status, err = models.GetLastTrBalanceByTcRed(&balance, strTransactionRed)
+				_, err = models.GetLastTrBalanceByTcRed(&balance, strTransactionRed)
 				if err != nil {
 					paramsBalance["rec_order"] = "0"
 				} else {
@@ -3114,7 +3113,7 @@ func ProsesPosting(c echo.Context) error {
 	if strTransTypeKey != "3" { // SELAIN SWITCH-OUT
 		var customer models.MsCustomer
 		strCustomerKey := strconv.FormatUint(transaction.CustomerKey, 10)
-		status, err = models.GetMsCustomer(&customer, strCustomerKey)
+		_, err = models.GetMsCustomer(&customer, strCustomerKey)
 		if err == nil {
 			if customer.InvestorType == "263" { //individu
 				paramsUserMessage := make(map[string]string)

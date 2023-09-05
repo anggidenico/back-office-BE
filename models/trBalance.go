@@ -137,22 +137,45 @@ func GetLastTrBalanceByTcRed(c *TrBalance, tcKeyRed string) (int, error) {
 	return http.StatusOK, nil
 }
 
+/*
+ambil AvgNav terakhir dari product yang dimiliki customer
+*/
 func GetLastAvgNavTrBalanceCustomerByProductKey(c *AvgNav, customerKey string, productKey string) (int, error) {
-	query := `SELECT 
-				tb.avg_nav as avg_nav
-				FROM tr_balance AS tb
-				INNER JOIN tr_transaction_confirmation AS tc ON tb.tc_key = tc.tc_key
-				INNER JOIN tr_transaction AS tr ON tc.transaction_key = tr.transaction_key
-				WHERE tr.customer_key = ` + customerKey +
-		` AND tr.product_key = ` + productKey +
-		` AND tr.trans_status_key = 9 AND tr.rec_status = 1 AND tb.rec_status = 1 AND tc.rec_status = 1 
-				ORDER BY tb.balance_key DESC LIMIT 1`
+	/*
+		d.customer_key,
+		d.product_key,
+		count(c.acc_key) AS count_acc,
+		count(a.aca_key) AS count_aca,
+		CURRENT_DATE() as inquiry_date,
+	*/
+	query := `
+	SELECT min(a.avg_nav) AS avg_nav  
+ FROM tr_balance a
+ INNER JOIN (
+	 
+	 SELECT 
+		t.aca_key, 
+		max(t.balance_date) AS balance_date 
+	 FROM tr_balance t
+	 WHERE t.rec_status = 1
+	 AND cast(t.balance_date AS DATE) <= CURRENT_DATE()
+	 GROUP BY t.aca_key
+
+ ) b ON (a.aca_key=b.aca_key AND a.balance_date=b.balance_date)
+ INNER JOIN tr_account_agent c ON (c.aca_key=a.aca_key AND c.rec_status = 1)
+ INNER JOIN tr_account d ON (d.acc_key=c.acc_key AND d.rec_status = 1)
+ WHERE CAST(a.balance_date AS DATE) <= CURRENT_DATE()
+ AND d.customer_key = ` + customerKey + `
+ AND d.product_key = ` + productKey + `
+ GROUP BY d.customer_key, d.product_key`
 
 	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		// log.Println(err)
-		return http.StatusBadGateway, err
+		if err != sql.ErrNoRows {
+			// log.Println(err)
+			return http.StatusBadGateway, err
+		}
 	}
 
 	return http.StatusOK, nil
