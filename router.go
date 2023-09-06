@@ -33,11 +33,8 @@ func router() *echo.Echo {
 	e.POST("/loginbo", controllers.LoginBo).Name = "LoginBo"
 
 	admin.GET("/lookup", controllers.GetGenLookup).Name = "GetGenLookup"
-
 	admin.GET("/city/:field/:key", controllers.GetMsCityList).Name = "GetMsCityList"
-
 	admin.GET("/country", controllers.GetMsCountryList).Name = "GetMsCountryList"
-
 	admin.GET("/bank", controllers.GetMsBankList).Name = "GetMsBankList"
 
 	//Admin OA Request
@@ -469,6 +466,9 @@ func router() *echo.Echo {
 	admin.GET("/pengkinian-personal-data-details/:key", controllers.GetPengkinianPersonalDataDetails)
 	admin.GET("/pengkinian-risk-profile-list", controllers.GetPengkinianRiskProfileList)
 	admin.GET("/pengkinian-risk-profile-details/:key", controllers.GetPengkinianRiskProfileDetails)
+	admin.GET("/oarequest-list/kyc-approved",controllers.GetOaRequestListKycApproved)
+	admin.GET("/donwload-sinvest-file", controllers.DownloadOaRequestTextFile)
+
 
 	return e
 }

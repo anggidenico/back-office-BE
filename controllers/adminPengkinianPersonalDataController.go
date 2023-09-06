@@ -142,12 +142,14 @@ func GetThePersonalDataDetails(OaRequestKey string) models.PengkinianPersonalDat
 
 	OaData.Agent = getPersonalData.Agent
 	OaData.AnnualIncome = getPersonalData.AnnualIncome
+	OaData.AnnualIncomeKey = getPersonalData.AnnualIncomeKey
 	OaData.BeneficialFullName = getPersonalData.BeneficialFullName
 	OaData.BeneficialRelation = getPersonalData.BeneficialRelation
 	OaData.Branch = getPersonalData.Branch
 	OaData.DateBirth = &DateBirth
 	OaData.DomicileAddress = getPersonalData.DomicileAddress
 	OaData.DomicileCity = getPersonalData.DomicileCity
+	OaData.DomicileCityCode = getPersonalData.DomicileCityCode
 	OaData.DomicilePostalCode = getPersonalData.DomicilePostalCode
 	OaData.DomicileProvince = getPersonalData.DomicileProvince
 	OaData.Education = getPersonalData.Education
@@ -160,13 +162,16 @@ func GetThePersonalDataDetails(OaRequestKey string) models.PengkinianPersonalDat
 	OaData.IdCardNo = getPersonalData.IdCardNo
 	OaData.IdCardAddress = getPersonalData.IdCardAddress
 	OaData.IdCardCity = getPersonalData.IdCardCity
+	OaData.IdCardCityCode = getPersonalData.IdCardCityCode
 	OaData.IdCardPostalCode = getPersonalData.IdCardPostalCode
 	OaData.IdCardProvince = getPersonalData.IdCardProvince
 	OaData.IdCardType = getPersonalData.IdCardType
 	OaData.InvesmentObjectives = getPersonalData.InvesmentObjectives
 	OaData.MaritalStatus = getPersonalData.MaritalStatus
+	OaData.MaritalStatusKey = getPersonalData.MaritalStatusKey
 	OaData.MotherMaidenName = getPersonalData.MotherMaidenName
 	OaData.Nationality = getPersonalData.Nationality
+	OaData.CountryCode = getPersonalData.CountryCode
 	OaData.OaEntryEnd = &EntryEnd
 	OaData.OaEntryStart = &EntryStart
 	OaData.OaRequestKey = getPersonalData.OaRequestKey
@@ -177,6 +182,7 @@ func GetThePersonalDataDetails(OaRequestKey string) models.PengkinianPersonalDat
 	OaData.OccupBusinessFields = getPersonalData.OccupBusinessFields
 	OaData.OccupCompany = getPersonalData.OccupCompany
 	OaData.OccupJob = getPersonalData.OccupJob
+	OaData.OccupJobKey = getPersonalData.OccupJobKey
 	OaData.OccupPosition = getPersonalData.OccupPosition
 	OaData.PepName = getPersonalData.PepName
 	OaData.PepPosition = getPersonalData.PepPosition
@@ -188,7 +194,9 @@ func GetThePersonalDataDetails(OaRequestKey string) models.PengkinianPersonalDat
 	OaData.RelationFullName = getPersonalData.RelationFullName
 	OaData.RelationOccupation = getPersonalData.RelationOccupation
 	OaData.RelationType = getPersonalData.RelationType
+	OaData.RelationTypeKey = getPersonalData.RelationTypeKey
 	OaData.Religion = getPersonalData.Religion
+	OaData.ReligionKey = getPersonalData.ReligionKey
 	OaData.SalesCode = getPersonalData.SalesCode
 	OaData.SiteReferrer = getPersonalData.SiteReferrer
 	OaData.SourceOfFund = getPersonalData.SourceOfFund
