@@ -201,7 +201,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	orst.lkp_name AS oa_status, t2.email_address, t2.phone_mobile, t2.phone_home,
 	t2.place_birth, t2.date_birth, t2.full_name, msco.country_name AS nationality, msco.country_code, 
 	idtype.lkp_name AS idcard_type, t2.idcard_no, gend.lkp_name AS gender, rel.lkp_name AS religion, 
-	edu.lkp_name AS education, t2.marital_status AS marital_status_key, mar.lkp_name AS marital_status, 
+	edu.lkp_name AS education, t2.education AS education_key ,t2.marital_status AS marital_status_key, mar.lkp_name AS marital_status, 
 	pep.lkp_name AS pep_status, t2.pep_name, t2.pep_position, t1.sales_code, t2.pic_ktp, t2.pic_selfie_ktp, 
 	jobz.lkp_name AS occup_job, t2.occup_company, posit.lkp_name AS occup_position,
 	bfield.lkp_name AS occup_business_fields, aincm.lkp_name AS annual_income,
