@@ -148,125 +148,202 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 		for _, oarData := range GetOaRequest {
 
 			// JIKA OA_FIRST / BARU PERTAMA KALI REGISTRASI
-			if *oarData.OaRequestTypeInt == uint64(lib.OA_REQ_TYPE_NEW_INT) {
-				var data models.OaRequestCsvFormat
-				personalData := GetThePersonalDataDetails(strconv.FormatUint(oarData.OaRequestKey, 10))
+			// if *oarData.OaRequestTypeInt == uint64(lib.OA_REQ_TYPE_NEW_INT) {
+			var data models.OaRequestCsvFormat
+			personalData := GetThePersonalDataDetails(strconv.FormatUint(oarData.OaRequestKey, 10))
 
-				sliceName := strings.Fields(*personalData.FullName)
-				firstName := ""
-				middleName := ""
-				lastName := ""
+			sliceName := strings.Fields(*personalData.FullName)
+			firstName := ""
+			middleName := ""
+			lastName := ""
 
-				if len(sliceName) > 0 {
-					if len(sliceName) == 1 {
-						firstName = sliceName[0]
-						lastName = sliceName[0]
-					}
-					if len(sliceName) == 2 {
-						firstName = sliceName[0]
-						lastName = sliceName[1]
-					}
-					if len(sliceName) > 2 {
-						ln := len(sliceName)
-						firstName = sliceName[0]
-						middleName = sliceName[1]
-						lastName = strings.Join(sliceName[2:ln], " ")
-						// lastName = lastName
-					}
+			if len(sliceName) > 0 {
+				if len(sliceName) == 1 {
+					firstName = sliceName[0]
+					lastName = sliceName[0]
 				}
-
-				newLayout := "20060102"
-				date1, _ := time.Parse(lib.TIMESTAMPFORMAT, *oarData.DateBirth)
-
-				var spouseName string
-				if *personalData.RelationTypeKey == uint64(87) || *personalData.RelationTypeKey == uint64(96) {
-					spouseName = *personalData.RelationFullName
+				if len(sliceName) == 2 {
+					firstName = sliceName[0]
+					lastName = sliceName[1]
 				}
-
-				QuizResult := models.GetRiskProfileQuizResult(strconv.FormatUint(oarData.OaRequestKey, 10))
-
-				data.Type = "1"
-				data.SACode = lib.SA_CODE_MAM
-				data.SID = ""
-				data.FirstName = firstName
-				data.MiddleName = middleName
-				data.LastName = lastName
-				data.CountryOfNationality = *personalData.CountryCode
-				data.IDno = *personalData.IdCardNo
-				data.IDExpirationDate = ""
-				data.NpwpNo = ""
-				data.NpwpRegistrationDate = ""
-				data.CountryOfBirth = *personalData.CountryCode
-				data.PlaceOfBirth = *personalData.PlaceBirth
-				data.DateOfBirth = date1.Format(newLayout)
-				data.Gender = *personalData.Gender
-				data.EducationalBackground = strconv.FormatUint(*personalData.EducationKey, 10)
-				data.MotherMaidenName = *personalData.MotherMaidenName
-				data.Religion = strconv.FormatUint(*personalData.ReligionKey, 10)
-				data.Occupation = strconv.FormatUint(*personalData.OccupJobKey, 10)
-				data.IncomeLevel = strconv.FormatUint(*personalData.AnnualIncomeKey, 10)
-				data.MaritalStatus = strconv.FormatUint(*personalData.MaritalStatusKey, 10)
-				data.SpouseName = spouseName
-				data.InvestorRiskProfile = strconv.FormatUint(QuizResult.RiskProfileKey, 10)
-				data.InvestmentObjective = strconv.FormatUint(*personalData.InvesmentObjectivesKey, 10)
-				data.SourceOfFund = strconv.FormatUint(*personalData.SourceOfFundkey, 10)
-				data.AssetOwner = "1"
-				data.KTPAddress = *personalData.IdCardAddress
-				data.KTPCityCode = *personalData.IdCardCityCode
-				data.KTPPostalCode = *personalData.IdCardPostalCode
-				data.CorrespondenceAddress = ""
-				data.CorrespondenceCityCode = ""
-				data.CorrespondenceCityName = ""
-				data.CorrespondencePostalCode = ""
-				data.CountryOfCorrespondence = ""
-				data.DomicileAddress = *personalData.DomicileAddress
-				data.DomicileCityCode = *personalData.DomicileCityCode
-				data.DomicileCityName = *personalData.DomicileCity
-				data.DomicilePostalCode = *personalData.DomicilePostalCode
-				data.CountryOfDomicile = *personalData.CountryCode
-				data.HomePhone = *personalData.PhoneHome
-				data.MobilePhone = *personalData.PhoneMobile
-				data.Facsimile = ""
-				data.Email = *personalData.EmailAddress
-				data.StatementType = "2"
-				data.FATCA = ""
-				data.ForeignTIN = ""
-				data.ForeignTINIssuanceCountry = ""
-				data.REDMPaymentBankBICCode1 = ""
-
-				for i := 0; i < len(*personalData.BankAccount); i++ {
-					bD := *personalData.BankAccount
-					bankData := bD[i]
-					if i == 0 {
-						data.REDMPaymentBankBIMemberCode1 = *bankData.BIMemberCode
-						data.REDMPaymentBankName1 = *bankData.BankValue
-						data.REDMPaymentBankCountry1 = *personalData.CountryCode
-						data.REDMPaymentBankBranch1 = *bankData.BankBranchName
-						data.REDMPaymentACCcy1 = *bankData.CurrencyCode
-						data.REDMPaymentACNo1 = *bankData.BankAccountNo
-						data.REDMPaymentACName1 = *bankData.BankAccountName
-					}
-					if i == 1 {
-						data.REDMPaymentBankBIMemberCode2 = *bankData.BIMemberCode
-						data.REDMPaymentBankName2 = *bankData.BankValue
-						data.REDMPaymentBankCountry2 = *personalData.CountryCode
-						data.REDMPaymentBankBranch2 = *bankData.BankBranchName
-						data.REDMPaymentACCcy2 = *bankData.CurrencyCode
-						data.REDMPaymentACNo2 = *bankData.BankAccountNo
-						data.REDMPaymentACName2 = *bankData.BankAccountName
-					}
-					if i == 2 {
-						data.REDMPaymentBankBIMemberCode3 = *bankData.BIMemberCode
-						data.REDMPaymentBankName3 = *bankData.BankValue
-						data.REDMPaymentBankCountry3 = *personalData.CountryCode
-						data.REDMPaymentBankBranch3 = *bankData.BankBranchName
-						data.REDMPaymentACCcy3 = *bankData.CurrencyCode
-						data.REDMPaymentACNo3 = *bankData.BankAccountNo
-						data.REDMPaymentACName3 = *bankData.BankAccountName
-					}
+				if len(sliceName) > 2 {
+					ln := len(sliceName)
+					firstName = sliceName[0]
+					middleName = sliceName[1]
+					lastName = strings.Join(sliceName[2:ln], " ")
+					// lastName = lastName
 				}
-
 			}
+
+			newLayout := "20060102"
+			date1, _ := time.Parse(lib.TIMESTAMPFORMAT, *oarData.DateBirth)
+
+			var spouseName string
+			if *personalData.RelationTypeKey == uint64(87) || *personalData.RelationTypeKey == uint64(96) {
+				spouseName = *personalData.RelationFullName
+			}
+
+			QuizResult := models.GetRiskProfileQuizResult(strconv.FormatUint(oarData.OaRequestKey, 10))
+
+			data.Type = "1"
+			data.SACode = lib.SA_CODE_MAM
+			data.SID = ""
+			data.FirstName = firstName
+			data.MiddleName = middleName
+			data.LastName = lastName
+			data.CountryOfNationality = *personalData.CountryCode
+			data.IDno = *personalData.IdCardNo
+			data.IDExpirationDate = ""
+			data.NpwpNo = ""
+			data.NpwpRegistrationDate = ""
+			data.CountryOfBirth = *personalData.CountryCode
+			data.PlaceOfBirth = *personalData.PlaceBirth
+			data.DateOfBirth = date1.Format(newLayout)
+			data.Gender = *personalData.Gender
+			data.EducationalBackground = strconv.FormatUint(*personalData.EducationKey, 10)
+			data.MotherMaidenName = *personalData.MotherMaidenName
+			data.Religion = strconv.FormatUint(*personalData.ReligionKey, 10)
+			data.Occupation = strconv.FormatUint(*personalData.OccupJobKey, 10)
+			data.IncomeLevel = strconv.FormatUint(*personalData.AnnualIncomeKey, 10)
+			data.MaritalStatus = strconv.FormatUint(*personalData.MaritalStatusKey, 10)
+			data.SpouseName = spouseName
+			data.InvestorRiskProfile = strconv.FormatUint(QuizResult.RiskProfileKey, 10)
+			data.InvestmentObjective = strconv.FormatUint(*personalData.InvesmentObjectivesKey, 10)
+			data.SourceOfFund = strconv.FormatUint(*personalData.SourceOfFundkey, 10)
+			data.AssetOwner = "1"
+			data.KTPAddress = *personalData.IdCardAddress
+			data.KTPCityCode = *personalData.IdCardCityCode
+			data.KTPPostalCode = *personalData.IdCardPostalCode
+			data.CorrespondenceAddress = ""
+			data.CorrespondenceCityCode = ""
+			data.CorrespondenceCityName = ""
+			data.CorrespondencePostalCode = ""
+			data.CountryOfCorrespondence = ""
+			data.DomicileAddress = *personalData.DomicileAddress
+			data.DomicileCityCode = *personalData.DomicileCityCode
+			data.DomicileCityName = *personalData.DomicileCity
+			data.DomicilePostalCode = *personalData.DomicilePostalCode
+			data.CountryOfDomicile = *personalData.CountryCode
+			data.HomePhone = *personalData.PhoneHome
+			data.MobilePhone = *personalData.PhoneMobile
+			data.Facsimile = ""
+			data.Email = *personalData.EmailAddress
+			data.StatementType = "2"
+			data.FATCA = ""
+			data.ForeignTIN = ""
+			data.ForeignTINIssuanceCountry = ""
+			data.REDMPaymentBankBICCode1 = ""
+
+			for i := 0; i < len(*personalData.BankAccount); i++ {
+				bD := *personalData.BankAccount
+				bankData := bD[i]
+				if i == 0 {
+					data.REDMPaymentBankBIMemberCode1 = *bankData.BIMemberCode
+					data.REDMPaymentBankName1 = *bankData.BankValue
+					data.REDMPaymentBankCountry1 = *personalData.CountryCode
+					data.REDMPaymentBankBranch1 = *bankData.BankBranchName
+					data.REDMPaymentACCcy1 = *bankData.CurrencyCode
+					data.REDMPaymentACNo1 = *bankData.BankAccountNo
+					data.REDMPaymentACName1 = *bankData.BankAccountName
+				}
+				if i == 1 {
+					data.REDMPaymentBankBIMemberCode2 = *bankData.BIMemberCode
+					data.REDMPaymentBankName2 = *bankData.BankValue
+					data.REDMPaymentBankCountry2 = *personalData.CountryCode
+					data.REDMPaymentBankBranch2 = *bankData.BankBranchName
+					data.REDMPaymentACCcy2 = *bankData.CurrencyCode
+					data.REDMPaymentACNo2 = *bankData.BankAccountNo
+					data.REDMPaymentACName2 = *bankData.BankAccountName
+				}
+				if i == 2 {
+					data.REDMPaymentBankBIMemberCode3 = *bankData.BIMemberCode
+					data.REDMPaymentBankName3 = *bankData.BankValue
+					data.REDMPaymentBankCountry3 = *personalData.CountryCode
+					data.REDMPaymentBankBranch3 = *bankData.BankBranchName
+					data.REDMPaymentACCcy3 = *bankData.CurrencyCode
+					data.REDMPaymentACNo3 = *bankData.BankAccountNo
+					data.REDMPaymentACName3 = *bankData.BankAccountName
+				}
+			}
+
+			txtData := data.Type + "|" +
+				data.SACode + "|" +
+				data.SID + "|" +
+				data.FirstName + "|" +
+				data.MiddleName + "|" +
+				data.LastName + "|" +
+				data.CountryOfNationality + "|" +
+				data.IDno + "|" +
+				data.IDExpirationDate + "|" +
+				data.NpwpNo + "|" +
+				data.NpwpRegistrationDate + "|" +
+				data.CountryOfBirth + "|" +
+				data.PlaceOfBirth + "|" +
+				data.DateOfBirth + "|" +
+				data.Gender + "|" +
+				data.EducationalBackground + "|" +
+				data.MotherMaidenName + "|" +
+				data.Religion + "|" +
+				data.Occupation + "|" +
+				data.IncomeLevel + "|" +
+				data.MaritalStatus + "|" +
+				data.SpouseName + "|" +
+				data.InvestorRiskProfile + "|" +
+				data.InvestmentObjective + "|" +
+				data.SourceOfFund + "|" +
+				data.AssetOwner + "|" +
+				data.KTPAddress + "|" +
+				data.KTPCityCode + "|" +
+				data.KTPPostalCode + "|" +
+				data.CorrespondenceAddress + "|" +
+				data.CorrespondenceCityCode + "|" +
+				data.CorrespondenceCityName + "|" +
+				data.CorrespondencePostalCode + "|" +
+				data.CountryOfCorrespondence + "|" +
+				data.DomicileAddress + "|" +
+				data.DomicileCityCode + "|" +
+				data.DomicileCityName + "|" +
+				data.DomicilePostalCode + "|" +
+				data.CountryOfDomicile + "|" +
+				data.HomePhone + "|" +
+				data.MobilePhone + "|" +
+				data.Facsimile + "|" +
+				data.Email + "|" +
+				data.StatementType + "|" +
+				data.FATCA + "|" +
+				data.ForeignTIN + "|" +
+				data.ForeignTINIssuanceCountry + "|" +
+				data.REDMPaymentBankBICCode1 + "|" +
+				data.REDMPaymentBankBIMemberCode1 + "|" +
+				data.REDMPaymentBankName1 + "|" +
+				data.REDMPaymentBankCountry1 + "|" +
+				data.REDMPaymentBankBranch1 + "|" +
+				data.REDMPaymentACCcy1 + "|" +
+				data.REDMPaymentACNo1 + "|" +
+				data.REDMPaymentACName1 + "|" +
+				data.REDMPaymentBankBICCode2 + "|" +
+				data.REDMPaymentBankBIMemberCode2 + "|" +
+				data.REDMPaymentBankName2 + "|" +
+				data.REDMPaymentBankCountry2 + "|" +
+				data.REDMPaymentBankBranch2 + "|" +
+				data.REDMPaymentACCcy2 + "|" +
+				data.REDMPaymentACNo2 + "|" +
+				data.REDMPaymentACName2 + "|" +
+				data.REDMPaymentBankBICCode3 + "|" +
+				data.REDMPaymentBankBIMemberCode3 + "|" +
+				data.REDMPaymentBankName3 + "|" +
+				data.REDMPaymentBankCountry3 + "|" +
+				data.REDMPaymentBankBranch3 + "|" +
+				data.REDMPaymentACCcy3 + "|" +
+				data.REDMPaymentACNo3 + "|" +
+				data.REDMPaymentACName3 + "|" +
+				data.ClientCode
+
+			var txt models.OaRequestCsvFormatFiksTxt
+			txt.DataRow = txtData
+			responseData = append(responseData, txt)
+
+			// }
 		}
 	}
 
