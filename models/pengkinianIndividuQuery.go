@@ -16,6 +16,8 @@ type OaRequestBankDetails struct {
 	BankAccountNo   *string `db:"bank_account_no" json:"bank_account_no"`
 	BankAccountName *string `db:"bank_account_name" json:"bank_account_name"`
 	BankBranchName  *string `db:"bank_branch_name" json:"bank_branch_name"`
+	BIMemberCode    *string `db:"bi_member_code" json:"bi_member_code"`
+	CurrencyCode    *string `db:"currency_code" json:"currency_code"`
 	FlagPriority    *uint64 `db:"flag_priority" json:"flag_priority"`
 }
 
@@ -279,10 +281,13 @@ func GetOaRequestBankAccountNew(c *[]OaRequestBankDetails, oaRequestKey string) 
 	a2.account_holder_name as bank_account_name, 
 	a3.bank_name as bank_value, 
 	a2.branch_name as bank_branch_name,
-	a1.flag_priority
+	a1.flag_priority,
+	a3.bi_member_code,
+	a4.code AS currency_code
 	FROM oa_request_bank_account a1
 	INNER JOIN ms_bank_account a2 ON a1.bank_account_key = a2.bank_account_key
 	INNER JOIN ms_bank a3 ON a2.bank_key = a3.bank_key 
+	LEFT JOIN ms_currency a4 ON a4.currency_key = a3.currency_key
 	WHERE a1.rec_status = 1 AND a1.oa_request_key = ` + oaRequestKey
 
 	// log.Println(query)

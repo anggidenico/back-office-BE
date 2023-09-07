@@ -18,7 +18,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func DownloadOaRequestFormatSinvest(c echo.Context) error { 
+func DownloadOaRequestFormatSinvest(c echo.Context) error {
 	errorAuth := initAuthFundAdmin()
 	if errorAuth != nil {
 		// log.Error("User Autorizer")

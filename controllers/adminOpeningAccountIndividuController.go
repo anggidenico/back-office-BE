@@ -85,6 +85,11 @@ func GetNewOAList(c echo.Context) error {
 }
 
 func GetOaRequestListKycApproved(c echo.Context) error {
+	errorAuth := initAuthFundAdmin()
+	if errorAuth != nil {
+		// log.Error("User Autorizer")
+		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
+	}
 
 	var responseData []models.OaRequestListKYCApprove
 	result := models.GetOaRequestKYCApproveListQuery()
@@ -173,10 +178,9 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 				newLayout := "20060102"
 				date1, _ := time.Parse(lib.TIMESTAMPFORMAT, *oarData.DateBirth)
 
+				var spouseName string
 				if *personalData.RelationTypeKey == uint64(87) || *personalData.RelationTypeKey == uint64(96) {
-					data.SpouseName = *personalData.RelationFullName
-				} else {
-					data.SpouseName = ""
+					spouseName = *personalData.RelationFullName
 				}
 
 				QuizResult := models.GetRiskProfileQuizResult(strconv.FormatUint(oarData.OaRequestKey, 10))
@@ -202,6 +206,7 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 				data.Occupation = strconv.FormatUint(*personalData.OccupJobKey, 10)
 				data.IncomeLevel = strconv.FormatUint(*personalData.AnnualIncomeKey, 10)
 				data.MaritalStatus = strconv.FormatUint(*personalData.MaritalStatusKey, 10)
+				data.SpouseName = spouseName
 				data.InvestorRiskProfile = strconv.FormatUint(QuizResult.RiskProfileKey, 10)
 				data.InvestmentObjective = strconv.FormatUint(*personalData.InvesmentObjectivesKey, 10)
 				data.SourceOfFund = strconv.FormatUint(*personalData.SourceOfFundkey, 10)
@@ -228,7 +233,38 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 				data.ForeignTIN = ""
 				data.ForeignTINIssuanceCountry = ""
 				data.REDMPaymentBankBICCode1 = ""
-				
+
+				for i := 0; i < len(*personalData.BankAccount); i++ {
+					bD := *personalData.BankAccount
+					bankData := bD[i]
+					if i == 0 {
+						data.REDMPaymentBankBIMemberCode1 = *bankData.BIMemberCode
+						data.REDMPaymentBankName1 = *bankData.BankValue
+						data.REDMPaymentBankCountry1 = *personalData.CountryCode
+						data.REDMPaymentBankBranch1 = *bankData.BankBranchName
+						data.REDMPaymentACCcy1 = *bankData.CurrencyCode
+						data.REDMPaymentACNo1 = *bankData.BankAccountNo
+						data.REDMPaymentACName1 = *bankData.BankAccountName
+					}
+					if i == 1 {
+						data.REDMPaymentBankBIMemberCode2 = *bankData.BIMemberCode
+						data.REDMPaymentBankName2 = *bankData.BankValue
+						data.REDMPaymentBankCountry2 = *personalData.CountryCode
+						data.REDMPaymentBankBranch2 = *bankData.BankBranchName
+						data.REDMPaymentACCcy2 = *bankData.CurrencyCode
+						data.REDMPaymentACNo2 = *bankData.BankAccountNo
+						data.REDMPaymentACName2 = *bankData.BankAccountName
+					}
+					if i == 2 {
+						data.REDMPaymentBankBIMemberCode3 = *bankData.BIMemberCode
+						data.REDMPaymentBankName3 = *bankData.BankValue
+						data.REDMPaymentBankCountry3 = *personalData.CountryCode
+						data.REDMPaymentBankBranch3 = *bankData.BankBranchName
+						data.REDMPaymentACCcy3 = *bankData.CurrencyCode
+						data.REDMPaymentACNo3 = *bankData.BankAccountNo
+						data.REDMPaymentACName3 = *bankData.BankAccountName
+					}
+				}
 
 			}
 		}
