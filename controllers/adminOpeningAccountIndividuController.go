@@ -223,6 +223,12 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 				data.MobilePhone = *personalData.PhoneMobile
 				data.Facsimile = ""
 				data.Email = *personalData.EmailAddress
+				data.StatementType = "2"
+				data.FATCA = ""
+				data.ForeignTIN = ""
+				data.ForeignTINIssuanceCountry = ""
+				data.REDMPaymentBankBICCode1 = ""
+				
 
 			}
 		}
