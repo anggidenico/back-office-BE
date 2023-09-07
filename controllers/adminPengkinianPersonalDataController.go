@@ -168,6 +168,7 @@ func GetThePersonalDataDetails(OaRequestKey string) models.PengkinianPersonalDat
 	OaData.IdCardProvince = getPersonalData.IdCardProvince
 	OaData.IdCardType = getPersonalData.IdCardType
 	OaData.InvesmentObjectives = getPersonalData.InvesmentObjectives
+	OaData.InvesmentObjectivesKey = getPersonalData.InvesmentObjectivesKey
 	OaData.MaritalStatus = getPersonalData.MaritalStatus
 	OaData.MaritalStatusKey = getPersonalData.MaritalStatusKey
 	OaData.MotherMaidenName = getPersonalData.MotherMaidenName
