@@ -153,6 +153,7 @@ func GetThePersonalDataDetails(OaRequestKey string) models.PengkinianPersonalDat
 	OaData.DomicilePostalCode = getPersonalData.DomicilePostalCode
 	OaData.DomicileProvince = getPersonalData.DomicileProvince
 	OaData.Education = getPersonalData.Education
+	OaData.EducationKey = getPersonalData.EducationKey
 	OaData.EmergencyFullName = getPersonalData.EmergencyFullName
 	OaData.EmergencyPhoneNo = getPersonalData.EmergencyPhoneNo
 	OaData.EmergencyRelation = getPersonalData.EmergencyRelation
