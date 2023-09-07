@@ -466,9 +466,8 @@ func router() *echo.Echo {
 	admin.GET("/pengkinian-personal-data-details/:key", controllers.GetPengkinianPersonalDataDetails)
 	admin.GET("/pengkinian-risk-profile-list", controllers.GetPengkinianRiskProfileList)
 	admin.GET("/pengkinian-risk-profile-details/:key", controllers.GetPengkinianRiskProfileDetails)
-	admin.GET("/oarequest-list/kyc-approved",controllers.GetOaRequestListKycApproved)
-	admin.GET("/donwload-sinvest-file", controllers.DownloadOaRequestTextFile)
-
+	admin.GET("/oarequest-list/kyc-approved", controllers.GetOaRequestListKycApproved)
+	admin.GET("/donwload-filetext-oa-request", controllers.DownloadOaRequestTextFile)
 
 	return e
 }
