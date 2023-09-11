@@ -171,7 +171,6 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 					firstName = sliceName[0]
 					middleName = sliceName[1]
 					lastName = strings.Join(sliceName[2:ln], " ")
-					// lastName = lastName
 				}
 			}
 
@@ -240,6 +239,10 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 			data.ForeignTIN = ""
 			data.ForeignTINIssuanceCountry = ""
 			data.REDMPaymentBankBICCode1 = ""
+
+			if personalData.ClientCode != nil {
+				data.ClientCode = *personalData.ClientCode
+			}
 
 			for i := 0; i < len(*personalData.BankAccount); i++ {
 				bD := *personalData.BankAccount

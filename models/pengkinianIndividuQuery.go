@@ -90,6 +90,7 @@ type PengkinianPersonalDataResponse struct {
 	Agent                  *string                 `db:"agent" json:"agent"`
 	Branch                 *string                 `db:"branch" json:"branch"`
 	SignatureImage         *string                 `db:"signature_image" json:"signature_image"`
+	ClientCode             *string                 `db:"client_code" json:"client_code"`
 	BankAccount            *[]OaRequestBankDetails `db:"bank_account_request" json:"bank_account_request"`
 }
 
@@ -172,6 +173,7 @@ type PengkinianPersonalDataModels struct {
 	Agent                     *string `db:"agent" json:"agent"`
 	Branch                    *string `db:"branch" json:"branch"`
 	SignatureImage            *string `db:"signature_image" json:"signature_image"`
+	ClientCode                *string `db:"client_code" json:"client_code"`
 }
 
 func GetLastActiveOaKeyByNewOaKey(NewOaRequestKey string) *string {
@@ -222,7 +224,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	t2.annual_income AS annual_income_key, t2.sourceof_fund AS sourceof_fund_key, 
 	t2.invesment_objectives AS invesment_objectives_key, t2.relation_occupation AS relation_occupation_key,
 	t2.relation_business_fields AS relation_business_fields_key, t2.religion AS religion_key,
-	t2.beneficial_relation AS beneficial_relation_key, src.lkp_name AS oa_source
+	t2.beneficial_relation AS beneficial_relation_key, src.lkp_name AS oa_source, t7.client_code
 
 	FROM oa_request t1
 	LEFT JOIN oa_personal_data t2 ON t2.oa_request_key = t1.oa_request_key
@@ -236,6 +238,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	LEFT JOIN ms_city dcp ON dcp.city_key = doms.province_key
 	LEFT JOIN ms_agent t5 ON t5.agent_key = t1.agent_key 
 	LEFT JOIN ms_branch t6 ON t6.branch_key = t1.branch_key
+	LEFT JOIN ms_customer t7 ON t7.user_login_key = t1.user_login_key
 	LEFT JOIN gen_lookup idtype ON idtype.lookup_key = t2.idcard_type
 	LEFT JOIN gen_lookup jobz ON jobz.lookup_key = t2.occup_job
 	LEFT JOIN gen_lookup posit ON posit.lookup_key = t2.occup_position
