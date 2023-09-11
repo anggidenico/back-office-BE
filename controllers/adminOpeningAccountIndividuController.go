@@ -183,9 +183,16 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 				spouseName = *personalData.RelationFullName
 			}
 
+			idCardAddr := strings.ReplaceAll(*personalData.IdCardAddress, ",", "")
+			domAddr := strings.ReplaceAll(*personalData.DomicileAddress, ",", "")
+
 			QuizResult := models.GetRiskProfileQuizResult(strconv.FormatUint(oarData.OaRequestKey, 10))
 
-			data.Type = "1"
+			if *oarData.OaRequestTypeInt == uint64(lib.OA_REQ_TYPE_NEW_INT) {
+				data.Type = "1" // OA NEW
+			} else {
+				data.Type = "2" // PENGKINIAN
+			}
 			data.SACode = lib.SA_CODE_MAM
 			data.SID = ""
 			data.FirstName = firstName
@@ -211,7 +218,7 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 			data.InvestmentObjective = strconv.FormatUint(*personalData.InvesmentObjectivesKey, 10)
 			data.SourceOfFund = strconv.FormatUint(*personalData.SourceOfFundkey, 10)
 			data.AssetOwner = "1"
-			data.KTPAddress = *personalData.IdCardAddress
+			data.KTPAddress = idCardAddr
 			data.KTPCityCode = *personalData.IdCardCityCode
 			data.KTPPostalCode = *personalData.IdCardPostalCode
 			data.CorrespondenceAddress = ""
@@ -219,7 +226,7 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 			data.CorrespondenceCityName = ""
 			data.CorrespondencePostalCode = ""
 			data.CountryOfCorrespondence = ""
-			data.DomicileAddress = *personalData.DomicileAddress
+			data.DomicileAddress = domAddr
 			data.DomicileCityCode = *personalData.DomicileCityCode
 			data.DomicileCityName = *personalData.DomicileCity
 			data.DomicilePostalCode = *personalData.DomicilePostalCode

@@ -1795,7 +1795,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 					paramsCustomer["fatca_status"] = "280"
 				}
 
-				
+				// BUAT FUNC UNTUK CUSTOMER CODE
 
 				status, err, requestID := models.CreateMsCustomer(paramsCustomer)
 				// log.Println("========== PARAMETER  INSERT CUSTOMER ==========>>>", paramsCustomer)

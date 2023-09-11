@@ -461,7 +461,6 @@ func DownloadOaRequestFormatSinvest(c echo.Context) error {
 							}
 						}
 					}
-
 					if a.PostalCode != nil {
 						postal := *a.PostalCode
 						data.KTPPostalCode = postal
