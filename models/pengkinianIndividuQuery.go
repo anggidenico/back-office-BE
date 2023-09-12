@@ -238,7 +238,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	LEFT JOIN ms_city dcp ON dcp.city_key = doms.province_key
 	LEFT JOIN ms_agent t5 ON t5.agent_key = t1.agent_key 
 	LEFT JOIN ms_branch t6 ON t6.branch_key = t1.branch_key
-	LEFT JOIN ms_customer t7 ON t7.user_login_key = t1.user_login_key
+	LEFT JOIN ms_customer t7 ON t7.customer_key = t1.customer_key
 	LEFT JOIN gen_lookup idtype ON idtype.lookup_key = t2.idcard_type
 	LEFT JOIN gen_lookup jobz ON jobz.lookup_key = t2.occup_job
 	LEFT JOIN gen_lookup posit ON posit.lookup_key = t2.occup_position
