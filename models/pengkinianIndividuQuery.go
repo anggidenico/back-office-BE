@@ -262,7 +262,6 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 	LEFT JOIN gen_lookup pep ON pep.lookup_key = t2.pep_status
 	LEFT JOIN gen_lookup src ON src.lookup_key = t1.oa_source
 
-	
 	WHERE t1.rec_status = 1  AND t2.rec_status = 1 AND t1.oa_request_key = ` + oa_request_key
 
 	// EXECUTE DATANYA
@@ -277,20 +276,13 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 }
 
 func GetOaRequestBankAccountNew(c *[]OaRequestBankDetails, oaRequestKey string) error {
-	query := `SELECT 
-	a2.bank_key,
-	a2.bank_account_key, 
-	a2.account_no as bank_account_no, 
-	a2.account_holder_name as bank_account_name, 
-	a3.bank_name as bank_value, 
-	a2.branch_name as bank_branch_name,
-	a1.flag_priority,
-	a3.bi_member_code,
-	a4.code AS currency_code
+	query := `SELECT a2.bank_key, a2.bank_account_key, a2.account_no as bank_account_no, 
+	a2.account_holder_name as bank_account_name, a3.bank_name as bank_value, a2.branch_name as bank_branch_name,
+	a1.flag_priority, a3.bi_member_code, a4.code AS currency_code
 	FROM oa_request_bank_account a1
 	INNER JOIN ms_bank_account a2 ON a1.bank_account_key = a2.bank_account_key
 	INNER JOIN ms_bank a3 ON a2.bank_key = a3.bank_key 
-	LEFT JOIN ms_currency a4 ON a4.currency_key = a3.currency_key
+	LEFT JOIN ms_currency a4 ON a4.currency_key = a2.currency_key
 	WHERE a1.rec_status = 1 AND a1.oa_request_key = ` + oaRequestKey
 
 	// log.Println(query)
