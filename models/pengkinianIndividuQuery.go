@@ -264,8 +264,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 
 	WHERE t1.rec_status = 1  AND t2.rec_status = 1 AND t1.oa_request_key = ` + oa_request_key
 
-	// EXECUTE DATANYA
-	log.Println("QUERY GetPersonalDataOnlyQuery =>", query)
+	log.Println(query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err.Error())
@@ -285,7 +284,7 @@ func GetOaRequestBankAccountNew(c *[]OaRequestBankDetails, oaRequestKey string) 
 	LEFT JOIN ms_currency a4 ON a4.currency_key = a2.currency_key
 	WHERE a1.rec_status = 1 AND a1.oa_request_key = ` + oaRequestKey
 
-	// log.Println(query)
+	log.Println(query)
 
 	err := db.Db.Select(c, query)
 	if err != nil {
