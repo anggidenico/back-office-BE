@@ -85,11 +85,11 @@ func GetNewOAList(c echo.Context) error {
 }
 
 func GetOaRequestListKycApproved(c echo.Context) error {
-	errorAuth := initAuthFundAdmin()
-	if errorAuth != nil {
-		// log.Error("User Autorizer")
-		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
-	}
+	// errorAuth := initAuthFundAdmin()
+	// if errorAuth != nil {
+	// 	// log.Error("User Autorizer")
+	// 	return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
+	// }
 
 	var responseData []models.OaRequestListKYCApprove
 	result := models.GetOaRequestKYCApproveListQuery()
@@ -126,11 +126,11 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 	// var err error
 	var responseData []models.OaRequestCsvFormatFiksTxt
 
-	errorAuth := initAuthFundAdmin()
-	if errorAuth != nil {
-		// log.Error("User Autorizer")
-		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
-	}
+	// errorAuth := initAuthFundAdmin()
+	// if errorAuth != nil {
+	// 	// log.Error("User Autorizer")
+	// 	return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
+	// }
 
 	OaRequestyKeys := c.QueryParam("oa_request_key")
 	if OaRequestyKeys == "" {
