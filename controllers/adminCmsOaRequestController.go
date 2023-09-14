@@ -1904,6 +1904,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 					tx.Rollback()
 					return lib.CustomError(status, err.Error(), "failed input data")
 				}
+
 				getCust := make(map[string]string)
 				getCust["user_login_key"] = strconv.FormatUint(*oareq.UserLoginKey, 10)
 				customerData := models.GetCustomerDetailWithParams(getCust)
@@ -2548,9 +2549,7 @@ func sendEmailApproveOa(fullName string, email string) {
 
 	err = lib.SendEmail(mailer)
 	if err != nil {
-		// log.Error("Failed send mail: " + err.Error())
-	} else {
-		// log.Info("Email sent")
+		log.Println(err.Error())
 	}
 	// dialer := gomail.NewDialer(
 	// 	config.EmailSMTPHost,

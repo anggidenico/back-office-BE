@@ -168,3 +168,31 @@ func GetOaRequestKYCApproveListByRequestKey(OaRequestKey string) []OaRequestList
 
 	return cek1
 }
+
+func GetLastOaRequestHasPersonalData(UserLoginKey string) string {
+	query := `SELECT oa_request_key FROM oa_request 
+	WHERE rec_status = 1 AND oa_request_type IN (127,296) 
+	AND user_login_key =` + UserLoginKey + ` ORDER BY oa_request_key DESC LIMIT 1`
+
+	var result string
+	err := db.Db.Get(&result, query)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	return result
+}
+
+func GetLastOaRequestHasRiskProfile(UserLoginKey string) string {
+	query := `SELECT oa_request_key FROM oa_request 
+	WHERE rec_status = 1 AND oa_request_type IN (127,128) 
+	AND user_login_key =` + UserLoginKey + ` ORDER BY oa_request_key DESC LIMIT 1`
+
+	var result string
+	err := db.Db.Get(&result, query)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	return result
+}

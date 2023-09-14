@@ -147,10 +147,30 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 	if len(GetOaRequest) > 0 {
 		for _, oarData := range GetOaRequest {
 
+			requestKey := strconv.FormatUint(oarData.OaRequestKey, 10)
+			var personalData models.PengkinianPersonalDataResponse
+			var quizResult models.RiskProfileQuizResultModels
+
+			if *oarData.OaRequestTypeInt == uint64(lib.OA_REQ_TYPE_NEW_INT) { // JIKA OA NEW
+				personalData = GetThePersonalDataDetails(requestKey)
+				quizResult = models.GetRiskProfileQuizResult(requestKey)
+			}
+
+			if *oarData.OaRequestTypeInt == uint64(lib.OA_REQ_TYPE_PENGKINIAN_RISIKO_INT) { // JIKA PENGKINIAN PROFIL RISIKO
+				requestKey1 := models.GetLastOaRequestHasPersonalData(strconv.FormatUint(*oarData.UserLoginKey, 10))
+				personalData = GetThePersonalDataDetails(requestKey1)
+				quizResult = models.GetRiskProfileQuizResult(requestKey)
+			}
+
+			if *oarData.OaRequestTypeInt == uint64(lib.OA_REQ_TYPE_PENGKINIAN_DATA_INT) { // JIKA PENGKINIAN PERSONAL DATA
+				requestKey1 := models.GetLastOaRequestHasRiskProfile(strconv.FormatUint(*oarData.UserLoginKey, 10))
+				personalData = GetThePersonalDataDetails(requestKey)
+				quizResult = models.GetRiskProfileQuizResult(requestKey1)
+			}
+
 			// JIKA OA_FIRST / BARU PERTAMA KALI REGISTRASI
 			// if *oarData.OaRequestTypeInt == uint64(lib.OA_REQ_TYPE_NEW_INT) {
 			var data models.OaRequestCsvFormat
-			personalData := GetThePersonalDataDetails(strconv.FormatUint(oarData.OaRequestKey, 10))
 
 			sliceName := strings.Fields(*personalData.FullName)
 			firstName := ""
@@ -185,8 +205,6 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 			idCardAddr := strings.ReplaceAll(*personalData.IdCardAddress, ",", "")
 			domAddr := strings.ReplaceAll(*personalData.DomicileAddress, ",", "")
 
-			QuizResult := models.GetRiskProfileQuizResult(strconv.FormatUint(oarData.OaRequestKey, 10))
-
 			if *oarData.OaRequestTypeInt == uint64(lib.OA_REQ_TYPE_NEW_INT) {
 				data.Type = "1" // OA NEW
 			} else {
@@ -213,7 +231,7 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 			data.IncomeLevel = strconv.FormatUint(*personalData.AnnualIncomeKey, 10)
 			data.MaritalStatus = strconv.FormatUint(*personalData.MaritalStatusKey, 10)
 			data.SpouseName = spouseName
-			data.InvestorRiskProfile = strconv.FormatUint(QuizResult.RiskProfileKey, 10)
+			data.InvestorRiskProfile = strconv.FormatUint(quizResult.RiskProfileKey, 10)
 			data.InvestmentObjective = strconv.FormatUint(*personalData.InvesmentObjectivesKey, 10)
 			data.SourceOfFund = strconv.FormatUint(*personalData.SourceOfFundkey, 10)
 			data.AssetOwner = "1"
