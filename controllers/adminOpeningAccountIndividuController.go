@@ -126,7 +126,7 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 	// var err error
 	var responseData []models.OaRequestCsvFormatFiksTxt
 
-	// errorAuth := initAuthFundAdmin()
+	errorAuth := initAuthFundAdmin()
 	// if errorAuth != nil {
 	// 	// log.Error("User Autorizer")
 	// 	return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")

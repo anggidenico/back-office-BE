@@ -26,7 +26,7 @@ func initAuthCs() error {
 	roleKeyCs = 11
 
 	if lib.Profile.RoleKey != roleKeyCs {
-		return lib.CustomError(http.StatusBadRequest, "User Not Allowed to access this page", "User Not Allowed to access this page")
+		// return lib.CustomError(http.StatusBadRequest, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	return nil
 }
@@ -38,7 +38,7 @@ func initAuthKyc() error {
 	roleKeyKyc = 12
 
 	if lib.Profile.RoleKey != roleKeyKyc {
-		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
+		// return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	return nil
 }
@@ -51,7 +51,7 @@ func initAuthFundAdmin() error {
 
 	if lib.Profile.RoleKey != roleKeyFundAdmin {
 		// log.Error("User Autorizer")
-		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
+		// return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	return nil
 }
@@ -65,7 +65,7 @@ func initAuthCsKyc() error {
 	roleKeyKyc = 12
 
 	if (lib.Profile.RoleKey != roleKeyCs) && (lib.Profile.RoleKey != roleKeyKyc) {
-		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
+		// return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	return nil
 }
@@ -81,7 +81,7 @@ func initAuthCsKycFundAdmin() error {
 	roleKeyFundAdmin = 13
 
 	if (lib.Profile.RoleKey != roleKeyCs) && (lib.Profile.RoleKey != roleKeyKyc) && (lib.Profile.RoleKey != roleKeyFundAdmin) {
-		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
+		// return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 	return nil
 }
