@@ -1942,14 +1942,14 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 					return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 				}
 
-				paramOaUpdate := make(map[string]string)
-				paramOaUpdate["oa_request_key"] = oarequestkey
-				paramOaUpdate["oa_status"] = "261" // Customer_Build
-				_, err = models.UpdateOaRequest(paramOaUpdate)
-				if err != nil {
-					tx.Rollback()
-					log.Println(err.Error())
-				}
+				// paramOaUpdate := make(map[string]string)
+				// paramOaUpdate["oa_request_key"] = oarequestkey
+				// paramOaUpdate["oa_status"] = "261" // Customer_Build
+				// _, err = models.UpdateOaRequest(paramOaUpdate)
+				// if err != nil {
+				// 	tx.Rollback()
+				// 	log.Println(err.Error())
+				// }
 
 				paramsUserMessage := make(map[string]string)
 				paramsUserMessage["umessage_type"] = "245"
