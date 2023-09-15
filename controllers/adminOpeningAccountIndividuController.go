@@ -195,7 +195,7 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 			}
 
 			newLayout := "20060102"
-			date1, _ := time.Parse(lib.TIMESTAMPFORMAT, *oarData.DateBirth)
+			date1, _ := time.Parse(lib.TIMESTAMPFORMAT, *personalData.DateBirth)
 
 			var spouseName string
 			if *personalData.RelationTypeKey == uint64(87) || *personalData.RelationTypeKey == uint64(96) {
