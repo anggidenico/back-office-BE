@@ -2105,14 +2105,14 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 
 		if oastatus == "260" { //JIKA REQUEST DI APPROVE
 			log.Println("pengkinian risk profile aprrove")
-			paramOaUpdate := make(map[string]string)
-			paramOaUpdate["oa_request_key"] = oarequestkey
-			paramOaUpdate["oa_status"] = "261" // Customer_Build
-			_, err = models.UpdateOaRequest(paramOaUpdate)
-			if err != nil {
-				tx.Rollback()
-				log.Println(err.Error())
-			}
+			// paramOaUpdate := make(map[string]string)
+			// paramOaUpdate["oa_request_key"] = oarequestkey
+			// paramOaUpdate["oa_status"] = "261" // Customer_Build
+			// _, err = models.UpdateOaRequest(paramOaUpdate)
+			// if err != nil {
+			// 	tx.Rollback()
+			// 	log.Println(err.Error())
+			// }
 
 			subject := "Selamat! pengkinian profil risiko telah disetujui"
 			body := "Saat ini pengkinian profil risiko kamu sudah disetujui. Yuk investasi sekarang juga."
