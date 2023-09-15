@@ -98,11 +98,22 @@ func GetOaRequestListKycApproved(c echo.Context) error {
 		for _, rData := range result {
 			datas := rData
 
-			if rData.DateBirth != nil {
+			requestKey := strconv.FormatUint(datas.OaRequestKey, 10)
+			log.Println(requestKey)
+			var personalData models.PengkinianPersonalDataResponse
+
+			if *datas.OaRequestTypeInt == uint64(lib.OA_REQ_TYPE_PENGKINIAN_RISIKO_INT) { // JIKA PENGKINIAN PROFIL RISIKO
+				requestKey1 := models.GetLastOaRequestHasPersonalData(strconv.FormatUint(*datas.UserLoginKey, 10))
+				personalData = GetThePersonalDataDetails(requestKey1)
+
 				layoutDateBirth := "02 Jan 2006"
-				t1, _ := time.Parse(lib.TIMESTAMPFORMAT, *rData.DateBirth)
+				t1, _ := time.Parse(lib.TIMESTAMPFORMAT, *personalData.DateBirth)
 				dateBirth := t1.Format(layoutDateBirth)
 				datas.DateBirth = &dateBirth
+				datas.FullName = personalData.FullName
+				datas.Agent = personalData.Agent
+				datas.Branch = personalData.Branch
+				datas.IDCardNo = personalData.IdCardNo
 			}
 
 			layout := "02 Jan 2006 15:04"
