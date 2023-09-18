@@ -136,6 +136,7 @@ func GetOaRequestListKycApproved(c echo.Context) error {
 func DownloadOaRequestTextFile(c echo.Context) error {
 	// var err error
 	var responseData []models.OaRequestCsvFormatFiksTxt
+	var counter int
 
 	// errorAuth := initAuthFundAdmin()
 	// if errorAuth != nil {
@@ -382,7 +383,15 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 			txt.DataRow = txtData
 			responseData = append(responseData, txt)
 
+			counter++
 			// }
+		}
+	}
+
+	if counter > 0 {
+		err := models.SetOAStatusSInvestDone(OaRequestyKeys)
+		if err != nil {
+			return lib.CustomError(http.StatusInternalServerError, err.Error())
 		}
 	}
 

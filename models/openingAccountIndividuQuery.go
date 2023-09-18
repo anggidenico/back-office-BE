@@ -196,3 +196,27 @@ func GetLastOaRequestHasRiskProfile(UserLoginKey string) string {
 
 	return result
 }
+
+func SetOAStatusSInvestDone(OaRequestKey string) error {
+	query := `UPDATE oa_request SET oa_status = 262 WHERE oa_request_key IN (` + OaRequestKey + `)`
+
+	_, err := db.Db.Exec(query)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func SetRevertOAStatus(OaRequestKey string) error {
+	query := `UPDATE oa_request SET oa_status = 260 WHERE oa_request_key IN (` + OaRequestKey + `)`
+
+	_, err := db.Db.Exec(query)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	return nil
+}

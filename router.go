@@ -468,6 +468,7 @@ func router() *echo.Echo {
 	admin.GET("/pengkinian-risk-profile-details/:key", controllers.GetPengkinianRiskProfileDetails)
 	admin.GET("/oarequest-list/kyc-approved", controllers.GetOaRequestListKycApproved)
 	admin.GET("/donwload-filetext-oa-request", controllers.DownloadOaRequestTextFile)
+	admin.POST("/revert-oa-status", controllers.RevertOAStatus)
 
 	return e
 }
