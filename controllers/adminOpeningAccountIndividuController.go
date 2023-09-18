@@ -389,7 +389,7 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 	}
 
 	if counter > 0 {
-		err := models.SetOAStatusSInvestDone(OaRequestyKeys)
+		err := models.SetOAStatusCustomerBuild(OaRequestyKeys)
 		if err != nil {
 			return lib.CustomError(http.StatusInternalServerError, err.Error())
 		}
