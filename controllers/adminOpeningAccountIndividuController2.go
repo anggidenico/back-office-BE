@@ -55,7 +55,7 @@ func GetOaRequestListCustomerBuild(c echo.Context) error {
 
 func RevertOAStatus(c echo.Context) error {
 
-	OaRequestyKeys := c.QueryParam("oa_request_key")
+	OaRequestyKeys := c.FormValue("oa_request_key")
 	if OaRequestyKeys == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing: oa_request_key", "Missing: oa_request_key")
 	}
