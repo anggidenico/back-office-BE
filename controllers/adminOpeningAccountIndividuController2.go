@@ -24,5 +24,6 @@ func RevertOAStatus(c echo.Context) error {
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = 
+	response.Data = nil
+	return c.JSON(http.StatusOK, response)
 }
