@@ -62,7 +62,7 @@ func RevertOAStatus(c echo.Context) error {
 
 	err := models.SetOAStatusRevert(OaRequestyKeys)
 	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Cannot Update oa_status", "Cannot Update oa_status")
+		return lib.CustomError(http.StatusBadRequest, "Can not revert oa request", "Can not revert oa request")
 	}
 
 	var response lib.Response
