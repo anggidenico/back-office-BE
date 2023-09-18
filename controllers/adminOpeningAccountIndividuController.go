@@ -91,7 +91,7 @@ func GetOaRequestListKycApproved(c echo.Context) error {
 	// 	return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	// }
 
-	var responseData []models.OaRequestListKYCApprove
+	var responseData []models.OaRequestListModelsResponse
 	result := models.GetOaRequestKYCApproveListQuery()
 
 	if len(result) > 0 {

@@ -12,7 +12,7 @@ import (
 )
 
 func GetOaRequestListCustomerBuild(c echo.Context) error {
-	var responseData []models.OaRequestListKYCApprove
+	var responseData []models.OaRequestListModelsResponse
 	result := models.GetOaRequestCustomerBuildListQuery()
 
 	if len(result) > 0 {

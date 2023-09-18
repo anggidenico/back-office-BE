@@ -92,7 +92,7 @@ func GetOARequestIndividuListQuery(c *[]PengkinianListResponse, requestType uint
 	return pagination
 }
 
-type OaRequestListKYCApprove struct {
+type OaRequestListModelsResponse struct {
 	OaRequestKey     uint64  `db:"oa_request_key" json:"oa_request_key"`
 	OaRequestType    *string `db:"oa_request_type" json:"oa_request_type"`
 	OaRequestTypeInt *uint64 `db:"oa_request_type_int" json:"oa_request_type_int"`
@@ -113,7 +113,7 @@ type OaRequestListKYCApprove struct {
 	OaSource         *string `db:"oa_source" json:"oa_source"`
 }
 
-func GetOaRequestKYCApproveListQuery() []OaRequestListKYCApprove {
+func GetOaRequestKYCApproveListQuery() []OaRequestListModelsResponse {
 
 	query := `SELECT t1.oa_request_key, t2.lkp_name AS oa_status, t4.ulogin_email AS email_address, 
 	t4.ulogin_mobileno AS phone_mobile, t3.date_birth, t3.full_name, t3.idcard_no, t1.oa_entry_start AS oa_date, 
@@ -132,7 +132,7 @@ func GetOaRequestKYCApproveListQuery() []OaRequestListKYCApprove {
 	LEFT JOIN oa_risk_profile t9 ON t1.oa_request_key = t9.oa_request_key AND t9.rec_status = 1
 	WHERE t1.rec_status = 1 AND t1.oa_status = 260`
 
-	var cek1 []OaRequestListKYCApprove
+	var cek1 []OaRequestListModelsResponse
 	err := db.Db.Select(&cek1, query)
 	if err != nil {
 		log.Println(err.Error())
@@ -141,7 +141,7 @@ func GetOaRequestKYCApproveListQuery() []OaRequestListKYCApprove {
 	return cek1
 }
 
-func GetOaRequestCustomerBuildListQuery() []OaRequestListKYCApprove {
+func GetOaRequestCustomerBuildListQuery() []OaRequestListModelsResponse {
 
 	query := `SELECT t1.oa_request_key, t2.lkp_name AS oa_status, t4.ulogin_email AS email_address, 
 	t4.ulogin_mobileno AS phone_mobile, t3.date_birth, t3.full_name, t3.idcard_no, t1.oa_entry_start AS oa_date, 
@@ -160,7 +160,7 @@ func GetOaRequestCustomerBuildListQuery() []OaRequestListKYCApprove {
 	LEFT JOIN oa_risk_profile t9 ON t1.oa_request_key = t9.oa_request_key AND t9.rec_status = 1
 	WHERE t1.rec_status = 1 AND t1.oa_status = 261`
 
-	var cek1 []OaRequestListKYCApprove
+	var cek1 []OaRequestListModelsResponse
 	err := db.Db.Select(&cek1, query)
 	if err != nil {
 		log.Println(err.Error())
@@ -169,7 +169,7 @@ func GetOaRequestCustomerBuildListQuery() []OaRequestListKYCApprove {
 	return cek1
 }
 
-func GetOaRequestKYCApproveListByRequestKey(OaRequestKey string) []OaRequestListKYCApprove {
+func GetOaRequestKYCApproveListByRequestKey(OaRequestKey string) []OaRequestListModelsResponse {
 
 	query := `SELECT t1.oa_request_key, t2.lkp_name AS oa_status, t4.ulogin_email AS email_address, 
 	t4.ulogin_mobileno AS phone_mobile, t3.date_birth, t3.full_name, t3.idcard_no, t1.oa_entry_start AS oa_date, 
@@ -188,7 +188,7 @@ func GetOaRequestKYCApproveListByRequestKey(OaRequestKey string) []OaRequestList
 	LEFT JOIN oa_risk_profile t9 ON t1.oa_request_key = t9.oa_request_key AND t9.rec_status = 1
 	WHERE t1.rec_status = 1 AND t1.oa_status = 260 AND t1.oa_request_key IN (` + OaRequestKey + `)`
 
-	var cek1 []OaRequestListKYCApprove
+	var cek1 []OaRequestListModelsResponse
 	err := db.Db.Select(&cek1, query)
 	if err != nil {
 		log.Println(err.Error())
