@@ -237,8 +237,8 @@ func SetOAStatusCustomerBuild(OaRequestKey string) error {
 	return nil
 }
 
-func SetOAStatusRevert(OaRequestKey string) error {
-	query := `UPDATE oa_request SET oa_status = 260 WHERE oa_request_key IN (` + OaRequestKey + `)`
+func SetOAStatusRevertToOAEntried(OaRequestKey string) error {
+	query := `UPDATE oa_request SET oa_status = 258 WHERE oa_request_key IN (` + OaRequestKey + `)`
 
 	_, err := db.Db.Exec(query)
 	if err != nil {

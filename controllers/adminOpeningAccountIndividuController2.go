@@ -60,7 +60,7 @@ func RevertOAStatus(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing: oa_request_key", "Missing: oa_request_key")
 	}
 
-	err := models.SetOAStatusRevert(OaRequestyKeys)
+	err := models.SetOAStatusRevertToOAEntried(OaRequestyKeys)
 	if err != nil {
 		return lib.CustomError(http.StatusBadRequest, "Can not revert oa request", "Can not revert oa request")
 	}
