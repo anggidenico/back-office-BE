@@ -358,7 +358,7 @@ func AdminGetAllCustomerIndividuInquery(c *[]CustomerIndividuInquiry, limit uint
 				DATE_FORMAT(r.rec_modified_date, '%d %M %Y %H:%i') AS modified_date, 
 				u2.ulogin_name as modified_by 
 			FROM oa_request AS r 
-			left join ms_customer as c on c.customer_key = r.customer_key 
+			LEFT JOIN ms_customer as c on c.customer_key = r.customer_key 
 			INNER JOIN oa_personal_data AS pd ON pd.oa_request_key = r.oa_request_key 
 			LEFT JOIN ms_branch AS br ON br.branch_key = r.branch_key 
 			LEFT JOIN ms_agent AS ag ON ag.agent_key = r.agent_key 
@@ -432,7 +432,7 @@ func AdminGetAllCustomerIndividuInquery(c *[]CustomerIndividuInquiry, limit uint
 
 	// Main query
 	// // log.Println("======================== query cutomer individu list ================================")
-	// log.Println("==========  ==========>>>", query)
+	log.Println("AdminGetAllCustomerIndividuInquery : ", query)
 	// // log.Println("=====================================================================================")
 	err := db.Db.Select(c, query)
 	if err != nil {
@@ -1183,7 +1183,6 @@ func GetCustomerDetailWithParams(param map[string]string) GetCustomerDetail {
 	if valueMap, ok := param["user_login_key"]; ok {
 		query += ` AND t2.user_login_key = ` + valueMap
 	}
-
 
 	var result GetCustomerDetail
 	log.Println("GetCustomerDetailWithParams", query)
