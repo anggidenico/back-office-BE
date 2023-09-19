@@ -470,6 +470,7 @@ func router() *echo.Echo {
 	admin.GET("/donwload-filetext-oa-request", controllers.DownloadOaRequestTextFile)
 	admin.GET("/oarequest-list/customer-build", controllers.GetOaRequestListCustomerBuild)
 	admin.POST("/revert-oa-status", controllers.RevertOAStatus)
+	admin.GET("/customer-individu-list", controllers.NewGetCustomerInquiryList)
 
 	return e
 }

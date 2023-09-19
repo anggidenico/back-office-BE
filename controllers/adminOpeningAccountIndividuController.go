@@ -189,20 +189,19 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 			middleName := ""
 			lastName := ""
 
-			if len(sliceName) > 0 {
-				if len(sliceName) == 1 {
-					firstName = sliceName[0]
-					lastName = sliceName[0]
-				}
-				if len(sliceName) == 2 {
-					firstName = sliceName[0]
-					lastName = sliceName[1]
-				}
-				if len(sliceName) > 2 {
-					ln := len(sliceName)
-					firstName = sliceName[0]
-					middleName = sliceName[1]
-					lastName = strings.Join(sliceName[2:ln], " ")
+			if len(sliceName) == 1 {
+				firstName = sliceName[0]
+				// lastName = sliceName[0]
+			}
+			if len(sliceName) == 2 {
+				firstName = sliceName[0]
+				lastName = sliceName[1]
+			}
+			if len(sliceName) > 2 {
+				firstName = sliceName[0]
+				middleName = sliceName[1]
+				for _, dt := range sliceName {
+					lastName = dt
 				}
 			}
 
@@ -250,11 +249,11 @@ func DownloadOaRequestTextFile(c echo.Context) error {
 			data.KTPAddress = idCardAddr
 			data.KTPCityCode = *personalData.IdCardCityCode
 			data.KTPPostalCode = *personalData.IdCardPostalCode
-			data.CorrespondenceAddress = ""
-			data.CorrespondenceCityCode = ""
-			data.CorrespondenceCityName = ""
-			data.CorrespondencePostalCode = ""
-			data.CountryOfCorrespondence = ""
+			data.CorrespondenceAddress = domAddr
+			data.CorrespondenceCityCode = *personalData.DomicileCityCode
+			data.CorrespondenceCityName = *personalData.DomicileCity
+			data.CorrespondencePostalCode = *personalData.DomicilePostalCode
+			data.CountryOfCorrespondence = *personalData.CountryCode
 			data.DomicileAddress = domAddr
 			data.DomicileCityCode = *personalData.DomicileCityCode
 			data.DomicileCityName = *personalData.DomicileCity

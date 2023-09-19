@@ -300,7 +300,7 @@ func AdminGetAllCustomerIndividuInquery(c *[]CustomerIndividuInquiry, limit uint
 	var condition string
 	var conditionNoCus string
 	var limitOffset string
-	var orderCondition string
+	var orderCondition string 
 
 	for field, value := range params {
 		if !(field == "orderBy" || field == "orderType") {
