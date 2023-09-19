@@ -90,7 +90,7 @@ type CustomerIndividuListResponse struct {
 	MotherMaidenName *string `db:"mother_name" json:"mother_name"`
 	DateBirth        *string `db:"date_birth" json:"date_birth"`
 	PhoneMobile      *string `db:"phone_mobile" json:"phone_mobile"`
-	CIFSuspendFlag   *bool   `db:"cif_suspend_flag" json:"cia_suspend_flag"`
+	CIFSuspendFlag   *bool   `db:"cif_suspend_flag" json:"cif_suspend_flag"`
 }
 
 type CustomerIndividuListDb struct {
@@ -155,8 +155,8 @@ func GetCustomerListWithCondition(params map[string]string, limit uint64, offset
 		queryCountPage += `AND t3.idcard_no = ` + valueMap
 	}
 
-	query += `GROUP BY t2.customer_key ORDER BY t2.customer_key`
-	queryCountPage += `GROUP BY t2.customer_key ORDER BY t2.customer_key`
+	query += ` GROUP BY t2.customer_key ORDER BY t2.customer_key`
+	queryCountPage += ` GROUP BY t2.customer_key ORDER BY t2.customer_key`
 
 	if limit > 0 {
 		query += " LIMIT " + strconv.FormatUint(limit, 10)
