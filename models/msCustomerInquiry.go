@@ -87,7 +87,7 @@ type CustomerIndividuListResponse struct {
 	Email            *string `db:"email" json:"email"`
 	IdCardNo         *string `db:"idcard_no" json:"idcard_no"`
 	FullName         *string `db:"full_name" json:"full_name"`
-	MotherMaidenName *string `db:"mother_name" json:"mother_name"`
+	MotherMaidenName *string `db:"mother_maiden_name" json:"mother_maiden_name"`
 	DateBirth        *string `db:"date_birth" json:"date_birth"`
 	PhoneMobile      *string `db:"phone_mobile" json:"phone_mobile"`
 	CIFSuspendFlag   *bool   `db:"cif_suspend_flag" json:"cif_suspend_flag"`
