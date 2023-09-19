@@ -342,7 +342,7 @@ func CreateAdminTrPromo(c echo.Context) error {
 	if promonotiftype != "" {
 		strpromonotiftype, err := strconv.ParseUint(promonotiftype, 10, 64)
 		if err == nil && strpromonotiftype > 0 {
-			params["promo_notif_type"] = promonotiftype
+			params["alert_notif_type"] = promonotiftype
 		} else {
 			// log.Error("Wrong input for parameter: promo_notif_type")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_notif_type", "Missing required parameter: promo_notif_type")

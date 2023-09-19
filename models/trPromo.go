@@ -174,6 +174,7 @@ func CreateTrPromo(params map[string]string) (int, error, string) {
 		// log.Println(err)
 		return http.StatusBadGateway, err, "0"
 	}
+
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	tx.Commit()
