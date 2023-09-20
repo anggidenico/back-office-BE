@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"log"
 	"math"
 	"mf-bo-api/config"
 	"mf-bo-api/lib"
@@ -711,7 +712,7 @@ func UpdateAdminTrPromo(c echo.Context) error {
 	if promonotiftype != "" {
 		strpromonotiftype, err := strconv.ParseUint(promonotiftype, 10, 64)
 		if err == nil && strpromonotiftype > 0 {
-			params["promo_notif_type"] = promonotiftype
+			params["alert_notif_type"] = promonotiftype
 		} else {
 			// log.Error("Wrong input for parameter: promo_notif_type")
 			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: promo_notif_type", "Missing required parameter: promo_notif_type")
@@ -919,6 +920,7 @@ func DetailPromo(c echo.Context) error {
 	}
 
 	if _, ok := lib.Find(lookupIds, strconv.FormatUint(promo.PromoNotifType, 10)); !ok {
+		log.Println("Promo Notif Type:", promo.PromoNotifType)
 		lookupIds = append(lookupIds, strconv.FormatUint(promo.PromoNotifType, 10))
 	}
 
@@ -993,6 +995,8 @@ func DetailPromo(c echo.Context) error {
 	responseData.PromoNotifEnd = t.Format(newlayout)
 
 	if n, ok := gData[promo.PromoNotifType]; ok {
+		log.Println("Promo Notif Type to Response:", n)
+
 		var trc models.LookupTrans
 
 		trc.LookupKey = n.LookupKey
