@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"database/sql"
-	"log"
 	"math"
 	"mf-bo-api/config"
 	"mf-bo-api/lib"
@@ -922,7 +921,7 @@ func DetailPromo(c echo.Context) error {
 	}
 
 	if _, ok := lib.Find(lookupIds, strconv.FormatUint(promo.PromoNotifType, 10)); !ok {
-		log.Println("Promo Notif Type:", promo.PromoNotifType)
+		// log.Println("Promo Notif Type:", promo.PromoNotifType)
 		lookupIds = append(lookupIds, strconv.FormatUint(promo.PromoNotifType, 10))
 	}
 
@@ -997,7 +996,7 @@ func DetailPromo(c echo.Context) error {
 	responseData.PromoNotifEnd = t.Format(newlayout)
 
 	if n, ok := gData[promo.PromoNotifType]; ok {
-		log.Println("Promo Notif Type to Response:", n)
+		// log.Println("Promo Notif Type to Response:", n)
 
 		var trc models.LookupTrans
 

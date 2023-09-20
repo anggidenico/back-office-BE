@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -336,7 +335,7 @@ func UpdateTrPromo(params map[string]string) (int, error) {
 		}
 	}
 	query += " WHERE promo_key = " + params["promo_key"]
-	log.Println(query)
+	// log.Println(query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {
