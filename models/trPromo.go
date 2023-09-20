@@ -24,7 +24,7 @@ type TrPromo struct {
 	PromoValidDate2       string          `db:"promo_valid_date2"       json:"promo_valid_date2"`
 	PromoNotifStart       string          `db:"promo_notif_start"       json:"promo_notif_start"`
 	PromoNotifEnd         string          `db:"promo_notif_end"         json:"promo_notif_end"`
-	PromoNotifType        uint64          `db:"promo_notif_type"        json:"promo_notif_type"`
+	PromoNotifType        uint64          `db:"alert_notif_type"        json:"promo_notif_type"`
 	PromoNotifDescription string          `db:"promo_description"       json:"promo_description"`
 	PromoTnc              string          `db:"promo_tnc"               json:"promo_tnc"`
 	RecOrder              *uint64         `db:"rec_order"               json:"rec_order"`
