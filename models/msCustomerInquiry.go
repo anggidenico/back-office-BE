@@ -167,7 +167,7 @@ func GetCustomerListWithCondition(params map[string]string, limit uint64, offset
 
 	// EXECUTE DATA
 	var result []CustomerIndividuListDb
-	log.Println(query)
+	// log.Println(query)
 	err := db.Db.Select(&result, query)
 	if err != nil {
 		log.Println(err.Error())
