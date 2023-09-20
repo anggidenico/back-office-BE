@@ -560,6 +560,8 @@ func UpdateAdminTrPromo(c echo.Context) error {
 		}
 	}
 
+	params["promo_code"] = promocode
+
 	//promo_title
 	promootitle := c.FormValue("promo_title")
 	if promootitle == "" {
