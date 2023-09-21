@@ -59,7 +59,7 @@ func GetUserBackOfficeList(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
-func GetUserCustomerList(c echo.Context) error {
+func GetUserCustomerOnlineList(c echo.Context) error {
 	var err error
 	params := make(map[string]string)
 

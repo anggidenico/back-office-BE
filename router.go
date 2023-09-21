@@ -472,7 +472,7 @@ func router() *echo.Echo {
 	admin.POST("/revert-oa-status", controllers.RevertOAStatus)
 	admin.GET("/customer-individu-list", controllers.NewGetCustomerInquiryList)
 	admin.GET("/user-bo-management-list", controllers.GetUserBackOfficeList)
-
+	admin.GET("/user-customer-online-list", controllers.GetUserCustomerOnlineList)
 	return e
 }
 
