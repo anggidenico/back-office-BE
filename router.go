@@ -471,6 +471,7 @@ func router() *echo.Echo {
 	admin.GET("/oarequest-list/customer-build", controllers.GetOaRequestListCustomerBuild)
 	admin.POST("/revert-oa-status", controllers.RevertOAStatus)
 	admin.GET("/customer-individu-list", controllers.NewGetCustomerInquiryList)
+	admin.GET("/user-bo-management-list", controllers.GetUserBackOfficeList)
 
 	return e
 }
