@@ -473,6 +473,7 @@ func router() *echo.Echo {
 	admin.GET("/customer-individu-list", controllers.NewGetCustomerInquiryList)
 	admin.GET("/user-bo-management-list", controllers.GetUserBackOfficeList)
 	admin.GET("/user-customer-online-list", controllers.GetUserCustomerOnlineList)
+
 	return e
 }
 
