@@ -2,7 +2,9 @@ package models
 
 import (
 	"log"
+	"math"
 	"mf-bo-api/db"
+	"strconv"
 )
 
 type UserCategoryBackOfficeList struct {
@@ -15,22 +17,28 @@ type UserCategoryBackOfficeList struct {
 	LockedStatus   *bool   `db:"lock_status" json:"lock_status"`
 }
 
-func GetUserBackOfficeCategoryList() []UserCategoryBackOfficeList {
+func GetUserBackOfficeCategoryList(params map[string]string, limit uint64, offset uint64) ([]UserCategoryBackOfficeList, int) {
 	query := `SELECT t1.user_login_key, t1.ulogin_email AS email, t4.role_name,
 	t2.ucategory_name AS category_name, t3.user_dept_name AS department_name,
-	CASE
-    	WHEN t1.ulogin_enabled = 1 THEN 'true'
-    	ELSE 'false'
-	END AS enable_status, 
-	CASE
-    	WHEN t1.ulogin_locked = 1 THEN 'true'
-    	ELSE 'false'
-	END AS lock_status
+	CASE WHEN t1.ulogin_enabled = 1 THEN 'true' ELSE 'false' END AS enable_status, 
+	CASE WHEN t1.ulogin_locked = 1 THEN 'true' ELSE 'false' END AS lock_status
 	FROM sc_user_login t1
 	INNER JOIN sc_user_category t2 ON t2.user_category_key = t1.user_category_key 
 	INNER JOIN sc_user_dept t3 ON t3.user_dept_key = t1.user_dept_key
 	INNER JOIN sc_role t4 ON t4.role_key = t1.role_key
 	WHERE t1.rec_status = 1 AND t2.user_category_key IN (2,3)`
+
+	if valueMap, ok := params["email"]; ok {
+		query += `AND t1.ulogin_email LIKE '%` + valueMap + `%'`
+		// queryCountPage += `AND t3.idcard_no = ` + valueMap
+	}
+
+	if limit > 0 {
+		query += " LIMIT " + strconv.FormatUint(limit, 10)
+		if offset > 0 {
+			query += " OFFSET " + strconv.FormatUint(offset, 10)
+		}
+	}
 
 	var result []UserCategoryBackOfficeList
 	err := db.Db.Select(&result, query)
@@ -38,5 +46,19 @@ func GetUserBackOfficeCategoryList() []UserCategoryBackOfficeList {
 		log.Println(err.Error())
 	}
 
-	return result
+	var pagination int
+	var count uint64
+	if len(result) > 0 {
+		count = uint64(len(result))
+	}
+	if limit > 0 {
+		if count < limit {
+			pagination = 1
+		} else {
+			calc := math.Ceil(float64(count) / float64(limit))
+			pagination = int(calc)
+		}
+	}
+
+	return result, pagination
 }
