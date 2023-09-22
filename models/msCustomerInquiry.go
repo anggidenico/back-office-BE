@@ -179,9 +179,6 @@ func GetCustomerListWithCondition(params map[string]string, limit uint64, offset
 			pagination = int(calc)
 		}
 	}
-	log.Println("query:", query)
-	log.Println("query count all data", queryCountPage)
-	log.Println("total data:", count, "limit:", limit)
 
 	return result, pagination
 }

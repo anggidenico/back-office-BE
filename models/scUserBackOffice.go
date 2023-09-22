@@ -42,7 +42,12 @@ func GetUserCategoryCustomerOnlineList(params map[string]string, limit uint64, o
 
 	if valueMap, ok := params["email"]; ok {
 		query += `AND t1.ulogin_email LIKE '%` + valueMap + `%'`
-		// queryCountPage += `AND t3.idcard_no = ` + valueMap
+	}
+	if valueMap, ok := params["full_name"]; ok {
+		query += `AND t1.ulogin_full_name LIKE '%` + valueMap + `%'`
+	}
+	if valueMap, ok := params["phone_mobile"]; ok {
+		query += `AND t1.ulogin_mobileno LIKE '%` + valueMap + `%'`
 	}
 
 	queryCountPage := `SELECT count(*) FROM
