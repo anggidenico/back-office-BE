@@ -54,7 +54,7 @@ func NewGetCustomerInquiryList(c echo.Context) error {
 	if datebirth != "" {
 		params["date_birth"] = datebirth
 	}
-	idcard_no := c.QueryParam("ktp")
+	idcard_no := c.QueryParam("idcard_no")
 	if idcard_no != "" {
 		params["idcard_no"] = idcard_no
 	}

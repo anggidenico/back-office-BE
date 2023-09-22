@@ -1836,6 +1836,7 @@ func UpdateStatusApprovalCompliance(c echo.Context) error {
 				paramsUserLogin["customer_key"] = requestID
 				paramsUserLogin["rec_modified_date"] = time.Now().Format(dateLayout)
 				paramsUserLogin["rec_modified_by"] = strKey
+				paramsUserLogin["ulogin_full_name"] = oapersonal.FullName
 				paramsUserLogin["role_key"] = "1"
 				strUserLoginKeyOa := strconv.FormatUint(*oareq.UserLoginKey, 10)
 				paramsUserLogin["user_login_key"] = strUserLoginKeyOa
