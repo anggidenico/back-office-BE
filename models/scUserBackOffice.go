@@ -45,6 +45,9 @@ func GetUserCategoryCustomerOnlineList(params map[string]string, limit uint64, o
 		// queryCountPage += `AND t3.idcard_no = ` + valueMap
 	}
 
+	queryCountPage := `SELECT count(*) FROM
+	( ` + query + `) t1`
+
 	if limit > 0 {
 		query += " LIMIT " + strconv.FormatUint(limit, 10)
 		if offset > 0 {
@@ -60,9 +63,7 @@ func GetUserCategoryCustomerOnlineList(params map[string]string, limit uint64, o
 
 	var pagination int
 	var count uint64
-	if len(result) > 0 {
-		count = uint64(len(result))
-	}
+	err = db.Db.Get(&count, queryCountPage)
 	if limit > 0 {
 		if count < limit {
 			pagination = 1
@@ -101,6 +102,9 @@ func GetUserCategoryBackOfficeList(params map[string]string, limit uint64, offse
 		// queryCountPage += `AND t3.idcard_no = ` + valueMap
 	}
 
+	queryCountPage := `SELECT count(*) FROM
+	( ` + query + `) t1`
+
 	if limit > 0 {
 		query += " LIMIT " + strconv.FormatUint(limit, 10)
 		if offset > 0 {
@@ -115,10 +119,13 @@ func GetUserCategoryBackOfficeList(params map[string]string, limit uint64, offse
 	}
 
 	var pagination int
+
 	var count uint64
-	if len(result) > 0 {
-		count = uint64(len(result))
+	err = db.Db.Get(&count, queryCountPage)
+	if err != nil {
+		log.Println(err.Error())
 	}
+
 	if limit > 0 {
 		if count < limit {
 			pagination = 1

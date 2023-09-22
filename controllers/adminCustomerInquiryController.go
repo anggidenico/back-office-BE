@@ -38,7 +38,7 @@ func NewGetCustomerInquiryList(c echo.Context) error {
 		page = 1
 	}
 	var offset uint64
-	if page > 1 {
+	if page > 0 {
 		offset = limit * (page - 1)
 	}
 

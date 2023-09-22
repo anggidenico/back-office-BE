@@ -58,22 +58,15 @@ func GetPengkinianRiskProfileListQuery(c *[]RiskProfileListModels, backOfficeRol
 	INNER JOIN ms_customer t4 ON t4.customer_key = t3.customer_key
 	WHERE t1.rec_status = 1 AND t1.oa_request_type = 128`
 
-	queryPage := `SELECT count(*) 
-	FROM oa_request t1
-	INNER JOIN gen_lookup t2 ON t1.oa_status = t2.lookup_key
-	LEFT JOIN gen_lookup t5 ON t1.oa_source = t5.lookup_key
-	INNER JOIN sc_user_login t3 ON t3.user_login_key = t1.user_login_key
-	INNER JOIN ms_customer t4 ON t4.customer_key = t3.customer_key
-	WHERE t1.rec_status = 1 AND t1.oa_request_type = 128`
-
 	if backOfficeRole == 11 {
 		query += ` AND t1.oa_status = 258`
-		queryPage += ` AND t1.oa_status = 258`
 	}
 	if backOfficeRole == 12 {
 		query += ` AND t1.oa_status = 259`
-		queryPage += ` AND t1.oa_status = 259`
 	}
+
+	queryCountPage := `SELECT count(*) FROM
+	( ` + query + `) t1`
 
 	// log.Println(limit)
 	if limit > 0 {
@@ -94,7 +87,7 @@ func GetPengkinianRiskProfileListQuery(c *[]RiskProfileListModels, backOfficeRol
 	var pagination int
 	var count uint64
 	// log.Println(queryPage)
-	err = db.Db.Get(&count, queryPage)
+	err = db.Db.Get(&count, queryCountPage)
 	if err != nil {
 		log.Println(err.Error())
 	}

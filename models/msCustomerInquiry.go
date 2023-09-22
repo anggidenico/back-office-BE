@@ -116,47 +116,36 @@ func GetCustomerListWithCondition(params map[string]string, limit uint64, offset
 	INNER JOIN ms_customer t2 ON t2.customer_key = t1.customer_key AND t2.rec_status = 1
 	INNER JOIN oa_personal_data t3 ON t3.oa_request_key = t1.oa_request_key
 	LEFT JOIN ms_branch t4 ON t4.branch_key = t1.branch_key
-	WHERE t1.rec_status = 1  `
-
-	queryCountPage := `SELECT count(*)
-	FROM oa_request t1
-	INNER JOIN ms_customer t2 ON t2.customer_key = t1.customer_key AND t2.rec_status = 1
-	INNER JOIN oa_personal_data t3 ON t3.oa_request_key = t1.oa_request_key
-	LEFT JOIN ms_branch t4 ON t4.branch_key = t1.branch_key
 	WHERE t1.rec_status = 1 `
 
 	if valueMap, ok := params["branch_key"]; ok {
 		query += `AND t4.branch_key = ` + valueMap
-		queryCountPage += `AND t4.branch_key = ` + valueMap
 	}
 
 	if valueMap, ok := params["cif"]; ok {
 		query += `AND t2.unit_holder_idno = ` + valueMap
-		queryCountPage += `AND t2.unit_holder_idno = ` + valueMap
 	}
 
 	if valueMap, ok := params["idcard_no"]; ok {
 		query += `AND t3.idcard_no = ` + valueMap
-		queryCountPage += `AND t3.idcard_no = ` + valueMap
 	}
 
 	if valueMap, ok := params["full_name"]; ok {
 		query += `AND t3.full_name LIKE '%` + valueMap + `%'`
-		queryCountPage += `AND t3.idcard_no = ` + valueMap
 	}
 
 	if valueMap, ok := params["mother_maiden_name"]; ok {
 		query += `AND t3.mother_maiden_name LIKE '%` + valueMap + `%'`
-		queryCountPage += `AND t3.idcard_no = ` + valueMap
 	}
 
 	if valueMap, ok := params["date_birth"]; ok {
-		query += `AND t3.date_birth = ` + valueMap
-		queryCountPage += `AND t3.idcard_no = ` + valueMap
+		query += `AND t3.date_birth = "` + valueMap + `"`
 	}
 
 	query += ` GROUP BY t2.customer_key ORDER BY t2.customer_key`
-	queryCountPage += ` GROUP BY t2.customer_key ORDER BY t2.customer_key`
+
+	queryCountPage := `SELECT count(*) FROM
+	( ` + query + `) t1`
 
 	if limit > 0 {
 		query += " LIMIT " + strconv.FormatUint(limit, 10)
@@ -180,6 +169,8 @@ func GetCustomerListWithCondition(params map[string]string, limit uint64, offset
 	if err != nil {
 		log.Println(err.Error())
 	}
+	// count = uint64(len(result))
+
 	if limit > 0 {
 		if count < limit {
 			pagination = 1
@@ -188,6 +179,9 @@ func GetCustomerListWithCondition(params map[string]string, limit uint64, offset
 			pagination = int(calc)
 		}
 	}
+	log.Println("query:", query)
+	log.Println("query count all data", queryCountPage)
+	log.Println("total data:", count, "limit:", limit)
 
 	return result, pagination
 }
