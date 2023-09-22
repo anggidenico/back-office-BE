@@ -655,6 +655,7 @@ func CreateAdminScUserLogin(c echo.Context) error {
 	}
 
 	params["must_change_pin"] = "0"
+	params["ulogin_failed_count"] = "0"
 
 	// Set expired for token
 	date := time.Now().AddDate(0, 0, 1)
