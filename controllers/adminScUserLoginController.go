@@ -654,6 +654,8 @@ func CreateAdminScUserLogin(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "locked parameter should be true/false", "locked parameter should be true/false")
 	}
 
+	params["must_change_pin"] = "0"
+
 	// Set expired for token
 	date := time.Now().AddDate(0, 0, 1)
 	dateLayout := "2006-01-02 15:04:05"
