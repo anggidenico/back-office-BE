@@ -5,6 +5,7 @@ import (
 	"mf-bo-api/models"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo"
 )
@@ -117,6 +118,71 @@ func GetUserCustomerList(c echo.Context) error {
 	response.Status.MessageClient = "OK"
 	response.Pagination = pagination
 	response.Data = responseData
+
+	return c.JSON(http.StatusOK, response)
+}
+
+func UserCustomerEdit(c echo.Context) error {
+	var err error
+	UpdtScUser := make(map[string]string)
+
+	userLoginKey := c.FormValue("user_login_key")
+	if userLoginKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing user_login_key", "Missing user_login_key")
+	} else {
+		UpdtScUser["user_login_key"] = userLoginKey
+	}
+
+	enabled := c.FormValue("enabled")
+	if enabled != "" {
+		if enabled == "true" {
+			UpdtScUser["ulogin_enabled"] = "1"
+		} else if enabled == "false" {
+			UpdtScUser["ulogin_enabled"] = "0"
+		}
+	}
+
+	locked := c.FormValue("locked")
+	if locked != "" {
+		if locked == "true" {
+			UpdtScUser["ulogin_locked"] = "1"
+		} else if locked == "false" {
+			UpdtScUser["ulogin_locked"] = "0"
+			UpdtScUser["ulogin_failed_count"] = "0"
+		}
+	}
+
+	verifEmail := c.FormValue("verified_email")
+	if verifEmail != "" {
+		if verifEmail == "true" {
+			UpdtScUser["verified_email"] = "1"
+		} else if verifEmail == "false" {
+			UpdtScUser["verified_email"] = "0"
+		}
+	}
+
+	verifMobileno := c.FormValue("verified_mobileno")
+	if verifMobileno != "" {
+		if verifMobileno == "true" {
+			UpdtScUser["verified_email"] = "1"
+			UpdtScUser["last_verified_mobileno"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+		} else if verifMobileno == "false" {
+			UpdtScUser["verified_email"] = "0"
+		}
+	}
+
+	UpdtScUser["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	UpdtScUser["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+	_, err = models.UpdateScUserLogin(UpdtScUser)
+	if err != nil {
+		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed update")
+	}
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "Berhasil Update Data Customer"
+	response.Data = nil
 
 	return c.JSON(http.StatusOK, response)
 }

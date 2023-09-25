@@ -60,6 +60,7 @@ func GetUserCategoryCustomerList(params map[string]string, limit uint64, offset 
 		}
 	}
 
+	log.Println(query)
 	var result []UserCategoryCustomerList
 	err := db.Db.Select(&result, query)
 	if err != nil {
