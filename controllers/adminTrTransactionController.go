@@ -2199,7 +2199,7 @@ func GetFormatExcelDownloadList(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: transaction_type", "Missing required parameter: transaction_type")
 	}
 
-	rolestransactiontype := []string{"1", "2", "3", "4"}
+	rolestransactiontype := []string{"1", "2", "3", "4", "13"}
 	_, found := lib.Find(rolestransactiontype, transactiontype)
 	if !found {
 		return lib.CustomError(http.StatusUnauthorized, "Missing parameter: transaction_type", "Missing parameter: transaction_type")
