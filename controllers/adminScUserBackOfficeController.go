@@ -152,6 +152,11 @@ func UserCustomerEdit(c echo.Context) error {
 		}
 	}
 
+	email := c.FormValue("email")
+	if email != "" {
+		UpdtScUser["ulogin_email"] = email
+	}
+
 	verifEmail := c.FormValue("verified_email")
 	if verifEmail != "" {
 		if verifEmail == "true" {
@@ -159,6 +164,11 @@ func UserCustomerEdit(c echo.Context) error {
 		} else if verifEmail == "false" {
 			UpdtScUser["verified_email"] = "0"
 		}
+	}
+
+	phone_mobile := c.FormValue("phone_mobile")
+	if phone_mobile != "" {
+		UpdtScUser["ulogin_mobileno"] = phone_mobile
 	}
 
 	verifMobileno := c.FormValue("verified_mobileno")
