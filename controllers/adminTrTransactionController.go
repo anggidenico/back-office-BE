@@ -1417,10 +1417,10 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 			}
 
 			if lib.Profile.RoleKey == roleKeyCs {
-				SentEmailTransactionToBackOffice(strconv.FormatUint(transaction.TransactionKey, 10), "12")
+				// SentEmailTransactionToBackOffice(strconv.FormatUint(transaction.TransactionKey, 10), "12")
 			}
 			if lib.Profile.RoleKey == roleKeyKyc {
-				SentEmailTransactionToBackOffice(strconv.FormatUint(transaction.TransactionKey, 10), "12")
+				// SentEmailTransactionToBackOffice(strconv.FormatUint(transaction.TransactionKey, 10), "12")
 			}
 		}
 
@@ -4990,6 +4990,38 @@ func SentEmailTransactionToBackOffice(transactionKey string, roleKey string) {
 		subject = "[MotionFunds] Mohon Verifikasi Transaksi Subscription"
 
 		mailParam["TipeTransaksi"] = "Subscription"
+		mailParam["NamaProduk"] = transaction.ProductName
+		mailParam["MetodePembayaran"] = *transaction.PaymentMethodName
+		mailParam["RekeningBankKustodian"] = *transaction.RekBankCustodian
+		if *transaction.PaymentMethod == uint64(284) { //manual
+			// log.Println("MANUAL TRANSFER")
+			mailTemp = "email-new-subs-to-cs-kyc-fundadmin.html"
+			var trDef models.TrTransaction
+			_, err := models.GetTrTransaction(&trDef, transactionKey)
+			if err == nil {
+				if trDef.RecApprovalStage == nil {
+					if transaction.BuktiTransafer != nil {
+						mailParam["BuktiTransfer"] = config.ImageUrl + "/images/user/" + transaction.UserLoginKey + "/transfer/" + *transaction.BuktiTransafer
+					} else {
+						mailParam["BuktiTransfer"] = ""
+					}
+				} else {
+					if transaction.BuktiTransafer != nil {
+						mailParam["BuktiTransfer"] = config.ImageUrl + "/images/user/institusi/" + strconv.FormatUint(trDef.CustomerKey, 10) + "/transfer/" + *transaction.BuktiTransafer
+					} else {
+						mailParam["BuktiTransfer"] = ""
+					}
+				}
+			}
+		} else {
+			// log.Println("NON MANUAL TRANSFER")
+			mailTemp = "email-new-subs-to-cs-kyc-fundadmin-non-manual-transfer.html"
+			mailParam["BuktiTransfer"] = "-"
+		}
+	} else if transaction.TransTypeKey == uint64(13) { // top up
+		subject = "[MotionFunds] Mohon Verifikasi Transaksi Subscription"
+
+		mailParam["TipeTransaksi"] = "Top Up"
 		mailParam["NamaProduk"] = transaction.ProductName
 		mailParam["MetodePembayaran"] = *transaction.PaymentMethodName
 		mailParam["RekeningBankKustodian"] = *transaction.RekBankCustodian
