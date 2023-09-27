@@ -286,7 +286,7 @@ func router() *echo.Echo {
 	admin.POST("/user-notif/update", controllers.UpdateAdminScUserNotif).Name = "UpdateAdminScUserNotif"
 	admin.GET("/user-notif/detail/:key", controllers.DetailUserNotif).Name = "DetailUserNotif"
 
-	//Admin Data Login
+	// MANAGEMENT USER YANG SEDANG LOGIN SAAT INI
 	admin.GET("/user", controllers.GetDetailScUserLogin).Name = "GetDetailScUserLogin"
 	admin.POST("/user/changepassword", controllers.AdminChangePasswordUserLogin).Name = "AdminChangePasswordUserLogin"
 	admin.POST("/user/changedata", controllers.AdminChangeDataUserLogin).Name = "AdminChangeDataUserLogin"
@@ -305,7 +305,7 @@ func router() *echo.Echo {
 
 	//Admin Customer File
 	admin.POST("/customer-file-update", controllers.CustomerUpdateFile).Name = "CustomerUpdateFile"
-	admin.GET("/customef-file-detail/:customer_key", controllers.AdminGetDetailCustomerDocument).Name = "AdminGetDetailCustomerDocument"
+	admin.GET("/customer-file-detail/:customer_key", controllers.AdminGetDetailCustomerDocument).Name = "AdminGetDetailCustomerDocument"
 
 	//Admin Menu
 	admin.GET("/menu-list", controllers.AdminGetListMenu).Name = "AdminGetListMenu"
@@ -406,13 +406,11 @@ func router() *echo.Echo {
 	admin.GET("/city/detail/:city_key", controllers.AdminDetailMsCity).Name = "AdminDetailMsCity"
 	admin.GET("/city-parent", controllers.GetCityParent).Name = "GetCityParent"
 
-	//Admin City
 	admin.GET("/mail-list", controllers.AdminGetListMmMailMaster).Name = "AdminGetListMmMailMaster"
 	admin.POST("/mail/delete", controllers.AdminDeleteMmMailMaster).Name = "AdminDeleteMmMailMaster"
 	admin.POST("/mail/create", controllers.AdminCreateMmMailMaster).Name = "AdminCreateMmMailMaster"
 	admin.POST("/mail/update", controllers.AdminUpdateMmMailMaster).Name = "AdminUpdateMmMailMaster"
 	admin.GET("/mail/detail/:mail_master_key", controllers.AdminDetailMmMailMaster).Name = "AdminDetailMmMailMaster"
-	//Admin City
 	admin.POST("/tes-sent-email", controllers.TestSentEmail).Name = "TestSentEmail"
 
 	//Admin OA Institusi

@@ -1344,10 +1344,10 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 
 	strTransTypeKey := strconv.FormatUint(transaction.TransTypeKey, 10)
 
-	if strTransTypeKey == "3" {
-		// log.Error("Transaction not found")
-		return lib.CustomError(http.StatusBadRequest)
-	}
+	// if strTransTypeKey == "3" {
+	// 	// log.Error("Transaction not found")
+	// 	return lib.CustomError(http.StatusBadRequest)
+	// }
 
 	if transStatusKeyDefault != strTransStatusKey {
 		// log.Error("User Autorizer")
@@ -1380,18 +1380,18 @@ func ProsesApproval(transStatusKeyDefault string, transStatusIds []string, c ech
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
 	}
 
-	if strTransTypeKey == "4" {
-		if transaction.ParentKey != nil {
-			strParentKey := strconv.FormatUint(*transaction.ParentKey, 10)
-			params["transaction_key"] = strParentKey
-			// log.Println(params)
-			_, err = models.UpdateTrTransaction(params)
-			if err != nil {
-				// log.Error("Error update tr transaction parent")
-				return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
-			}
-		}
-	}
+	// if strTransTypeKey == "4" {
+	// 	if transaction.ParentKey != nil {
+	// 		strParentKey := strconv.FormatUint(*transaction.ParentKey, 10)
+	// 		params["transaction_key"] = strParentKey
+	// 		// log.Println(params)
+	// 		_, err = models.UpdateTrTransaction(params)
+	// 		if err != nil {
+	// 			// log.Error("Error update tr transaction parent")
+	// 			return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed update data")
+	// 		}
+	// 	}
+	// }
 
 	//send email to KYC / fund admin
 	if (lib.Profile.RoleKey == roleKeyCs) || (lib.Profile.RoleKey == roleKeyKyc) { //cek user
