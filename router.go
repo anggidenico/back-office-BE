@@ -459,6 +459,7 @@ func router() *echo.Echo {
 
 	//==================================================== NEW ENDPOINT ======================================================================
 
+	// OA DAN PENGKINIAN
 	admin.GET("/new-oarequest-list", controllers.GetNewOAList)
 	admin.GET("/pengkinian-personal-data-list", controllers.GetPengkinianPersonalDataList)
 	admin.GET("/pengkinian-personal-data-details/:key", controllers.GetPengkinianPersonalDataDetails)
@@ -468,10 +469,17 @@ func router() *echo.Echo {
 	admin.GET("/donwload-filetext-oa-request", controllers.DownloadOaRequestTextFile)
 	admin.GET("/oarequest-list/customer-build", controllers.GetOaRequestListCustomerBuild)
 	admin.POST("/revert-oa-status", controllers.RevertOAStatus)
+
+	// SETTING SC USER
 	admin.GET("/customer-individu-list", controllers.NewGetCustomerInquiryList)
 	admin.GET("/user-bo-management-list", controllers.GetUserBackOfficeList)
 	admin.GET("/user-customer-list", controllers.GetUserCustomerList)
 	admin.POST("/user-customer-edit", controllers.UserCustomerEdit)
+
+	// MANAGEMENT RISK PROFILE QUIZ
+	admin.GET("/get-riskprofile-question-list", controllers.GetRiskProfileQuestionList)
+
+	admin.GET("/get-option-list/:question_key", controllers.GetOptionListPerQuestion)
 
 	return e
 }
