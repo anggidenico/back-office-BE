@@ -149,25 +149,29 @@ func GetLastAvgNavTrBalanceCustomerByProductKey(c *AvgNav, customerKey string, p
 		CURRENT_DATE() as inquiry_date,
 	*/
 	query := `
-	SELECT min(a.avg_nav) AS avg_nav  
- FROM tr_balance a
- INNER JOIN (
-	 
-	 SELECT 
-		t.aca_key, 
-		max(t.balance_date) AS balance_date 
-	 FROM tr_balance t
-	 WHERE t.rec_status = 1
-	 AND cast(t.balance_date AS DATE) <= CURRENT_DATE()
-	 GROUP BY t.aca_key
-
- ) b ON (a.aca_key=b.aca_key AND a.balance_date=b.balance_date)
- INNER JOIN tr_account_agent c ON (c.aca_key=a.aca_key AND c.rec_status = 1)
- INNER JOIN tr_account d ON (d.acc_key=c.acc_key AND d.rec_status = 1)
- WHERE CAST(a.balance_date AS DATE) <= CURRENT_DATE()
- AND d.customer_key = ` + customerKey + `
- AND d.product_key = ` + productKey + `
- GROUP BY d.customer_key, d.product_key`
+	SELECT a.avg_nav FROM tr_balance a
+	INNER JOIN (
+		SELECT x.tc_key, cast(MAX(x.balance_date) AS DATE) AS balance_date
+		FROM tr_balance x
+		INNER JOIN tr_account_agent x2 ON (x2.aca_key = x.aca_key AND x2.rec_status = 1)
+		INNER JOIN tr_account x3 ON (x3.acc_key = x2.acc_key AND x3.rec_status = 1)
+		WHERE x.rec_status = 1 
+		AND x3.customer_key = ` + customerKey + `
+		AND x3.product_key = ` + productKey + `
+		AND cast(x.balance_date AS DATE) <= CURRENT_DATE()
+		AND x.balance_unit >= 1
+		GROUP BY x.tc_key
+	) b ON (a.tc_key = b.tc_key AND cast(a.balance_date AS DATE) = cast(b.balance_date AS DATE))
+	INNER JOIN tr_account_agent aa ON (aa.aca_key = a.aca_key AND aa.rec_status = 1)
+	INNER JOIN tr_account ac ON (ac.acc_key = aa.acc_key AND ac.rec_status = 1)
+	INNER JOIN ms_product p ON (p.product_key = ac.product_key AND p.rec_status = 1)
+	INNER JOIN ms_currency cr ON (cr.currency_key = p.currency_key AND cr.rec_status = 1)
+	INNER JOIN ms_customer c ON (c.customer_key = ac.customer_key AND c.rec_status = 1)
+	WHERE a.rec_status = 1
+	AND ac.customer_key = ` + customerKey + `
+	AND ac.product_key = ` + productKey + `
+	GROUP BY ac.customer_key, c.full_name, ac.product_key, p.product_name_alt
+	ORDER BY ac.product_key`
 
 	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)

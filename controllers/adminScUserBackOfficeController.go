@@ -174,10 +174,10 @@ func UserCustomerEdit(c echo.Context) error {
 	verifMobileno := c.FormValue("verified_mobileno")
 	if verifMobileno != "" {
 		if verifMobileno == "true" {
-			UpdtScUser["verified_email"] = "1"
+			UpdtScUser["verified_mobileno"] = "1"
 			UpdtScUser["last_verified_mobileno"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 		} else if verifMobileno == "false" {
-			UpdtScUser["verified_email"] = "0"
+			UpdtScUser["verified_mobileno"] = "0"
 		}
 	}
 
