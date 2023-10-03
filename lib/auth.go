@@ -31,6 +31,7 @@ type CProfile struct {
 }
 
 var Profile CProfile
+var UserIDStr string
 
 func AuthenticationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -145,7 +146,7 @@ func AuthenticationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			} else {
 				Profile.RecImage1 = config.BaseUrl + "/user/default.png"
 			}
-
+			UserIDStr = strconv.Itoa(int(Profile.UserID))
 			//log endpoint
 			dateLayout := "2006-01-02 15:04:05"
 			paramLog := make(map[string]string)

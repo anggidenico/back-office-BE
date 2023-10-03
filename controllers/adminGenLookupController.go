@@ -377,3 +377,24 @@ func AdminDetailLookup(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, response)
 }
+
+func GetLookupByGroupKey(c echo.Context) error {
+	var responseData []models.OptionGenLookUp
+
+	groupKey := c.Param("group_key")
+	if groupKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing group_key", "Missing group_key")
+	}
+
+	responseData = models.GetOptionByLookupGroupKey(groupKey)
+	if len(responseData) < 1 {
+		return lib.CustomError(http.StatusBadRequest, "Option list not found", "Option list not found")
+	}
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = responseData
+	return c.JSON(http.StatusOK, response)
+}

@@ -33,7 +33,7 @@ func router() *echo.Echo {
 	e.POST("/loginbo", controllers.LoginBo).Name = "LoginBo"
 
 	admin.GET("/lookup", controllers.GetGenLookup).Name = "GetGenLookup"
-	admin.GET("/city/:field/:key", controllers.GetMsCityList).Name = "GetMsCityList"
+	// admin.GET("/city/:field/:key", controllers.GetMsCityList).Name = "GetMsCityList"
 	admin.GET("/country", controllers.GetMsCountryList).Name = "GetMsCountryList"
 	admin.GET("/bank", controllers.GetMsBankList).Name = "GetMsBankList"
 
@@ -459,6 +459,8 @@ func router() *echo.Echo {
 
 	//==================================================== NEW ENDPOINT ======================================================================
 
+	e.GET("/get-lookup-by-group/:group_key", controllers.GetLookupByGroupKey)
+
 	// OA DAN PENGKINIAN
 	admin.GET("/new-oarequest-list", controllers.GetNewOAList)
 	admin.GET("/pengkinian-personal-data-list", controllers.GetPengkinianPersonalDataList)
@@ -478,8 +480,16 @@ func router() *echo.Echo {
 
 	// MANAGEMENT RISK PROFILE QUIZ
 	admin.GET("/get-riskprofile-question-list", controllers.GetRiskProfileQuestionList)
+	admin.GET("/get-question-detail/:question_key", controllers.GetQuestionDetail)
+	admin.POST("/create-riskprofile-question", controllers.CreateQuizQuestion)
+	admin.POST("/update-riskprofile-question", controllers.UpdateQuizQuestion)
+	admin.POST("/delete-riskprofile-question", controllers.DeleteQuizQuestion)
 
 	admin.GET("/get-option-list/:question_key", controllers.GetOptionListPerQuestion)
+	admin.GET("/get-option-detail/:quiz_option_key", controllers.GetOptionDetail)
+	admin.POST("/create-quiz-option", controllers.CreateQuizOption)
+	admin.POST("/update-quiz-option", controllers.UpdateQuizOption)
+	admin.POST("/delete-quiz-option", controllers.DeleteQuizOption)
 
 	return e
 }

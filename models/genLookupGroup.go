@@ -1,6 +1,7 @@
 package models
 
 import (
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 )
@@ -103,4 +104,20 @@ func AdminGetListDropdownLookupGroup(c *[]ListDropdownLookupGroup) (int, error) 
 	}
 
 	return http.StatusOK, nil
+}
+
+type OptionGenLookUp struct {
+	Key   string `db:"lookup_key" json:"key"`
+	Value string `db:"lkp_name" json:"value"`
+}
+
+func GetOptionByLookupGroupKey(groupKey string) (result []OptionGenLookUp) {
+	query := `SELECT lookup_key, lkp_name FROM gen_lookup 
+	WHERE rec_status = 1 AND lkp_group_key = ` + groupKey
+	err := db.Db.Select(&result, query)
+	if err != nil {
+		log.Println(err.Error())
+		// return http.StatusBadGateway, err
+	}
+	return
 }
