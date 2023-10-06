@@ -484,12 +484,13 @@ func router() *echo.Echo {
 	admin.POST("/create-riskprofile-question", controllers.CreateQuizQuestion)
 	admin.POST("/update-riskprofile-question", controllers.UpdateQuizQuestion)
 	admin.POST("/delete-riskprofile-question", controllers.DeleteQuizQuestion)
-
 	admin.GET("/get-option-list/:question_key", controllers.GetOptionListPerQuestion)
 	admin.GET("/get-option-detail/:quiz_option_key", controllers.GetOptionDetail)
 	admin.POST("/create-quiz-option", controllers.CreateQuizOption)
 	admin.POST("/update-quiz-option", controllers.UpdateQuizOption)
 	admin.POST("/delete-quiz-option", controllers.DeleteQuizOption)
+
+	admin.POST("/save-product", controllers.SaveMasterProduct)
 
 	return e
 }
