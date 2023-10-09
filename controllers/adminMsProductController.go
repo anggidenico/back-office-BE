@@ -142,7 +142,14 @@ func GetListProductAdmin(c echo.Context) error {
 	var productTypeIds []string
 	var genLookupIds []string
 	var custodianIds []string
+	var riskProfileIds []string
+
 	for _, pro := range msProduct {
+		if pro.RiskProfileKey != nil {
+			if _, ok := lib.Find(riskProfileIds, strconv.FormatUint(*pro.CurrencyKey, 10)); !ok {
+				riskProfileIds = append(riskProfileIds, strconv.FormatUint(*pro.CurrencyKey, 10))
+			}
+		}
 
 		if pro.CurrencyKey != nil {
 			if _, ok := lib.Find(currencyIds, strconv.FormatUint(*pro.CurrencyKey, 10)); !ok {
@@ -167,6 +174,7 @@ func GetListProductAdmin(c echo.Context) error {
 				custodianIds = append(custodianIds, strconv.FormatUint(*pro.CustodianKey, 10))
 			}
 		}
+
 	}
 
 	//mapping currency
@@ -181,6 +189,19 @@ func GetListProductAdmin(c echo.Context) error {
 	currencyData := make(map[uint64]models.MsCurrency)
 	for _, b := range msCurrency {
 		currencyData[b.CurrencyKey] = b
+	}
+
+	var msRiskProfileData []models.MsRiskProfile
+	if len(riskProfileIds) > 0 {
+		status, err = models.GetMsRiskProfileIn(&msRiskProfileData, riskProfileIds)
+		if err != nil {
+			// log.Error(err.Error())
+			return lib.CustomError(status, err.Error(), "Failed get data")
+		}
+	}
+	RiskProfileData := make(map[uint64]models.MsRiskProfile)
+	for _, rp := range msRiskProfileData {
+		RiskProfileData[rp.RiskProfileKey] = rp
 	}
 
 	//mapping MsProductCategory
@@ -265,11 +286,11 @@ func GetListProductAdmin(c echo.Context) error {
 				data.ProductTypeName = n.ProductTypeName
 			}
 		}
-		if pro.RiskProfileKey != nil {
-			if n, ok := gData[*pro.RiskProfileKey]; ok {
-				data.RiskProfileName = n.LkpName
-			}
-		}
+		// if pro.RiskProfileKey != nil {
+		// 	if n, ok := gData[*pro.RiskProfileKey]; ok {
+		// 		data.RiskProfileName = n.LkpName
+		// 	}
+		// }
 		layout := "2006-01-02 15:04:05"
 		newLayout := "02 Jan 2006"
 		if pro.LaunchDate != nil {
