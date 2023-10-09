@@ -124,6 +124,8 @@ func GetListProductAdmin(c echo.Context) error {
 		paramsLike["isin_code"] = isinCode
 	}
 
+	// var RiskProfileName string
+
 	var msProduct []models.MsProduct
 
 	status, err = models.AdminGetAllMsProductWithLike(&msProduct, limit, offset, params, paramsLike, noLimit)
@@ -146,9 +148,14 @@ func GetListProductAdmin(c echo.Context) error {
 
 	for _, pro := range msProduct {
 		if pro.RiskProfileKey != nil {
-			if _, ok := lib.Find(riskProfileIds, strconv.FormatUint(*pro.CurrencyKey, 10)); !ok {
-				riskProfileIds = append(riskProfileIds, strconv.FormatUint(*pro.CurrencyKey, 10))
+			if _, ok := lib.Find(riskProfileIds, strconv.FormatUint(*pro.RiskProfileKey, 10)); !ok {
+				riskProfileIds = append(riskProfileIds, strconv.FormatUint(*pro.RiskProfileKey, 10))
 			}
+			// var msRiskProfileData []models.MsRiskProfile
+			// status, err = models.GetMsRiskProfileIn(&msRiskProfileData, riskProfileIds)
+			// if len(msRiskProfileData) > 0 {
+			// 	RiskProfileName = *msRiskProfileData[0].RiskName
+			// }
 		}
 
 		if pro.CurrencyKey != nil {
@@ -288,6 +295,7 @@ func GetListProductAdmin(c echo.Context) error {
 		}
 		if pro.RiskProfileKey != nil {
 			if n, ok := RiskProfileData[*pro.RiskProfileKey]; ok {
+				// log.Println(n.RiskCode, n.RiskName)
 				data.RiskProfileName = n.RiskName
 			}
 		}

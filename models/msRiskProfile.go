@@ -1,6 +1,7 @@
 package models
 
 import (
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -71,10 +72,10 @@ func GetMsRiskProfileIn(c *[]MsRiskProfile, value []string) (int, error) {
 	query := query2 + " WHERE ms_risk_profile.risk_profile_key IN(" + inQuery + ")"
 
 	// Main query
-	// log.Println("==========  ==========>>>", query)
+	// log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		// log.Println(err)
+		log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
 
