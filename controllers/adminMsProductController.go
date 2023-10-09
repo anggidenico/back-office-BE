@@ -286,11 +286,11 @@ func GetListProductAdmin(c echo.Context) error {
 				data.ProductTypeName = n.ProductTypeName
 			}
 		}
-		// if pro.RiskProfileKey != nil {
-		// 	if n, ok := gData[*pro.RiskProfileKey]; ok {
-		// 		data.RiskProfileName = n.LkpName
-		// 	}
-		// }
+		if pro.RiskProfileKey != nil {
+			if n, ok := RiskProfileData[*pro.RiskProfileKey]; ok {
+				data.RiskProfileName = n.RiskName
+			}
+		}
 		layout := "2006-01-02 15:04:05"
 		newLayout := "02 Jan 2006"
 		if pro.LaunchDate != nil {
