@@ -78,7 +78,7 @@ type MsProductData struct {
 
 type MsProduct struct {
 	ProductKey            uint64           `db:"product_key"             json:"product_key"`
-	ProductID             uint64           `db:"product_id"              json:"product_id"`
+	ProductID             *uint64          `db:"product_id"              json:"product_id"`
 	ProductCode           string           `db:"product_code"            json:"product_code"`
 	ProductName           string           `db:"product_name"            json:"product_name"`
 	ProductNameAlt        string           `db:"product_name_alt"        json:"product_name_alt"`
@@ -101,7 +101,7 @@ type MsProduct struct {
 	MaxRedFee             decimal.Decimal  `db:"max_red_fee"             json:"max_red_fee"`
 	MaxSwiFee             decimal.Decimal  `db:"max_swi_fee"             json:"max_swi_fee"`
 	MinSubAmount          decimal.Decimal  `db:"min_sub_amount"          json:"min_sub_amount"`
-	MinTopUpAmount        decimal.Decimal  `db:"min_topup_amount"        json:"min_topup_amount"`
+	MinTopUpAmount        *decimal.Decimal `db:"min_topup_amount"        json:"min_topup_amount"`
 	MinRedAmount          decimal.Decimal  `db:"min_red_amount"          json:"min_red_amount"`
 	MinRedUnit            decimal.Decimal  `db:"min_red_unit"            json:"min_red_unit"`
 	MinUnitAfterRed       decimal.Decimal  `db:"min_unit_after_red"      json:"min_unit_after_red"`
@@ -109,8 +109,8 @@ type MsProduct struct {
 	ManagementFee         decimal.Decimal  `db:"management_fee"          json:"management_fee"`
 	CustodianFee          decimal.Decimal  `db:"custodian_fee"           json:"custodian_fee"`
 	CustodianKey          *uint64          `db:"custodian_key"           json:"custodian_key"`
-	OjkFee                decimal.Decimal  `db:"ojk_fee"                 json:"ojk_fee"`
-	ProductFeeAmount      decimal.Decimal  `db:"product_fee_amount"      json:"product_fee_amount"`
+	OjkFee                *decimal.Decimal `db:"ojk_fee"                 json:"ojk_fee"`
+	ProductFeeAmount      *decimal.Decimal `db:"product_fee_amount"      json:"product_fee_amount"`
 	OverwriteTransactFlag uint8            `db:"overwrite_transact_flag" json:"overwrite_transact_flag"`
 	OverwriteFeeFlag      uint8            `db:"overwrite_fee_flag"      json:"overwrite_fee_flag"`
 	OtherFeeAmount        decimal.Decimal  `db:"other_fee_amount"        json:"other_fee_amount"`
@@ -160,14 +160,14 @@ type AdminMsProductList struct {
 	LaunchDate          *string `json:"launch_date"`
 	InceptionDate       *string `json:"inception_date"`
 	IsinCode            *string `json:"isin_code"`
-	Syariah             string  `json:"syariah"`
+	Syariah             bool    `json:"syariah"`
 	CustodianFullName   *string `json:"custodian_full_name"`
 	SinvestFundCode     *string `json:"sinvest_fund_code"`
-	Enabled             string  `json:"enabled"`
-	Subscription        string  `json:"subscription"`
-	Redemption          string  `json:"redemption"`
-	SwitchOut           string  `json:"switch_out"`
-	SwitchIn            string  `json:"switch_in"`
+	Enabled             bool    `json:"enabled"`
+	Subscription        bool    `json:"subscription"`
+	Redemption          bool    `json:"redemption"`
+	SwitchOut           bool    `json:"switch_out"`
+	SwitchIn            bool    `json:"switch_in"`
 }
 
 func CreateMsProduct(params map[string]string) (int, error) {

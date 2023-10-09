@@ -290,9 +290,9 @@ func GetListProductAdmin(c echo.Context) error {
 		data.IsinCode = pro.IsinCode
 
 		if pro.FlagSyariah == 1 {
-			data.Syariah = "Ya"
+			data.Syariah = true
 		} else {
-			data.Syariah = "Tidak"
+			data.Syariah = false
 		}
 
 		if pro.CustodianKey != nil {
@@ -304,33 +304,33 @@ func GetListProductAdmin(c echo.Context) error {
 		data.SinvestFundCode = pro.SinvestFundCode
 
 		if pro.FlagEnabled == 1 {
-			data.Enabled = "Ya"
+			data.Enabled = true
 		} else {
-			data.Enabled = "Tidak"
+			data.Enabled = false
 		}
 
 		if pro.FlagSubscription == 1 {
-			data.Subscription = "Ya"
+			data.Subscription = true
 		} else {
-			data.Subscription = "Tidak"
+			data.Subscription = false
 		}
 
 		if pro.FlagRedemption == 1 {
-			data.Redemption = "Ya"
+			data.Redemption = true
 		} else {
-			data.Redemption = "Tidak"
+			data.Redemption = false
 		}
 
 		if pro.FlagSwitchOut == 1 {
-			data.SwitchOut = "Ya"
+			data.SwitchOut = true
 		} else {
-			data.SwitchOut = "Tidak"
+			data.SwitchOut = false
 		}
 
 		if pro.FlagSwitchIn == 1 {
-			data.SwitchIn = "Ya"
+			data.SwitchIn = true
 		} else {
-			data.SwitchIn = "Tidak"
+			data.SwitchIn = false
 		}
 
 		responseData = append(responseData, data)
@@ -613,8 +613,8 @@ func GetProductDetailAdmin(c echo.Context) error {
 		}
 	}
 
-	responseData.OjkFee = product.OjkFee
-	responseData.ProductFeeAmount = product.ProductFeeAmount
+	responseData.OjkFee = *product.OjkFee
+	responseData.ProductFeeAmount = *product.ProductFeeAmount
 
 	if product.OverwriteTransactFlag == 1 {
 		responseData.OverwriteTransactFlag = true
@@ -1354,6 +1354,34 @@ func CreateAdminMsProduct(c echo.Context) error {
 	} else {
 		// log.Error("flag_switch_in parameter should be true/false")
 		return lib.CustomError(http.StatusBadRequest, "flag_switch_in parameter should be true/false", "flag_switch_in parameter should be true/false")
+	}
+
+	decNav := c.FormValue("dec_nav")
+	if decNav == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing dec_nav", "Missing dec_nav")
+	} else {
+		params["dec_nav"] = decNav
+	}
+
+	decunit := c.FormValue("dec_unit")
+	if decunit == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing dec_unit", "Missing dec_unit")
+	} else {
+		params["dec_unit"] = decNav
+	}
+
+	decperformance := c.FormValue("dec_performance")
+	if decperformance == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing dec_performance", "Missing dec_performance")
+	} else {
+		params["dec_performance"] = decperformance
+	}
+
+	decamount := c.FormValue("dec_amount")
+	if decamount == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing dec_amount", "Missing dec_amount")
+	} else {
+		params["dec_amount"] = decamount
 	}
 
 	dateLayout := "2006-01-02 15:04:05"
