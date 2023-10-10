@@ -894,6 +894,17 @@ func CreateAdminMsProduct(c echo.Context) error {
 		}
 	}
 
+	custodiankey := c.FormValue("custodian_key")
+	if custodiankey != "" {
+		sub, err := strconv.ParseUint(custodiankey, 10, 64)
+		if err == nil && sub > 0 {
+			params["custodian_key"] = custodiankey
+		} else {
+			// log.Error("Wrong input for parameter: custodian_key number")
+			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: custodian_key must number", "Missing required parameter: custodian_key number")
+		}
+	}
+
 	//product_profile
 	productprofile := c.FormValue("product_profile")
 	if productprofile != "" {
@@ -1064,6 +1075,23 @@ func CreateAdminMsProduct(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_sub_amount must number", "Missing required parameter: min_sub_amount number")
 	}
 
+	mintopupamount := c.FormValue("min_topup_amount")
+	if mintopupamount == "" {
+		// log.Error("Missing required parameter: min_topup_amount cann't be blank")
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_topup_amount cann't be blank", "Missing required parameter: min_topup_amount cann't be blank")
+	}
+	mintopupamountFloat, err := strconv.ParseFloat(mintopupamount, 64)
+	if err == nil {
+		if mintopupamountFloat < 0 {
+			// log.Error("Wrong input for parameter: min_topup_amount cann't negatif")
+			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_topup_amount must cann't negatif", "Missing required parameter: min_topup_amount cann't negatif")
+		}
+		params["min_topup_amount"] = mintopupamount
+	} else {
+		// log.Error("Wrong input for parameter: min_topup_amount number")
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_topup_amount must number", "Missing required parameter: min_topup_amount number")
+	}
+
 	//min_red_amount
 	minredamount := c.FormValue("min_red_amount")
 	if minredamount == "" {
@@ -1118,6 +1146,23 @@ func CreateAdminMsProduct(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_unit_after_red must number", "Missing required parameter: min_unit_after_red number")
 	}
 
+	minamountafterred := c.FormValue("min_amount_after_red")
+	if minamountafterred == "" {
+		// log.Error("Missing required parameter: min_amount_after_red cann't be blank")
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_amount_after_red cann't be blank", "Missing required parameter: min_amount_after_red cann't be blank")
+	}
+	minamountafterredFloat, err := strconv.ParseFloat(minamountafterred, 64)
+	if err == nil {
+		if minamountafterredFloat < 0 {
+			// log.Error("Wrong input for parameter: min_amount_after_red cann't negatif")
+			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_amount_after_red must cann't negatif", "Missing required parameter: min_amount_after_red cann't negatif")
+		}
+		params["min_amount_after_red"] = minamountafterred
+	} else {
+		// log.Error("Wrong input for parameter: min_amount_after_red number")
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: min_amount_after_red must number", "Missing required parameter: min_amount_after_red number")
+	}
+
 	//management_fee
 	managementfee := c.FormValue("management_fee")
 	if managementfee == "" {
@@ -1152,18 +1197,6 @@ func CreateAdminMsProduct(c echo.Context) error {
 	} else {
 		// log.Error("Wrong input for parameter: custodian_fee number")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: custodian_fee must number", "Missing required parameter: custodian_fee number")
-	}
-
-	//custodian_key
-	custodiankey := c.FormValue("custodian_key")
-	if custodiankey != "" {
-		sub, err := strconv.ParseUint(custodiankey, 10, 64)
-		if err == nil && sub > 0 {
-			params["custodian_key"] = custodiankey
-		} else {
-			// log.Error("Wrong input for parameter: custodian_key number")
-			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: custodian_key must number", "Missing required parameter: custodian_key number")
-		}
 	}
 
 	//ojk_fee
@@ -1412,6 +1445,18 @@ func CreateAdminMsProduct(c echo.Context) error {
 	} else {
 		params["dec_amount"] = decamount
 	}
+
+	npwp_number := c.FormValue("npwp_number")
+	params["npwp_number"] = npwp_number
+
+	npwp_date_reg := c.FormValue("npwp_date_reg")
+	params["npwp_date_reg"] = npwp_date_reg
+
+	npwp_name := c.FormValue("npwp_name")
+	params["npwp_name"] = npwp_name
+
+	portfolio_code := c.FormValue("portfolio_code")
+	params["portfolio_code"] = portfolio_code
 
 	dateLayout := "2006-01-02 15:04:05"
 	params["rec_status"] = "1"
