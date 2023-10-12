@@ -492,6 +492,11 @@ func router() *echo.Echo {
 
 	admin.POST("/save-product", controllers.SaveMasterProduct)
 
+	//RISK-PROFILE
+	e.POST("/create-risk-profile", controllers.CreateRiskProfile)
+	e.GET("/get-risk-controller", controllers.GetriskProfileController)
+	e.POST("/update-risk-profile", controllers.UpdateRiskProfile)
+	e.POST("/delete-risk-profile", controllers.DeleteRiskProfile)
 	return e
 }
 
