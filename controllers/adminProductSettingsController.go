@@ -8,22 +8,22 @@ import (
 	"github.com/labstack/echo"
 )
 
-func SaveProductSetting2(c echo.Context) (err error) {
-	m := new(models.MasterProduct)
-	if err := c.Bind(m); err != nil {
-		return err
-	}
-	if err := c.Validate(m); err != nil {
-		return err
-	}
+// func SaveProductSetting2(c echo.Context) (err error) {
+// 	m := new(models.MasterProduct)
+// 	if err := c.Bind(m); err != nil {
+// 		return err
+// 	}
+// 	if err := c.Validate(m); err != nil {
+// 		return err
+// 	}
 
-	var response lib.Response
-	response.Status.Code = http.StatusOK
-	response.Status.MessageServer = "OK"
-	response.Status.MessageClient = "OK"
-	response.Data = nil
-	return c.JSON(http.StatusOK, response)
-}
+// 	var response lib.Response
+// 	response.Status.Code = http.StatusOK
+// 	response.Status.MessageServer = "OK"
+// 	response.Status.MessageClient = "OK"
+// 	response.Data = nil
+// 	return c.JSON(http.StatusOK, response)
+// }
 
 func SaveMasterProduct(c echo.Context) (err error) {
 	insertMsProduct := make(map[string]string)

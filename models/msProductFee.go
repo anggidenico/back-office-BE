@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -374,6 +375,140 @@ func GetProductFeeValueSubscription(c *ProductFeeValueSubscription, productKey s
 		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
+
+	return http.StatusOK, nil
+}
+
+type FeeItemData struct {
+	ProductFeeItemKey uint64          `db:"product_fee_item_key" json:"product_fee_item_key"`
+	PrincipleLimit    decimal.Decimal `db:"principle_limit" json:"principle_limit"`
+	FeeValue          decimal.Decimal `db:"fee_value" json:"fee_value"`
+	ItemNotes         string          `db:"item_notes" json:"item_notes"`
+	// ProductFeeKey uint64 `db:"product_fee_key" json:"product_fee_key"`
+	// ItemSeqno      string          `db:"item_seqno" json:"item_seqno"`
+	// RowMax         uint64          `db:"row_max" json:"row_max"`
+	// RecStatus      uint64          `db:"rec_status" json:"rec_status"`
+	// RecCreatedDate string `db:"rec_created_date" json:"rec_created_date"`
+	// RecCreatedBy string `db:"rec_created_by" json:"rec_created_by"`
+}
+
+func CreateProductFeeSettings(paramsFee map[string]string, feeItems []FeeItemData) (int, error) {
+	query := "INSERT INTO ms_product_fee"
+	var fields, values string
+	var bindvars []interface{}
+	for key, value := range paramsFee {
+		fields += key + ", "
+		values += "?, "
+		bindvars = append(bindvars, value)
+	}
+	fields = fields[:(len(fields) - 2)]
+	values = values[:(len(values) - 2)]
+
+	query += "(" + fields + ") VALUES(" + values + ")"
+
+	tx, err := db.Db.Begin()
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return http.StatusBadGateway, err
+	}
+	var ret sql.Result
+	ret, err = tx.Exec(query, bindvars...)
+	// tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return http.StatusBadRequest, err
+	}
+	lastKey, _ := ret.LastInsertId()
+
+	productFeeKey := strconv.FormatInt(lastKey, 10)
+
+	queryItem := `INSERT INTO ms_product_fee_item(product_fee_key,item_seqno,row_max,principle_limit,fee_value,item_notes,rec_status,rec_created_date,rec_created_by) 
+	VALUES`
+	for i, data := range feeItems {
+		principleLimit := data.PrincipleLimit.String()
+		feeValue := data.FeeValue.String()
+		itemNotes := data.ItemNotes
+		seqNo := strconv.FormatInt(int64(i), 10)
+		rowMax := "0"
+		if i == len(feeItems)-1 {
+			rowMax = "1"
+		}
+		recStatus := "1"
+		recCreatedDate := paramsFee["rec_created_date"]
+		recCreatedBy := paramsFee["rec_created_by"]
+
+		queryItem += `('` + productFeeKey + `','` + seqNo + `','` + rowMax + `','` + principleLimit + `','` + feeValue + `','` + itemNotes + `','` + recStatus + `','` + recCreatedDate + `','` + recCreatedBy + `'),`
+	}
+	queryItem = queryItem[0 : len(queryItem)-1]
+
+	_, err = tx.Exec(queryItem)
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return http.StatusBadRequest, err
+	}
+
+	tx.Commit()
+	return http.StatusOK, nil
+}
+
+func UpdateProductFeeSettings(params map[string]string, feeItems []FeeItemData) (int, error) {
+	query := "UPDATE ms_product_fee SET "
+	i := 0
+	for key, value := range params {
+		if key != "fee_key" {
+			query += key + " = '" + value + "'"
+			if (len(params) - 2) > i {
+				query += ", "
+			}
+			i++
+		}
+	}
+	query += " WHERE fee_key = " + params["fee_key"]
+
+	tx, err := db.Db.Begin()
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return http.StatusBadGateway, err
+	}
+	var ret sql.Result
+	ret, err = tx.Exec(query)
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return http.StatusBadGateway, err
+	}
+	count, err := ret.RowsAffected()
+
+	if count > 0 {
+		var queryItem string
+		for _, data := range feeItems {
+			itemKey := strconv.FormatUint(data.ProductFeeItemKey, 10)
+			principleLimit := data.PrincipleLimit.String()
+			feeValue := data.FeeValue.String()
+			itemNotes := data.ItemNotes
+
+			queryItem = `UPDATE ms_product_fee_item SET 
+			principle_limit = ` + principleLimit + `, fee_value = ` + feeValue + `, item_notes = '` + itemNotes + `', rec_modified_date = '` + params["rec_modified_date"] + `', rec_modified_by = ` + params["rec_modified_by"] + `
+			WHERE product_fee_item_key = ` + itemKey
+			// log.Println(queryItem)
+			_, err = tx.Exec(queryItem)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return http.StatusBadGateway, err
+			}
+		}
+		// log.Println(queryItem)
+
+	} else {
+		tx.Rollback()
+	}
+
+	tx.Commit()
 
 	return http.StatusOK, nil
 }
