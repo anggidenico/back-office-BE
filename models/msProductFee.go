@@ -451,6 +451,64 @@ func CreateProductFeeSettings(paramsFee map[string]string, feeItems []FeeItemDat
 	}
 
 	tx.Commit()
+	return http.StatusOK, nil
+}
+
+func UpdateProductFeeSettings(params map[string]string, feeItems []FeeItemData) (int, error) {
+	query := "UPDATE ms_product_fee SET "
+	i := 0
+	for key, value := range params {
+		if key != "fee_key" {
+			query += key + " = '" + value + "'"
+			if (len(params) - 2) > i {
+				query += ", "
+			}
+			i++
+		}
+	}
+	query += " WHERE fee_key = " + params["fee_key"]
+
+	tx, err := db.Db.Begin()
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return http.StatusBadGateway, err
+	}
+	var ret sql.Result
+	ret, err = tx.Exec(query)
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return http.StatusBadGateway, err
+	}
+	count, err := ret.RowsAffected()
+
+	if count > 0 {
+		var queryItem string
+		for _, data := range feeItems {
+			itemKey := strconv.FormatUint(data.ProductFeeItemKey, 10)
+			principleLimit := data.PrincipleLimit.String()
+			feeValue := data.FeeValue.String()
+			itemNotes := data.ItemNotes
+
+			queryItem = `UPDATE ms_product_fee_item SET 
+			principle_limit = ` + principleLimit + `, fee_value = ` + feeValue + `, item_notes = '` + itemNotes + `', rec_modified_date = '` + params["rec_modified_date"] + `', rec_modified_by = ` + params["rec_modified_by"] + `
+			WHERE product_fee_item_key = ` + itemKey
+			// log.Println(queryItem)
+			_, err = tx.Exec(queryItem)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return http.StatusBadGateway, err
+			}
+		}
+		// log.Println(queryItem)
+
+	} else {
+		tx.Rollback()
+	}
+
+	tx.Commit()
 
 	return http.StatusOK, nil
 }
