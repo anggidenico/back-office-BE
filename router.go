@@ -496,10 +496,15 @@ func router() *echo.Echo {
 
 	//RISK-PROFILE
 	e.POST("/create-risk-profile", controllers.CreateRiskProfile)
-	e.GET("/get-risk-controller", controllers.GetriskProfileController)
+	e.GET("/get-risk-profile", controllers.GetriskProfileController)
 	e.POST("/update-risk-profile", controllers.UpdateRiskProfile)
-	e.POST("/delete-risk-profile", controllers.DeleteRiskProfile)
+	e.GET("/get-detail-risk-profile", controllers.GetDetailRiskProfileController)
+
+	//End Point
+	e.GET("/get-endpoint-sc", controllers.GetEndpointscController)
+	e.GET("/get-endpoint-detail", controllers.GetEndpointDetailController)
 	return e
+
 }
 
 func printUrlMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
