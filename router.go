@@ -495,15 +495,15 @@ func router() *echo.Echo {
 	admin.POST("/save-product", controllers.SaveMasterProduct)
 
 	//RISK-PROFILE
-	e.POST("/create-risk-profile", controllers.CreateRiskProfile)
-	e.GET("/get-risk-profile", controllers.GetriskProfileController)
-	e.POST("/update-risk-profile", controllers.UpdateRiskProfile)
-	e.POST("/delete-risk-profile", controllers.DeleteRiskProfile)
-	e.GET("/get-detail-risk-profile", controllers.GetDetailRiskProfileController)
+	admin.POST("/create-risk-profile", controllers.CreateRiskProfile)
+	admin.GET("/get-risk-profile", controllers.GetriskProfileController)
+	admin.POST("/update-risk-profile", controllers.UpdateRiskProfile)
+	admin.POST("/delete-risk-profile", controllers.DeleteRiskProfile)
+	admin.GET("/get-detail-risk-profile/:risk_profile_key", controllers.GetDetailRiskProfileController)
 
 	//End Point
-	e.GET("/get-endpoint-sc", controllers.GetEndpointscController)
-	e.GET("/get-endpoint-detail", controllers.GetEndpointDetailController)
+	admin.GET("/get-endpoint-sc", controllers.GetEndpointscController)
+	admin.GET("/get-endpoint-detail/:endpoint_key", controllers.GetEndpointDetailController)
 
 	return e
 

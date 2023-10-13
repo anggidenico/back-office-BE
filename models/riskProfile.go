@@ -42,8 +42,8 @@ func GetRiskProfileModels() (result []RiskProfile) {
 	return
 
 }
-func GetDetailRiskProfileModels() (result []GetDetailRisk) {
-	query := `SELECT risk_profile_key,risk_code,risk_name,risk_desc,min_score,max_score,max_flag,rec_order FROM ms_risk_profile`
+func GetDetailRiskProfileModels(RiskProfileKey string) (result []GetDetailRisk) {
+	query := `SELECT risk_profile_key,risk_code,risk_name,risk_desc,min_score,max_score,max_flag,rec_order FROM ms_risk_profile WHERE risk_profile_key =` + RiskProfileKey
 	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(&result, query)
 	if err != nil {

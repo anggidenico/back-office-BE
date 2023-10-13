@@ -23,8 +23,11 @@ func GetEndpointscController(c echo.Context) error {
 }
 
 func GetEndpointDetailController(c echo.Context) error {
-
-	result := models.GetDetailEndpointModels()
+	endpointKey := c.Param("endpoint_key")
+	if endpointKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing question key", "Missing question key")
+	}
+	result := models.GetDetailEndpointModels(endpointKey)
 	log.Println("Not Found")
 
 	var response lib.Response

@@ -48,8 +48,8 @@ func GetEndpointscModels() (result []scEndpoint) {
 
 }
 
-func GetDetailEndpointModels() (result []scEndpointDetail) {
-	query := `SELECT endpoint_key,endpoint_category_key,endpoint_code,endpoint_name,menu_key,endpoint_verb,endpoint_uri,endpoint_version,privileges_key FROM sc_endpoint`
+func GetDetailEndpointModels(EndPointKey string) (result []scEndpointDetail) {
+	query := `SELECT endpoint_key,endpoint_category_key,endpoint_code,endpoint_name,menu_key,endpoint_verb,endpoint_uri,endpoint_version,privileges_key FROM sc_endpoint WHERE endpoint_key =` + EndPointKey
 	log.Println("====================>>>", query)
 	err := db.Db.Select(&result, query)
 	if err != nil {
