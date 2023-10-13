@@ -105,10 +105,10 @@ func GetDetailRiskProfileController(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing question key", "Missing question key")
 	}
 	result := models.GetDetailRiskProfileModels(riskProfileKey)
-	if len(result) < 1 {
-		return lib.CustomError(http.StatusInternalServerError, "Can not get option list", "Can not get option list")
-		// log.Println("Not Found")
-	}
+	// if len(result) < 1 {
+	// 	return lib.CustomError(http.StatusInternalServerError, "Can not get option list", "Can not get option list")
+	// 	// log.Println("Not Found")
+	// }
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"

@@ -28,7 +28,7 @@ func GetEndpointDetailController(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing question key", "Missing question key")
 	}
 	result := models.GetDetailEndpointModels(endpointKey)
-	log.Println("Not Found")
+	// log.Println("Not Found")
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
