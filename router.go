@@ -498,7 +498,6 @@ func router() *echo.Echo {
 	e.POST("/create-risk-profile", controllers.CreateRiskProfile)
 	e.GET("/get-risk-profile", controllers.GetriskProfileController)
 	e.POST("/update-risk-profile", controllers.UpdateRiskProfile)
-<<<<<<< HEAD
 	e.POST("/delete-risk-profile", controllers.DeleteRiskProfile)
 	e.GET("/get-detail-risk-profile", controllers.GetDetailRiskProfileController)
 
@@ -506,13 +505,6 @@ func router() *echo.Echo {
 	e.GET("/get-endpoint-sc", controllers.GetEndpointscController)
 	e.GET("/get-endpoint-detail", controllers.GetEndpointDetailController)
 
-=======
-	// e.GET("/get-detail-risk-profile", controllers.GetDetailRiskProfileController)
-
-	// //End Point
-	// e.GET("/get-endpoint-sc", controllers.GetEndpointscController)
-	// e.GET("/get-endpoint-detail", controllers.GetEndpointDetailController)
->>>>>>> f0f0b0c6b424baf989f13453b7dba22f4c0639c2
 	return e
 
 }
