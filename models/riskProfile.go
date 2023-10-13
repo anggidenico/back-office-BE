@@ -17,9 +17,32 @@ type RiskProfile struct {
 	MaxScore       int    `json:"max_score" db:"max_score"`
 	MaxFlag        bool   `json:"max_flag" db:"max_flag"`
 	RecOrder       int    `json:"rec_order" db:"rec_order"`
+	RecStatus      int    `json:"rec_status" db:"rec_status"`
+}
+
+type GetDetailRisk struct {
+	RiskProfileKey string `json:"risk_profile_key"  db:"risk_profile_key"`
+	RiskCode       string `json:"risk_code" db:"risk_code"`
+	RiskName       string `json:"risk_name" db:"risk_name"`
+	RiskDesc       string `json:"risk_desc" db:"risk_desc"`
+	MinScore       int    `json:"min_score" db:"min_score"`
+	MaxScore       int    `json:"max_score" db:"max_score"`
+	MaxFlag        bool   `json:"max_flag" db:"max_flag"`
+	RecOrder       int    `json:"rec_order" db:"rec_order"`
 }
 
 func GetRiskProfileModels() (result []RiskProfile) {
+	query := `SELECT risk_profile_key,risk_code,risk_name,risk_desc,min_score,max_score,max_flag,rec_order,rec_status FROM ms_risk_profile`
+	log.Println("==========  ==========>>>", query)
+	err := db.Db.Select(&result, query)
+	if err != nil {
+		log.Println(err.Error())
+		// return http.StatusBadGateway, err
+	}
+	return
+
+}
+func GetDetailRiskProfileModels() (result []GetDetailRisk) {
 	query := `SELECT risk_profile_key,risk_code,risk_name,risk_desc,min_score,max_score,max_flag,rec_order FROM ms_risk_profile`
 	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(&result, query)
@@ -30,7 +53,6 @@ func GetRiskProfileModels() (result []RiskProfile) {
 	return
 
 }
-
 func CreateRiskProfile(params map[string]string) (int, error) {
 	query := "INSERT INTO ms_risk_profile"
 	// Get params
