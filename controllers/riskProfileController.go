@@ -47,29 +47,24 @@ func CreateRiskProfile(c echo.Context) error {
 	max_score := c.FormValue("max_score")
 	if max_score == "" {
 
-		return lib.CustomError(http.StatusBadRequest, "min_score can not be blank", "min_score can not be blank")
+		return lib.CustomError(http.StatusBadRequest, "max_score can not be blank", "min_score can not be blank")
 	}
 	params["max_score"] = max_score
 
 	max_flag := c.FormValue("max_flag")
 	if max_flag == "" {
-		return lib.CustomError(http.StatusBadRequest, "min_score can not be blank", "min_score can not be blank")
+		return lib.CustomError(http.StatusBadRequest, "max_flag can not be blank", "min_score can not be blank")
 	}
 	params["max_flag"] = max_flag
 
 	rec_order := c.FormValue("rec_order")
 	if rec_order == "" {
 
-		return lib.CustomError(http.StatusBadRequest, "min_score can not be blank", "min_score can not be blank")
+		return lib.CustomError(http.StatusBadRequest, "rec_order can not be blank", "min_score can not be blank")
 	}
+
 	params["rec_order"] = rec_order
-
-	rec_status := c.FormValue("rec_status")
-	if rec_status == "" {
-
-		return lib.CustomError(http.StatusBadRequest, "min_score can not be blank", "min_score can not be blank")
-	}
-	params["rec_status"] = rec_status
+	params["rec_status"] = "1"
 
 	status, err = models.CreateRiskProfile(params)
 	if err != nil {
@@ -95,6 +90,18 @@ func GetriskProfileController(c echo.Context) error {
 	// 	return lib.CustomError(http.StatusInternalServerError, "Can not get risk profile", "Can not get risk profile")
 	// }
 	log.Println("data ga keambil")
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = result
+	return c.JSON(http.StatusOK, response)
+}
+func GetDetailRiskProfileController(c echo.Context) error {
+
+	result := models.GetDetailRiskProfileModels()
+	log.Println("Not Found")
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -142,29 +149,22 @@ func UpdateRiskProfile(c echo.Context) error {
 
 	max_score := c.FormValue("max_score")
 	if max_score == "" {
-		return lib.CustomError(http.StatusBadRequest, "min_score can not be blank", "min_score can not be blank")
+		return lib.CustomError(http.StatusBadRequest, "max_score can not be blank", "min_score can not be blank")
 	}
 	params["max_score"] = max_score
 
 	max_flag := c.FormValue("max_flag")
 	if max_flag == "" {
-		return lib.CustomError(http.StatusBadRequest, "min_score can not be blank", "min_score can not be blank")
+		return lib.CustomError(http.StatusBadRequest, "max_flag can not be blank", "min_score can not be blank")
 	}
 	params["max_flag"] = max_flag
 
 	rec_order := c.FormValue("rec_order")
 	if rec_order == "" {
 
-		return lib.CustomError(http.StatusBadRequest, "min_score can not be blank", "min_score can not be blank")
+		return lib.CustomError(http.StatusBadRequest, "rec_order can not be blank", "min_score can not be blank")
 	}
 	params["rec_order"] = rec_order
-
-	rec_status := c.FormValue("rec_status")
-	if rec_status == "" {
-
-		return lib.CustomError(http.StatusBadRequest, "min_score can not be blank", "min_score can not be blank")
-	}
-	params["rec_status"] = rec_status
 
 	err = models.UpdateRiskProfile(riskprofileKey, params)
 	if err != nil {
