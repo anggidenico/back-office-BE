@@ -499,6 +499,7 @@ func router() *echo.Echo {
 	e.GET("/get-risk-controller", controllers.GetriskProfileController)
 	e.POST("/update-risk-profile", controllers.UpdateRiskProfile)
 	e.POST("/delete-risk-profile", controllers.DeleteRiskProfile)
+
 	return e
 }
 
