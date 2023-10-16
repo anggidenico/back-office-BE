@@ -33,7 +33,7 @@ type GetDetailRisk struct {
 
 func GetRiskProfileModels() (result []RiskProfile) {
 	query := `SELECT risk_profile_key,risk_code,risk_name,risk_desc,min_score,max_score,max_flag,rec_order,rec_status FROM ms_risk_profile
-			  WHERE rec_status = 3 order by rec_order`
+			  WHERE rec_status = 1 order by rec_order`
 	log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(&result, query)
 	if err != nil {

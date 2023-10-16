@@ -2,7 +2,6 @@
 package controllers
 
 import (
-	"log"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -88,18 +87,21 @@ func GetriskProfileController(c echo.Context) error {
 	// 	return lib.CustomError(http.StatusBadRequest, "Missing key", "Missing key")
 	// }
 	result := models.GetRiskProfileModels()
-	if len(result) < 1 {
-		return lib.CustomError(http.StatusInternalServerError, "Can not get risk profile", "Can not get risk profile")
-	}
-	log.Println("data ga keambil")
-
 	var response lib.Response
-	response.Status.Code = http.StatusOK
-	response.Status.MessageServer = "OK"
-	response.Status.MessageClient = "OK"
-	response.Data = result
+	if len(result) < 1 {
+		response.Status.Code = http.StatusOK
+		response.Status.MessageServer = "OK"
+		response.Status.MessageClient = "OK"
+		response.Data = []models.RiskProfile{}
+	} else {
+		response.Status.Code = http.StatusOK
+		response.Status.MessageServer = "OK"
+		response.Status.MessageClient = "OK"
+		response.Data = result
+	}
 	return c.JSON(http.StatusOK, response)
 }
+
 func GetDetailRiskProfileController(c echo.Context) error {
 
 	riskProfileKey := c.Param("risk_profile_key")

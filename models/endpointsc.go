@@ -4,6 +4,7 @@ import (
 	"log"
 	"mf-bo-api/db"
 	"net/http"
+	"strings"
 )
 
 type scEndpoint struct {
@@ -88,4 +89,54 @@ func CreateEndpointSc(params map[string]string) (int, error) {
 		return http.StatusBadRequest, err
 	}
 	return http.StatusOK, nil
+}
+func UpdateEndpointSc(EndpointKey string, params map[string]string) error {
+	query := `UPDATE sc_endpoint SET `
+	var setClauses []string
+	var values []interface{}
+
+	for key, value := range params {
+		if key != "endpoint_key" {
+			setClauses = append(setClauses, key+" = ?")
+			values = append(values, value)
+		}
+	}
+	query += strings.Join(setClauses, ", ")
+	query += ` WHERE endpoint_key = ?`
+	values = append(values, EndpointKey)
+
+	log.Println("========== UpdateRiskProfile ==========>>>", query)
+
+	_, err := db.Db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	return nil
+}
+
+func DeleteEndpoint(EndpointKey string, params map[string]string) error {
+	query := `UPDATE sc_endpoint SET `
+	var setClauses []string
+	var values []interface{}
+
+	for key, value := range params {
+		if key != "endpoint_key" {
+			setClauses = append(setClauses, key+" = ?")
+			values = append(values, value)
+		}
+	}
+	query += strings.Join(setClauses, ", ")
+	query += ` WHERE endpoint_key = ?`
+	values = append(values, EndpointKey)
+
+	log.Println("========== UpdateRiskProfile ==========>>>", query)
+
+	_, err := db.Db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	return nil
 }
