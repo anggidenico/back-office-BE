@@ -384,6 +384,7 @@ type FeeItemData struct {
 	PrincipleLimit    decimal.Decimal `db:"principle_limit" json:"principle_limit"`
 	FeeValue          decimal.Decimal `db:"fee_value" json:"fee_value"`
 	ItemNotes         string          `db:"item_notes" json:"item_notes"`
+	RecStatus         uint64          `db:"rec_status" json:"rec_status"`
 	// ProductFeeKey uint64 `db:"product_fee_key" json:"product_fee_key"`
 	// ItemSeqno      string          `db:"item_seqno" json:"item_seqno"`
 	// RowMax         uint64          `db:"row_max" json:"row_max"`
@@ -486,15 +487,36 @@ func UpdateProductFeeSettings(params map[string]string, feeItems []FeeItemData) 
 	if count > 0 {
 		var queryItem string
 		for _, data := range feeItems {
-			itemKey := strconv.FormatUint(data.ProductFeeItemKey, 10)
+			// itemKey :=
 			principleLimit := data.PrincipleLimit.String()
 			feeValue := data.FeeValue.String()
 			itemNotes := data.ItemNotes
+			recstatus := strconv.FormatUint(data.RecStatus, 10)
+			seqNo := strconv.FormatInt(int64(i), 10)
+			rowMax := "0"
+			if i == len(feeItems)-1 {
+				rowMax = "1"
+			}
 
-			queryItem = `UPDATE ms_product_fee_item SET 
-			principle_limit = ` + principleLimit + `, fee_value = ` + feeValue + `, item_notes = '` + itemNotes + `', rec_modified_date = '` + params["rec_modified_date"] + `', rec_modified_by = ` + params["rec_modified_by"] + `
-			WHERE product_fee_item_key = ` + itemKey
-			// log.Println(queryItem)
+			if data.ProductFeeItemKey > 0 {
+				// JIKA ADA FEE ITEM KEY MAKA UPDATE
+				queryItem = `UPDATE ms_product_fee_item SET 
+				principle_limit = ` + principleLimit + `, 
+				fee_value = ` + feeValue + `, 
+				item_notes = '` + itemNotes + `',
+				item_seqno = '` + seqNo + `',
+				row_max = '` + rowMax + `', 
+				rec_status = '` + recstatus + `', 
+				rec_modified_date = '` + params["rec_modified_date"] + `', 
+				rec_modified_by = ` + params["rec_modified_by"] + `
+				WHERE product_fee_item_key = ` + strconv.FormatUint(data.ProductFeeItemKey, 10)
+			} else {
+				// JIKA TIDAK ADA FEE ITEM KEY MAKA CREATE
+				recstatus = `1`
+				queryItem = `INSERT INTO ms_product_fee_item(product_fee_key,item_seqno,row_max,principle_limit,fee_value,item_notes,rec_status,rec_created_date,rec_created_by) 
+				VALUES('` + params["product_fee_key"] + `','` + seqNo + `','` + rowMax + `','` + principleLimit + `','` + feeValue + `','` + itemNotes + `','` + recstatus + `','` + params["rec_modified_date"] + `','` + params["rec_modified_by"] + `'),`
+			}
+			log.Println("query update fee item:", queryItem)
 			_, err = tx.Exec(queryItem)
 			if err != nil {
 				tx.Rollback()
@@ -503,7 +525,6 @@ func UpdateProductFeeSettings(params map[string]string, feeItems []FeeItemData) 
 			}
 		}
 		// log.Println(queryItem)
-
 	} else {
 		tx.Rollback()
 	}

@@ -505,6 +505,10 @@ func router() *echo.Echo {
 	admin.GET("/get-endpoint-sc", controllers.GetEndpointscController)
 	admin.GET("/get-endpoint-detail/:endpoint_key", controllers.GetEndpointDetailController)
 
+	// PRODUCT PAYMENT CHANNEL
+	admin.GET("/product-channel/:product_key", controllers.ProductPaymentChannelList)
+	admin.GET("/product-channel/create", controllers.CreateProductPaymentChannels)
+
 	return e
 
 }

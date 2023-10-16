@@ -1,6 +1,7 @@
 package models
 
 import (
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -30,6 +31,7 @@ type MsFundType struct {
 	FundTypeDesc      *string `db:"fund_type_desc"        json:"fund_type_desc"`
 	ShowHome          uint8   `db:"show_home"             json:"show_home"`
 	ShowOnboard       uint8   `db:"show_onboard" json:"show_onboard"`
+	RiskProfileKey    uint8   `db:"risk_profile_key" json:"risk_profile_key"`
 	RecOrder          *uint64 `db:"rec_order"             json:"rec_order"`
 	RecStatus         uint8   `db:"rec_status"            json:"rec_status"`
 	RecCreatedDate    *string `db:"rec_created_date"      json:"rec_created_date"`
@@ -185,4 +187,13 @@ func AdminGetAllMsFundType(c *[]MsFundType, limit uint64, offset uint64, params 
 	}
 
 	return http.StatusOK, nil
+}
+
+func GetRiskProfileByFundType(FundTypeKey string) (result uint64) {
+	query := `SELECT risk_profile_key FROM ms_fund_type WHERE func_type_key =` + FundTypeKey
+	err := db.Db.Get(&result, query)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	return
 }

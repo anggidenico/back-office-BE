@@ -374,6 +374,7 @@ func GetProductFeeDetailAdmin(c echo.Context) error {
 		data.PrincipleLimit = feeItem.PrincipleLimit
 		data.FeeValue = feeItem.FeeValue
 		data.ItemNotes = feeItem.ItemNotes
+		data.RecStatus = feeItem.RecStatus
 
 		productFeeList = append(productFeeList, data)
 	}
