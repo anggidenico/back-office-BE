@@ -15,6 +15,8 @@ import (
 func CreateRiskProfile(c echo.Context) error {
 	var err error
 	params := make(map[string]string)
+	params["rec_created_by"] = lib.UserIDStr
+	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
 	risk_code := c.FormValue("risk_code")
 	if risk_code == "" {
@@ -86,9 +88,9 @@ func GetriskProfileController(c echo.Context) error {
 	// 	return lib.CustomError(http.StatusBadRequest, "Missing key", "Missing key")
 	// }
 	result := models.GetRiskProfileModels()
-	// if len(result) < 1 {
-	// 	return lib.CustomError(http.StatusInternalServerError, "Can not get risk profile", "Can not get risk profile")
-	// }
+	if len(result) < 1 {
+		return lib.CustomError(http.StatusInternalServerError, "Can not get risk profile", "Can not get risk profile")
+	}
 	log.Println("data ga keambil")
 
 	var response lib.Response
@@ -120,6 +122,8 @@ func GetDetailRiskProfileController(c echo.Context) error {
 func UpdateRiskProfile(c echo.Context) error {
 	var err error
 	params := make(map[string]string)
+	params["rec_modified_by"] = lib.UserIDStr
+	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
 	riskprofileKey := c.FormValue("risk_profile_key")
 	if riskprofileKey == "" {

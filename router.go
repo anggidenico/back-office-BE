@@ -504,7 +504,7 @@ func router() *echo.Echo {
 	//End Point
 	admin.GET("/get-endpoint-sc", controllers.GetEndpointscController)
 	admin.GET("/get-endpoint-detail/:endpoint_key", controllers.GetEndpointDetailController)
-
+	admin.POST("/create-endpoint-sc", controllers.CreateEndpointController)
 	return e
 
 }
