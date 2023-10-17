@@ -847,16 +847,16 @@ func CreateAdminMsProduct(c echo.Context) error {
 	}
 
 	//product_type_key
-	producttypekey := c.FormValue("product_type_key")
-	if producttypekey != "" {
-		sub, err := strconv.ParseUint(producttypekey, 10, 64)
-		if err == nil && sub > 0 {
-			params["product_type_key"] = producttypekey
-		} else {
-			// log.Error("Wrong input for parameter: product_type_key number")
-			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_type_key must number", "Missing required parameter: product_type_key number")
-		}
-	}
+	// producttypekey := c.FormValue("product_type_key")
+	// if producttypekey != "" {
+	// 	sub, err := strconv.ParseUint(producttypekey, 10, 64)
+	// 	if err == nil && sub > 0 {
+	// 		params["product_type_key"] = producttypekey
+	// 	} else {
+	// 		// log.Error("Wrong input for parameter: product_type_key number")
+	// 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_type_key must number", "Missing required parameter: product_type_key number")
+	// 	}
+	// }
 
 	//fund_type_key
 	fundtypekey := c.FormValue("fund_type_key")
@@ -871,16 +871,16 @@ func CreateAdminMsProduct(c echo.Context) error {
 	}
 
 	//fund_structure_key
-	fundstructurekey := c.FormValue("fund_structure_key")
-	if fundstructurekey != "" {
-		sub, err := strconv.ParseUint(fundstructurekey, 10, 64)
-		if err == nil && sub > 0 {
-			params["fund_structure_key"] = fundstructurekey
-		} else {
-			// log.Error("Wrong input for parameter: fund_structure_key number")
-			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fund_structure_key must number", "Missing required parameter: fund_structure_key number")
-		}
-	}
+	// fundstructurekey := c.FormValue("fund_structure_key")
+	// if fundstructurekey != "" {
+	// 	sub, err := strconv.ParseUint(fundstructurekey, 10, 64)
+	// 	if err == nil && sub > 0 {
+	// 		params["fund_structure_key"] = fundstructurekey
+	// 	} else {
+	// 		// log.Error("Wrong input for parameter: fund_structure_key number")
+	// 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fund_structure_key must number", "Missing required parameter: fund_structure_key number")
+	// 	}
+	// }
 
 	//risk_profile_key
 	// riskprofilekey := c.FormValue("risk_profile_key")
@@ -1202,96 +1202,96 @@ func CreateAdminMsProduct(c echo.Context) error {
 	}
 
 	//ojk_fee
-	ojkfee := c.FormValue("ojk_fee")
-	if ojkfee == "" {
-		// log.Error("Missing required parameter: ojk_fee cann't be blank")
-		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ojk_fee cann't be blank", "Missing required parameter: ojk_fee cann't be blank")
-	}
-	ojkfeeFloat, err := strconv.ParseFloat(ojkfee, 64)
-	if err == nil {
-		if ojkfeeFloat < 0 {
-			// log.Error("Wrong input for parameter: ojk_fee cann't negatif")
-			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ojk_fee must cann't negatif", "Missing required parameter: ojk_fee cann't negatif")
-		}
-		params["ojk_fee"] = ojkfee
-	} else {
-		// log.Error("Wrong input for parameter: ojk_fee number")
-		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ojk_fee must number", "Missing required parameter: ojk_fee number")
-	}
+	// ojkfee := c.FormValue("ojk_fee")
+	// if ojkfee == "" {
+	// 	// log.Error("Missing required parameter: ojk_fee cann't be blank")
+	// 	return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ojk_fee cann't be blank", "Missing required parameter: ojk_fee cann't be blank")
+	// }
+	// ojkfeeFloat, err := strconv.ParseFloat(ojkfee, 64)
+	// if err == nil {
+	// 	if ojkfeeFloat < 0 {
+	// 		// log.Error("Wrong input for parameter: ojk_fee cann't negatif")
+	// 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ojk_fee must cann't negatif", "Missing required parameter: ojk_fee cann't negatif")
+	// 	}
+	// 	params["ojk_fee"] = ojkfee
+	// } else {
+	// 	// log.Error("Wrong input for parameter: ojk_fee number")
+	// 	return lib.CustomError(http.StatusBadRequest, "Missing required parameter: ojk_fee must number", "Missing required parameter: ojk_fee number")
+	// }
 
 	//product_fee_amount
-	productfeeamount := c.FormValue("product_fee_amount")
-	if productfeeamount == "" {
-		// log.Error("Missing required parameter: product_fee_amount cann't be blank")
-		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_fee_amount cann't be blank", "Missing required parameter: product_fee_amount cann't be blank")
-	}
-	productfeeamountFloat, err := strconv.ParseFloat(productfeeamount, 64)
-	if err == nil {
-		if productfeeamountFloat < 0 {
-			// log.Error("Wrong input for parameter: product_fee_amount cann't negatif")
-			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_fee_amount must cann't negatif", "Missing required parameter: product_fee_amount cann't negatif")
-		}
-		params["product_fee_amount"] = productfeeamount
-	} else {
-		// log.Error("Wrong input for parameter: product_fee_amount number")
-		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_fee_amount must number", "Missing required parameter: product_fee_amount number")
-	}
+	// productfeeamount := c.FormValue("product_fee_amount")
+	// if productfeeamount == "" {
+	// 	// log.Error("Missing required parameter: product_fee_amount cann't be blank")
+	// 	return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_fee_amount cann't be blank", "Missing required parameter: product_fee_amount cann't be blank")
+	// }
+	// productfeeamountFloat, err := strconv.ParseFloat(productfeeamount, 64)
+	// if err == nil {
+	// 	if productfeeamountFloat < 0 {
+	// 		// log.Error("Wrong input for parameter: product_fee_amount cann't negatif")
+	// 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_fee_amount must cann't negatif", "Missing required parameter: product_fee_amount cann't negatif")
+	// 	}
+	// 	params["product_fee_amount"] = productfeeamount
+	// } else {
+	// 	// log.Error("Wrong input for parameter: product_fee_amount number")
+	// 	return lib.CustomError(http.StatusBadRequest, "Missing required parameter: product_fee_amount must number", "Missing required parameter: product_fee_amount number")
+	// }
 
 	//overwrite_transact_flag
-	overwritetransactflag := c.FormValue("overwrite_transact_flag")
-	var overwritetransactflagBool bool
-	if overwritetransactflag != "" {
-		overwritetransactflagBool, err = strconv.ParseBool(overwritetransactflag)
-		if err != nil {
-			// log.Error("overwrite_transact_flag parameter should be true/false")
-			return lib.CustomError(http.StatusBadRequest, "overwrite_transact_flag parameter should be true/false", "overwrite_transact_flag parameter should be true/false")
-		}
-		if overwritetransactflagBool == true {
-			params["overwrite_transact_flag"] = "1"
-		} else {
-			params["overwrite_transact_flag"] = "0"
-		}
-	} else {
-		// log.Error("overwrite_transact_flag parameter should be true/false")
-		return lib.CustomError(http.StatusBadRequest, "overwrite_transact_flag parameter should be true/false", "overwrite_transact_flag parameter should be true/false")
-	}
+	// overwritetransactflag := c.FormValue("overwrite_transact_flag")
+	// var overwritetransactflagBool bool
+	// if overwritetransactflag != "" {
+	// 	overwritetransactflagBool, err = strconv.ParseBool(overwritetransactflag)
+	// 	if err != nil {
+	// 		// log.Error("overwrite_transact_flag parameter should be true/false")
+	// 		return lib.CustomError(http.StatusBadRequest, "overwrite_transact_flag parameter should be true/false", "overwrite_transact_flag parameter should be true/false")
+	// 	}
+	// 	if overwritetransactflagBool == true {
+	// 		params["overwrite_transact_flag"] = "1"
+	// 	} else {
+	// 		params["overwrite_transact_flag"] = "0"
+	// 	}
+	// } else {
+	// 	// log.Error("overwrite_transact_flag parameter should be true/false")
+	// 	return lib.CustomError(http.StatusBadRequest, "overwrite_transact_flag parameter should be true/false", "overwrite_transact_flag parameter should be true/false")
+	// }
 
 	//overwrite_fee_flag
-	overwritefeeflag := c.FormValue("overwrite_fee_flag")
-	var overwritefeeflagBool bool
-	if overwritefeeflag != "" {
-		overwritefeeflagBool, err = strconv.ParseBool(overwritefeeflag)
-		if err != nil {
-			// log.Error("overwrite_fee_flag parameter should be true/false")
-			return lib.CustomError(http.StatusBadRequest, "overwrite_fee_flag parameter should be true/false", "overwrite_fee_flag parameter should be true/false")
-		}
-		if overwritefeeflagBool == true {
-			params["overwrite_fee_flag"] = "1"
-		} else {
-			params["overwrite_fee_flag"] = "0"
-		}
-	} else {
-		// log.Error("overwrite_fee_flag parameter should be true/false")
-		return lib.CustomError(http.StatusBadRequest, "overwrite_fee_flag parameter should be true/false", "overwrite_fee_flag parameter should be true/false")
-	}
+	// overwritefeeflag := c.FormValue("overwrite_fee_flag")
+	// var overwritefeeflagBool bool
+	// if overwritefeeflag != "" {
+	// 	overwritefeeflagBool, err = strconv.ParseBool(overwritefeeflag)
+	// 	if err != nil {
+	// 		// log.Error("overwrite_fee_flag parameter should be true/false")
+	// 		return lib.CustomError(http.StatusBadRequest, "overwrite_fee_flag parameter should be true/false", "overwrite_fee_flag parameter should be true/false")
+	// 	}
+	// 	if overwritefeeflagBool == true {
+	// 		params["overwrite_fee_flag"] = "1"
+	// 	} else {
+	// 		params["overwrite_fee_flag"] = "0"
+	// 	}
+	// } else {
+	// 	// log.Error("overwrite_fee_flag parameter should be true/false")
+	// 	return lib.CustomError(http.StatusBadRequest, "overwrite_fee_flag parameter should be true/false", "overwrite_fee_flag parameter should be true/false")
+	// }
 
 	//other_fee_amount
-	otherfeeamount := c.FormValue("other_fee_amount")
-	if otherfeeamount == "" {
-		// log.Error("Missing required parameter: other_fee_amount cann't be blank")
-		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: other_fee_amount cann't be blank", "Missing required parameter: other_fee_amount cann't be blank")
-	}
-	otherfeeamountFloat, err := strconv.ParseFloat(otherfeeamount, 64)
-	if err == nil {
-		if otherfeeamountFloat < 0 {
-			// log.Error("Wrong input for parameter: other_fee_amount cann't negatif")
-			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: other_fee_amount must cann't negatif", "Missing required parameter: other_fee_amount cann't negatif")
-		}
-		params["other_fee_amount"] = otherfeeamount
-	} else {
-		// log.Error("Wrong input for parameter: other_fee_amount number")
-		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: other_fee_amount must number", "Missing required parameter: other_fee_amount number")
-	}
+	// otherfeeamount := c.FormValue("other_fee_amount")
+	// if otherfeeamount == "" {
+	// 	// log.Error("Missing required parameter: other_fee_amount cann't be blank")
+	// 	return lib.CustomError(http.StatusBadRequest, "Missing required parameter: other_fee_amount cann't be blank", "Missing required parameter: other_fee_amount cann't be blank")
+	// }
+	// otherfeeamountFloat, err := strconv.ParseFloat(otherfeeamount, 64)
+	// if err == nil {
+	// 	if otherfeeamountFloat < 0 {
+	// 		// log.Error("Wrong input for parameter: other_fee_amount cann't negatif")
+	// 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: other_fee_amount must cann't negatif", "Missing required parameter: other_fee_amount cann't negatif")
+	// 	}
+	// 	params["other_fee_amount"] = otherfeeamount
+	// } else {
+	// 	// log.Error("Wrong input for parameter: other_fee_amount number")
+	// 	return lib.CustomError(http.StatusBadRequest, "Missing required parameter: other_fee_amount must number", "Missing required parameter: other_fee_amount number")
+	// }
 
 	//settlement_period
 	settlementperiod := c.FormValue("settlement_period")
@@ -1326,139 +1326,148 @@ func CreateAdminMsProduct(c echo.Context) error {
 	}
 
 	//flag_enabled
-	flagenabled := c.FormValue("flag_enabled")
-	var flagenabledBool bool
-	if flagenabled != "" {
-		flagenabledBool, err = strconv.ParseBool(flagenabled)
-		if err != nil {
-			// log.Error("flag_enabled parameter should be true/false")
-			return lib.CustomError(http.StatusBadRequest, "flag_enabled parameter should be true/false", "flag_enabled parameter should be true/false")
-		}
-		if flagenabledBool == true {
-			params["flag_enabled"] = "1"
-		} else {
-			params["flag_enabled"] = "0"
-		}
-	} else {
-		// log.Error("flag_enabled parameter should be true/false")
-		return lib.CustomError(http.StatusBadRequest, "flag_enabled parameter should be true/false", "flag_enabled parameter should be true/false")
-	}
+	// flagenabled := c.FormValue("flag_enabled")
+	// var flagenabledBool bool
+	// if flagenabled != "" {
+	// 	flagenabledBool, err = strconv.ParseBool(flagenabled)
+	// 	if err != nil {
+	// 		// log.Error("flag_enabled parameter should be true/false")
+	// 		return lib.CustomError(http.StatusBadRequest, "flag_enabled parameter should be true/false", "flag_enabled parameter should be true/false")
+	// 	}
+	// 	if flagenabledBool == true {
+	// 		params["flag_enabled"] = "1"
+	// 	} else {
+	// 		params["flag_enabled"] = "0"
+	// 	}
+	// } else {
+	// 	// log.Error("flag_enabled parameter should be true/false")
+	// 	return lib.CustomError(http.StatusBadRequest, "flag_enabled parameter should be true/false", "flag_enabled parameter should be true/false")
+	// }
+	params["flag_enabled"] = "1"
 
 	//flag_subscription
-	flagsubscription := c.FormValue("flag_subscription")
-	var flagsubscriptionBool bool
-	if flagsubscription != "" {
-		flagsubscriptionBool, err = strconv.ParseBool(flagsubscription)
-		if err != nil {
-			// log.Error("flag_subscription parameter should be true/false")
-			return lib.CustomError(http.StatusBadRequest, "flag_subscription parameter should be true/false", "flag_subscription parameter should be true/false")
-		}
-		if flagsubscriptionBool == true {
-			params["flag_subscription"] = "1"
-		} else {
-			params["flag_subscription"] = "0"
-		}
-	} else {
-		// log.Error("flag_subscription parameter should be true/false")
-		return lib.CustomError(http.StatusBadRequest, "flag_subscription parameter should be true/false", "flag_subscription parameter should be true/false")
-	}
+	// flagsubscription := c.FormValue("flag_subscription")
+	// var flagsubscriptionBool bool
+	// if flagsubscription != "" {
+	// 	flagsubscriptionBool, err = strconv.ParseBool(flagsubscription)
+	// 	if err != nil {
+	// 		// log.Error("flag_subscription parameter should be true/false")
+	// 		return lib.CustomError(http.StatusBadRequest, "flag_subscription parameter should be true/false", "flag_subscription parameter should be true/false")
+	// 	}
+	// 	if flagsubscriptionBool == true {
+	// 		params["flag_subscription"] = "1"
+	// 	} else {
+	// 		params["flag_subscription"] = "0"
+	// 	}
+	// } else {
+	// 	// log.Error("flag_subscription parameter should be true/false")
+	// 	return lib.CustomError(http.StatusBadRequest, "flag_subscription parameter should be true/false", "flag_subscription parameter should be true/false")
+	// }
+	params["flag_subscription"] = "1"
 
 	//flag_redemption
-	flagredemption := c.FormValue("flag_redemption")
-	var flagredemptionBool bool
-	if flagredemption != "" {
-		flagredemptionBool, err = strconv.ParseBool(flagredemption)
-		if err != nil {
-			// log.Error("flag_redemption parameter should be true/false")
-			return lib.CustomError(http.StatusBadRequest, "flag_redemption parameter should be true/false", "flag_redemption parameter should be true/false")
-		}
-		if flagredemptionBool == true {
-			params["flag_redemption"] = "1"
-		} else {
-			params["flag_redemption"] = "0"
-		}
-	} else {
-		// log.Error("flag_redemption parameter should be true/false")
-		return lib.CustomError(http.StatusBadRequest, "flag_redemption parameter should be true/false", "flag_redemption parameter should be true/false")
-	}
+	// flagredemption := c.FormValue("flag_redemption")
+	// var flagredemptionBool bool
+	// if flagredemption != "" {
+	// 	flagredemptionBool, err = strconv.ParseBool(flagredemption)
+	// 	if err != nil {
+	// 		// log.Error("flag_redemption parameter should be true/false")
+	// 		return lib.CustomError(http.StatusBadRequest, "flag_redemption parameter should be true/false", "flag_redemption parameter should be true/false")
+	// 	}
+	// 	if flagredemptionBool == true {
+	// 		params["flag_redemption"] = "1"
+	// 	} else {
+	// 		params["flag_redemption"] = "0"
+	// 	}
+	// } else {
+	// 	// log.Error("flag_redemption parameter should be true/false")
+	// 	return lib.CustomError(http.StatusBadRequest, "flag_redemption parameter should be true/false", "flag_redemption parameter should be true/false")
+	// }
+	params["flag_redemption"] = "1"
 
 	//flag_switch_out
-	flagswitchout := c.FormValue("flag_switch_out")
-	var flagswitchoutBool bool
-	if flagswitchout != "" {
-		flagswitchoutBool, err = strconv.ParseBool(flagswitchout)
-		if err != nil {
-			// log.Error("flag_switch_out parameter should be true/false")
-			return lib.CustomError(http.StatusBadRequest, "flag_switch_out parameter should be true/false", "flag_switch_out parameter should be true/false")
-		}
-		if flagswitchoutBool == true {
-			params["flag_switch_out"] = "1"
-		} else {
-			params["flag_switch_out"] = "0"
-		}
-	} else {
-		// log.Error("flag_switch_out parameter should be true/false")
-		return lib.CustomError(http.StatusBadRequest, "flag_switch_out parameter should be true/false", "flag_switch_out parameter should be true/false")
-	}
+	// flagswitchout := c.FormValue("flag_switch_out")
+	// var flagswitchoutBool bool
+	// if flagswitchout != "" {
+	// 	flagswitchoutBool, err = strconv.ParseBool(flagswitchout)
+	// 	if err != nil {
+	// 		// log.Error("flag_switch_out parameter should be true/false")
+	// 		return lib.CustomError(http.StatusBadRequest, "flag_switch_out parameter should be true/false", "flag_switch_out parameter should be true/false")
+	// 	}
+	// 	if flagswitchoutBool == true {
+	// 		params["flag_switch_out"] = "1"
+	// 	} else {
+	// 		params["flag_switch_out"] = "0"
+	// 	}
+	// } else {
+	// 	// log.Error("flag_switch_out parameter should be true/false")
+	// 	return lib.CustomError(http.StatusBadRequest, "flag_switch_out parameter should be true/false", "flag_switch_out parameter should be true/false")
+	// }
+	params["flag_switch_out"] = "1"
 
 	//flag_switch_in
-	flagswitchin := c.FormValue("flag_switch_in")
-	var flagswitchinBool bool
-	if flagswitchin != "" {
-		flagswitchinBool, err = strconv.ParseBool(flagswitchin)
-		if err != nil {
-			// log.Error("flag_switch_in parameter should be true/false")
-			return lib.CustomError(http.StatusBadRequest, "flag_switch_in parameter should be true/false", "flag_switch_in parameter should be true/false")
-		}
-		if flagswitchinBool == true {
-			params["flag_switch_in"] = "1"
-		} else {
-			params["flag_switch_in"] = "0"
-		}
-	} else {
-		// log.Error("flag_switch_in parameter should be true/false")
-		return lib.CustomError(http.StatusBadRequest, "flag_switch_in parameter should be true/false", "flag_switch_in parameter should be true/false")
-	}
+	// flagswitchin := c.FormValue("flag_switch_in")
+	// var flagswitchinBool bool
+	// if flagswitchin != "" {
+	// 	flagswitchinBool, err = strconv.ParseBool(flagswitchin)
+	// 	if err != nil {
+	// 		// log.Error("flag_switch_in parameter should be true/false")
+	// 		return lib.CustomError(http.StatusBadRequest, "flag_switch_in parameter should be true/false", "flag_switch_in parameter should be true/false")
+	// 	}
+	// 	if flagswitchinBool == true {
+	// 		params["flag_switch_in"] = "1"
+	// 	} else {
+	// 		params["flag_switch_in"] = "0"
+	// 	}
+	// } else {
+	// 	// log.Error("flag_switch_in parameter should be true/false")
+	// 	return lib.CustomError(http.StatusBadRequest, "flag_switch_in parameter should be true/false", "flag_switch_in parameter should be true/false")
+	// }
+	params["flag_switch_in"] = "1"
 
-	decNav := c.FormValue("dec_nav")
-	if decNav == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing dec_nav", "Missing dec_nav")
-	} else {
-		params["dec_nav"] = decNav
-	}
+	// decNav := c.FormValue("dec_nav")
+	// if decNav == "" {
+	// 	return lib.CustomError(http.StatusBadRequest, "Missing dec_nav", "Missing dec_nav")
+	// } else {
+	// 	params["dec_nav"] = decNav
+	// }
+	params["dec_nav"] = "4"
 
-	decunit := c.FormValue("dec_unit")
-	if decunit == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing dec_unit", "Missing dec_unit")
-	} else {
-		params["dec_unit"] = decNav
-	}
+	// decunit := c.FormValue("dec_unit")
+	// if decunit == "" {
+	// 	return lib.CustomError(http.StatusBadRequest, "Missing dec_unit", "Missing dec_unit")
+	// } else {
+	// 	params["dec_unit"] = decNav
+	// }
+	params["dec_unit"] = "4"
 
-	decperformance := c.FormValue("dec_performance")
-	if decperformance == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing dec_performance", "Missing dec_performance")
-	} else {
-		params["dec_performance"] = decperformance
-	}
+	// decperformance := c.FormValue("dec_performance")
+	// if decperformance == "" {
+	// 	return lib.CustomError(http.StatusBadRequest, "Missing dec_performance", "Missing dec_performance")
+	// } else {
+	// 	params["dec_performance"] = decperformance
+	// }
+	params["dec_performance"] = "4"
 
-	decamount := c.FormValue("dec_amount")
-	if decamount == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing dec_amount", "Missing dec_amount")
-	} else {
-		params["dec_amount"] = decamount
-	}
+	// decamount := c.FormValue("dec_amount")
+	// if decamount == "" {
+	// 	return lib.CustomError(http.StatusBadRequest, "Missing dec_amount", "Missing dec_amount")
+	// } else {
+	// 	params["dec_amount"] = decamount
+	// }
+	params["dec_amount"] = "4"
 
-	npwp_number := c.FormValue("npwp_number")
-	params["npwp_number"] = npwp_number
+	// npwp_number := c.FormValue("npwp_number")
+	// params["npwp_number"] = npwp_number
 
-	npwp_date_reg := c.FormValue("npwp_date_reg")
-	params["npwp_date_reg"] = npwp_date_reg
+	// npwp_date_reg := c.FormValue("npwp_date_reg")
+	// params["npwp_date_reg"] = npwp_date_reg
 
-	npwp_name := c.FormValue("npwp_name")
-	params["npwp_name"] = npwp_name
+	// npwp_name := c.FormValue("npwp_name")
+	// params["npwp_name"] = npwp_name
 
-	portfolio_code := c.FormValue("portfolio_code")
-	params["portfolio_code"] = portfolio_code
+	// portfolio_code := c.FormValue("portfolio_code")
+	// params["portfolio_code"] = portfolio_code
 
 	dateLayout := "2006-01-02 15:04:05"
 	params["rec_status"] = "1"
