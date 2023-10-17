@@ -82,10 +82,6 @@ func CreateRiskProfile(c echo.Context) error {
 }
 
 func GetriskProfileController(c echo.Context) error {
-	// key := c.Param("key")
-	// if key == "" {
-	// 	return lib.CustomError(http.StatusBadRequest, "Missing key", "Missing key")
-	// }
 	result := models.GetRiskProfileModels()
 	var response lib.Response
 	if len(result) < 1 {
@@ -109,11 +105,9 @@ func GetDetailRiskProfileController(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing question key", "Missing question key")
 	}
 	result := models.GetDetailRiskProfileModels(riskProfileKey)
-	// if len(result) < 1 {
-	// 	return lib.CustomError(http.StatusInternalServerError, "Can not get option list", "Can not get option list")
-	// 	// log.Println("Not Found")
-	// }
+
 	var response lib.Response
+
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"

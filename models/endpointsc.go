@@ -47,7 +47,6 @@ func GetEndpointscModels() (result []scEndpoint) {
 		// return http.StatusBadGateway, err
 	}
 	return
-
 }
 
 func GetDetailEndpointModels(EndPointKey string) (result scEndpointDetail) {

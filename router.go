@@ -507,6 +507,9 @@ func router() *echo.Echo {
 	admin.POST("/create-endpoint-sc", controllers.CreateEndpointController)
 	admin.POST("/update-endpoint-sc", controllers.UpdateEndpointController)
 	admin.POST("/delete-endpoint-sc", controllers.DeleteEndpointController)
+
+	//Payment Channel
+
 	return e
 
 }
