@@ -504,14 +504,13 @@ func router() *echo.Echo {
 	//End Point
 	admin.GET("/get-endpoint-sc", controllers.GetEndpointscController)
 	admin.GET("/get-endpoint-detail/:endpoint_key", controllers.GetEndpointDetailController)
+	admin.POST("/create-endpoint-sc", controllers.CreateEndpointController)
+	admin.POST("/update-endpoint-sc", controllers.UpdateEndpointController)
+	admin.POST("/delete-endpoint-sc", controllers.DeleteEndpointController)
 
 	// PRODUCT PAYMENT CHANNEL
 	admin.GET("/product-channel/:product_key", controllers.ProductPaymentChannelList)
 	admin.GET("/product-channel/create", controllers.CreateProductPaymentChannels)
-
-	admin.POST("/create-endpoint-sc", controllers.CreateEndpointController)
-	admin.POST("/update-endpoint-sc", controllers.UpdateEndpointController)
-	admin.POST("/delete-endpoint-sc", controllers.DeleteEndpointController)
 
 	//Payment Channel
 
