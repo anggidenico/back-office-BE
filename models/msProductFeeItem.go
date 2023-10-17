@@ -49,6 +49,7 @@ type MsProductFeeItemDetailList struct {
 	PrincipleLimit    decimal.Decimal `json:"principle_limit"`
 	FeeValue          decimal.Decimal `json:"fee_value"`
 	ItemNotes         *string         `json:"item_notes"`
+	RecStatus         uint8           `json:"rec_status"`
 }
 
 func GetAllMsProductFeeItem(c *[]MsProductFeeItem, params map[string]string) (int, error) {

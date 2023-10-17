@@ -883,16 +883,18 @@ func CreateAdminMsProduct(c echo.Context) error {
 	}
 
 	//risk_profile_key
-	riskprofilekey := c.FormValue("risk_profile_key")
-	if riskprofilekey != "" {
-		sub, err := strconv.ParseUint(riskprofilekey, 10, 64)
-		if err == nil && sub > 0 {
-			params["risk_profile_key"] = riskprofilekey
-		} else {
-			// log.Error("Wrong input for parameter: risk_profile_key number")
-			return lib.CustomError(http.StatusBadRequest, "Missing required parameter: risk_profile_key must number", "Missing required parameter: risk_profile_key number")
-		}
-	}
+	// riskprofilekey := c.FormValue("risk_profile_key")
+	// if riskprofilekey != "" {
+	// 	sub, err := strconv.ParseUint(riskprofilekey, 10, 64)
+	// 	if err == nil && sub > 0 {
+	// 		params["risk_profile_key"] = riskprofilekey
+	// 	} else {
+	// 		// log.Error("Wrong input for parameter: risk_profile_key number")
+	// 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: risk_profile_key must number", "Missing required parameter: risk_profile_key number")
+	// 	}
+	// }
+	riskProfileKey := models.GetRiskProfileByFundType(fundtypekey)
+	params["risk_profile_key"] = strconv.FormatUint(riskProfileKey, 10)
 
 	custodiankey := c.FormValue("custodian_key")
 	if custodiankey != "" {
