@@ -512,7 +512,7 @@ func router() *echo.Echo {
 	admin.GET("/product-channel/:product_key", controllers.ProductPaymentChannelList)
 	admin.GET("/product-channel/create", controllers.CreateProductPaymentChannels)
 
-	//Payment Channel
+	// MASTER PAYMENT CHANNEL
 
 	return e
 
