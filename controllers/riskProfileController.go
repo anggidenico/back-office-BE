@@ -102,9 +102,13 @@ func GetDetailRiskProfileController(c echo.Context) error {
 
 	riskProfileKey := c.Param("risk_profile_key")
 	if riskProfileKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing question key", "Missing question key")
+		return lib.CustomError(http.StatusBadRequest, "Missing risk_profile_key", "Missing risk_profile_key")
 	}
 	result := models.GetDetailRiskProfileModels(riskProfileKey)
+
+	if result == nil {
+		return c.NoContent(http.StatusOK)
+	}
 
 	var response lib.Response
 
