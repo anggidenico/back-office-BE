@@ -508,12 +508,14 @@ func router() *echo.Echo {
 	// PRODUCT PAYMENT CHANNEL
 	admin.GET("/product-channel/:product_key", controllers.ProductPaymentChannelList)
 	admin.GET("/product-channel/create", controllers.CreateProductPaymentChannels)
+	admin.GET("/product-channel/delete", controllers.DeleteProductPaymentChannels)
 
 	admin.POST("/create-endpoint-sc", controllers.CreateEndpointController)
 	admin.POST("/update-endpoint-sc", controllers.UpdateEndpointController)
 	admin.POST("/delete-endpoint-sc", controllers.DeleteEndpointController)
 
-	// MASTER PAYMENT CHANNEL
+	// UPDATE PRODUCT WITH APPROVAL
+	admin.POST("/product/update/request", controllers.SaveProductUpdateRequest)
 
 	return e
 
