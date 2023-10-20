@@ -230,7 +230,7 @@ func AdminCreateMsCountry(c echo.Context) error {
 		}
 		//validate unique bank_code
 		var countData models.CountData
-		status, err = models.CountMsCountryValidateUnique(&countData, "cou_code", couCode, "")
+		status, err = models.CountMsCountryValidateUnique(&countData, "country_code", couCode, "")
 		if err != nil {
 			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
@@ -239,7 +239,7 @@ func AdminCreateMsCountry(c echo.Context) error {
 			// log.Error("Missing required parameter: cou_code")
 			return lib.CustomError(http.StatusBadRequest, "cou_code already used", "cou_code already used")
 		}
-		params["cou_code"] = couCode
+		params["country_code"] = couCode
 	}
 
 	couName := c.FormValue("cou_name")
@@ -253,7 +253,7 @@ func AdminCreateMsCountry(c echo.Context) error {
 		}
 		//validate unique bank_code
 		var countData models.CountData
-		status, err = models.CountMsCountryValidateUnique(&countData, "cou_name", couName, "")
+		status, err = models.CountMsCountryValidateUnique(&countData, "country_name", couName, "")
 		if err != nil {
 			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
@@ -262,7 +262,7 @@ func AdminCreateMsCountry(c echo.Context) error {
 			// log.Error("Missing required parameter: cou_name")
 			return lib.CustomError(http.StatusBadRequest, "cou_name already used", "cou_name already used")
 		}
-		params["cou_name"] = couName
+		params["country_name"] = couName
 	}
 
 	shortName := c.FormValue("short_name")
@@ -272,6 +272,15 @@ func AdminCreateMsCountry(c echo.Context) error {
 			return lib.CustomError(http.StatusBadRequest, "short_name must maximal 30 character", "short_name must maximal 30 character")
 		}
 		params["short_name"] = shortName
+	}
+
+	callingCode := c.FormValue("calling_code")
+	if callingCode != "" {
+		if len(callingCode) > 50 {
+			// log.Error("short_name must maximal 30 character")
+			return lib.CustomError(http.StatusBadRequest, "calling_code must maximal 30 character", "calling_code must maximal 30 character")
+		}
+		params["calling_code"] = callingCode
 	}
 
 	flagBase := c.FormValue("flag_base")
@@ -356,7 +365,7 @@ func AdminUpdateMsCountry(c echo.Context) error {
 		}
 		//validate unique bank_code
 		var countData models.CountData
-		status, err = models.CountMsCountryValidateUnique(&countData, "cou_code", couCode, countryKey)
+		status, err = models.CountMsCountryValidateUnique(&countData, "country_code", couCode, countryKey)
 		if err != nil {
 			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
@@ -365,7 +374,7 @@ func AdminUpdateMsCountry(c echo.Context) error {
 			// log.Error("Missing required parameter: cou_code")
 			return lib.CustomError(http.StatusBadRequest, "cou_code already used", "cou_code already used")
 		}
-		params["cou_code"] = couCode
+		params["country_code"] = couCode
 	}
 
 	couName := c.FormValue("cou_name")
@@ -379,7 +388,7 @@ func AdminUpdateMsCountry(c echo.Context) error {
 		}
 		//validate unique bank_code
 		var countData models.CountData
-		status, err = models.CountMsCountryValidateUnique(&countData, "cou_name", couName, countryKey)
+		status, err = models.CountMsCountryValidateUnique(&countData, "country_name", couName, countryKey)
 		if err != nil {
 			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
@@ -388,7 +397,7 @@ func AdminUpdateMsCountry(c echo.Context) error {
 			// log.Error("Missing required parameter: cou_name")
 			return lib.CustomError(http.StatusBadRequest, "cou_name already used", "cou_name already used")
 		}
-		params["cou_name"] = couName
+		params["country_name"] = couName
 	}
 
 	shortName := c.FormValue("short_name")
@@ -398,6 +407,15 @@ func AdminUpdateMsCountry(c echo.Context) error {
 			return lib.CustomError(http.StatusBadRequest, "short_name must maximal 30 character", "short_name must maximal 30 character")
 		}
 		params["short_name"] = shortName
+	}
+
+	callingCode := c.FormValue("calling_code")
+	if callingCode != "" {
+		if len(callingCode) > 50 {
+			// log.Error("short_name must maximal 30 character")
+			return lib.CustomError(http.StatusBadRequest, "calling_code must maximal 30 character", "calling_code must maximal 30 character")
+		}
+		params["calling_code"] = callingCode
 	}
 
 	flagBase := c.FormValue("flag_base")
@@ -482,6 +500,7 @@ func AdminDetailMsCountry(c echo.Context) error {
 	} else {
 		responseData["short_name"] = ""
 	}
+	responseData["calling_code"] = country.CallingCode
 	responseData["flag_base"] = country.FlagBase
 	if country.CurrencyKey != nil {
 		responseData["currency_key"] = *country.CurrencyKey

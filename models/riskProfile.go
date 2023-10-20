@@ -42,17 +42,19 @@ func GetRiskProfileModels() (result []RiskProfile) {
 	}
 	return
 }
-func GetDetailRiskProfileModels(RiskProfileKey string) (result GetDetailRisk) {
+func GetDetailRiskProfileModels(RiskProfileKey string) *GetDetailRisk {
 	query := `SELECT risk_profile_key,risk_code,risk_name,risk_desc,min_score,max_score,max_flag,rec_order FROM ms_risk_profile WHERE risk_profile_key =` + RiskProfileKey
+
+	var result GetDetailRisk
 	log.Println("==========  ==========>>>", query)
-	err := db.Db.Get(&result, query)
+	err := db.Db.Get(&result, query, RiskProfileKey)
 	if err != nil {
 		log.Println(err.Error())
-		// return http.StatusBadGateway, err
+		return nil
 	}
-	return
-
+	return &result
 }
+
 func CreateRiskProfile(params map[string]string) (int, error) {
 	query := "INSERT INTO ms_risk_profile"
 	// Get params

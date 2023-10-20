@@ -1,13 +1,57 @@
 package models
 
 import (
+	"log"
 	"mf-bo-api/config"
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/shopspring/decimal"
 )
+
+type MsPaymentChannel1 struct {
+	PchannelKey         *string    `db:"pchannel_key"    json:"pchannel_key"`
+	PchannelCode        *string    `db:"pchannel_code"    json:"pchannel_code"`
+	PchannelName        *string    `db:"pchannel_name"    json:"pchannel_name"`                 /* Nama yg lebih dikenal */
+	SettleChannel       *string    `db:"settle_channel"    json:"settle_channel"`               /* Vendor/perusahaan PG penyedia payment method. lkp_group_key = 73 */
+	SettlePaymentMethod *string    `db:"settle_payment_method"    json:"settle_payment_method"` /* Payment method */
+	MinNominalTrx       *string    `db:"min_nominal_trx"    json:"min_nominal_trx"`             /* Min. nominal transaksi yg akan dikenakan fee ini. default 0 = semua akan kena fee layanan */
+	ValueType           *string    `db:"value_type"    json:"value_type"`                       /* lookup value_type: FixAmount | Percentage */
+	CurrencyKey         *string    `db:"currency_key"    json:"currency_key"`                   /* Mata uang Fee */
+	FeeValue            *string    `db:"fee_value"    json:"fee_value"`                         /* Nilai Fee */
+	HasMinMax           *string    `db:"has_min_max"    json:"has_min_max"`                     /* True: nilai min dan max harus diset */
+	FeeMinValue         *string    `db:"fee_min_value"    json:"fee_min_value"`                 /* Nilai Fee Minimum */
+	FeeMaxValue         *string    `db:"fee_max_value"    json:"fee_max_value"`                 /* Nilai Fee Maximum */
+	FixedAmountFee      *string    `db:"fixed_amount_fee"    json:"fixed_amount_fee"`           /* jika ada biaya tetap/hari, yg sifatnya selalu ada */
+	FixedDmrFee         *string    `db:"fixed_dmr_fee"    json:"fixed_dmr_fee"`                 /* jika ada fixed_dmr_fee */
+	PgTnc               *string    `db:"pg_tnc"    json:"pg_tnc" `                              /* Isi TNC */
+	PgRemarks           *string    `db:"pg_remarks"    json:"pg_remarks"`                       /* Remarks */
+	PaymentLoginUrl     *string    `db:"payment_login_url"    json:"payment_login_url"`         /*  */
+	PaymentEntryUrl     *string    `db:"payment_entry_url"    json:"payment_entry_url"`         /*  */
+	PaymentErrorUrl     *string    `db:"payment_error_url"    json:"payment_error_url"`         /*  */
+	PaymentSuccessUrl   *string    `db:"payment_success_url"    json:"payment_success_url"`     /*  */
+	PgPrefix            *string    `db:"pg_prefix"    json:"pg_prefix"`                         /*  */
+	PicName             *string    `db:"pic_name"    json:"pic_name"`                           /*  */
+	PicPhoneNo          *string    `db:"pic_phone_no"    json:"pic_phone_no"`                   /*  */
+	PicEmailAddress     *string    `db:"pic_email_address"    json:"pic_email_address"`         /*  */
+	RecOrder            uint32     `db:"rec_order"    json:"rec_order"`                         /* Urutan record ditampilkan. Set value kolom ini jika ingin mengurutkan data tampil. Pada akhir setiap select query order by kolom rec_order ASC */
+	RecStatus           uint8      `db:"rec_status"    json:"rec_status"`                       /* Status of record : 1 = active | 0 = tidak aktif | 2 = archieved | 9 = deleted. Untuk menampilan record yang aktif, pada setiap select selalu gunakan kondisi WHERE rec_status=1  */
+	RecCreatedDate      *time.Time `db:"rec_created_date"    json:"rec_created_date"`           /* DateTime record diinsert. selalu isi kolom ini ketika action INSERT. tanggal diambil dari system */
+	RecCreatedBy        string     `db:"rec_created_by"    json:"rec_created_by"`               /* Userkey/UserName yang melakukan insert. Selalu isi kolom ini ketika action INSERT. Ambil userid dari session login */
+	RecModifiedDate     *time.Time `db:"rec_modified_date"    json:"rec_modified_date"`         /* DateTime record diupdate/ubah. Selalu isi kolom ini ketika action UPDATE. tanggal diambil dari system */
+	RecModifiedBy       string     `db:"rec_modified_by"    json:"rec_modified_by"`             /* User key yang melakukan perubahan pada record. Selalu isi kolom ini ketika action UPDATE. Ambil userid dari session login */
+	RecImage1           string     `db:"rec_image1"    json:"rec_image1"`                       /* nama icon atau image url - jika memerlukan image untuk record ini */
+	RecImage2           string     `db:"rec_image2"    json:"rec_image2"`                       /* nama icon ke 2 atau image url ke 2 - jika memerlukan image untuk record ini */
+	RecApprovalStatus   uint8      `db:"rec_approval_status"    json:"rec_approval_status"`     /* Approval status: 0 = Pending(Waiting) | 1 = Approved | 2 = Rejected */
+	RecApprovalStage    uint32     `db:"rec_approval_stage"    json:"rec_approval_stage"`       /* Appoval stage sesuai flow approval. Nama stage lihat di workflow stage */
+	RecApprovedDate     *time.Time `db:"rec_approved_date"    json:"rec_approved_date"`         /* Tanggal approval di lakukan - ambil dari tanggal system */
+	RecApprovedBy       string     `db:"rec_approved_by"    json:"rec_approved_by"`             /* UserID yang melakukan approval - ambil dari userlogin */
+	RecDeletedDate      *time.Time `db:"rec_deleted_date"    json:"rec_deleted_date"`           /* Tanggal record dihapus */
+	RecDeletedBy        string     `db:"rec_deleted_by"    json:"rec_deleted_by"`               /* User yang melakukan penghapusan */
+
+}
 
 type MsPaymentChannel struct {
 	PchannelKey         uint64           `db:"pchannel_key"             json:"pchannel_key"`
@@ -50,6 +94,21 @@ type MsPaymentChannel struct {
 	RecAttributeID1     *string          `db:"rec_attribute_id1"        json:"rec_attribute_id1"`
 	RecAttributeID2     *string          `db:"rec_attribute_id2"        json:"rec_attribute_id2"`
 	RecAttributeID3     *string          `db:"rec_attribute_id3"        json:"rec_attribute_id3"`
+}
+
+type PaymentChannel struct {
+	PchannelKey         uint64           `db:"pchannel_key"             json:"pchannel_key"`
+	PchannelCode        *string          `db:"pchannel_code"            json:"pchannel_code"`
+	PchannelName        *string          `db:"pchannel_name"            json:"pchannel_name"`
+	SettleChannel       uint64           `db:"settle_channel"           json:"settle_channel"`
+	SettleChannelName   string           `db:"settle_channel_name"      json:"settle_channel_name"`
+	SettlePaymentMethod uint64           `db:"settle_payment_method"    json:"settle_payment_method"`
+	MinNominalTrx       *decimal.Decimal `db:"min_nominal_trx"          json:"min_nominal_trx"`
+	ValueType           uint64           `db:"value_type"               json:"value_type"`
+	FeeValue            decimal.Decimal  `db:"fee_value"                json:"fee_value"`
+	HasMinMax           uint8            `db:"has_min_max"              json:"has_min_max"`
+	PgTnc               *string          `db:"pg_tnc"                   json:"pg_tnc"`
+	RecStatus           uint8            `db:"rec_status"               json:"rec_status"`
 }
 
 type SubscribePaymentChannel struct {
@@ -115,7 +174,6 @@ func GetAllMsPaymentChannel(c *[]MsPaymentChannel, params map[string]string) (in
 	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		// log.Println(err)
 		return http.StatusBadGateway, err
 	}
 
@@ -193,4 +251,25 @@ func GetPaymentChannelByCusomerKey(c *[]SubscribePaymentChannel, product string,
 	}
 
 	return http.StatusOK, nil
+}
+
+func GetPaymentChannelModels() (result []PaymentChannel) {
+	query := `SELECT a.pchannel_key, 
+	a.pchannel_code, 
+	a.pchannel_name, 
+	a.settle_channel, 
+	b.lkp_name settle_channel_name,
+	a.settle_payment_method, 
+	a.min_nominal_trx,a.value_type,
+	a.has_min_max,a.pg_tnc
+	FROM ms_payment_channel a 
+	JOIN gen_lookup b ON a.settle_channel = b.lookup_key 
+	WHERE a.rec_status =1`
+	log.Println("====================>>>", query)
+	err := db.Db.Select(&result, query)
+	if err != nil {
+		log.Println(err.Error())
+		// return http.StatusBadGateway, err
+	}
+	return
 }
