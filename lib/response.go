@@ -27,7 +27,11 @@ func CustomError(code int, messages ...string) *echo.HTTPError {
 			response.Status.MessageServer = value
 		}
 		if index == 1 {
-			response.Status.MessageClient = value
+			if value == "" {
+				response.Status.MessageClient = response.Status.MessageServer
+			} else {
+				response.Status.MessageClient = value
+			}
 		}
 	}
 

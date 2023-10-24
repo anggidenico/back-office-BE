@@ -519,10 +519,8 @@ func router() *echo.Echo {
 
 	// UPDATE PRODUCT WITH APPROVAL
 	admin.POST("/product/update/request", controllers.SaveProductUpdateRequest)
-	// MASTER PAYMENT CHANNEL
 
 	return e
-
 }
 
 func printUrlMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
