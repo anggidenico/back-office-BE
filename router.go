@@ -519,11 +519,7 @@ func router() *echo.Echo {
 	admin.POST("/delete-endpoint-sc", controllers.DeleteEndpointController)
 
 	// UPDATE PRODUCT WITH APPROVAL
-<<<<<<< HEAD
-	admin.POST("/product/update/request", controllers.SaveProductUpdateRequest)
-=======
 	admin.POST("/product/update/request", controllers.CreateProductUpdateRequest)
->>>>>>> e91fdf1319c5e03e94dffff9de8926014c0d5f03
 
 	// MASTER PAYMENT CHANNEL
 	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController)
