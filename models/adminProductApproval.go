@@ -5,7 +5,7 @@ import (
 	"mf-bo-api/db"
 )
 
-func InsertProductRequest(params map[string]string) error {
+func CreateProductUpdateRequest(params map[string]string) error {
 	query := "INSERT INTO ms_product_request"
 	var fields, values string
 	var bindvars []interface{}
