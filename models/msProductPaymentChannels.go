@@ -53,6 +53,30 @@ func CreateProductPaymentChannels(params map[string]string) error {
 	return nil
 }
 
+func UpdateProductPaymentChannels(params map[string]string) error {
+	query := "UPDATE ms_product_channel SET "
+	i := 0
+	for key, value := range params {
+		if key != "prod_channel_key" {
+			query += key + " = '" + value + "'"
+			if (len(params) - 2) > i {
+				query += ", "
+			}
+			i++
+		}
+	}
+	query += " WHERE prod_channel_key = " + params["prod_channel_key"]
+
+	// log.Println(query)
+	_, err := db.Db.Exec(query)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	return nil
+}
+
 func DeleteProductPaymentChannels(prod_channel_key string) error {
 	query := "UPDATE ms_product_channel SET rec_status = 0 WHERE prod_channel_key = " + prod_channel_key
 	// log.Println(query)
