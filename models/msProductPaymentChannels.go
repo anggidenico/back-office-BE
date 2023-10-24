@@ -30,7 +30,7 @@ func GetProductPaymentChannels(productKey string) (result []ProductPaymentChanne
 }
 
 func CreateProductPaymentChannels(params map[string]string) error {
-	query := "INSERT INTO ms_product"
+	query := "INSERT INTO ms_product_channel"
 	var fields, values string
 	var bindvars []interface{}
 	for key, value := range params {
@@ -43,7 +43,7 @@ func CreateProductPaymentChannels(params map[string]string) error {
 
 	query += "(" + fields + ") VALUES(" + values + ")"
 
-	log.Println(query)
+	// log.Println(query)
 	_, err := db.Db.Exec(query)
 	if err != nil {
 		log.Println(err.Error())
@@ -54,7 +54,7 @@ func CreateProductPaymentChannels(params map[string]string) error {
 }
 
 func DeleteProductPaymentChannels(prod_channel_key string) error {
-	query := "UPDATE ms_product_channel SET rec_statsu = 0 WHERE prod_channel_key = " + prod_channel_key
+	query := "UPDATE ms_product_channel SET rec_status = 0 WHERE prod_channel_key = " + prod_channel_key
 	// log.Println(query)
 	_, err := db.Db.Exec(query)
 	if err != nil {

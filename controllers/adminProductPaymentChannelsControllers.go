@@ -4,6 +4,7 @@ import (
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo"
 )
@@ -29,6 +30,9 @@ func ProductPaymentChannelList(c echo.Context) error {
 func CreateProductPaymentChannels(c echo.Context) error {
 
 	params := make(map[string]string)
+	params["rec_created_by"] = lib.UserIDStr
+	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	params["rec_status"] = "1"
 
 	productKey := c.FormValue("product_key")
 	if productKey == "" {
@@ -70,12 +74,12 @@ func CreateProductPaymentChannels(c echo.Context) error {
 
 func DeleteProductPaymentChannels(c echo.Context) error {
 
-	pchannelKey := c.FormValue("prod_channel_key")
-	if pchannelKey == "" {
+	prodChannelKey := c.FormValue("prod_channel_key")
+	if prodChannelKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing prod_channel_key", "Missing prod_channel_key")
 	}
 
-	err := models.DeleteProductPaymentChannels(pchannelKey)
+	err := models.DeleteProductPaymentChannels(prodChannelKey)
 	if err != nil {
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
 	}
