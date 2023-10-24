@@ -511,6 +511,7 @@ func router() *echo.Echo {
 	// PRODUCT PAYMENT CHANNEL
 	admin.GET("/product-channel/:product_key", controllers.ProductPaymentChannelList)
 	admin.GET("/product-channel/create", controllers.CreateProductPaymentChannels)
+	admin.GET("/product-channel/update", controllers.UpdateProductPaymentChannels)
 	admin.GET("/product-channel/delete", controllers.DeleteProductPaymentChannels)
 
 	admin.POST("/create-endpoint-sc", controllers.CreateEndpointController)
@@ -518,14 +519,17 @@ func router() *echo.Echo {
 	admin.POST("/delete-endpoint-sc", controllers.DeleteEndpointController)
 
 	// UPDATE PRODUCT WITH APPROVAL
+<<<<<<< HEAD
 	admin.POST("/product/update/request", controllers.SaveProductUpdateRequest)
+=======
+	admin.POST("/product/update/request", controllers.CreateProductUpdateRequest)
+>>>>>>> e91fdf1319c5e03e94dffff9de8926014c0d5f03
 
 	// MASTER PAYMENT CHANNEL
 	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController)
 	admin.GET("/get-payment-channel/:pchannel_key", controllers.GetMsPaymentDetailController)
 	admin.POST("/delete-payment-channel", controllers.DeleteMsPaymentChannelController)
 	return e
-
 }
 
 func printUrlMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
