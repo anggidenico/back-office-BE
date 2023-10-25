@@ -97,20 +97,19 @@ type MsPaymentChannel struct {
 }
 
 type PaymentChannel struct {
-	PchannelKey             uint64  `db:"pchannel_key"             json:"pchannel_key"`
-	PchannelCode            *string `db:"pchannel_code"            json:"pchannel_code"`
-	PchannelName            *string `db:"pchannel_name"            json:"pchannel_name"`
-	SettleChannel           uint64  `db:"settle_channel"           json:"settle_channel"`
-	SettleChannelName       string  `db:"settle_channel_name"            json:"settle_channel_name"`
-	SettlePaymentMethod     uint64  `db:"settle_payment_method"    json:"settle_payment_method"`
-	SettlePaymentMethodName SettlePaymentMethod
+	PchannelKey             uint64           `db:"pchannel_key"             json:"pchannel_key"`
+	PchannelCode            *string          `db:"pchannel_code"            json:"pchannel_code"`
+	PchannelName            *string          `db:"pchannel_name"            json:"pchannel_name"`
+	SettleChannel           uint64           `db:"settle_channel"           json:"settle_channel"`
+	SettleChannelName       string           `db:"settle_channel_name"            json:"settle_channel_name"`
+	SettlePaymentMethod     uint64           `db:"settle_payment_method"    json:"settle_payment_method"`
+	SettlePaymentMethodName string           `db:"settle_payment_method_name"    json:"settle_payment_method_name"`
 	MinNominalTrx           *decimal.Decimal `db:"min_nominal_trx"          json:"min_nominal_trx"`
 	ValueType               uint64           `db:"value_type"               json:"value_type"`
-	// ValueTypeName           string           `db:"value_type_name"               json:"value_type_name"`
-	FeeValue  decimal.Decimal `db:"fee_value"                json:"fee_value"`
-	HasMinMax uint8           `db:"has_min_max"              json:"has_min_max"`
-	PgTnc     *string         `db:"pg_tnc"                   json:"pg_tnc"`
-	RecStatus uint8           `db:"rec_status"               json:"rec_status"`
+	ValueTypeName           string           `db:"value_type_name"               json:"value_type_name"`
+	FeeValue                decimal.Decimal  `db:"fee_value"                json:"fee_value"`
+	HasMinMax               uint8            `db:"has_min_max"              json:"has_min_max"`
+	PgTnc                   *string          `db:"pg_tnc"                   json:"pg_tnc"`
 }
 
 type SettlePaymentMethod struct {
@@ -278,14 +277,15 @@ func GetPaymentChannelModels() (result []PaymentChannel) {
 	a.settle_channel, 
 	b.lkp_name settle_channel_name,
 	a.settle_payment_method,
-	b.lkp_name settle_payment_method_name, 
+	c.lkp_name settle_payment_method_name, 
 	a.min_nominal_trx,
 	a.value_type,
-	b.lkp_name value_type_name,
+	d.lkp_name value_type_name,
 	a.has_min_max,a.pg_tnc
 	FROM ms_payment_channel a 
-	JOIN gen_lookup b ON a.settle_channel = b.lookup_key 
-	WHERE a.rec_status =1`
+	JOIN gen_lookup b ON a.settle_channel = b.lookup_key
+    JOIN gen_lookup c ON a.settle_payment_method = c.lookup_key
+	JOIN gen_lookup d ON a.value_type = d.lookup_key WHERE a.rec_status = 1`
 	log.Println("====================>>>", query)
 	err := db.Db.Select(&result, query)
 	if err != nil {
