@@ -510,9 +510,9 @@ func router() *echo.Echo {
 
 	// PRODUCT PAYMENT CHANNEL
 	admin.GET("/product-channel/:product_key", controllers.ProductPaymentChannelList)
-	admin.GET("/product-channel/create", controllers.CreateProductPaymentChannels)
-	admin.GET("/product-channel/update", controllers.UpdateProductPaymentChannels)
-	admin.GET("/product-channel/delete", controllers.DeleteProductPaymentChannels)
+	admin.POST("/product-channel/create", controllers.CreateProductPaymentChannels)
+	admin.POST("/product-channel/update", controllers.UpdateProductPaymentChannels)
+	admin.POST("/product-channel/delete", controllers.DeleteProductPaymentChannels)
 
 	admin.POST("/create-endpoint-sc", controllers.CreateEndpointController)
 	admin.POST("/update-endpoint-sc", controllers.UpdateEndpointController)
@@ -522,6 +522,10 @@ func router() *echo.Echo {
 	admin.POST("/product/update/request", controllers.CreateProductUpdateRequest)
 	admin.POST("/product/update/request-list", controllers.ProductApprovalList)
 
+	// MASTER PAYMENT CHANNEL
+	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController)
+	admin.GET("/get-payment-channel/:pchannel_key", controllers.GetMsPaymentDetailController)
+	admin.POST("/delete-payment-channel", controllers.DeleteMsPaymentChannelController)
 	return e
 }
 
