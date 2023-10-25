@@ -267,11 +267,27 @@ func CreateProductUpdateRequest(c echo.Context) error {
 	params["rec_status"] = "1"
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 	params["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-	params["rec_action"] = "REQUEST_UPDATE"
-	err = models.CreateProductUpdateRequest(params)
+	params["rec_action"] = "UPDATE"
+	err = models.CreateProductRequest(params)
 	if err != nil {
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
 	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = nil
+	return c.JSON(http.StatusOK, response)
+}
 
-	return nil
+func ProductApprovalList(c echo.Context) error {
+
+	result := models.GetProductRequestList()
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = result
+	return c.JSON(http.StatusOK, response)
 }
