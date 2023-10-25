@@ -65,7 +65,7 @@ type ProductRequest struct {
 }
 
 func GetProductRequestList() (result []ProductRequest) {
-	query := `SELECT rec_pk, rec_action, product_key, product_name, fund_type_key
+	query := `SELECT rec_pk, rec_action, product_key, product_name, product_code
 	FROM ms_product_request WHERE rec_status = 1`
 	err := db.Db.Select(&result, query)
 	if err != nil {

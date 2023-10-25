@@ -264,6 +264,9 @@ func CreateProductUpdateRequest(c echo.Context) error {
 		}
 	}
 
+	riskProfileKey := models.GetRiskProfileByFundType(fund_type_key)
+	params["risk_profile_key"] = strconv.FormatUint(riskProfileKey, 10)
+
 	params["rec_status"] = "1"
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 	params["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
