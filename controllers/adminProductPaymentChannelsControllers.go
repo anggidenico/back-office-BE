@@ -79,16 +79,14 @@ func UpdateProductPaymentChannels(c echo.Context) error {
 	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 	params["rec_status"] = "1"
 
-	prodChannelKey := c.FormValue("prod_channel_key")
-	if prodChannelKey == "" {
+	prod_channel_key := c.FormValue("prod_channel_key")
+	if prod_channel_key == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing prod_channel_key", "Missing prod_channel_key")
 	}
+	params["prod_channel_key"] = prod_channel_key
 
-	productKey := c.FormValue("product_key")
-	if productKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing product_key", "Missing product_key")
-	}
-	params["product_key"] = productKey
+	// productKey := c.FormValue("product_key")
+	// params["product_key"] = productKey
 
 	pchannelKey := c.FormValue("pchannel_key")
 	if pchannelKey == "" {

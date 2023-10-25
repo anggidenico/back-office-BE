@@ -20,7 +20,7 @@ func GetProductPaymentChannels(productKey string) (result []ProductPaymentChanne
 	FROM ms_product_channel t1
 	INNER JOIN ms_payment_channel t2 ON (t1.pchannel_key = t2.pchannel_key AND t2.rec_status = 1)
 	WHERE t1.rec_status = 1 AND t1.product_key = ` + productKey
-
+	log.Println(query)
 	err := db.Db.Select(&result, query)
 	if err != nil {
 		log.Println(err.Error())

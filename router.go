@@ -519,7 +519,7 @@ func router() *echo.Echo {
 	admin.POST("/delete-endpoint-sc", controllers.DeleteEndpointController)
 
 	// UPDATE PRODUCT WITH APPROVAL
-	admin.POST("/product/update/request", controllers.CreateProductUpdateRequest)
+	admin.POST("/product/update/create-request", controllers.CreateProductUpdateRequest)
 	admin.POST("/product/update/request-list", controllers.ProductApprovalList)
 
 	// MASTER PAYMENT CHANNEL
