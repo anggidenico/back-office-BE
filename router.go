@@ -526,6 +526,7 @@ func router() *echo.Echo {
 	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController)
 	admin.GET("/get-payment-channel/:pchannel_key", controllers.GetMsPaymentDetailController)
 	admin.POST("/delete-payment-channel", controllers.DeleteMsPaymentChannelController)
+
 	return e
 }
 
