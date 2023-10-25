@@ -520,6 +520,7 @@ func router() *echo.Echo {
 
 	// UPDATE PRODUCT WITH APPROVAL
 	admin.POST("/product/update/request", controllers.CreateProductUpdateRequest)
+	admin.POST("/product/update/request-list", controllers.ProductApprovalList)
 
 	return e
 }
