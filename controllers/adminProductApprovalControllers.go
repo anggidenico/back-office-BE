@@ -184,6 +184,15 @@ func ProductCreateRequest(c echo.Context) error {
 	}
 	params["sinvest_fund_code"] = sinvest_fund_code
 
+	flag_syariah := c.FormValue("flag_syariah")
+	if flag_syariah != "" {
+		if flag_syariah == "true" {
+			params["flag_syariah"] = "1"
+		} else {
+			params["flag_syariah"] = "0"
+		}
+	}
+
 	riskProfileKey := models.GetRiskProfileByFundType(fund_type_key)
 	params["risk_profile_key"] = strconv.FormatUint(riskProfileKey, 10)
 
