@@ -60,7 +60,7 @@ type MsProductBankAccountDetailAdmin struct {
 	BranchName         *string         `json:"branch_name"`
 	Currency           *MsCurrencyInfo `json:"currency"`
 	BankAccountType    LookupTrans     `json:"bank_account_type"`
-	SwiftCode          *string         `son:"swift_code"`
+	SwiftCode          *string         `json:"swift_code"`
 	BankAccountName    string          `json:"bank_account_name"`
 	BankAccountPurpose LookupTrans     `json:"bank_account_purpose"`
 }
