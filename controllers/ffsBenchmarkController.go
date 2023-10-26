@@ -54,7 +54,7 @@ func DeleteBenchmarkController(c echo.Context) error {
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
-	response.Status.MessageClient = "Berhasil Benchmark!"
+	response.Status.MessageClient = "Berhasil Menghapus Benchmark!"
 	response.Data = ""
 	return c.JSON(http.StatusOK, response)
 }
