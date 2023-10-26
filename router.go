@@ -525,6 +525,11 @@ func router() *echo.Echo {
 	admin.POST("/delete-payment-channel", controllers.DeleteMsPaymentChannelController)
 	admin.POST("/create-payment-channel", controllers.CreateMsPaymentChannelController)
 	admin.POST("/update-payment-channel", controllers.UpdateMsPaymentChannelController)
+
+	// Benchmark
+	admin.GET("/get-benchmark-list", controllers.GetFfsBenchmarkController)
+	admin.GET("/get-benchmark-detail/:benchmark_key", controllers.GetBenchmarkDetailController)
+	admin.POST("/delete-benchmark", controllers.DeleteBenchmarkController)
 	return e
 }
 
