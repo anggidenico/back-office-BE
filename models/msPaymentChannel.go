@@ -288,7 +288,7 @@ func GetPaymentChannelModels() (result []PaymentChannel) {
 	JOIN gen_lookup b ON a.settle_channel = b.lookup_key
     JOIN gen_lookup c ON a.settle_payment_method = c.lookup_key
 	JOIN gen_lookup d ON a.value_type = d.lookup_key WHERE a.rec_status = 1`
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Select(&result, query)
 	if err != nil {
 		log.Println(err.Error())
@@ -313,7 +313,7 @@ func GetDetailPaymentChannelModels(PChannelKey string) (result PaymentChannelDet
     JOIN gen_lookup c ON a.settle_payment_method = c.lookup_key
 	JOIN gen_lookup d ON a.value_type = d.lookup_key WHERE a.rec_status = 1 AND a.pchannel_key =` + PChannelKey
 
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Get(&result, query)
 	if err != nil {
 		log.Println(err.Error())
