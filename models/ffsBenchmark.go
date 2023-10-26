@@ -77,10 +77,10 @@ func DeleteBenchmark(BenchmarkKey string, params map[string]string) error {
 		}
 	}
 	query += strings.Join(setClauses, ", ")
-	query += ` WHERE benchmark = ?`
+	query += ` WHERE benchmark_key = ?`
 	values = append(values, BenchmarkKey)
 
-	log.Println("========== UpdateRiskProfile ==========>>>", query)
+	log.Println("========== DeleteBenchmark ==========>>>", query)
 
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
