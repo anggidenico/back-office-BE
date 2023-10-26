@@ -212,7 +212,7 @@ func ProductCreateRequest(c echo.Context) error {
 	params["rec_status"] = "1"
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 	params["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
-	params["rec_action"] = "CREATE"
+	params["rec_action"] = "NEW"
 	err = models.CreateProductRequest(params)
 	if err != nil {
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
