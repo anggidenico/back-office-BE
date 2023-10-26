@@ -514,10 +514,6 @@ func router() *echo.Echo {
 	admin.POST("/product-channel/update", controllers.UpdateProductPaymentChannels)
 	admin.POST("/product-channel/delete", controllers.DeleteProductPaymentChannels)
 
-	admin.POST("/create-endpoint-sc", controllers.CreateEndpointController)
-	admin.POST("/update-endpoint-sc", controllers.UpdateEndpointController)
-	admin.POST("/delete-endpoint-sc", controllers.DeleteEndpointController)
-
 	// UPDATE PRODUCT WITH APPROVAL
 	admin.POST("/product/update/create-request", controllers.CreateProductUpdateRequest)
 	admin.GET("/product/update/request-list", controllers.ProductApprovalList)
