@@ -116,17 +116,19 @@ type SettlePaymentMethod struct {
 	SettlePaymentMethodName string `db:"settle_payment_method_name"    json:"settle_payment_method_name"`
 }
 type PaymentChannelDetail struct {
-	PchannelCode        *string          `db:"pchannel_code"            json:"pchannel_code"`
-	PchannelName        *string          `db:"pchannel_name"            json:"pchannel_name"`
-	SettleChannel       uint64           `db:"settle_channel"           json:"settle_channel"`
-	SettleChannelName   string           `db:"settle_channel_name"      json:"settle_channel_name"`
-	SettlePaymentMethod uint64           `db:"settle_payment_method"    json:"settle_payment_method"`
-	MinNominalTrx       *decimal.Decimal `db:"min_nominal_trx"          json:"min_nominal_trx"`
-	ValueType           uint64           `db:"value_type"               json:"value_type"`
-	FeeValue            decimal.Decimal  `db:"fee_value"                json:"fee_value"`
-	HasMinMax           uint8            `db:"has_min_max"              json:"has_min_max"`
-	PgTnc               *string          `db:"pg_tnc"                   json:"pg_tnc"`
-	RecStatus           uint8            `db:"rec_status"               json:"rec_status"`
+	PchannelCode            *string          `db:"pchannel_code"            json:"pchannel_code"`
+	PchannelName            *string          `db:"pchannel_name"            json:"pchannel_name"`
+	SettleChannel           uint64           `db:"settle_channel"           json:"settle_channel"`
+	SettleChannelName       string           `db:"settle_channel_name"            json:"settle_channel_name"`
+	SettlePaymentMethod     uint64           `db:"settle_payment_method"    json:"settle_payment_method"`
+	SettlePaymentMethodName string           `db:"settle_payment_method_name"    json:"settle_payment_method_name"`
+	MinNominalTrx           *decimal.Decimal `db:"min_nominal_trx"          json:"min_nominal_trx"`
+	ValueType               uint64           `db:"value_type"               json:"value_type"`
+	ValueTypeName           string           `db:"value_type_name"               json:"value_type_name"`
+	FeeValue                decimal.Decimal  `db:"fee_value"                json:"fee_value"`
+	HasMinMax               uint8            `db:"has_min_max"              json:"has_min_max"`
+	PgTnc                   *string          `db:"pg_tnc"                   json:"pg_tnc"`
+	RecStatus               uint8            `db:"rec_status" json:"rec_status"`
 }
 type SubscribePaymentChannel struct {
 	PchannelKey    uint64           `db:"pchannel_key"             json:"pchannel_key"`
@@ -296,13 +298,21 @@ func GetPaymentChannelModels() (result []PaymentChannel) {
 }
 
 func GetDetailPaymentChannelModels(PChannelKey string) (result PaymentChannelDetail) {
-	query := `SELECT pchannel_code, 
-			pchannel_name, 
-			settle_channel, 
-			settle_payment_method, min_nominal_trx, 
-			value_type, fee_value, has_min_max, pg_tnc,
-			rec_status FROM ms_payment_channel 
-			WHERE pchannel_key = ` + PChannelKey
+	query := `SELECT a.pchannel_code, 
+	a.pchannel_name, 
+	a.settle_channel, 
+	b.lkp_name settle_channel_name,
+	a.settle_payment_method,
+	c.lkp_name settle_payment_method_name, 
+	a.min_nominal_trx,
+	a.value_type,
+	d.lkp_name value_type_name,
+	a.has_min_max,a.pg_tnc,a.rec_status
+	FROM ms_payment_channel a 
+	JOIN gen_lookup b ON a.settle_channel = b.lookup_key
+    JOIN gen_lookup c ON a.settle_payment_method = c.lookup_key
+	JOIN gen_lookup d ON a.value_type = d.lookup_key WHERE a.rec_status = 1 AND a.pchannel_key =` + PChannelKey
+
 	log.Println("====================>>>", query)
 	err := db.Db.Get(&result, query)
 	if err != nil {
@@ -335,5 +345,61 @@ func DeleteMsPaymentChannel(PChannelKey string, params map[string]string) error 
 		return err
 	}
 
+	return nil
+}
+
+func CreateMsPaymentChannel(params map[string]string) (int, error) {
+	query := "INSERT INTO ms_payment_channel"
+	// Get params
+	var fields, values string
+	var bindvars []interface{}
+	for key, value := range params {
+		fields += key + ", "
+		values += "?, "
+		bindvars = append(bindvars, value)
+	}
+	fields = fields[:(len(fields) - 2)]
+	values = values[:(len(values) - 2)]
+
+	// Combine params to build query
+	query += "(" + fields + ") VALUES(" + values + ")"
+	// log.Println("==========  ==========>>>", query)
+
+	tx, err := db.Db.Begin()
+	if err != nil {
+		// log.Error(err)
+		return http.StatusBadGateway, err
+	}
+	_, err = tx.Exec(query, bindvars...)
+	tx.Commit()
+	if err != nil {
+		// log.Error(err)
+		return http.StatusBadRequest, err
+	}
+	return http.StatusOK, nil
+}
+
+func UpdateMsPaymentChannel(PChannelKey string, params map[string]string) error {
+	query := `UPDATE ms_payment_channel SET `
+	var setClauses []string
+	var values []interface{}
+
+	for key, value := range params {
+		if key != "pchannel_key" {
+			setClauses = append(setClauses, key+" = ?")
+			values = append(values, value)
+		}
+	}
+	query += strings.Join(setClauses, ", ")
+	query += ` WHERE pchannel_key = ?`
+	values = append(values, PChannelKey)
+
+	log.Println("========== UpdateRiskProfile ==========>>>", query)
+
+	_, err := db.Db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
 	return nil
 }
