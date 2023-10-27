@@ -3,6 +3,7 @@ package models
 import (
 	"log"
 	"mf-bo-api/db"
+	"net/http"
 	"strings"
 )
 
@@ -88,5 +89,61 @@ func DeleteBenchmark(BenchmarkKey string, params map[string]string) error {
 		return err
 	}
 
+	return nil
+}
+
+func CreateFfsBenchmark(params map[string]string) (int, error) {
+	query := "INSERT INTO ffs_benchmark"
+	// Get params
+	var fields, values string
+	var bindvars []interface{}
+	for key, value := range params {
+		fields += key + ", "
+		values += "?, "
+		bindvars = append(bindvars, value)
+	}
+	fields = fields[:(len(fields) - 2)]
+	values = values[:(len(values) - 2)]
+
+	// Combine params to build query
+	query += "(" + fields + ") VALUES(" + values + ")"
+	// log.Println("==========  ==========>>>", query)
+
+	tx, err := db.Db.Begin()
+	if err != nil {
+		// log.Error(err)
+		return http.StatusBadGateway, err
+	}
+	_, err = tx.Exec(query, bindvars...)
+	tx.Commit()
+	if err != nil {
+		// log.Error(err)
+		return http.StatusBadRequest, err
+	}
+	return http.StatusOK, nil
+}
+
+func UpdateFfsBenchmark(BenchmarkKey string, params map[string]string) error {
+	query := `UPDATE ffs_benchmark SET `
+	var setClauses []string
+	var values []interface{}
+
+	for key, value := range params {
+		if key != "benchmark_key" {
+			setClauses = append(setClauses, key+" = ?")
+			values = append(values, value)
+		}
+	}
+	query += strings.Join(setClauses, ", ")
+	query += ` WHERE benchmark_key = ?`
+	values = append(values, BenchmarkKey)
+
+	log.Println("========== UpdateRiskProfile ==========>>>", query)
+
+	_, err := db.Db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
 	return nil
 }

@@ -394,7 +394,7 @@ func UpdateMsPaymentChannel(PChannelKey string, params map[string]string) error 
 	query += ` WHERE pchannel_key = ?`
 	values = append(values, PChannelKey)
 
-	log.Println("========== UpdateRiskProfile ==========>>>", query)
+	log.Println("========== Updatepaymentchannel ==========>>>", query)
 
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {

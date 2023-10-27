@@ -530,6 +530,8 @@ func router() *echo.Echo {
 	admin.GET("/get-benchmark-list", controllers.GetFfsBenchmarkController)
 	admin.GET("/get-benchmark-detail/:benchmark_key", controllers.GetBenchmarkDetailController)
 	admin.POST("/delete-benchmark", controllers.DeleteBenchmarkController)
+	admin.POST("/create-benchmark", controllers.CreateFfsBenchmarkController)
+	admin.POST("/update-benchmark", controllers.UpdateFfsBenchmarkController)
 	return e
 }
 
