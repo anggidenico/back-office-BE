@@ -509,3 +509,18 @@ func ProductApprovalList(c echo.Context) error {
 	response.Data = result
 	return c.JSON(http.StatusOK, response)
 }
+
+func ProductApprovalDetails(c echo.Context) error {
+	RecPK := c.Param("rec_pk")
+	if RecPK == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing rec_pk")
+	}
+	result := models.GetProductRequestDetail(RecPK)
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = result
+	return c.JSON(http.StatusOK, response)
+}

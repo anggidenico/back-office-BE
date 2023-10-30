@@ -16,9 +16,13 @@ type ProductRequest struct {
 	ProductName           *string          `db:"product_name"            json:"product_name"`
 	ProductNameAlt        *string          `db:"product_name_alt"        json:"product_name_alt"`
 	CurrencyKey           *uint64          `db:"currency_key"            json:"currency_key"`
-	ProductCategoryKey    *uint64          `db:"product_category_key"    json:"product_category_key"`
+	CurrencyName          *string          `db:"currency_name" json:"currency_name"`
+	ProductCategoryKey    *uint64          `db:"product_category_key" json:"product_category_key"`
+	ProductCategoryName   *string          `db:"product_category_name" json:"product_category_name"`
 	ProductTypeKey        *uint64          `db:"product_type_key"        json:"product_type_key"`
+	ProductTypeName       *string          `db:"product_type_name"       json:"product_type_name"`
 	FundTypeKey           *uint64          `db:"fund_type_key"           json:"fund_type_key"`
+	FundTypeName          *string          `db:"fund_type_name"           json:"fund_type_name"`
 	FundStructureKey      *uint64          `db:"fund_structure_key"      json:"fund_structure_key"`
 	RiskProfileKey        *uint64          `db:"risk_profile_key"        json:"risk_profile_key"`
 	ProductProfile        *string          `db:"product_profile"         json:"product_profile"`
@@ -73,7 +77,25 @@ func GetProductRequestList() (result []ProductRequest) {
 	}
 
 	return
+}
 
+func GetProductRequestDetail(RecPK string) (result ProductRequest) {
+	query := `SELECT rec_pk,rec_action, product_key, product_id, product_code, product_name, product_name_alt,
+	currency_key, product_category_key, product_type_key, fund_type_key, fund_structure_key, risk_profile_key,
+	product_profile, investment_objectives, product_phase, nav_valuation_type, prospectus_link, launch_date,
+	inception_date, isin_code, flag_syariah, max_sub_fee, max_red_fee, max_swi_fee, min_sub_amount, min_topup_amount,
+	min_red_amount, min_red_amount, min_red_unit, min_unit_after_red, min_amount_after_red, management_fee, 
+	custodian_fee, custodian_key, ojk_fee, product_fee_amount, overwrite_transact_flag, overwrite_fee_flag, 
+	other_fee_amount, settlement_period, sinvest_fund_code, flag_enabled, flag_subscription, flag_redemption,
+	flag_redemption, flag_switch_out, flag_switch_in, dec_unit, dec_amount, dec_nav, dec_performance, npwp_date_reg,
+	npwp_name, npwp_number, portfolio_code
+	FROM ms_product_request WHERE rec_status = 1 AND rec_pk = ` + RecPK
+	err := db.Db.Get(&result, query)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	return
 }
 
 func CreateProductRequest(params map[string]string) error {
