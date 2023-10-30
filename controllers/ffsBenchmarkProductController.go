@@ -50,3 +50,17 @@ func GetFfsBenchmarkProductController(c echo.Context) error {
 	response.Data = result
 	return c.JSON(http.StatusOK, response)
 }
+func GetBenchmarkProdDetailController(c echo.Context) error {
+	benchProdKey := c.Param("bench_prod_key")
+	if benchProdKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing benchmark_product_key", "Missing benchmark_product_key")
+	}
+	result := models.GetBenchmarkProductDetailModels(benchProdKey)
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = result
+	return c.JSON(http.StatusOK, response)
+}
