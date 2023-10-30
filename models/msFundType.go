@@ -190,7 +190,7 @@ func AdminGetAllMsFundType(c *[]MsFundType, limit uint64, offset uint64, params 
 }
 
 func GetRiskProfileByFundType(FundTypeKey string) (result uint64) {
-	query := `SELECT risk_profile_key FROM ms_fund_type WHERE func_type_key =` + FundTypeKey
+	query := `SELECT risk_profile_key FROM ms_fund_type WHERE fund_type_key =` + FundTypeKey
 	err := db.Db.Get(&result, query)
 	if err != nil {
 		log.Println(err.Error())
