@@ -138,7 +138,7 @@ func UpdateFfsBenchmark(BenchmarkKey string, params map[string]string) error {
 	query += ` WHERE benchmark_key = ?`
 	values = append(values, BenchmarkKey)
 
-	log.Println("========== UpdateRiskProfile ==========>>>", query)
+	log.Println("========== UpdateFFsBenchmark ==========>>>", query)
 
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
