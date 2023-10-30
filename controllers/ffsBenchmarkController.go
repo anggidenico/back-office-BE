@@ -156,3 +156,25 @@ func UpdateFfsBenchmarkController(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, response)
 }
+func DeleteBenchmarkProdController(c echo.Context) error {
+	params := make(map[string]string)
+	params["rec_status"] = "0"
+	params["rec_deleted_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	params["rec_deleted_by"] = lib.UserIDStr
+
+	benchProdKey := c.FormValue("bench_prod_key")
+	if benchProdKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing bench_prod_key", "Missing bench_prod_key")
+	}
+
+	err := models.DeleteBenchmarkProduct(benchProdKey, params)
+	if err != nil {
+		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "Berhasil Menghapus Benchmark Product!"
+	response.Data = ""
+	return c.JSON(http.StatusOK, response)
+}

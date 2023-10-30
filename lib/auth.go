@@ -197,7 +197,6 @@ func AuthenticationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			// log.Error("Invalid token")
 			return CustomError(http.StatusForbidden, "Forbidden", "You have to login first")
 		}
-
 		return next(c)
 	}
 }
