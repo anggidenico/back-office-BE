@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/config"
 	"mf-bo-api/db"
 	"net/http"
@@ -168,6 +169,7 @@ type AdminMsProductList struct {
 	Redemption          bool    `json:"redemption"`
 	SwitchOut           bool    `json:"switch_out"`
 	SwitchIn            bool    `json:"switch_in"`
+	StatusUpdate        bool    `json:"status_update"`
 }
 
 func CreateMsProduct(params map[string]string) (int, error) {
@@ -435,6 +437,30 @@ func AdminGetAllMsProductWithLike(c *[]MsProduct, limit uint64, offset uint64, p
 	}
 
 	return http.StatusOK, nil
+}
+
+func ProductStatusUpdate(productKey string) bool {
+	query := `SELECT count(*) FROM ms_product_request 
+	WHERE rec_status = 1 AND (rec_approval_status IS NULL OR rec_approval_status = 0) 
+	AND product_key = ` + productKey
+	// log.Println(query)
+	var count uint64
+	err := db.Db.Get(&count, query)
+	if err != nil {
+		log.Println(err.Error())
+		return false
+	}
+	// log.Println(count)
+
+	var result bool
+
+	if count > 0 { // kalau ada request gantung maka false
+		result = false
+	} else {
+		result = true
+	}
+
+	return result
 }
 
 func AdminGetCountMsProductWithLike(c *CountData, params map[string]string, paramsLike map[string]string) (int, error) {

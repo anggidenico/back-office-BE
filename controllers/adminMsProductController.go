@@ -362,6 +362,8 @@ func GetListProductAdmin(c echo.Context) error {
 			data.SwitchIn = false
 		}
 
+		data.StatusUpdate = models.ProductStatusUpdate(strconv.FormatUint(data.ProductKey, 10))
+
 		responseData = append(responseData, data)
 	}
 
@@ -750,7 +752,7 @@ func DeleteProductAdmin(c echo.Context) error {
 	response.Data = nil
 	return c.JSON(http.StatusOK, response)
 
-} 
+}
 
 func CreateAdminMsProduct(c echo.Context) error {
 	var err error
