@@ -178,3 +178,38 @@ func DeleteBenchmarkProdController(c echo.Context) error {
 	response.Data = ""
 	return c.JSON(http.StatusOK, response)
 }
+func UpdateBenchmarkProdController(c echo.Context) error {
+	var err error
+	params := make(map[string]string)
+	params["rec_modified_by"] = lib.UserIDStr
+	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+
+	benchProdKey := c.FormValue("bench_prod_key")
+	if benchProdKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "bench_prod_key can not be blank", "brench_prod_key can not be blank")
+	}
+	productKey := c.FormValue("product_key")
+	if productKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "product_key can not be blank", "product_key can not be blank")
+	}
+	benchmarkRatio := c.FormValue("benchmark_ratio")
+	if benchmarkRatio == "" {
+		return lib.CustomError(http.StatusBadRequest, "benchmark_ratio can not be blank", "benchmark_ratio can not be blank")
+	}
+	params["bench_prod_key"] = benchProdKey
+	params["product_key"] = productKey
+	params["benchmark_ratio"] = benchmarkRatio
+	params["rec_status"] = "1"
+
+	err = models.UpdateBenchmarkProduct(benchProdKey, params)
+	if err != nil {
+		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed input data")
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = ""
+
+	return c.JSON(http.StatusOK, response)
+}

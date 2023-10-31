@@ -121,3 +121,27 @@ func DeleteBenchmarkProduct(BenchProdKey string, params map[string]string) error
 
 	return nil
 }
+func UpdateBenchmarkProduct(BenchProdKey string, params map[string]string) error {
+	query := `UPDATE ffs_benchmark_product SET `
+	var setClauses []string
+	var values []interface{}
+
+	for key, value := range params {
+		if key != "bench_prod_key" {
+			setClauses = append(setClauses, key+" = ?")
+			values = append(values, value)
+		}
+	}
+	query += strings.Join(setClauses, ", ")
+	query += ` WHERE bench_prod_key = ?`
+	values = append(values, BenchProdKey)
+
+	log.Println("========== UpdateFFsBenchmarkProduct ==========>>>", query)
+
+	_, err := db.Db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+	return nil
+}

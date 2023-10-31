@@ -539,6 +539,7 @@ func router() *echo.Echo {
 	admin.GET("/get-benchmark-product-list", controllers.GetFfsBenchmarkProductController)
 	admin.GET("/get-benchmark-product/:bench_prod_key", controllers.GetBenchmarkProdDetailController)
 	admin.POST("/delete-benchmark-product", controllers.DeleteBenchmarkProdController)
+	admin.POST("/update-benchmark-product", controllers.UpdateBenchmarkProdController)
 	return e
 }
 
