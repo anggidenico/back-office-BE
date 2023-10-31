@@ -450,16 +450,13 @@ func ProductStatusUpdate(productKey string) bool {
 		log.Println(err.Error())
 		return false
 	}
-	// log.Println(count)
 
 	var result bool
-
 	if count > 0 { // kalau ada request gantung maka false
 		result = false
 	} else {
 		result = true
 	}
-
 	return result
 }
 
