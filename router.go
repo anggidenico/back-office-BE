@@ -519,6 +519,7 @@ func router() *echo.Echo {
 	admin.POST("/product/update-request", controllers.ProductUpdateRequest)
 	admin.GET("/product/approval-list", controllers.ProductApprovalList)
 	admin.GET("/product/request-detail/", controllers.ProductApprovalDetails)
+	admin.POST("/product/approval", controllers.ApprovalProduct)
 
 	// MASTER PAYMENT CHANNEL
 	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController)
