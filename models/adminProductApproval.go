@@ -88,7 +88,7 @@ func GetProductRequestDetail(RecPK string) (result ProductRequest) {
 	min_red_amount, min_red_amount, min_red_unit, min_unit_after_red, min_amount_after_red, management_fee, 
 	custodian_fee, custodian_key, settlement_period, sinvest_fund_code, flag_enabled, flag_subscription, flag_redemption,
 	flag_redemption, flag_switch_out, flag_switch_in, dec_unit, dec_amount, dec_nav, dec_performance, npwp_date_reg,
-	npwp_name, npwp_number, portfolio_code
+	npwp_name, npwp_number, portfolio_code, rec_created_date
 	FROM ms_product_request WHERE rec_status = 1 AND rec_pk = ` + RecPK
 	err := db.Db.Get(&result, query)
 	if err != nil {
