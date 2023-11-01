@@ -515,10 +515,13 @@ func router() *echo.Echo {
 	admin.POST("/product-channel/delete", controllers.DeleteProductPaymentChannels)
 
 	// UPDATE PRODUCT WITH APPROVAL
+	// --- dari sisi maker ---
 	admin.POST("/product/create-request", controllers.ProductCreateRequest)
 	admin.POST("/product/update-request", controllers.ProductUpdateRequest)
+	// --- dari sisi approver ---
 	admin.GET("/product/approval-list", controllers.ProductApprovalList)
-	admin.GET("/product/request-detail/", controllers.ProductApprovalDetails)
+	admin.GET("/product/approval-detail/:rec_pk", controllers.ProductApprovalDetails)
+	admin.POST("/product/approval-action", controllers.ApprovalProduct)
 
 	// MASTER PAYMENT CHANNEL
 	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController)
