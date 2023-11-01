@@ -543,6 +543,8 @@ func router() *echo.Echo {
 
 	//Securities List
 	admin.POST("/create-securities-list", controllers.CreateMsSecuritiesController)
+	admin.GET("/get-securities-list", controllers.GetMsSecuritiesController)
+	admin.POST("/delete-securities-list", controllers.DeleteMsSecuritiesController)
 	return e
 }
 
