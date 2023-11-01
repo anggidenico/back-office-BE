@@ -66,10 +66,11 @@ type ProductRequest struct {
 	NpwpName              *string          `db:"npwp_name" json:"npwp_name"`
 	NpwpNumber            *string          `db:"npwp_number" json:"npwp_number"`
 	PortfolioCode         *string          `db:"portfolio_code" json:"portfolio_code"`
+	RecCreatedDate        *string          `db:"rec_created_date" json:"rec_created_date"`
 }
 
 func GetProductRequestList() (result []ProductRequest) {
-	query := `SELECT rec_pk, rec_action, product_key, product_name, product_code
+	query := `SELECT rec_pk, rec_action, product_key, product_name, product_code, rec_created_date
 	FROM ms_product_request WHERE rec_status = 1`
 	err := db.Db.Select(&result, query)
 	if err != nil {
