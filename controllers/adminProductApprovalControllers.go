@@ -519,7 +519,6 @@ func ProductApprovalDetails(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing rec_pk")
 	}
 
-	
 	result := models.GetProductRequestDetail(RecPK)
 
 	var response lib.Response

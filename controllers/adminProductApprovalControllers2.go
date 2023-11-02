@@ -12,8 +12,8 @@ import (
 func ProductApprovalAction(c echo.Context) error {
 
 	params := make(map[string]string)
-	params["rec_created_by"] = lib.UserIDStr
-	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	params["rec_by"] = lib.UserIDStr
+	params["rec_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
 	RecPK := c.FormValue("rec_pk")
 	if RecPK == "" {
@@ -37,9 +37,9 @@ func ProductApprovalAction(c echo.Context) error {
 	}
 	params["reason"] = Reason
 
-	err := models.ApprovalAction(params)
+	err := models.ProductApprovalAction(params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
+		return lib.CustomError(http.StatusInternalServerError, err.Error())
 	}
 
 	var response lib.Response
