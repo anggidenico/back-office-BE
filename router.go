@@ -521,7 +521,7 @@ func router() *echo.Echo {
 	// --- dari sisi approver ---
 	admin.GET("/product/approval-list", controllers.ProductApprovalList)
 	admin.GET("/product/approval-detail/:rec_pk", controllers.ProductApprovalDetails)
-	admin.POST("/product/approval-action", controllers.ApprovalProduct)
+	admin.POST("/product/approval-action", controllers.ProductApprovalAction)
 
 	// MASTER PAYMENT CHANNEL
 	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController)
