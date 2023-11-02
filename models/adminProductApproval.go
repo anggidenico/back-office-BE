@@ -109,7 +109,7 @@ func GetProductRequestDetail(RecPK string) ProductUpdateDetails {
 	// GET EXISTING DATA
 	query2 := `SELECT product_key, product_id, product_code, product_name, product_name_alt,
 	currency_key, product_category_key, fund_type_key, product_profile, investment_objectives, product_phase, nav_valuation_type, prospectus_link, launch_date, inception_date, isin_code, flag_syariah, max_sub_fee, max_red_fee, max_swi_fee, min_sub_amount, min_topup_amount, min_red_amount, min_red_amount, min_red_unit, min_unit_after_red, min_amount_after_red, management_fee, custodian_fee, custodian_key, settlement_period, sinvest_fund_code, flag_enabled, flag_subscription, flag_redemption,flag_redemption, flag_switch_out, flag_switch_in, dec_unit, dec_amount, dec_nav, dec_performance, npwp_date_reg, npwp_name, npwp_number, portfolio_code
-	FROM ms_product_request WHERE rec_status = 1 AND product_key = ` + strconv.FormatUint(result.Updates.ProductKey, 10)
+	FROM ms_product_request WHERE rec_status = 1 AND product_key = ` + strconv.FormatUint(*result.Updates.ProductKey, 10)
 	row2 := tx.QueryRow(query2)
 	err = row2.Scan(&result.Existing.ProductKey, &result.Existing.ProductID, &result.Existing.ProductCode,
 		&result.Existing.ProductName, &result.Existing.ProductNameAlt, &result.Existing.CurrencyKey,
