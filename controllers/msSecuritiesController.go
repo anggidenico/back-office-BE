@@ -185,7 +185,7 @@ func UpdateMsSecuritiesController(c echo.Context) error {
 	dateIssued := dateIs.Format(lib.TIMESTAMPFORMAT)
 	params["sec_code"] = secCode
 	params["sec_name"] = secName
-	params["sec_category"] = secCategory
+	params["securities_category"] = secCategory
 	params["security_type"] = secType
 	params["currency_key"] = currencyKey
 	params["security_status"] = secStatus
@@ -193,8 +193,6 @@ func UpdateMsSecuritiesController(c echo.Context) error {
 	params["sec_classification"] = secClassification
 	params["date_issued"] = dateIssued
 	params["date_matured"] = pastDueDate
-	params["security_type"] = secType
-	params["sec_category"] = secCategory
 	params["rec_status"] = "1"
 
 	err = models.UpdateMsSecurities(secKey, params)

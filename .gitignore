@@ -1,6 +1,17 @@
 go.mod
 go.sum
 config/config.go
+config.go
+config.zip
+config.go.*
+config.*
+config/config.go
 mf-bo-api
 mf-bo-api.code-workspace
 mf-bo-api.exe
+/config/*
+/docs/*
+/unused
+/unused/*
+/temp/*
+/tmp/*
