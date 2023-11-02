@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
+	"github.com/shopspring/decimal"
 )
 
 func ProductCreateRequest(c echo.Context) error {
@@ -499,6 +500,7 @@ func ProductUpdateRequest(c echo.Context) error {
 }
 
 func ProductApprovalList(c echo.Context) error {
+	
 
 	result := models.GetProductRequestList()
 
@@ -511,6 +513,8 @@ func ProductApprovalList(c echo.Context) error {
 }
 
 func ProductApprovalDetails(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
+
 	RecPK := c.Param("rec_pk")
 	if RecPK == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing rec_pk")

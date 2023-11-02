@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func ApprovalProduct(c echo.Context) error {
+func ProductApprovalAction(c echo.Context) error {
 
 	
 
