@@ -11,7 +11,7 @@ import (
 type ProductRequest struct {
 	RecPK               *uint64 `db:"rec_pk" json:"rec_pk"`
 	RecAction           *string `db:"rec_action" json:"rec_action"`
-	ProductKey          uint64  `db:"product_key"             json:"product_key"`
+	ProductKey          *uint64 `db:"product_key"             json:"product_key"`
 	ProductID           *uint64 `db:"product_id"              json:"product_id"`
 	ProductCode         *string `db:"product_code"            json:"product_code"`
 	ProductName         *string `db:"product_name"            json:"product_name"`
