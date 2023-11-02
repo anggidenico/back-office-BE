@@ -518,6 +518,8 @@ func ProductApprovalDetails(c echo.Context) error {
 	if RecPK == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing rec_pk")
 	}
+
+	
 	result := models.GetProductRequestDetail(RecPK)
 
 	var response lib.Response

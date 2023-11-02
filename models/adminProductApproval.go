@@ -82,6 +82,7 @@ func GetProductRequestList() (result []ProductRequest) {
 }
 
 type ProductUpdateDetails struct {
+	Type     string         `json:"type"`
 	Existing ProductRequest `json:"existing"`
 	Updates  ProductRequest `json:"updates"`
 }
@@ -95,7 +96,7 @@ func GetProductRequestDetail(RecPK string) ProductUpdateDetails {
 	}
 
 	// GET UPDATES DATA
-	query := `SELECT rec_pk,rec_action, product_key, product_id, product_code, product_name, product_name_alt,
+	query := `SELECT rec_pk, rec_action, product_key, product_id, product_code, product_name, product_name_alt,
 	currency_key, product_category_key, fund_type_key, product_profile, investment_objectives, product_phase, nav_valuation_type, prospectus_link, launch_date, inception_date, isin_code, flag_syariah, max_sub_fee, max_red_fee, max_swi_fee, min_sub_amount, min_topup_amount, min_red_amount, min_red_amount, min_red_unit, min_unit_after_red, min_amount_after_red, management_fee, custodian_fee, custodian_key, settlement_period, sinvest_fund_code, flag_enabled, flag_subscription, flag_redemption, flag_redemption, flag_switch_out, flag_switch_in, dec_unit, dec_amount, dec_nav, dec_performance, npwp_date_reg, npwp_name, npwp_number, portfolio_code, rec_created_date
 	FROM ms_product_request WHERE rec_status = 1 AND rec_pk = ` + RecPK
 
@@ -106,22 +107,27 @@ func GetProductRequestDetail(RecPK string) ProductUpdateDetails {
 		log.Println(err.Error())
 	}
 
-	// GET EXISTING DATA
-	query2 := `SELECT product_key, product_id, product_code, product_name, product_name_alt,
+	result.Type = *result.Updates.RecAction
+
+	if result.Type == "UPDATE" {
+
+		// GET EXISTING DATA FROM MS_PRODUCT
+		query2 := `SELECT product_key, product_id, product_code, product_name, product_name_alt,
 	currency_key, product_category_key, fund_type_key, product_profile, investment_objectives, product_phase, nav_valuation_type, prospectus_link, launch_date, inception_date, isin_code, flag_syariah, max_sub_fee, max_red_fee, max_swi_fee, min_sub_amount, min_topup_amount, min_red_amount, min_red_amount, min_red_unit, min_unit_after_red, min_amount_after_red, management_fee, custodian_fee, custodian_key, settlement_period, sinvest_fund_code, flag_enabled, flag_subscription, flag_redemption,flag_redemption, flag_switch_out, flag_switch_in, dec_unit, dec_amount, dec_nav, dec_performance, npwp_date_reg, npwp_name, npwp_number, portfolio_code
 	FROM ms_product_request WHERE rec_status = 1 AND product_key = ` + strconv.FormatUint(*result.Updates.ProductKey, 10)
-	row2 := tx.QueryRow(query2)
-	err = row2.Scan(&result.Existing.ProductKey, &result.Existing.ProductID, &result.Existing.ProductCode,
-		&result.Existing.ProductName, &result.Existing.ProductNameAlt, &result.Existing.CurrencyKey,
-		&result.Existing.ProductCategoryKey, &result.Existing.FundTypeKey, &result.Existing.ProductProfile,
-		&result.Existing.InvestmentObjectives, &result.Existing.ProductPhase, &result.Existing.NavValuationType,
-		&result.Existing.ProspectusLink, &result.Existing.LaunchDate, &result.Existing.InceptionDate,
-		&result.Existing.IsinCode, &result.Existing.FlagSyariah, &result.Existing.MaxSubFee,
-		&result.Existing.MaxRedFee, &result.Existing.MaxSwiFee, &result.Existing.MinSubAmount,
-		&result.Existing.MinTopUpAmount, &result.Existing.MinRedAmount, &result.Existing.MinRedAmount, &result.Existing.MinRedUnit, &result.Existing.MinUnitAfterRed, &result.Existing.MinAmountAfterRed, &result.Existing.ManagementFee, &result.Existing.CustodianFee, &result.Existing.CustodianKey, &result.Existing.SettlementPeriod, &result.Existing.SinvestFundCode, &result.Existing.FlagEnabled, &result.Existing.FlagSubscription, &result.Existing.FlagRedemption, &result.Existing.FlagRedemption, &result.Existing.FlagSwitchOut, &result.Existing.FlagSwitchIn, &result.Existing.DecUnit, &result.Existing.DecAmount, &result.Existing.DecNav, &result.Existing.DecPerformance, &result.Existing.NpwpDateReg, &result.Existing.NpwpName, &result.Existing.NpwpNumber, &result.Existing.PortfolioCode)
-	if err != nil {
-		tx.Rollback()
-		log.Println(err.Error())
+		row2 := tx.QueryRow(query2)
+		err = row2.Scan(&result.Existing.ProductKey, &result.Existing.ProductID, &result.Existing.ProductCode,
+			&result.Existing.ProductName, &result.Existing.ProductNameAlt, &result.Existing.CurrencyKey,
+			&result.Existing.ProductCategoryKey, &result.Existing.FundTypeKey, &result.Existing.ProductProfile,
+			&result.Existing.InvestmentObjectives, &result.Existing.ProductPhase, &result.Existing.NavValuationType,
+			&result.Existing.ProspectusLink, &result.Existing.LaunchDate, &result.Existing.InceptionDate,
+			&result.Existing.IsinCode, &result.Existing.FlagSyariah, &result.Existing.MaxSubFee,
+			&result.Existing.MaxRedFee, &result.Existing.MaxSwiFee, &result.Existing.MinSubAmount,
+			&result.Existing.MinTopUpAmount, &result.Existing.MinRedAmount, &result.Existing.MinRedAmount, &result.Existing.MinRedUnit, &result.Existing.MinUnitAfterRed, &result.Existing.MinAmountAfterRed, &result.Existing.ManagementFee, &result.Existing.CustodianFee, &result.Existing.CustodianKey, &result.Existing.SettlementPeriod, &result.Existing.SinvestFundCode, &result.Existing.FlagEnabled, &result.Existing.FlagSubscription, &result.Existing.FlagRedemption, &result.Existing.FlagRedemption, &result.Existing.FlagSwitchOut, &result.Existing.FlagSwitchIn, &result.Existing.DecUnit, &result.Existing.DecAmount, &result.Existing.DecNav, &result.Existing.DecPerformance, &result.Existing.NpwpDateReg, &result.Existing.NpwpName, &result.Existing.NpwpNumber, &result.Existing.PortfolioCode)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+		}
 	}
 
 	err = tx.Commit()
