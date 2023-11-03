@@ -1,10 +1,12 @@
 package models
 
 import (
-	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"reflect"
+	"strconv"
+
+	"github.com/shopspring/decimal"
 )
 
 func ProductApprovalAction(params map[string]string) error {
@@ -31,17 +33,20 @@ func ProductApprovalAction(params map[string]string) error {
 		return err
 	}
 
-	// UpdProductRequest := `UPDATE ms_product_request SET rec_approval_status = ` + params["approval"] + ` AND rec_approved_date = '` + params["rec_date"] + ` AND rec_approved_by = '` + params["rec_by"] + ` AND rec_attribute_id1 = '` + params["reason"] + `' WHERE rec_pk = ` + params["rec_pk"]
+	UpdProductRequest := `UPDATE ms_product_request SET rec_approval_status = ` + params["approval"] + ` , rec_approved_date = '` + recDate + `' , rec_approved_by = '` + recBy + `' , rec_attribute_id1 = '` + params["reason"] + `' WHERE rec_pk = ` + params["rec_pk"]
 
-	// _, err = tx.Exec(UpdProductRequest)
-	// if err != nil {
-	// 	tx.Rollback()
-	// 	log.Println(err.Error())
-	// 	return err
-	// }
+	log.Println(UpdProductRequest)
+	res, err := tx.Exec(UpdProductRequest)
+	log.Println(res.RowsAffected())
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return err
+	}
 
 	if *ProdReqData.RecAction == "CREATE" {
 		insertMsProduct := make(map[string]string)
+
 		var reflectValue = reflect.ValueOf(ProdReqData)
 		if reflectValue.Kind() == reflect.Ptr {
 			reflectValue = reflectValue.Elem()
@@ -49,29 +54,118 @@ func ProductApprovalAction(params map[string]string) error {
 		var reflectType = reflectValue.Type()
 		for i := 0; i < reflectValue.NumField(); i++ {
 			columnName := reflectType.Field(i).Tag.Get("db")
-			columnValue := fmt.Sprintf("%v", reflectValue.Field(i).Interface())
-			insertMsProduct[columnName] = columnValue
-			insertMsProduct["rec_status"] = "1"
-			insertMsProduct["rec_created_by"] = recBy
-			insertMsProduct["rec_created_date"] = recDate
+			value := reflectValue.Field(i).Interface()
+
+			if val, ok := value.(*uint64); ok {
+				if val != nil {
+					columnValue := strconv.FormatUint(*val, 10)
+					insertMsProduct[columnName] = columnValue
+				}
+			}
+			if val, ok := value.(*uint8); ok {
+				if val != nil {
+					columnValue := strconv.FormatUint(uint64(*val), 10)
+					insertMsProduct[columnName] = columnValue
+				}
+			}
+			if val, ok := value.(*string); ok {
+				if val != nil {
+					columnValue := *val
+					insertMsProduct[columnName] = columnValue
+				}
+			}
+			if val, ok := value.(*decimal.Decimal); ok {
+				if val != nil {
+					columnValue := val.String()
+					insertMsProduct[columnName] = columnValue
+				}
+			}
 		}
+		insertMsProduct["rec_status"] = "1"
+		insertMsProduct["overwrite_transact_flag"] = "1"
+		insertMsProduct["overwrite_fee_flag"] = "1"
+		insertMsProduct["other_fee_amount"] = "0"
+		insertMsProduct["rec_created_by"] = recBy
+		insertMsProduct["rec_created_date"] = recDate
 		var fields, values string
 		var bindvars []interface{}
 		for key, value := range insertMsProduct {
-			fields += key + ", "
-			values += ` "` + value + `", `
-			bindvars = append(bindvars, value)
+			if key != "rec_pk" && key != "rec_action" {
+				fields += key + ", "
+				values += ` "` + value + `", `
+				bindvars = append(bindvars, value)
+			}
 		}
 		fields = fields[:(len(fields) - 2)]
 		values = values[:(len(values) - 2)]
 		query := `INSERT INTO ms_product (` + fields + `) VALUES(` + values + `)`
 
 		log.Println(query)
+		res, err = tx.Exec(query)
+		log.Println(res.LastInsertId())
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err
+		}
 
 	}
 
 	if *ProdReqData.RecAction == "UPDATE" {
+		updMsProduct := make(map[string]string)
 
+		var reflectValue = reflect.ValueOf(ProdReqData)
+		if reflectValue.Kind() == reflect.Ptr {
+			reflectValue = reflectValue.Elem()
+		}
+		var reflectType = reflectValue.Type()
+		for i := 0; i < reflectValue.NumField(); i++ {
+			columnName := reflectType.Field(i).Tag.Get("db")
+			value := reflectValue.Field(i).Interface()
+
+			if val, ok := value.(*uint64); ok {
+				if val != nil {
+					columnValue := strconv.FormatUint(*val, 10)
+					updMsProduct[columnName] = columnValue
+				}
+			}
+			if val, ok := value.(*string); ok {
+				if val != nil {
+					columnValue := *val
+					updMsProduct[columnName] = columnValue
+				}
+			}
+			if val, ok := value.(*decimal.Decimal); ok {
+				if val != nil {
+					columnValue := val.String()
+					updMsProduct[columnName] = columnValue
+				}
+			}
+		}
+		updMsProduct["rec_modified_by"] = recBy
+		updMsProduct["rec_modified_date"] = recDate
+
+		query := "UPDATE ms_product SET "
+		i := 0
+		for key, value := range updMsProduct {
+			if key != "product_key" && key != "rec_created_date" && key != "rec_pk" && key != "rec_action" {
+				query += key + " = '" + value + "'"
+				if (len(updMsProduct) - 5) > i {
+					query += ", "
+				}
+				i++
+			}
+		}
+		query += " WHERE product_key = " + updMsProduct["product_key"]
+
+		log.Println(query)
+		res, err := tx.Exec(query)
+		log.Println(res.RowsAffected())
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err
+		}
 	}
 
 	if *ProdReqData.RecAction == "DELETE" {
