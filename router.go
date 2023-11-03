@@ -550,6 +550,10 @@ func router() *echo.Echo {
 	admin.POST("/delete-securities-list", controllers.DeleteMsSecuritiesController)
 	admin.GET("/get-securities-detail/:sec_key", controllers.GetMsSecuritiesDetailController)
 	admin.POST("/update-securities", controllers.UpdateMsSecuritiesController)
+
+	//Fund Fact Sheet - Periode
+	admin.GET("/get-periode-list", controllers.GetFfsPeriodeController)
+
 	return e
 }
 
