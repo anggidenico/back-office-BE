@@ -33,11 +33,11 @@ func ProductApprovalAction(params map[string]string) error {
 		return err
 	}
 
-	UpdProductRequest := `UPDATE ms_product_request SET rec_approval_status = ` + params["approval"] + ` , rec_approved_date = '` + recDate + `' , rec_approved_by = '` + recBy + `' , rec_attribute_id1 = '` + params["reason"] + `' WHERE rec_pk = ` + params["rec_pk"]
+	query1 := `UPDATE ms_product_request SET rec_approval_status = ` + params["approval"] + ` , rec_approved_date = '` + recDate + `' , rec_approved_by = '` + recBy + `' , rec_attribute_id1 = '` + params["reason"] + `' WHERE rec_pk = ` + params["rec_pk"]
 
-	log.Println(UpdProductRequest)
-	res, err := tx.Exec(UpdProductRequest)
-	log.Println(res.RowsAffected())
+	// log.Println(query1)
+	_, err = tx.Exec(query1)
+	// log.Println(res.RowsAffected())
 	if err != nil {
 		tx.Rollback()
 		log.Println(err.Error())
@@ -100,9 +100,9 @@ func ProductApprovalAction(params map[string]string) error {
 		values = values[:(len(values) - 2)]
 		query := `INSERT INTO ms_product (` + fields + `) VALUES(` + values + `)`
 
-		log.Println(query)
-		res, err = tx.Exec(query)
-		log.Println(res.LastInsertId())
+		// log.Println(query)
+		_, err = tx.Exec(query)
+		// log.Println(res.LastInsertId())
 		if err != nil {
 			tx.Rollback()
 			log.Println(err.Error())
@@ -158,9 +158,9 @@ func ProductApprovalAction(params map[string]string) error {
 		}
 		query += " WHERE product_key = " + updMsProduct["product_key"]
 
-		log.Println(query)
-		res, err := tx.Exec(query)
-		log.Println(res.RowsAffected())
+		// log.Println(query)
+		_, err := tx.Exec(query)
+		// log.Println(res.RowsAffected())
 		if err != nil {
 			tx.Rollback()
 			log.Println(err.Error())
