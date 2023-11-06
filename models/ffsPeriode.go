@@ -32,7 +32,11 @@ func GetFfsPeriodeModels() (result []FfsPeriode) {
 	return
 }
 func GetFfsPeriodeDetailModels(PeriodeKey string) (result FfsPeriode) {
-	query := `
+	query := `SELECT periode_key,
+	periode_date,
+	periode_name,
+	date_opened,
+	date_closed FROM ffs_periode
 	WHERE rec_status = 1 
 	AND periode_key =` + PeriodeKey
 

@@ -31,28 +31,38 @@ type GetDetailRisk struct {
 	RecOrder       int    `json:"rec_order" db:"rec_order"`
 }
 
-func GetRiskProfileModels() (result []RiskProfile) {
+func GetRiskProfileModels(c *[]RiskProfile) (int, error) {
 	query := `SELECT risk_profile_key,risk_code,risk_name,risk_desc,min_score,max_score,max_flag,rec_order,rec_status FROM ms_risk_profile
 			  WHERE rec_status = 1 order by rec_order`
-	log.Println("==========  ==========>>>", query)
-	err := db.Db.Select(&result, query)
+	log.Println(query)
+	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())
-		// return http.StatusBadGateway, err
+		return http.StatusBadGateway, err
 	}
-	return
+	return http.StatusOK, nil
 }
-func GetDetailRiskProfileModels(RiskProfileKey string) *GetDetailRisk {
-	query := `SELECT risk_profile_key,risk_code,risk_name,risk_desc,min_score,max_score,max_flag,rec_order FROM ms_risk_profile WHERE risk_profile_key =` + RiskProfileKey
 
-	var result GetDetailRisk
+func GetDetailRiskProfileModels(c *GetDetailRisk, RiskProfileKey string) (int, error) {
+	query := `SELECT risk_profile_key,
+	risk_code,
+	risk_name,
+	risk_desc,
+	min_score,
+	max_score,
+	max_flag,
+	rec_order 
+	FROM ms_risk_profile 
+	WHERE risk_profile_key =` + RiskProfileKey
+
+	// var result []GetDetailRisk
 	log.Println("==========  ==========>>>", query)
-	err := db.Db.Get(&result, query, RiskProfileKey)
+	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err.Error())
-		return nil
+		return http.StatusBadGateway, err
 	}
-	return &result
+	return http.StatusOK, nil
 }
 
 func CreateRiskProfile(params map[string]string) (int, error) {
