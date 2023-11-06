@@ -495,18 +495,18 @@ func router() *echo.Echo {
 	admin.POST("/save-product", controllers.SaveMasterProduct)
 
 	//RISK-PROFILE
-	admin.POST("/create-risk-profile", controllers.CreateRiskProfile)
-	admin.GET("/get-risk-profile", controllers.GetriskProfileController)
-	admin.POST("/update-risk-profile", controllers.UpdateRiskProfile)
-	admin.POST("/delete-risk-profile", controllers.DeleteRiskProfile)
-	admin.GET("/get-detail-risk-profile/:risk_profile_key", controllers.GetDetailRiskProfileController)
+	admin.POST("/create-risk-profile", controllers.CreateRiskProfile).Name = "CreateRiskProfile"
+	admin.GET("/get-risk-profile", controllers.GetriskProfileController).Name = "GetriskProfileController"
+	admin.POST("/update-risk-profile", controllers.UpdateRiskProfile).Name = "UpdateRiskProfile"
+	admin.POST("/delete-risk-profile", controllers.DeleteRiskProfile).Name = "DeleteRiskProfile"
+	admin.GET("/get-detail-risk-profile/:risk_profile_key", controllers.GetDetailRiskProfileController).Name = "GetDetailRiskProfileController"
 
 	//End Point
-	admin.GET("/get-endpoint-sc", controllers.GetEndpointscController)
-	admin.GET("/get-endpoint-detail/:endpoint_key", controllers.GetEndpointDetailController)
-	admin.POST("/create-endpoint-sc", controllers.CreateEndpointController)
-	admin.POST("/update-endpoint-sc", controllers.UpdateEndpointController)
-	admin.POST("/delete-endpoint-sc", controllers.DeleteEndpointController)
+	admin.GET("/get-endpoint-sc", controllers.GetEndpointscController).Name = "GetEndpointscController"
+	admin.GET("/get-endpoint-detail/:endpoint_key", controllers.GetEndpointDetailController).Name = "GetEndpointDetailController"
+	admin.POST("/create-endpoint-sc", controllers.CreateEndpointController).Name = "CreateEndpointController"
+	admin.POST("/update-endpoint-sc", controllers.UpdateEndpointController).Name = "UpdateEndpointController"
+	admin.POST("/delete-endpoint-sc", controllers.DeleteEndpointController).Name = "DeleteEndpointController"
 
 	// PRODUCT PAYMENT CHANNEL
 	admin.GET("/product-channel/:product_key", controllers.ProductPaymentChannelList)
@@ -526,36 +526,36 @@ func router() *echo.Echo {
 	admin.POST("/product/approval-action", controllers.ProductApprovalAction)
 
 	// MASTER PAYMENT CHANNEL
-	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController)
-	admin.GET("/get-payment-channel/:pchannel_key", controllers.GetMsPaymentDetailController)
-	admin.POST("/delete-payment-channel", controllers.DeleteMsPaymentChannelController)
-	admin.POST("/create-payment-channel", controllers.CreateMsPaymentChannelController)
-	admin.POST("/update-payment-channel", controllers.UpdateMsPaymentChannelController)
+	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController).Name = "GetmsPaymentChannelController"
+	admin.GET("/get-payment-channel/:pchannel_key", controllers.GetMsPaymentDetailController).Name = "GetMsPaymentDetailController"
+	admin.POST("/delete-payment-channel", controllers.DeleteMsPaymentChannelController).Name = "DeleteMsPaymentChannelController"
+	admin.POST("/create-payment-channel", controllers.CreateMsPaymentChannelController).Name = "CreateMsPaymentChannelController"
+	admin.POST("/update-payment-channel", controllers.UpdateMsPaymentChannelController).Name = "UpdateMsPaymentChannelController"
 
 	// Benchmark
-	admin.GET("/get-benchmark-list", controllers.GetFfsBenchmarkController)
-	admin.GET("/get-benchmark-detail/:benchmark_key", controllers.GetBenchmarkDetailController)
-	admin.POST("/delete-benchmark", controllers.DeleteBenchmarkController)
-	admin.POST("/create-benchmark", controllers.CreateFfsBenchmarkController)
-	admin.POST("/update-benchmark", controllers.UpdateFfsBenchmarkController)
+	admin.GET("/get-benchmark-list", controllers.GetFfsBenchmarkController).Name = "GetFfsBenchmarkController"
+	admin.GET("/get-benchmark-detail/:benchmark_key", controllers.GetBenchmarkDetailController).Name = "GetBenchmarkDetailController"
+	admin.POST("/delete-benchmark", controllers.DeleteBenchmarkController).Name = "DeleteBenchmarkController"
+	admin.POST("/create-benchmark", controllers.CreateFfsBenchmarkController).Name = "CreateFfsBenchmarkController"
+	admin.POST("/update-benchmark", controllers.UpdateFfsBenchmarkController).Name = "UpdateFfsBenchmarkController"
 
 	//Product Benchmark
-	admin.POST("/create-benchmark-product", controllers.CreateFfsBenchmarkProductController)
-	admin.GET("/get-benchmark-product-list", controllers.GetFfsBenchmarkProductController)
-	admin.GET("/get-benchmark-product/:bench_prod_key", controllers.GetBenchmarkProdDetailController)
-	admin.POST("/delete-benchmark-product", controllers.DeleteBenchmarkProdController)
-	admin.POST("/update-benchmark-product", controllers.UpdateBenchmarkProdController)
+	admin.POST("/create-benchmark-product", controllers.CreateFfsBenchmarkProductController).Name = "CreateFfsBenchmarkProductController"
+	admin.GET("/get-benchmark-product-list", controllers.GetFfsBenchmarkProductController).Name = "GetFfsBenchmarkProductController"
+	admin.GET("/get-benchmark-product/:bench_prod_key", controllers.GetBenchmarkProdDetailController).Name = "GetBenchmarkProdDetailController"
+	admin.POST("/delete-benchmark-product", controllers.DeleteBenchmarkProdController).Name = "DeleteBenchmarkProdController"
+	admin.POST("/update-benchmark-product", controllers.UpdateBenchmarkProdController).Name = "UpdateBenchmarkProdController"
 
 	//Securities List
-	admin.POST("/create-securities-list", controllers.CreateMsSecuritiesController)
-	admin.GET("/get-securities-list", controllers.GetMsSecuritiesController)
-	admin.POST("/delete-securities-list", controllers.DeleteMsSecuritiesController)
-	admin.GET("/get-securities-detail/:sec_key", controllers.GetMsSecuritiesDetailController)
-	admin.POST("/update-securities", controllers.UpdateMsSecuritiesController)
+	admin.POST("/create-securities-list", controllers.CreateMsSecuritiesController).Name = "CreateMsSecuritiesController"
+	admin.GET("/get-securities-list", controllers.GetMsSecuritiesController).Name = "GetMsSecuritiesController"
+	admin.POST("/delete-securities-list", controllers.DeleteMsSecuritiesController).Name = "DeleteMsSecuritiesController"
+	admin.GET("/get-securities-detail/:sec_key", controllers.GetMsSecuritiesDetailController).Name = "GetMsSecuritiesDetailController"
+	admin.POST("/update-securities", controllers.UpdateMsSecuritiesController).Name = "UpdateMsSecuritiesController"
 
 	//Fund Fact Sheet - Periode
-	admin.GET("/get-periode-list", controllers.GetFfsPeriodeController)
-
+	admin.GET("/get-periode-list", controllers.GetFfsPeriodeController).Name = "GetFfsPeriodeController"
+	admin.GET("/get-periode-detail/:periode_key", controllers.GetFfsPeriodeDetailController).Name = "GetFfsPeriodeDetailController"
 	return e
 }
 

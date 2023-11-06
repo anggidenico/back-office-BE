@@ -81,9 +81,14 @@ func CreateRiskProfile(c echo.Context) error {
 }
 
 func GetriskProfileController(c echo.Context) error {
-	result := models.GetRiskProfileModels()
+	var riskprofile []models.RiskProfile
+	status, err := models.GetRiskProfileModels(&riskprofile)
+	if err != nil {
+		// log.Error(err.Error())
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
 	var response lib.Response
-	if len(result) < 1 {
+	if len(riskprofile) < 1 {
 		response.Status.Code = http.StatusOK
 		response.Status.MessageServer = "OK"
 		response.Status.MessageClient = "OK"
@@ -92,7 +97,7 @@ func GetriskProfileController(c echo.Context) error {
 		response.Status.Code = http.StatusOK
 		response.Status.MessageServer = "OK"
 		response.Status.MessageClient = "OK"
-		response.Data = result
+		response.Data = riskprofile
 	}
 	return c.JSON(http.StatusOK, response)
 }
@@ -103,9 +108,15 @@ func GetDetailRiskProfileController(c echo.Context) error {
 	if riskProfileKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing risk_profile_key", "Missing risk_profile_key")
 	}
-	result := models.GetDetailRiskProfileModels(riskProfileKey)
+	var detailrisk models.GetDetailRisk
+	status, err := models.GetDetailRiskProfileModels(&detailrisk, riskProfileKey)
+	if err != nil {
+		// log.Error(err.Error())
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
+	// result := models.GetDetailRiskProfileModels(riskProfileKey)
 
-	if result == nil {
+	if detailrisk.RiskProfileKey == "" {
 		return c.NoContent(http.StatusOK)
 	}
 
@@ -114,7 +125,7 @@ func GetDetailRiskProfileController(c echo.Context) error {
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = detailrisk
 	return c.JSON(http.StatusOK, response)
 }
 
