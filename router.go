@@ -519,7 +519,7 @@ func router() *echo.Echo {
 	admin.POST("/product/create-request", controllers.ProductCreateRequest)
 	admin.POST("/product/update-request", controllers.ProductUpdateRequest)
 	admin.POST("/productfee/create-request", controllers.ProductFeeCreateRequest)
-	// admin.POST("/productfee/update-request", controllers.ProductFeeUpdateRequest)
+	admin.POST("/productfee/update-request", controllers.ProductFeeUpdateRequest)
 	// --- dari sisi approver ---
 	admin.GET("/product/approval-list", controllers.ProductApprovalList)
 	admin.GET("/product/approval-detail/:rec_pk", controllers.ProductApprovalDetails)

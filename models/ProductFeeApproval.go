@@ -9,6 +9,13 @@ import (
 )
 
 func ProductFeeCreateRequest(paramsFee map[string]string, feeItems []FeeItemData) (int, error) {
+	tx, err := db.Db.Begin()
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return http.StatusBadGateway, err
+	}
+
 	query := "INSERT INTO ms_product_fee_request"
 	var fields, values string
 	var bindvars []interface{}
@@ -16,18 +23,16 @@ func ProductFeeCreateRequest(paramsFee map[string]string, feeItems []FeeItemData
 		fields += key + ", "
 		values += "?, "
 		bindvars = append(bindvars, value)
+		log.Println(key)
+
 	}
 	fields = fields[:(len(fields) - 2)]
 	values = values[:(len(values) - 2)]
 
 	query += "(" + fields + ") VALUES(" + values + ")"
 
-	tx, err := db.Db.Begin()
-	if err != nil {
-		tx.Rollback()
-		log.Println(err.Error())
-		return http.StatusBadGateway, err
-	}
+	log.Println(query)
+
 	var ret sql.Result
 	ret, err = tx.Exec(query, bindvars...)
 	// tx.Commit()
@@ -40,7 +45,7 @@ func ProductFeeCreateRequest(paramsFee map[string]string, feeItems []FeeItemData
 
 	productFeeKey := strconv.FormatInt(lastKey, 10)
 
-	queryItem := `INSERT INTO ms_product_fee_item_request(product_fee_key,item_seqno,row_max,principle_limit,fee_value,item_notes,rec_status,rec_created_date,rec_created_by) 
+	queryItem := `INSERT INTO ms_product_fee_item_request(product_fee_key,item_seqno,row_max,principle_limit,fee_value,item_notes,rec_status,rec_created_date,rec_created_by,rec_action) 
 	VALUES`
 	for i, data := range feeItems {
 		principleLimit := data.PrincipleLimit.String()
@@ -54,8 +59,9 @@ func ProductFeeCreateRequest(paramsFee map[string]string, feeItems []FeeItemData
 		recStatus := "1"
 		recCreatedDate := paramsFee["rec_created_date"]
 		recCreatedBy := paramsFee["rec_created_by"]
+		recAction := paramsFee["rec_action"]
 
-		queryItem += `('` + productFeeKey + `','` + seqNo + `','` + rowMax + `','` + principleLimit + `','` + feeValue + `','` + itemNotes + `','` + recStatus + `','` + recCreatedDate + `','` + recCreatedBy + `'),`
+		queryItem += `('` + productFeeKey + `','` + seqNo + `','` + rowMax + `','` + principleLimit + `','` + feeValue + `','` + itemNotes + `','` + recStatus + `','` + recCreatedDate + `','` + recCreatedBy + `','` + recAction + `'),`
 	}
 	queryItem = queryItem[0 : len(queryItem)-1]
 
