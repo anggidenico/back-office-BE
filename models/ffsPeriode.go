@@ -4,6 +4,7 @@ import (
 	"log"
 	"mf-bo-api/db"
 	"net/http"
+	"strings"
 )
 
 type FfsPeriode struct {
@@ -55,5 +56,85 @@ func GetFfsPeriodeDetailModels(c *FfsPeriodeDetail, PeriodeKey string) (int, err
 		log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
+	return http.StatusOK, nil
+}
+func CreateFfsPeriode(params map[string]string) (int, error) {
+	query := "INSERT INTO ffs_periode"
+	// Get params
+	var fields, values string
+	var bindvars []interface{}
+	for key, value := range params {
+		fields += key + ", "
+		values += "?, "
+		bindvars = append(bindvars, value)
+	}
+	fields = fields[:(len(fields) - 2)]
+	values = values[:(len(values) - 2)]
+
+	// Combine params to build query
+	query += "(" + fields + ") VALUES(" + values + ")"
+	// log.Println("==========  ==========>>>", query)
+
+	tx, err := db.Db.Begin()
+	if err != nil {
+		// log.Error(err)
+		return http.StatusBadGateway, err
+	}
+	_, err = tx.Exec(query, bindvars...)
+	tx.Commit()
+	if err != nil {
+		// log.Error(err)
+		return http.StatusBadRequest, err
+	}
+	return http.StatusOK, nil
+}
+func UpdateFfsPeriode(PeriodeKey string, params map[string]string) (int, error) {
+	query := `UPDATE ffs_periode SET `
+	var setClauses []string
+	var values []interface{}
+
+	for key, value := range params {
+		if key != "periode_key" {
+			setClauses = append(setClauses, key+" = ?")
+			values = append(values, value)
+		}
+	}
+	query += strings.Join(setClauses, ", ")
+	query += ` WHERE periode_key = ?`
+	values = append(values, PeriodeKey)
+
+	log.Println("========== UpdateFFSPeriode ==========>>>", query)
+
+	_, err := db.Db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return http.StatusBadRequest, err
+	}
+
+	return http.StatusOK, nil
+}
+func DeleteFfsPeriode(PeriodeKey string, params map[string]string) (int, error) {
+	query := `UPDATE ms_securities SET `
+	var setClauses []string
+	var values []interface{}
+
+	for key, value := range params {
+		if key != "periode_key" {
+			setClauses = append(setClauses, key+" = ?")
+			values = append(values, value)
+		}
+	}
+	query += strings.Join(setClauses, ", ")
+	query += ` WHERE periode_key = ?`
+	values = append(values, PeriodeKey)
+
+	log.Println("========== DeleteFfsPeriode ==========>>>", query)
+
+	_, err := db.Db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return http.StatusBadGateway, err
+	}
+
 	return http.StatusOK, nil
 }
