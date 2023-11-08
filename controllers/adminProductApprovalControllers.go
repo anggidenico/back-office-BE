@@ -480,6 +480,18 @@ func ProductUpdateRequest(c echo.Context) error {
 		}
 	}
 
+	npwp_number := c.FormValue("npwp_number")
+	params["npwp_number"] = npwp_number
+
+	npwp_date_reg := c.FormValue("npwp_date_reg")
+	params["npwp_date_reg"] = npwp_date_reg
+
+	npwp_name := c.FormValue("npwp_name")
+	params["npwp_name"] = npwp_name
+
+	portfolio_code := c.FormValue("portfolio_code")
+	params["portfolio_code"] = portfolio_code
+
 	riskProfileKey := models.GetRiskProfileByFundType(fund_type_key)
 	params["risk_profile_key"] = strconv.FormatUint(riskProfileKey, 10)
 

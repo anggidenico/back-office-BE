@@ -441,7 +441,7 @@ func AdminGetAllMsProductWithLike(c *[]MsProduct, limit uint64, offset uint64, p
 
 func ProductStatusUpdate(productKey string) bool {
 	query := `SELECT count(*) FROM ms_product_request 
-	WHERE rec_status = 1 AND (rec_approval_status IS NULL OR rec_approval_status = 0) 
+	WHERE rec_status = 1 AND rec_approval_status IS NULL 
 	AND product_key = ` + productKey
 	// log.Println(query)
 	var count uint64
