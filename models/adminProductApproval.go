@@ -120,8 +120,10 @@ func GetProductRequestDetail(RecPK string) ProductUpdateDetails {
 	a6 := GetForeignKeyValue("ms_custodian_bank", "custodian_short_name", "custodian_key", *result.Updates.CustodianKey)
 	result.Updates.CustodianName = &a6
 
-	a7 := GetForeignKeyValue("ms_product_type", "product_type_name", "product_type_key", *result.Updates.ProductTypeKey)
-	result.Updates.CustodianName = &a7
+	if result.Updates.ProductTypeKey != nil {
+		a7 := GetForeignKeyValue("ms_product_type", "product_type_name", "product_type_key", *result.Updates.ProductTypeKey)
+		result.Updates.CustodianName = &a7
+	}
 
 	result.Type = *result.Updates.RecAction
 
@@ -159,8 +161,10 @@ func GetProductRequestDetail(RecPK string) ProductUpdateDetails {
 		b6 := GetForeignKeyValue("ms_custodian_bank", "custodian_short_name", "custodian_key", *result.Existing.CustodianKey)
 		result.Existing.CustodianName = &b6
 
-		b7 := GetForeignKeyValue("ms_product_type", "product_type_name", "product_type_key", *result.Existing.ProductTypeKey)
-		result.Existing.CustodianName = &b7
+		if result.Existing.ProductTypeKey != nil {
+			b7 := GetForeignKeyValue("ms_product_type", "product_type_name", "product_type_key", *result.Existing.ProductTypeKey)
+			result.Existing.CustodianName = &b7
+		}
 	}
 
 	err = tx.Commit()
