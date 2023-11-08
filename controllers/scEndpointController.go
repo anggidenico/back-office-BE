@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -11,15 +10,18 @@ import (
 )
 
 func GetEndpointscController(c echo.Context) error {
-
-	result := models.GetEndpointscModels()
-	log.Println("Not Found")
+	var endpoint []models.ScEndpointt
+	status, err := models.GetEndpointscModels(&endpoint)
+	if err != nil {
+		// log.Error(err.Error())
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = endpoint
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -28,14 +30,18 @@ func GetEndpointDetailController(c echo.Context) error {
 	if endpointKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing endpoint key", "Missing endpoint key")
 	}
-	result := models.GetDetailEndpointModels(endpointKey)
+	var detailendpoint models.ScEndpointDetail
+	status, err := models.GetDetailEndpointModels(&detailendpoint, endpointKey)
 	// log.Println("Not Found")
-
+	if err != nil {
+		// log.Error(err.Error())
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = detailendpoint
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -149,9 +155,9 @@ func UpdateEndpointController(c echo.Context) error {
 	params["endpoint_version"] = "1"
 	params["privileges_key"] = "READ"
 
-	err = models.UpdateEndpointSc(endpointKey, params)
+	status, err = models.UpdateEndpointSc(endpointKey, params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed input data")
+		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -173,9 +179,9 @@ func DeleteEndpointController(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing endpointKey", "Missing endpointKey")
 	}
 
-	err := models.DeleteEndpoint(endpointKey, params)
+	status, err := models.DeleteEndpoint(endpointKey, params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK

@@ -186,9 +186,9 @@ func UpdateRiskProfile(c echo.Context) error {
 	}
 	params["rec_order"] = rec_order
 
-	err = models.UpdateRiskProfile(riskprofileKey, params)
+	status, err = models.UpdateRiskProfile(riskprofileKey, params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed input data")
+		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -211,9 +211,9 @@ func DeleteRiskProfile(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing risk_profile_key", "Missing risk_profile_key")
 	}
 
-	err := models.DeleteRiskProfile(riskprofileKey, params)
+	status, err := models.DeleteRiskProfile(riskprofileKey, params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK

@@ -105,7 +105,7 @@ func CreateMsSecurities(params map[string]string) (int, error) {
 	}
 	return http.StatusOK, nil
 }
-func GetSecuritiesModels() (result []Securities) {
+func GetSecuritiesModels(c *[]Securities) (int, error) {
 	query := `SELECT a.sec_key,
 	a.sec_code, 
 	a.sec_name,
@@ -130,14 +130,14 @@ func GetSecuritiesModels() (result []Securities) {
 	WHERE a.rec_status =1`
 
 	log.Println("====================>>>", query)
-	err := db.Db.Select(&result, query)
+	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())
-		// return http.StatusBadGateway, err
+		return http.StatusBadGateway, err
 	}
-	return
+	return http.StatusOK, nil
 }
-func DeleteMsSecurities(SecKey string, params map[string]string) error {
+func DeleteMsSecurities(SecKey string, params map[string]string) (int, error) {
 	query := `UPDATE ms_securities SET `
 	var setClauses []string
 	var values []interface{}
@@ -157,12 +157,12 @@ func DeleteMsSecurities(SecKey string, params map[string]string) error {
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return err
+		return http.StatusBadGateway, err
 	}
 
-	return nil
+	return http.StatusOK, nil
 }
-func GetMsSecuritiesDetailModels(SecKey string) (result SecuritiesDetail) {
+func GetMsSecuritiesDetailModels(c *SecuritiesDetail, SecKey string) (int, error) {
 	query := `SELECT a.sec_key,
 	a.sec_code, 
 	a.sec_name,
@@ -188,14 +188,14 @@ func GetMsSecuritiesDetailModels(SecKey string) (result SecuritiesDetail) {
 	AND a.sec_key =` + SecKey
 
 	log.Println("====================>>>", query)
-	err := db.Db.Get(&result, query)
+	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err.Error())
-		// return http.StatusBadGateway, err
+		return http.StatusBadGateway, err
 	}
-	return
+	return http.StatusOK, nil
 }
-func UpdateMsSecurities(SecKey string, params map[string]string) error {
+func UpdateMsSecurities(SecKey string, params map[string]string) (int, error) {
 	query := `UPDATE ms_securities SET `
 	var setClauses []string
 	var values []interface{}
@@ -215,7 +215,7 @@ func UpdateMsSecurities(SecKey string, params map[string]string) error {
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return err
+		return http.StatusBadGateway, err
 	}
-	return nil
+	return http.StatusOK, nil
 }

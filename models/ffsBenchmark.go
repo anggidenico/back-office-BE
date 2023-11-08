@@ -25,7 +25,7 @@ type BenchmarkDetail struct {
 	RecStatus          int8   `db:"rec_status"  json:"rec_status"`
 }
 
-func GetBenchmarkModels() (result []Benchmark) {
+func GetBenchmarkModels(c *[]Benchmark) (int, error) {
 	query := `SELECT a.benchmark_key, 
 	a.fund_type_key,
 	b.fund_type_name, 
@@ -37,15 +37,15 @@ func GetBenchmarkModels() (result []Benchmark) {
 	ON a.fund_type_key = b.fund_type_key WHERE a.rec_status = 1`
 
 	log.Println("====================>>>", query)
-	err := db.Db.Select(&result, query)
+	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())
-		// return http.StatusBadGateway, err
+		return http.StatusBadGateway, err
 	}
-	return
+	return http.StatusOK, nil
 }
 
-func GetBenchmarkDetailModels(BenchmarkKey string) (result BenchmarkDetail) {
+func GetBenchmarkDetailModels(c *BenchmarkDetail, BenchmarkKey string) (int, error) {
 	query := `SELECT a.fund_type_key,
 	b.fund_type_name, 
 	a.benchmark_code, 
@@ -58,15 +58,15 @@ func GetBenchmarkDetailModels(BenchmarkKey string) (result BenchmarkDetail) {
 	ON a.fund_type_key = b.fund_type_key WHERE a.rec_status = 1 AND a.benchmark_key =` + BenchmarkKey
 
 	log.Println("====================>>>", query)
-	err := db.Db.Get(&result, query)
+	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err.Error())
-		// return http.StatusBadGateway, err
+		return http.StatusBadGateway, err
 	}
-	return
+	return http.StatusOK, nil
 }
 
-func DeleteBenchmark(BenchmarkKey string, params map[string]string) error {
+func DeleteBenchmark(BenchmarkKey string, params map[string]string) (int, error) {
 	query := `UPDATE ffs_benchmark SET `
 	var setClauses []string
 	var values []interface{}
@@ -86,10 +86,10 @@ func DeleteBenchmark(BenchmarkKey string, params map[string]string) error {
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return err
+		return http.StatusBadGateway, err
 	}
 
-	return nil
+	return http.StatusOK, nil
 }
 
 func CreateFfsBenchmark(params map[string]string) (int, error) {
@@ -123,7 +123,7 @@ func CreateFfsBenchmark(params map[string]string) (int, error) {
 	return http.StatusOK, nil
 }
 
-func UpdateFfsBenchmark(BenchmarkKey string, params map[string]string) error {
+func UpdateFfsBenchmark(BenchmarkKey string, params map[string]string) (int, error) {
 	query := `UPDATE ffs_benchmark SET `
 	var setClauses []string
 	var values []interface{}
@@ -143,7 +143,7 @@ func UpdateFfsBenchmark(BenchmarkKey string, params map[string]string) error {
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return err
+		return http.StatusBadRequest, err
 	}
-	return nil
+	return http.StatusOK, nil
 }

@@ -96,21 +96,7 @@ func CreateRiskProfile(params map[string]string) (int, error) {
 	return http.StatusOK, nil
 }
 
-func UpdateRiskProfile(RiskProfileKey string, params map[string]string) error {
-	// query := `UPDATE ms_risk_profile SET `
-	// i := 0
-	// for key, value := range params {
-	// 	if key != "risk_profile_key" {
-	// 		query += key + " = '" + value + "'"
-
-	// 		if (len(params) - 1) > i {
-	// 			query += ", "
-	// 		}
-	// 		i++
-	// 	}
-	// }
-	// query += ` WHERE risk_profile_key = ` + RiskProfileKey
-
+func UpdateRiskProfile(RiskProfileKey string, params map[string]string) (int, error) {
 	query := `UPDATE ms_risk_profile SET `
 	var setClauses []string
 	var values []interface{}
@@ -130,13 +116,13 @@ func UpdateRiskProfile(RiskProfileKey string, params map[string]string) error {
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return err
+		return http.StatusBadRequest, err
 	}
 
-	return nil
+	return http.StatusOK, nil
 }
 
-func DeleteRiskProfile(RiskProfileKey string, params map[string]string) error {
+func DeleteRiskProfile(RiskProfileKey string, params map[string]string) (int, error) {
 	query := `UPDATE ms_risk_profile SET `
 	var setClauses []string
 	var values []interface{}
@@ -156,8 +142,8 @@ func DeleteRiskProfile(RiskProfileKey string, params map[string]string) error {
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return err
+		return http.StatusBadRequest, err
 	}
 
-	return nil
+	return http.StatusOK, nil
 }

@@ -9,28 +9,33 @@ import (
 )
 
 func GetFfsPeriodeController(c echo.Context) error {
-
-	result := models.GetFfsPeriodeModels()
-
+	var ffsperiode []models.FfsPeriode
+	status, err := models.GetFfsPeriodeModels(&ffsperiode)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), err.Error())
+	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = ffsperiode
 	return c.JSON(http.StatusOK, response)
 }
 
 func GetFfsPeriodeDetailController(c echo.Context) error {
 	periodeKey := c.Param("periode_key")
 	if periodeKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing peiode_key", "Missing peiode_key")
+		return lib.CustomError(http.StatusBadRequest, "Missing periode_key", "Missing periode_key")
 	}
-	result := models.GetFfsPeriodeDetailModels(periodeKey)
-
+	var detperiode models.FfsPeriodeDetail
+	status, err := models.GetFfsPeriodeDetailModels(&detperiode, periodeKey)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), err.Error())
+	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = detperiode
 	return c.JSON(http.StatusOK, response)
 }

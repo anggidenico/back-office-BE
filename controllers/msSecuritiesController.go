@@ -89,14 +89,16 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 func GetMsSecuritiesController(c echo.Context) error {
-
-	result := models.GetSecuritiesModels()
-
+	var sec []models.Securities
+	status, err := models.GetSecuritiesModels(&sec)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), err.Error())
+	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = sec
 	return c.JSON(http.StatusOK, response)
 }
 func DeleteMsSecuritiesController(c echo.Context) error {
@@ -110,9 +112,9 @@ func DeleteMsSecuritiesController(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing sec_key", "Missing sec_key")
 	}
 
-	err := models.DeleteMsSecurities(secKey, params)
+	status, err := models.DeleteMsSecurities(secKey, params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -126,13 +128,16 @@ func GetMsSecuritiesDetailController(c echo.Context) error {
 	if secKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing sec_key", "Missing sec_key")
 	}
-	result := models.GetMsSecuritiesDetailModels(secKey)
-
+	var detailmssec models.SecuritiesDetail
+	status, err := models.GetMsSecuritiesDetailModels(&detailmssec, secKey)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed input data")
+	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = detailmssec
 	return c.JSON(http.StatusOK, response)
 }
 func UpdateMsSecuritiesController(c echo.Context) error {
@@ -195,9 +200,9 @@ func UpdateMsSecuritiesController(c echo.Context) error {
 	params["date_matured"] = pastDueDate
 	params["rec_status"] = "1"
 
-	err = models.UpdateMsSecurities(secKey, params)
+	status, err = models.UpdateMsSecurities(secKey, params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed input data")
+		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK

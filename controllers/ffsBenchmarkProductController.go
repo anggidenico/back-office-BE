@@ -40,14 +40,16 @@ func CreateFfsBenchmarkProductController(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 func GetFfsBenchmarkProductController(c echo.Context) error {
-
-	result := models.GetBenchmarkProductModels()
-
+	var benchmarkprod []models.BenchmarkProduct
+	status, err := models.GetBenchmarkProductModels(&benchmarkprod)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed input data")
+	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = benchmarkprod
 	return c.JSON(http.StatusOK, response)
 }
 func GetBenchmarkProdDetailController(c echo.Context) error {
@@ -55,12 +57,15 @@ func GetBenchmarkProdDetailController(c echo.Context) error {
 	if benchProdKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing benchmark_product_key", "Missing benchmark_product_key")
 	}
-	result := models.GetBenchmarkProductDetailModels(benchProdKey)
-
+	var detailbenchmarkprod models.BenchmarkProdDetail
+	status, err := models.GetBenchmarkProductDetailModels(&detailbenchmarkprod, benchProdKey)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed input data")
+	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = detailbenchmarkprod
 	return c.JSON(http.StatusOK, response)
 }

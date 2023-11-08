@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-type scEndpoint struct {
+type ScEndpointt struct {
 	EndpointCode       string  `db:"endpoint_code" json:"endpoint_code"`
 	EndpointName       string  `db:"endpoint_name" json:"endpoint_name"`
 	Method             string  `db:"endpoint_verb" json:"method"`
@@ -24,7 +24,7 @@ type scEndpoint struct {
 	PrivilegesKey      string  `db:"privileges_key" json:"privileges_key"`
 }
 
-type scEndpointDetail struct {
+type ScEndpointDetail struct {
 	EndpointKey         string  `db:"endpoint_key" json:"endpoint_key"`
 	EndpointCategoryKey string  `db:"endpoint_category_key" json:"endpoint_category_key"`
 	EndPointCode        string  `db:"endpoint_code" json:"endpoint_code"`
@@ -36,28 +36,28 @@ type scEndpointDetail struct {
 	PrivilegesKey       string  `db:"privileges_key" json:"privileges_key"`
 }
 
-func GetEndpointscModels() (result []scEndpoint) {
+func GetEndpointscModels(c *[]ScEndpointt) (int, error) {
 	query := `SELECT a.endpoint_code, a.endpoint_name, a.endpoint_verb, a.endpoint_uri,a.endpoint_version,a.endpoint_version,a.privileges_key, b.endpoint_ctg_code, b.endpoint_ctg_desc, b.endpoint_ctg_purpose, c.menu_code, c.menu_name, c.menu_page, c.menu_url, c.menu_desc FROM sc_endpoint AS a 
 	JOIN sc_endpoint_category AS b ON a.endpoint_category_key = b.endpoint_category_key 
 	JOIN sc_menu AS c ON a.menu_key = c.menu_key WHERE a.rec_status = 1`
 	log.Println("====================>>>", query)
-	err := db.Db.Select(&result, query)
+	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())
-		// return http.StatusBadGateway, err
+		return http.StatusBadGateway, err
 	}
-	return
+	return http.StatusOK, nil
 }
 
-func GetDetailEndpointModels(EndPointKey string) (result scEndpointDetail) {
+func GetDetailEndpointModels(c *ScEndpointDetail, EndPointKey string) (int, error) {
 	query := `SELECT endpoint_key,endpoint_category_key,endpoint_code,endpoint_name,menu_key,endpoint_verb,endpoint_uri,endpoint_version,privileges_key FROM sc_endpoint WHERE endpoint_key = ` + EndPointKey
 	log.Println("====================>>>", query)
-	err := db.Db.Get(&result, query)
+	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err.Error())
-		// return http.StatusBadGateway, err
+		return http.StatusBadGateway, err
 	}
-	return
+	return http.StatusOK, nil
 }
 func CreateEndpointSc(params map[string]string) (int, error) {
 	query := "INSERT INTO sc_endpoint"
@@ -89,7 +89,7 @@ func CreateEndpointSc(params map[string]string) (int, error) {
 	}
 	return http.StatusOK, nil
 }
-func UpdateEndpointSc(EndpointKey string, params map[string]string) error {
+func UpdateEndpointSc(EndpointKey string, params map[string]string) (int, error) {
 	query := `UPDATE sc_endpoint SET `
 	var setClauses []string
 	var values []interface{}
@@ -109,12 +109,12 @@ func UpdateEndpointSc(EndpointKey string, params map[string]string) error {
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return err
+		return http.StatusBadRequest, err
 	}
-	return nil
+	return http.StatusOK, nil
 }
 
-func DeleteEndpoint(EndpointKey string, params map[string]string) error {
+func DeleteEndpoint(EndpointKey string, params map[string]string) (int, error) {
 	query := `UPDATE sc_endpoint SET `
 	var setClauses []string
 	var values []interface{}
@@ -134,8 +134,8 @@ func DeleteEndpoint(EndpointKey string, params map[string]string) error {
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return err
+		return http.StatusBadRequest, err
 	}
 
-	return nil
+	return http.StatusOK, nil
 }
