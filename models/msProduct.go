@@ -245,6 +245,16 @@ type AdminMsProductDetail struct {
 	FlagRedemption        bool                     `json:"flag_redemption"`
 	FlagSwitchOut         bool                     `json:"flag_switch_out"`
 	FlagSwitchIn          bool                     `json:"flag_switch_in"`
+	MinTopupAmount        *decimal.Decimal         `json:"min_topup_amount"`
+	MinAmountAfterRed     *decimal.Decimal         `json:"min_amount_after_red"`
+	DecNav                uint64                   `json:"dec_nav"`
+	DecPerformance        uint64                   `json:"dec_performance"`
+	DecUnit               uint64                   `json:"dec_unit"`
+	DecAmount             uint64                   `json:"dec_amount"`
+	NpwpName              *string                  `json:"npwp_name"`
+	NpwpNumber            *string                  `json:"npwp_number"`
+	NpwpDateReg           *string                  `json:"npwp_date_reg"`
+	PortfolioCode         *string                  `json:"portfolio_code"`
 }
 
 type ProductSubscription struct {

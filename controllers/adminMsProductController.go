@@ -692,6 +692,17 @@ func GetProductDetailAdmin(c echo.Context) error {
 		responseData.FlagSwitchIn = false
 	}
 
+	responseData.MinTopupAmount = product.MinTopUpAmount
+	responseData.MinAmountAfterRed = product.MinAmountAfterRed
+	responseData.DecAmount = uint64(product.DecAmount)
+	responseData.DecNav = uint64(product.DecNav)
+	responseData.DecPerformance = uint64(product.DecPerformance)
+	responseData.DecUnit = uint64(product.DecUnit)
+	responseData.NpwpDateReg = product.NpwpDateReg
+	responseData.NpwpName = product.NpwpName
+	responseData.NpwpNumber = product.NpwpNumber
+	responseData.PortfolioCode = product.PortfolioCode
+
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
