@@ -561,6 +561,9 @@ func router() *echo.Echo {
 	//Fund Fact Sheet - Periode
 	admin.GET("/get-periode-list", controllers.GetFfsPeriodeController).Name = "GetFfsPeriodeController"
 	admin.GET("/get-periode-detail/:periode_key", controllers.GetFfsPeriodeDetailController).Name = "GetFfsPeriodeDetailController"
+	admin.POST("/create-periode", controllers.CreateFfsPeriodeController).Name = "CreateFfsPeriodeController"
+	admin.POST("/update-ffsperiode", controllers.UpdateFfsPeriode).Name = "UpdateFfsPeriode"
+	admin.POST("/delete-ffsperiode", controllers.DeleteFfsPeriode).Name = "DeleteFfsPeriode"
 	return e
 }
 

@@ -272,7 +272,7 @@ func GetPaymentChannelByCusomerKey(c *[]SubscribePaymentChannel, product string,
 	return http.StatusOK, nil
 }
 
-func GetPaymentChannelModels() (result []PaymentChannel) {
+func GetPaymentChannelModels(c *[]PaymentChannel) (int, error) {
 	query := `SELECT a.pchannel_key, 
 	a.pchannel_code, 
 	a.pchannel_name, 
@@ -289,15 +289,15 @@ func GetPaymentChannelModels() (result []PaymentChannel) {
     JOIN gen_lookup c ON a.settle_payment_method = c.lookup_key
 	JOIN gen_lookup d ON a.value_type = d.lookup_key WHERE a.rec_status = 1`
 	// log.Println("====================>>>", query)
-	err := db.Db.Select(&result, query)
+	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())
-		// return http.StatusBadGateway, err
+		return http.StatusBadGateway, err
 	}
-	return
+	return http.StatusOK, nil
 }
 
-func GetDetailPaymentChannelModels(PChannelKey string) (result PaymentChannelDetail) {
+func GetDetailPaymentChannelModels(c *PaymentChannelDetail, PChannelKey string) (int, error) {
 	query := `SELECT a.pchannel_code, 
 	a.pchannel_name, 
 	a.settle_channel, 
@@ -314,15 +314,15 @@ func GetDetailPaymentChannelModels(PChannelKey string) (result PaymentChannelDet
 	JOIN gen_lookup d ON a.value_type = d.lookup_key WHERE a.rec_status = 1 AND a.pchannel_key =` + PChannelKey
 
 	// log.Println("====================>>>", query)
-	err := db.Db.Get(&result, query)
+	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err.Error())
-		// return http.StatusBadGateway, err
+		return http.StatusBadGateway, err
 	}
-	return
+	return http.StatusOK, nil
 }
 
-func DeleteMsPaymentChannel(PChannelKey string, params map[string]string) error {
+func DeleteMsPaymentChannel(PChannelKey string, params map[string]string) (int, error) {
 	query := `UPDATE ms_payment_channel SET `
 	var setClauses []string
 	var values []interface{}
@@ -342,10 +342,10 @@ func DeleteMsPaymentChannel(PChannelKey string, params map[string]string) error 
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return err
+		return http.StatusBadGateway, err
 	}
 
-	return nil
+	return http.StatusOK, nil
 }
 
 func CreateMsPaymentChannel(params map[string]string) (int, error) {
@@ -379,7 +379,7 @@ func CreateMsPaymentChannel(params map[string]string) (int, error) {
 	return http.StatusOK, nil
 }
 
-func UpdateMsPaymentChannel(PChannelKey string, params map[string]string) error {
+func UpdateMsPaymentChannel(PChannelKey string, params map[string]string) (int, error) {
 	query := `UPDATE ms_payment_channel SET `
 	var setClauses []string
 	var values []interface{}
@@ -399,7 +399,7 @@ func UpdateMsPaymentChannel(PChannelKey string, params map[string]string) error 
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return err
+		return http.StatusBadRequest, err
 	}
-	return nil
+	return http.StatusOK, nil
 }

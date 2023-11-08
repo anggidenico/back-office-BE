@@ -10,14 +10,16 @@ import (
 )
 
 func GetmsPaymentChannelController(c echo.Context) error {
-
-	result := models.GetPaymentChannelModels()
-
+	var mspayment []models.PaymentChannel
+	status, err := models.GetPaymentChannelModels(&mspayment)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = mspayment
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -26,14 +28,18 @@ func GetMsPaymentDetailController(c echo.Context) error {
 	if pChannelKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing payment channel key", "Missing payment channel key")
 	}
-	result := models.GetDetailPaymentChannelModels(pChannelKey)
+	var detailpayment models.PaymentChannelDetail
+	status, err := models.GetDetailPaymentChannelModels(&detailpayment, pChannelKey)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
 	// log.Println("Not Found")
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = detailpayment
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -48,9 +54,9 @@ func DeleteMsPaymentChannelController(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing pchannelKey", "Missing pchannelKey")
 	}
 
-	err := models.DeleteMsPaymentChannel(pChannelKey, params)
+	status, err := models.DeleteMsPaymentChannel(pChannelKey, params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -176,9 +182,9 @@ func UpdateMsPaymentChannelController(c echo.Context) error {
 	params["value_type"] = valueType
 	params["rec_status"] = "1"
 
-	err = models.UpdateMsPaymentChannel(pChannelKey, params)
+	status, err = models.UpdateMsPaymentChannel(pChannelKey, params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed input data")
+		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK

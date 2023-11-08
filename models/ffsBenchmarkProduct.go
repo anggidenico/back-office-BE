@@ -54,7 +54,7 @@ func CreateFfsProductBenchmark(params map[string]string) (int, error) {
 	}
 	return http.StatusOK, nil
 }
-func GetBenchmarkProductModels() (result []BenchmarkProduct) {
+func GetBenchmarkProductModels(c *[]BenchmarkProduct) (int, error) {
 	query := `SELECT a.bench_prod_key,
 	a.product_key,
 	b.product_code,
@@ -66,15 +66,15 @@ func GetBenchmarkProductModels() (result []BenchmarkProduct) {
 	WHERE a.rec_status =1`
 
 	log.Println("====================>>>", query)
-	err := db.Db.Select(&result, query)
+	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())
-		// return http.StatusBadGateway, err
+		return http.StatusBadGateway, err
 	}
-	return
+	return http.StatusOK, nil
 }
 
-func GetBenchmarkProductDetailModels(BenchProdKey string) (result BenchmarkProdDetail) {
+func GetBenchmarkProductDetailModels(c *BenchmarkProdDetail, BenchProdKey string) (int, error) {
 	query := `SELECT a.bench_prod_key,
 	a.product_key,
 	b.product_code,
@@ -89,14 +89,14 @@ func GetBenchmarkProductDetailModels(BenchProdKey string) (result BenchmarkProdD
 	AND a.bench_prod_key =` + BenchProdKey
 
 	log.Println("====================>>>", query)
-	err := db.Db.Get(&result, query)
+	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err.Error())
-		// return http.StatusBadGateway, err
+		return http.StatusBadGateway, err
 	}
-	return
+	return http.StatusOK, nil
 }
-func DeleteBenchmarkProduct(BenchProdKey string, params map[string]string) error {
+func DeleteBenchmarkProduct(BenchProdKey string, params map[string]string) (int, error) {
 	query := `UPDATE ffs_benchmark_product SET `
 	var setClauses []string
 	var values []interface{}
@@ -116,12 +116,12 @@ func DeleteBenchmarkProduct(BenchProdKey string, params map[string]string) error
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return err
+		return http.StatusBadGateway, err
 	}
 
-	return nil
+	return http.StatusOK, nil
 }
-func UpdateBenchmarkProduct(BenchProdKey string, params map[string]string) error {
+func UpdateBenchmarkProduct(BenchProdKey string, params map[string]string) (int, error) {
 	query := `UPDATE ffs_benchmark_product SET `
 	var setClauses []string
 	var values []interface{}
@@ -141,7 +141,7 @@ func UpdateBenchmarkProduct(BenchProdKey string, params map[string]string) error
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return err
+		return http.StatusBadGateway, err
 	}
-	return nil
+	return http.StatusOK, nil
 }

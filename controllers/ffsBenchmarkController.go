@@ -10,14 +10,16 @@ import (
 )
 
 func GetFfsBenchmarkController(c echo.Context) error {
-
-	result := models.GetBenchmarkModels()
-
+	var benchmark []models.Benchmark
+	status, err := models.GetBenchmarkModels(&benchmark)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = benchmark
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -26,13 +28,17 @@ func GetBenchmarkDetailController(c echo.Context) error {
 	if benchmarkKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing benchmark key", "Missing benchmark key")
 	}
-	result := models.GetBenchmarkDetailModels(benchmarkKey)
+	var detailbenchmark models.BenchmarkDetail
+	status, err := models.GetBenchmarkDetailModels(&detailbenchmark, benchmarkKey)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = result
+	response.Data = detailbenchmark
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -47,9 +53,9 @@ func DeleteBenchmarkController(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing benchmarkKey", "Missing benchmarkKey")
 	}
 
-	err := models.DeleteBenchmark(benchmarkKey, params)
+	status, err := models.DeleteBenchmark(benchmarkKey, params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -144,9 +150,9 @@ func UpdateFfsBenchmarkController(c echo.Context) error {
 	// params["rec_attribute_id1"] = recAttributeID1
 	params["rec_status"] = "1"
 
-	err = models.UpdateFfsBenchmark(benchmarkKey, params)
+	status, err = models.UpdateFfsBenchmark(benchmarkKey, params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed input data")
+		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -167,9 +173,9 @@ func DeleteBenchmarkProdController(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing bench_prod_key", "Missing bench_prod_key")
 	}
 
-	err := models.DeleteBenchmarkProduct(benchProdKey, params)
+	status, err := models.DeleteBenchmarkProduct(benchProdKey, params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -201,9 +207,9 @@ func UpdateBenchmarkProdController(c echo.Context) error {
 	params["benchmark_ratio"] = benchmarkRatio
 	params["rec_status"] = "1"
 
-	err = models.UpdateBenchmarkProduct(benchProdKey, params)
+	status, err = models.UpdateBenchmarkProduct(benchProdKey, params)
 	if err != nil {
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Failed input data")
+		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
