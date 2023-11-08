@@ -131,34 +131,30 @@ func GetProductRequestDetail(RecPK string) ProductUpdateDetails {
 		row2 := tx.QueryRow(query2)
 		err = row2.Scan(&result.Existing.ProductKey, &result.Existing.ProductID, &result.Existing.ProductCode,
 			&result.Existing.ProductName, &result.Existing.ProductNameAlt, &result.Existing.CurrencyKey,
-			&result.Existing.ProductCategoryKey, &result.Existing.FundTypeKey, &result.Existing.ProductProfile,
-			&result.Existing.InvestmentObjectives, &result.Existing.ProductPhase, &result.Existing.NavValuationType,
-			&result.Existing.ProspectusLink, &result.Existing.LaunchDate, &result.Existing.InceptionDate,
-			&result.Existing.IsinCode, &result.Existing.FlagSyariah, &result.Existing.MaxSubFee,
-			&result.Existing.MaxRedFee, &result.Existing.MaxSwiFee, &result.Existing.MinSubAmount,
+			&result.Existing.ProductCategoryKey, &result.Existing.FundTypeKey, &result.Existing.ProductProfile, &result.Existing.InvestmentObjectives, &result.Existing.ProductPhase, &result.Existing.NavValuationType, &result.Existing.ProspectusLink, &result.Existing.LaunchDate, &result.Existing.InceptionDate, &result.Existing.IsinCode, &result.Existing.FlagSyariah, &result.Existing.MaxSubFee, &result.Existing.MaxRedFee, &result.Existing.MaxSwiFee, &result.Existing.MinSubAmount,
 			&result.Existing.MinTopUpAmount, &result.Existing.MinRedAmount, &result.Existing.MinRedAmount, &result.Existing.MinRedUnit, &result.Existing.MinUnitAfterRed, &result.Existing.MinAmountAfterRed, &result.Existing.ManagementFee, &result.Existing.CustodianFee, &result.Existing.CustodianKey, &result.Existing.SettlementPeriod, &result.Existing.SinvestFundCode, &result.Existing.FlagEnabled, &result.Existing.FlagSubscription, &result.Existing.FlagRedemption, &result.Existing.FlagRedemption, &result.Existing.FlagSwitchOut, &result.Existing.FlagSwitchIn, &result.Existing.DecUnit, &result.Existing.DecAmount, &result.Existing.DecNav, &result.Existing.DecPerformance, &result.Existing.NpwpDateReg, &result.Existing.NpwpName, &result.Existing.NpwpNumber, &result.Existing.PortfolioCode)
 		if err != nil {
 			tx.Rollback()
 			log.Println(err.Error())
 		}
 
-		b1 := GetForeignKeyValue("ms_currency", "code", "currency_key", *result.Updates.CurrencyKey)
-		result.Updates.CurrencyName = &b1
+		b1 := GetForeignKeyValue("ms_currency", "code", "currency_key", *result.Existing.CurrencyKey)
+		result.Existing.CurrencyName = &b1
 
-		b2 := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Updates.ProductPhase)
-		result.Updates.ProductPhaseName = &b2
+		b2 := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Existing.ProductPhase)
+		result.Existing.ProductPhaseName = &b2
 
-		b3 := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Updates.NavValuationType)
-		result.Updates.NavValuationTypeName = &b3
+		b3 := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Existing.NavValuationType)
+		result.Existing.NavValuationTypeName = &b3
 
-		b4 := GetForeignKeyValue("ms_fund_type", "fund_type_name", "fund_type_key", *result.Updates.FundTypeKey)
-		result.Updates.FundTypeName = &b4
+		b4 := GetForeignKeyValue("ms_fund_type", "fund_type_name", "fund_type_key", *result.Existing.FundTypeKey)
+		result.Existing.FundTypeName = &b4
 
-		b5 := GetForeignKeyValue("ms_product_category", "category_name", "product_category_key", *result.Updates.ProductCategoryKey)
-		result.Updates.ProductCategoryName = &b5
+		b5 := GetForeignKeyValue("ms_product_category", "category_name", "product_category_key", *result.Existing.ProductCategoryKey)
+		result.Existing.ProductCategoryName = &b5
 
-		b6 := GetForeignKeyValue("ms_custodian_bank", "custodian_short_name", "custodian_key", *result.Updates.CustodianKey)
-		result.Updates.CustodianName = &b6
+		b6 := GetForeignKeyValue("ms_custodian_bank", "custodian_short_name", "custodian_key", *result.Existing.CustodianKey)
+		result.Existing.CustodianName = &b6
 	}
 
 	err = tx.Commit()
