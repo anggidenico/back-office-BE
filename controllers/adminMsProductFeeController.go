@@ -124,6 +124,15 @@ func GetListProductFeeAdmin(c echo.Context) error {
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 
+	var resData []models.AdminListMsProductFee
+	if len(msProductFee) > 0 {
+		for _, data := range msProductFee {
+			dt := data
+			dt.StatusUpdate = models.ProductFeeStatusUpdate(strconv.FormatUint(data.FeeKey, 10))
+			resData = append(resData, dt)
+		}
+	}
+
 	var countData models.CountData
 	var pagination int
 	if limit > 0 {
@@ -147,7 +156,7 @@ func GetListProductFeeAdmin(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Pagination = pagination
-	response.Data = msProductFee
+	response.Data = resData
 
 	return c.JSON(http.StatusOK, response)
 }

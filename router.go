@@ -529,6 +529,7 @@ func router() *echo.Echo {
 
 	admin.GET("/productfee/approval-list", controllers.ProductFeeApprovalList)
 	admin.GET("/productfee/approval-detail/:rec_pk", controllers.ProductFeeApprovalDetail)
+	admin.POST("/productfee/approval-action", controllers.ProductFeeApprovalAction)
 
 	// MASTER PAYMENT CHANNEL
 	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController).Name = "GetmsPaymentChannelController"

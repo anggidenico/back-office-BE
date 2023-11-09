@@ -41,6 +41,11 @@ type ProductFeeRequest struct {
 	FeeItem               *[]ProductFeeItemRequest `db:"fee_item" json:"fee_item"`
 }
 
+type ProductFeeUpdateDetails struct {
+	Existing ProductFeeRequest `json:"existing"`
+	Updates  ProductFeeRequest `json:"updates"`
+}
+
 type ProductFeeItemRequest struct {
 	RecPK             *uint64          `db:"rec_pk" json:"rec_pk"`
 	RecAction         *string          `db:"rec_action" json:"rec_action"`
@@ -77,8 +82,8 @@ func GetProductFeeApprovalList() []ProductFeeRequest {
 	return result
 }
 
-func GetProductFeeApprovalDetail(rec_pk string) ProductFeeRequest {
-	var result ProductFeeRequest
+func GetProductFeeApprovalDetail(rec_pk string) ProductFeeUpdateDetails {
+	var result ProductFeeUpdateDetails
 
 	tx, err := db.Db.Begin()
 	if err != nil {
@@ -86,33 +91,62 @@ func GetProductFeeApprovalDetail(rec_pk string) ProductFeeRequest {
 		log.Println(err.Error())
 	}
 
-	query := `SELECT rec_pk, rec_action, fee_type, product_key, fee_code, flag_show_ontnc, fee_annotation, fee_desc, fee_date_start, fee_date_thru, fee_nominal_type, enabled_min_amount, fee_min_amount, enabled_max_amount, fee_max_amount, fee_calc_method, calculation_baseon, period_hold, days_inyear
-	FROM ms_product_fee_request WHERE rec_pk = ` + rec_pk
+	query := `SELECT rec_pk, rec_action, fee_type, product_key, fee_key, fee_code, flag_show_ontnc, fee_annotation, fee_desc, fee_date_start, fee_date_thru, fee_nominal_type, enabled_min_amount, fee_min_amount, enabled_max_amount, fee_max_amount, fee_calc_method, calculation_baseon, period_hold, days_inyear FROM ms_product_fee_request WHERE rec_pk = ` + rec_pk
 	// log.Print(query)
 	row := tx.QueryRow(query)
-	err = row.Scan(&result.RecPK, &result.RecAction, &result.FeeType, &result.ProductKey, &result.FeeCode, &result.FlagShowOntnc, &result.FeeAnnotation, &result.FeeDesc, &result.FeeDateStart, &result.FeeDateThru, &result.FeeNominalType, &result.EnabledMinAmount, &result.FeeMinAmount, &result.EnabledMaxAmount, &result.FeeMaxAmount, &result.FeeCalcMethod, &result.CalculationBaseon, &result.PeriodHold, &result.DaysInyear)
+	err = row.Scan(&result.Updates.RecPK, &result.Updates.RecAction, &result.Updates.FeeType, &result.Updates.ProductKey, &result.Updates.FeeKey, &result.Updates.FeeCode, &result.Updates.FlagShowOntnc, &result.Updates.FeeAnnotation, &result.Updates.FeeDesc, &result.Updates.FeeDateStart, &result.Updates.FeeDateThru, &result.Updates.FeeNominalType, &result.Updates.EnabledMinAmount, &result.Updates.FeeMinAmount, &result.Updates.EnabledMaxAmount, &result.Updates.FeeMaxAmount, &result.Updates.FeeCalcMethod, &result.Updates.CalculationBaseon, &result.Updates.PeriodHold, &result.Updates.DaysInyear)
 	if err != nil {
 		tx.Rollback()
 		log.Println(err.Error())
 	}
 
-	product_name := GetForeignKeyValue("ms_product", "product_name", "product_key", *result.ProductKey)
-	result.ProductName = &product_name
+	product_name := GetForeignKeyValue("ms_product", "product_name", "product_key", *result.Updates.ProductKey)
+	result.Updates.ProductName = &product_name
 
-	fee_type_name := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.FeeType)
-	result.FeeTypeName = &fee_type_name
+	fee_type_name := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Updates.FeeType)
+	result.Updates.FeeTypeName = &fee_type_name
 
-	fee_nominal_type_name := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.FeeNominalType)
-	result.FeeNominalTypeName = &fee_nominal_type_name
+	fee_nominal_type_name := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Updates.FeeNominalType)
+	result.Updates.FeeNominalTypeName = &fee_nominal_type_name
 
-	fee_calc_method_name := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.FeeCalcMethod)
-	result.FeeCalcMethodName = &fee_calc_method_name
+	fee_calc_method_name := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Updates.FeeCalcMethod)
+	result.Updates.FeeCalcMethodName = &fee_calc_method_name
 
-	calculation_baseon_name := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.CalculationBaseon)
-	result.CalculationBaseonName = &calculation_baseon_name
+	calculation_baseon_name := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Updates.CalculationBaseon)
+	result.Updates.CalculationBaseonName = &calculation_baseon_name
 
-	days_inyear := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.DaysInyear)
-	result.DaysInyearName = &days_inyear
+	days_inyear := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Updates.DaysInyear)
+	result.Updates.DaysInyearName = &days_inyear
+
+	if *result.Updates.RecAction == "UPDATE" {
+
+		query2 := `SELECT rec_pk, rec_action, fee_type, product_key, fee_key, fee_code, flag_show_ontnc, fee_annotation, fee_desc, fee_date_start, fee_date_thru, fee_nominal_type, enabled_min_amount, fee_min_amount, enabled_max_amount, fee_max_amount, fee_calc_method, calculation_baseon, period_hold, days_inyear FROM ms_product_fee_request WHERE fee_key = ` + strconv.FormatUint(*result.Updates.FeeKey, 10)
+		// log.Print(query)
+		row := tx.QueryRow(query2)
+		err = row.Scan(&result.Existing.RecPK, &result.Existing.RecAction, &result.Existing.FeeType, &result.Existing.ProductKey, &result.Existing.FeeKey, &result.Existing.FeeCode, &result.Existing.FlagShowOntnc, &result.Existing.FeeAnnotation, &result.Existing.FeeDesc, &result.Existing.FeeDateStart, &result.Existing.FeeDateThru, &result.Existing.FeeNominalType, &result.Existing.EnabledMinAmount, &result.Existing.FeeMinAmount, &result.Existing.EnabledMaxAmount, &result.Existing.FeeMaxAmount, &result.Existing.FeeCalcMethod, &result.Existing.CalculationBaseon, &result.Existing.PeriodHold, &result.Existing.DaysInyear)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+		}
+
+		product_name := GetForeignKeyValue("ms_product", "product_name", "product_key", *result.Existing.ProductKey)
+		result.Existing.ProductName = &product_name
+
+		fee_type_name := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Existing.FeeType)
+		result.Existing.FeeTypeName = &fee_type_name
+
+		fee_nominal_type_name := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Existing.FeeNominalType)
+		result.Existing.FeeNominalTypeName = &fee_nominal_type_name
+
+		fee_calc_method_name := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Existing.FeeCalcMethod)
+		result.Existing.FeeCalcMethodName = &fee_calc_method_name
+
+		calculation_baseon_name := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Existing.CalculationBaseon)
+		result.Existing.CalculationBaseonName = &calculation_baseon_name
+
+		days_inyear := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Existing.DaysInyear)
+		result.Existing.DaysInyearName = &days_inyear
+	}
 
 	return result
 }
@@ -183,4 +217,42 @@ func ProductFeeCreateRequest(paramsFee map[string]string, feeItems []FeeItemData
 
 	tx.Commit()
 	return http.StatusOK, nil
+}
+
+func ProductFeeApprovalAction(params map[string]string) error {
+	tx, err := db.Db.Begin()
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return err
+	}
+
+	recBy := params["rec_by"]
+	recDate := params["rec_date"]
+
+	qGetData := `SELECT rec_pk, rec_action, fee_type, product_key, fee_code, flag_show_ontnc, fee_annotation, fee_desc, fee_date_start, fee_date_thru, fee_nominal_type, enabled_min_amount, fee_min_amount, enabled_max_amount, fee_max_amount, fee_calc_method, calculation_baseon, period_hold, days_inyear
+	FROM ms_product_fee_request WHERE rec_status = 1 AND rec_pk = ` + params["rec_pk"]
+
+	var pf ProductFeeRequest
+
+	row := tx.QueryRow(qGetData)
+	err = row.Scan(&pf.RecPK, &pf.RecAction, &pf.FeeType, &pf.ProductKey, &pf.FeeCode, &pf.FlagShowOntnc, &pf.FeeAnnotation, &pf.FeeDesc, &pf.FeeDateStart, &pf.FeeDateThru, &pf.FeeNominalType, &pf.EnabledMinAmount, &pf.FeeMinAmount, &pf.EnabledMaxAmount, &pf.FeeMaxAmount, &pf.FeeCalcMethod, &pf.CalculationBaseon, &pf.PeriodHold, &pf.DaysInyear)
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return err
+	}
+
+	query1 := `UPDATE ms_product_request SET rec_approval_status = ` + params["approval"] + ` , rec_approved_date = '` + recDate + `' , rec_approved_by = '` + recBy + `' , rec_attribute_id1 = '` + params["reason"] + `' WHERE rec_pk = ` + params["rec_pk"]
+
+	// log.Println(query1)
+	_, err = tx.Exec(query1)
+	// log.Println(res.RowsAffected())
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return err
+	}
+
+	return nil
 }

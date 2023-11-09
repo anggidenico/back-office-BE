@@ -89,6 +89,7 @@ type AdminListMsProductFee struct {
 	FeeDateStart *string `db:"fee_date_start"        json:"fee_date_start"`
 	FeeDateThru  *string `db:"fee_date_thru"         json:"fee_date_thru"`
 	PeriodHold   uint64  `db:"period_hold"           json:"period_hold"`
+	StatusUpdate bool    `db:"status_update" json:"status_update"`
 }
 
 func GetAllMsProductFee(c *[]MsProductFee, params map[string]string) (int, error) {
@@ -138,6 +139,22 @@ func GetAllMsProductFee(c *[]MsProductFee, params map[string]string) (int, error
 	}
 
 	return http.StatusOK, nil
+}
+
+func ProductFeeStatusUpdate(FeeKey string) bool {
+
+	query := `SELECT count(*) FROM ms_product_fee_request WHERE rec_approval_status IS NULL AND fee_key = ` + FeeKey
+	var get int
+	err := db.Db.Get(&get, query)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	result := true
+	if get > 0 {
+		result = false
+	}
+
+	return result
 }
 
 func AdminGetAllMsProductFee(c *[]AdminListMsProductFee, limit uint64, offset uint64, params map[string]string, nolimit bool, searchLike *string) (int, error) {
