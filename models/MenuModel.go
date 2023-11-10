@@ -94,7 +94,8 @@ func GetMenuTree(ctx *[]ScMenuModel, p_parent_key uint64) (int, error) {
 		sm.rec_order,
 		sm.rec_attribute_id1 
 	from sc_menu sm 
-	where sm.rec_status = 1 and menu_parent = %v 
+	where sm.rec_status = 1 
+	and COALESCE(menu_parent, 0) = %v 
 	order by rec_order`
 
 	s_sql := fmt.Sprintf(query, p_parent_key)
