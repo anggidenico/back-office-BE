@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -28,6 +29,12 @@ func GetFfsPeriodeDetailController(c echo.Context) error {
 	periodeKey := c.Param("periode_key")
 	if periodeKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing periode_key", "Missing periode_key")
+	} else {
+		_, err := strconv.ParseUint(periodeKey, 10, 64)
+		if err != sql.ErrNoRows {
+			// log.Error("Wrong input for parameter: country_key")
+			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: periode_key", "Wrong input for parameter: periode_key")
+		}
 	}
 	var detperiode models.FfsPeriodeDetail
 	status, err := models.GetFfsPeriodeDetailModels(&detperiode, periodeKey)

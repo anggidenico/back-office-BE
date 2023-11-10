@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"database/sql"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo"
@@ -29,6 +31,12 @@ func GetEndpointDetailController(c echo.Context) error {
 	endpointKey := c.Param("endpoint_key")
 	if endpointKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing endpoint key", "Missing endpoint key")
+	} else {
+		_, err := strconv.ParseUint(endpointKey, 10, 64)
+		if err != sql.ErrNoRows {
+			// log.Error("Wrong input for parameter: country_key")
+			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: endpoint_key", "Wrong input for parameter: endpoint_key")
+		}
 	}
 	var detailendpoint models.ScEndpointDetail
 	status, err := models.GetDetailEndpointModels(&detailendpoint, endpointKey)

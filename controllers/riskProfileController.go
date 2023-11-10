@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -107,6 +108,12 @@ func GetDetailRiskProfileController(c echo.Context) error {
 	riskProfileKey := c.Param("risk_profile_key")
 	if riskProfileKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing risk_profile_key", "Missing risk_profile_key")
+	} else {
+		_, err := strconv.ParseUint(riskProfileKey, 10, 64)
+		if err != sql.ErrNoRows {
+			// log.Error("Wrong input for parameter: country_key")
+			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: risk_profile_key", "Wrong input for parameter: risk_profile_key")
+		}
 	}
 	var detailrisk models.GetDetailRisk
 	status, err := models.GetDetailRiskProfileModels(&detailrisk, riskProfileKey)

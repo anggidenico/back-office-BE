@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"database/sql"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo"
@@ -27,6 +29,12 @@ func GetMsPaymentDetailController(c echo.Context) error {
 	pChannelKey := c.Param("pchannel_key")
 	if pChannelKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing payment channel key", "Missing payment channel key")
+	} else {
+		_, err := strconv.ParseUint(pChannelKey, 10, 64)
+		if err != sql.ErrNoRows {
+			// log.Error("Wrong input for parameter: country_key")
+			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: pChannel_key", "Wrong input for parameter: pChannel_key")
+		}
 	}
 	var detailpayment models.PaymentChannelDetail
 	status, err := models.GetDetailPaymentChannelModels(&detailpayment, pChannelKey)
