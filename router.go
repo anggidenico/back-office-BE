@@ -565,7 +565,11 @@ func router() *echo.Echo {
 	admin.POST("/create-periode", controllers.CreateFfsPeriodeController).Name = "CreateFfsPeriodeController"
 	admin.POST("/update-ffsperiode", controllers.UpdateFfsPeriode).Name = "UpdateFfsPeriode"
 	admin.POST("/delete-ffsperiode", controllers.DeleteFfsPeriode).Name = "DeleteFfsPeriode"
+
+	//Fund Fact Sheet - Portfolio Instrument
+	admin.GET("/get-allocsecurity", controllers.GetAllocSecController).Name = "GetAllocSecController"
 	return e
+
 }
 
 func printUrlMiddleware(next echo.HandlerFunc) echo.HandlerFunc {

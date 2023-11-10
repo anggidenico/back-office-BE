@@ -477,13 +477,8 @@ func AdminDetailMsCountry(c echo.Context) error {
 	if countryKey == "" {
 		// log.Error("Missing required parameter: country_key")
 		return lib.CustomError(http.StatusBadRequest, "country_key can not be blank", "country_key can not be blank")
-	} else {
-		n, err := strconv.ParseUint(countryKey, 10, 64)
-		if err != nil || n == 0 {
-			// log.Error("Wrong input for parameter: country_key")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: country_key", "Wrong input for parameter: country_key")
-		}
 	}
+
 	var country models.MsCountry
 	_, err = models.GetMsCountry(&country, countryKey)
 	if err != nil {
