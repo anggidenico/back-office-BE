@@ -31,6 +31,8 @@ func router() *echo.Echo {
 	admin.Use(lib.AuthenticationMiddleware)
 
 	e.POST("/loginbo", controllers.LoginBo).Name = "LoginBo"
+	//menu sidebar
+	admin.GET("/menusidebar", controllers.GetMMMenus).Name = "GetMMMenus"
 
 	admin.GET("/lookup", controllers.GetGenLookup).Name = "GetGenLookup"
 	// admin.GET("/city/:field/:key", controllers.GetMsCityList).Name = "GetMsCityList"
