@@ -33,7 +33,7 @@ func router() *echo.Echo {
 	e.POST("/loginbo", controllers.LoginBo).Name = "LoginBo"
 
 	//menu sidebar
-	e.GET("/menusidebar", controllers.GetMFBOMenus).Name = "GetMFBOMenus"
+	admin.GET("/menusidebar", controllers.GetMFBOMenus).Name = "GetMFBOMenus"
 
 	admin.GET("/lookup", controllers.GetGenLookup).Name = "GetGenLookup"
 	// admin.GET("/city/:field/:key", controllers.GetMsCityList).Name = "GetMsCityList"
