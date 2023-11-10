@@ -23,17 +23,23 @@ func GetUserInfo(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
-func GetMMMenus(c echo.Context) error {
+func GetMFBOMenus(c echo.Context) error {
 
-	var ret_data models.SideBarMenuModel
-	_, err := models.GetRootMenu(&ret_data)
-	if err != nil {
-		log.Println("Fail to load root menu")
-		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Fail to load root menu")
+	//var ret_data models.SideBarMenuModel
+	// _, err := models.GetRootMenu(&ret_data)
+	// if err != nil {
+	// 	log.Println("Fail to load root menu")
+	// 	return lib.CustomError(http.StatusInternalServerError, err.Error(), "Fail to load root menu")
+	// }
+	ret_data := models.SideBarMenuModel{
+		RootMenuKey:  0,
+		RootMenuCode: "MFBO",
+		RootMenuName: "MotionFund BackOffice",
+		RootHomeURL:  "/",
 	}
 
 	var mnu_parent []models.ScMenuModel
-	_, err = models.GetMenuTree(&mnu_parent, ret_data.RootMenuKey)
+	_, err := models.GetMenuTree(&mnu_parent, ret_data.RootMenuKey)
 	if err != nil {
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Fail to load root menu Tree")
 	}
