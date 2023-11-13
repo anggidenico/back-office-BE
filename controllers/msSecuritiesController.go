@@ -25,15 +25,7 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	if secName == "" {
 		return lib.CustomError(http.StatusBadRequest, "sec_name can not be blank", "sec_name can not be blank")
 	}
-	// Memeriksa apakah sec_name sudah ada dalam peta (map) validasi
-	// if _, exists := validatedSecNames[secName]; exists {
-	// 	return lib.CustomError(http.StatusBadRequest, "sec_name already exists", "sec_name already exists")
-	// }
 
-	// // ... (lanjutkan dengan kode validasi lainnya)
-
-	// // Setelah berhasil memvalidasi, tambahkan sec_name ke dalam peta validasi
-	// validatedSecNames[secName] = true
 	secCategory := c.FormValue("securities_category")
 	if secCategory == "" {
 		return lib.CustomError(http.StatusBadRequest, "securities_category can not be blank", "securities_category can not be blank")

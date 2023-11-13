@@ -570,6 +570,7 @@ func router() *echo.Echo {
 
 	//Fund Fact Sheet - Portfolio Instrument
 	admin.GET("/get-allocsecurity", controllers.GetAllocSecController).Name = "GetAllocSecController"
+	admin.POST("/create-alloc-security", controllers.CreateAllocSecController).Name = "CreateAllocSecController"
 	return e
 
 }
