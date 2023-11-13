@@ -107,9 +107,23 @@ type PaymentChannel struct {
 	MinNominalTrx           *decimal.Decimal `db:"min_nominal_trx"          json:"min_nominal_trx"`
 	ValueType               uint64           `db:"value_type"               json:"value_type"`
 	ValueTypeName           string           `db:"value_type_name"               json:"value_type_name"`
-	FeeValue                decimal.Decimal  `db:"fee_value"                json:"fee_value"`
+	FeeValue                *decimal.Decimal `db:"fee_value"                json:"fee_value"`
 	HasMinMax               uint8            `db:"has_min_max"              json:"has_min_max"`
+	FeeMinValue             *decimal.Decimal `db:"fee_min_value" json:"fee_min_value"`
+	FeeMaxValue             *decimal.Decimal `db:"fee_max_value" json:"fee_max_value"`
+	FixedAmountFee          *decimal.Decimal `db:"fixed_amount_fee" json:"fixed_amount_fee"`
+	FixedDmrFee             *decimal.Decimal `db:"fixed_dmr_fee" json:"fixed_dmr_fee"`
 	PgTnc                   *string          `db:"pg_tnc"                   json:"pg_tnc"`
+	PgRemarks               *string          `db:"pg_remarks" json:"pg_remarks"`
+	PaymentLoginUrl         *string          `db:"payment_login_url" json:"payment_login_url"`
+	PaymentEntryUrl         *string          `db:"payment_entry_url" json:"payment_entry_url"`
+	PaymentErrorUrl         *string          `db:"payment_error_url" json:"payment_error_url"`
+	PaymentSuccessUrl       *string          `db:"payment_success_url" json:"payment_success_url"`
+	PgPrefix                *string          `db:"pg_prefix" json:"pg_prefix"`
+	PicName                 *string          `db:"pic_name" json:"pic_name"`
+	PicPhoneNo              *string          `db:"pic_phone_no" json:"pic_phone_no"`
+	PicEmailAddress         *string          `db:"pic_email_address" json:"pic_email_address"`
+	RecOrder                *uint64          `db:"rec_order"               json:"rec_order"`
 }
 
 type SettlePaymentMethod struct {
@@ -125,10 +139,23 @@ type PaymentChannelDetail struct {
 	MinNominalTrx           *decimal.Decimal `db:"min_nominal_trx"          json:"min_nominal_trx"`
 	ValueType               uint64           `db:"value_type"               json:"value_type"`
 	ValueTypeName           string           `db:"value_type_name"               json:"value_type_name"`
-	FeeValue                decimal.Decimal  `db:"fee_value"                json:"fee_value"`
+	FeeValue                *decimal.Decimal `db:"fee_value"                json:"fee_value"`
 	HasMinMax               uint8            `db:"has_min_max"              json:"has_min_max"`
+	FeeMinValue             *decimal.Decimal `db:"fee_min_value" json:"fee_min_value"`
+	FeeMaxValue             *decimal.Decimal `db:"fee_max_value" json:"fee_max_value"`
+	FixedAmountFee          *decimal.Decimal `db:"fixed_amount_fee" json:"fixed_amount_fee"`
+	FixedDmrFee             *decimal.Decimal `db:"fixed_dmr_fee" json:"fixed_dmr_fee"`
 	PgTnc                   *string          `db:"pg_tnc"                   json:"pg_tnc"`
-	RecStatus               uint8            `db:"rec_status" json:"rec_status"`
+	PgRemarks               *string          `db:"pg_remarks" json:"pg_remarks"`
+	PaymentLoginUrl         *string          `db:"payment_login_url" json:"payment_login_url"`
+	PaymentEntryUrl         *string          `db:"payment_entry_url" json:"payment_entry_url"`
+	PaymentErrorUrl         *string          `db:"payment_error_url" json:"payment_error_url"`
+	PaymentSuccessUrl       *string          `db:"payment_success_url" json:"payment_success_url"`
+	PgPrefix                *string          `db:"pg_prefix" json:"pg_prefix"`
+	PicName                 *string          `db:"pic_name" json:"pic_name"`
+	PicPhoneNo              *string          `db:"pic_phone_no" json:"pic_phone_no"`
+	PicEmailAddress         *string          `db:"pic_email_address" json:"pic_email_address"`
+	RecOrder                *uint64          `db:"rec_order"               json:"rec_order"`
 }
 type SubscribePaymentChannel struct {
 	PchannelKey    uint64           `db:"pchannel_key"             json:"pchannel_key"`
@@ -283,7 +310,22 @@ func GetPaymentChannelModels(c *[]PaymentChannel) (int, error) {
 	a.min_nominal_trx,
 	a.value_type,
 	d.lkp_name value_type_name,
-	a.has_min_max,a.pg_tnc
+	a.has_min_max,
+	a.fee_min_value,
+	a.fee_max_value,
+	a.fixed_amount_fee,
+	a.fixed_dmr_fee,
+	a.pg_remarks,
+	a.payment_login_url,
+	a.payment_entry_url,
+	a.payment_error_url,
+	a.payment_success_url,
+	a.pg_prefix,
+	a.pic_name,
+	a.pic_phone_no,
+	a.pic_email_address,
+	a.rec_order,
+	a.pg_tnc
 	FROM ms_payment_channel a 
 	JOIN gen_lookup b ON a.settle_channel = b.lookup_key
     JOIN gen_lookup c ON a.settle_payment_method = c.lookup_key
@@ -307,7 +349,22 @@ func GetDetailPaymentChannelModels(c *PaymentChannelDetail, PChannelKey string) 
 	a.min_nominal_trx,
 	a.value_type,
 	d.lkp_name value_type_name,
-	a.has_min_max,a.pg_tnc,a.rec_status
+	a.has_min_max,
+	a.fee_min_value,
+	a.fee_max_value,
+	a.fixed_amount_fee,
+	a.fixed_dmr_fee,
+	a.pg_remarks,
+	a.payment_login_url,
+	a.payment_entry_url,
+	a.payment_error_url,
+	a.payment_success_url,
+	a.pg_prefix,
+	a.pic_name,
+	a.pic_phone_no,
+	a.pic_email_address,
+	a.rec_order,
+	a.pg_tnc
 	FROM ms_payment_channel a 
 	JOIN gen_lookup b ON a.settle_channel = b.lookup_key
     JOIN gen_lookup c ON a.settle_payment_method = c.lookup_key
