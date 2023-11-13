@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"mf-bo-api/db"
@@ -23,67 +24,75 @@ type ScMenuModel struct {
 }
 
 type SideBarMenuModel struct {
-	RootMenuKey      uint64        `db:"menu_key" json:"root_key"`
-	RootMenuCode     string        `db:"menu_code" json:"root_code"`
-	RootMenuName     string        `db:"menu_name" json:"root_name"`
-	RootMenuDesc     *string       `db:"menu_desc" json:"root_desc"`
-	RootHomeURL      string        `db:"menu_url" json:"root_url"`
-	RootMenuPage     *string       `db:"menu_page" json:"root_folder"`
-	RootMenuIcon     *string       `db:"rec_image1" json:"root_icon"`
-	RootMenuLogo     *string       `db:"rec_image2" json:"root_logo"`
-	RootMainColor    *string       `db:"rec_attribute_id1" json:"color_primary"`
-	RootAltColor     *string       `db:"rec_attribute_id2" json:"color_secondary"`
-	RootModuleCode   *string       `db:"app_module_code" json:"module_code"`
-	RootMenuTypeCode *string       `db:"menu_type_code" json:"menu_type_code"`
-	MenuList         []ScMenuModel `json:"menu_list"`
+	RootMenuKey      uint64        `db:"root_key" json:"root_key"`
+	RootMenuCode     string        `db:"root_code" json:"root_code"`
+	RootMenuName     string        `db:"root_name" json:"root_name"`
+	RootMenuDesc     *string       `db:"root_desc" json:"root_desc"`
+	RootHomeURL      *string       `db:"root_url" json:"root_url"`
+	RootLoginURL     *string       `db:"url_login" json:"url_login"`
+	RootLogoutURL    *string       `db:"url_logout" json:"url_logout"`
+	RootDashboardURL *string       `db:"url_dashboard" json:"url_dashboard"`
+	RootFolderPage   *string       `db:"root_folder" json:"root_folder"`
+	RootMenuIcon     *string       `db:"root_icon" json:"root_icon"`
+	RootMenuLogo     *string       `db:"root_logo" json:"root_logo"`
+	RootMainColor    *string       `db:"color_primary" json:"color_primary"`
+	RootAltColor     *string       `db:"color_secondary" json:"color_secondary"`
+	RoleKey          uint64        `db:"role_key" json:"role_key"`
+	RoleCode         string        `db:"role_code" json:"role_code"`
+	RoleName         string        `db:"role_name" json:"role_name"`
+	RoleDesc         string        `db:"role_desc" json:"role_desc"`
+	MenuList         []ScMenuModel `db:"menu_list" json:"menu_list"`
 }
 
 /* Menu queries */
 
-func GetRootMenu(ctx *SideBarMenuModel) (int, error) {
-	//menu_code := ""
-	//AND sm.menu_code = '%v'
-
-	role_key := 15
+func GetRootMenu(ctx *SideBarMenuModel, pModule string, pRole_key uint16) (int, error) {
+	module_code := "MFBO"
+	if pModule != "" {
+		module_code = pModule
+	}
+	role_key := pRole_key
 	query := `select 
-	sm.menu_key,
-	sm.menu_code,
-	sm.menu_name,
-	sm.menu_desc, 
-	COALESCE(sm.menu_url,'') as menu_url,
-	COALESCE(sm.menu_page,'/') as menu_page,
-	sm.rec_image1,
-	sm.rec_image2, 
-	sm.rec_attribute_id1, 
-	sm.rec_attribute_id2,
-	am.app_module_code,
-	mt.menu_type_code  
-from sc_menu sm 
-INNER JOIN sc_role_menu rm ON (rm.menu_key=sm.menu_key AND rm.rec_status=0)
-INNER JOIN sc_menu_type mt ON (sm.menu_type_key = mt.menu_type_key AND mt.rec_status=1 AND mt.menu_type_key=2)
-INNER JOIN sc_app_module am ON (am.app_module_key=sm.app_module_key AND am.rec_status = 1)
-where sm.rec_status = 1 
-AND am.app_module_key NOT IN (1)
-AND COALESCE(sm.menu_parent, 0) = 0
-AND rm.role_key = %v
-order BY am.app_module_key, sm.rec_order;
-`
+	am.rec_attribute_id3 AS root_key,
+	am.app_module_code AS root_code,
+	am.app_module_name AS root_name,
+	am.app_module_desc AS root_desc, 	
+	am.url_module_home AS root_url,
+	am.url_module_login AS url_login,
+	am.url_module_logout AS url_logout,
+	am.url_module_dasboard AS url_dashboard,
+	am.app_module_prefix AS root_folder,
+	am.rec_image1 AS root_icon,
+	am.rec_image2 AS root_logo,
+	am.rec_attribute_id1 as color_primary,
+	am.rec_attribute_id2 AS color_secondary,	
+	r.role_key,
+	r.role_code, 
+	r.role_name,
+	r.role_desc
+from sc_app_module am 
+CROSS JOIN sc_role r
+WHERE am.rec_status = 1 
+AND r.rec_status = 1
+AND am.app_module_code = '%v'
+AND r.role_key = %v;`
 
-	s_sql := fmt.Sprintf(query, role_key)
-	log.Println("[----GetRootMenu: ----]", s_sql)
+	s_sql := fmt.Sprintf(query, module_code, role_key)
+	//log.Println("[----GetRootMenu: ----]", s_sql)
 
 	err := db.Db.Get(ctx, s_sql)
 	if err != nil {
-		log.Println(err)
-		return http.StatusBadGateway, err
+		if err != sql.ErrNoRows {
+			log.Println(err)
+			return http.StatusBadGateway, err
+		}
 	}
-
 	return http.StatusOK, nil
 }
 
-func GetMenuTree(ctx *[]ScMenuModel, p_parent_key uint64) (int, error) {
+func GetMenuTree(ctx *[]ScMenuModel, p_role_key uint16, p_parent_key uint64) (int, error) {
 	query :=
-		`select
+		`SELECT
 		sm.menu_key,
 		sm.menu_parent,
 		sm.menu_code,
@@ -93,17 +102,21 @@ func GetMenuTree(ctx *[]ScMenuModel, p_parent_key uint64) (int, error) {
 		sm.menu_desc,
 		sm.rec_order,
 		sm.rec_attribute_id1 
-	from sc_menu sm 
-	where sm.rec_status = 1 and menu_parent = %v 
-	order by rec_order`
+		FROM sc_menu sm 
+INNER JOIN sc_role_menu rm ON (rm.menu_key=sm.menu_key AND rm.rec_status=1)
+WHERE sm.rec_status = 1 
+AND rm.role_key = %v
+AND COALESCE(sm.menu_parent,0) = %v
+ORDER BY sm.rec_order;`
 
-	s_sql := fmt.Sprintf(query, p_parent_key)
-	log.Println("[----GetMenuTree: ----]", s_sql)
-
+	s_sql := fmt.Sprintf(query, p_role_key, p_parent_key)
+	//log.Println("[----GetMenuTree: ----]", s_sql)
 	err := db.Db.Select(ctx, s_sql)
 	if err != nil {
-		log.Println(err)
-		return http.StatusBadGateway, err
+		if err != sql.ErrNoRows {
+			log.Println(err)
+			return http.StatusBadGateway, err
+		}
 	}
 
 	return http.StatusOK, nil

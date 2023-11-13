@@ -31,8 +31,9 @@ func router() *echo.Echo {
 	admin.Use(lib.AuthenticationMiddleware)
 
 	e.POST("/loginbo", controllers.LoginBo).Name = "LoginBo"
+
 	//menu sidebar
-	admin.GET("/menusidebar", controllers.GetMMMenus).Name = "GetMMMenus"
+	admin.GET("/menusidebar", controllers.GetMFBOMenus).Name = "GetMFBOMenus"
 
 	admin.GET("/lookup", controllers.GetGenLookup).Name = "GetGenLookup"
 	// admin.GET("/city/:field/:key", controllers.GetMsCityList).Name = "GetMsCityList"
@@ -520,15 +521,16 @@ func router() *echo.Echo {
 	// --- dari sisi maker ---
 	admin.POST("/product/create-request", controllers.ProductCreateRequest)
 	admin.POST("/product/update-request", controllers.ProductUpdateRequest)
-
-	admin.POST("/productfee/create-request", controllers.ProductFeeCreateRequest)
-	admin.POST("/productfee/update-request", controllers.ProductFeeUpdateRequest)
-
 	// --- dari sisi approver ---
 	admin.GET("/product/approval-list", controllers.ProductApprovalList)
 	admin.GET("/product/approval-detail/:rec_pk", controllers.ProductApprovalDetails)
 	admin.POST("/product/approval-action", controllers.ProductApprovalAction)
 
+	// PRODUCT FEE WITH APPROVAL
+	// --- dari sisi maker ---
+	admin.POST("/productfee/create-request", controllers.ProductFeeCreateRequest)
+	admin.POST("/productfee/update-request", controllers.ProductFeeUpdateRequest)
+	// --- dari sisi approver ---
 	admin.GET("/productfee/approval-list", controllers.ProductFeeApprovalList)
 	admin.GET("/productfee/approval-detail/:rec_pk", controllers.ProductFeeApprovalDetail)
 	admin.POST("/productfee/approval-action", controllers.ProductFeeApprovalAction)

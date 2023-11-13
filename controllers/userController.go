@@ -5,7 +5,6 @@ import (
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo"
 )
@@ -23,27 +22,23 @@ func GetUserInfo(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
-func GetMMMenus(c echo.Context) error {
-
+/*
+build menu on side bar
+*/
+func GetMFBOMenus(c echo.Context) error {
+	var user_role_Key uint16 = 15
 	var ret_data models.SideBarMenuModel
-	_, err := models.GetRootMenu(&ret_data)
+	_, err := models.GetRootMenu(&ret_data, "MFBO", user_role_Key)
 	if err != nil {
 		log.Println("Fail to load root menu")
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Fail to load root menu")
 	}
 
 	var mnu_parent []models.ScMenuModel
-	_, err = models.GetMenuTree(&mnu_parent, ret_data.RootMenuKey)
+	_, err = models.GetMenuTree(&mnu_parent, user_role_Key, ret_data.RootMenuKey)
 	if err != nil {
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), "Fail to load root menu Tree")
 	}
-
-	var base_url string = ret_data.RootHomeURL
-	if ret_data.RootMenuPage != nil {
-		base_url = ret_data.RootHomeURL + *ret_data.RootMenuPage
-	}
-	ret_data.RootHomeURL = base_url
-	base_url = ret_data.RootHomeURL
 
 	if len(mnu_parent) > 0 {
 		ret_data.MenuList = nil
@@ -53,22 +48,15 @@ func GetMMMenus(c echo.Context) error {
 			_mnu.MenuParent = _row.MenuParent
 			_mnu.MenuCode = _row.MenuCode
 			_mnu.MenuName = _row.MenuName
-			//_mnu.MenuPage = _row.MenuPage
+			_mnu.MenuPage = _row.MenuPage
+			_mnu.MenuUrl = _row.MenuUrl
 
-			var str_folder string = ""
-			if _row.MenuPage != nil && strings.Trim(*_row.MenuPage, " ") != "#" {
-				str_folder = strings.Trim(*_row.MenuPage, " ")
-				page_full_url := base_url + str_folder
-				_mnu.MenuUrl = page_full_url
-			} else {
-				_mnu.MenuUrl = "#"
-			}
 			_mnu.MenuDesc = _row.MenuDesc
 			_mnu.RecOrder = _row.RecOrder
 			_mnu.MenuIcon = _row.MenuIcon
 
 			var mnu_child []models.ScMenuModel
-			_, err := models.GetMenuTree(&mnu_child, _row.MenuKey)
+			_, err := models.GetMenuTree(&mnu_child, user_role_Key, _row.MenuKey)
 			if err == nil {
 				if len(mnu_child) > 0 {
 					var arr_child []models.ScMenuModel
@@ -79,11 +67,7 @@ func GetMMMenus(c echo.Context) error {
 						_child_row.MenuCode = _child.MenuCode
 						_child_row.MenuName = _child.MenuName
 						_child_row.MenuPage = _child.MenuPage
-						if _row.MenuPage != nil {
-							str_folder = strings.Trim(*_child.MenuPage, " ")
-						}
-						page_full_url := base_url + str_folder
-						_child_row.MenuUrl = page_full_url
+						_child_row.MenuUrl = _child.MenuUrl
 						_child_row.MenuDesc = _child.MenuDesc
 						_child_row.RecOrder = _child.RecOrder
 						_child_row.MenuIcon = _child.MenuIcon
@@ -91,11 +75,11 @@ func GetMMMenus(c echo.Context) error {
 					}
 					_mnu.ChildList = arr_child
 				} else {
-					log.Println("Fail to load child menu")
+					log.Println("node menu has no child")
 					_mnu.ChildList = nil
 				}
 			} else {
-				log.Println("Fail to load child menu")
+				log.Println("node menu has no child")
 				_mnu.ChildList = nil
 			}
 
