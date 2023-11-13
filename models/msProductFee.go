@@ -533,7 +533,7 @@ func UpdateProductFeeSettings(params map[string]string, feeItems []FeeItemData) 
 				queryItem = `INSERT INTO ms_product_fee_item(product_fee_key,item_seqno,row_max,principle_limit,fee_value,item_notes,rec_status,rec_created_date,rec_created_by) 
 				VALUES('` + params["product_fee_key"] + `','` + seqNo + `','` + rowMax + `','` + principleLimit + `','` + feeValue + `','` + itemNotes + `','` + recstatus + `','` + params["rec_modified_date"] + `','` + params["rec_modified_by"] + `'),`
 			}
-			log.Println("query update fee item:", queryItem)
+			// log.Println("query update fee item:", queryItem)
 			_, err = tx.Exec(queryItem)
 			if err != nil {
 				tx.Rollback()
