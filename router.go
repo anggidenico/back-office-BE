@@ -535,6 +535,15 @@ func router() *echo.Echo {
 	admin.GET("/productfee/approval-detail/:rec_pk", controllers.ProductFeeApprovalDetail)
 	admin.POST("/productfee/approval-action", controllers.ProductFeeApprovalAction)
 
+	// PRODUCT BANK ACCOUNT WITH APPROVAL
+	// --- dari sisi maker ---
+	admin.POST("/productbankaccount/create-request", controllers.CreateProductBankRequest)
+	// admin.POST("/productbankaccount/update-request", controllers.)
+	// --- dari sisi approver ---
+	// admin.GET("/productfee/approval-list", controllers.ProductFeeApprovalList)
+	// admin.GET("/productfee/approval-detail/:rec_pk", controllers.ProductFeeApprovalDetail)
+	// admin.POST("/productfee/approval-action", controllers.ProductFeeApprovalAction)
+
 	// MASTER PAYMENT CHANNEL
 	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController).Name = "GetmsPaymentChannelController"
 	admin.GET("/get-payment-channel/:pchannel_key", controllers.GetMsPaymentDetailController).Name = "GetMsPaymentDetailController"
