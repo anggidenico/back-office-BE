@@ -4,6 +4,7 @@ import (
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo"
@@ -92,10 +93,18 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 	if hasMinMax == "" {
 		return lib.CustomError(http.StatusBadRequest, "has_min_max can not be blank", "has_min_max can not be blank")
 	}
-	settleChannel := c.FormValue("settle_channel")
-	if settleChannel == "" {
+	settleChannelInput := c.FormValue("settle_channel")
+	if settleChannelInput != "" {
+		// Validasi bahwa settleChannelInput adalah bilangan bulat
+		settleChannel, err := strconv.Atoi(settleChannelInput)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "settle_channel should be a number", "settle_channel should be a number")
+		}
+		params["settle_channel"] = strconv.Itoa(settleChannel)
+	} else {
 		return lib.CustomError(http.StatusBadRequest, "settle_channel can not be blank", "settle_channel can not be blank")
 	}
+
 	settlePaymentMethod := c.FormValue("settle_payment_method")
 	if settlePaymentMethod == "" {
 		return lib.CustomError(http.StatusBadRequest, "settle_payment_method can not be blank", "settle_payment_method can not be blank")
@@ -170,7 +179,7 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 	params["pchannel_name"] = pchannelName
 	params["fee_value"] = feeValue
 	params["has_min_max"] = hasMinMax
-	params["settle_channel"] = settleChannel
+	// params["settle_channel"] = SettleChannel
 	params["settle_payment_method"] = settlePaymentMethod
 	params["value_type"] = valueType
 	params["fee_min_value"] = feeMinValue

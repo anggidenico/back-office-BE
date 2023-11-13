@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -36,8 +37,10 @@ func GetFfsPeriodeModels(c *[]FfsPeriode) (int, error) {
 	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err.Error())
-		return http.StatusBadGateway, err
+		if err != sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
 	}
 	return http.StatusOK, nil
 }
@@ -114,7 +117,7 @@ func UpdateFfsPeriode(PeriodeKey string, params map[string]string) (int, error) 
 	return http.StatusOK, nil
 }
 func DeleteFfsPeriode(PeriodeKey string, params map[string]string) (int, error) {
-	query := `UPDATE ms_securities SET `
+	query := `UPDATE ffs_periode SET `
 	var setClauses []string
 	var values []interface{}
 
