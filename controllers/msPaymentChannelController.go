@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"database/sql"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -29,12 +28,6 @@ func GetMsPaymentDetailController(c echo.Context) error {
 	pChannelKey := c.Param("pchannel_key")
 	if pChannelKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing payment channel key", "Missing payment channel key")
-	} else {
-		_, err := strconv.ParseUint(pChannelKey, 10, 64)
-		if err != sql.ErrNoRows {
-			// log.Error("Wrong input for parameter: country_key")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: pChannel_key", "Wrong input for parameter: pChannel_key")
-		}
 	}
 	var detailpayment models.PaymentChannelDetail
 	status, err := models.GetDetailPaymentChannelModels(&detailpayment, pChannelKey)
@@ -100,10 +93,18 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 	if hasMinMax == "" {
 		return lib.CustomError(http.StatusBadRequest, "has_min_max can not be blank", "has_min_max can not be blank")
 	}
-	settleChannel := c.FormValue("settle_channel")
-	if settleChannel == "" {
+	settleChannelInput := c.FormValue("settle_channel")
+	if settleChannelInput != "" {
+		// Validasi bahwa settleChannelInput adalah bilangan bulat
+		settleChannel, err := strconv.Atoi(settleChannelInput)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "settle_channel should be a number", "settle_channel should be a number")
+		}
+		params["settle_channel"] = strconv.Itoa(settleChannel)
+	} else {
 		return lib.CustomError(http.StatusBadRequest, "settle_channel can not be blank", "settle_channel can not be blank")
 	}
+
 	settlePaymentMethod := c.FormValue("settle_payment_method")
 	if settlePaymentMethod == "" {
 		return lib.CustomError(http.StatusBadRequest, "settle_payment_method can not be blank", "settle_payment_method can not be blank")
@@ -112,16 +113,89 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 	if valueType == "" {
 		return lib.CustomError(http.StatusBadRequest, "settle_channel can not be blank", "settle_channel can not be blank")
 	}
-
+	feeMinValue := c.FormValue("fee_min_value")
+	if feeMinValue == "" {
+		return lib.CustomError(http.StatusBadRequest, "fee_min_value can not be blank", "fee_min_value can not be blank")
+	}
+	feeMaxValue := c.FormValue("fee_max_value")
+	if feeMaxValue == "" {
+		return lib.CustomError(http.StatusBadRequest, "fee_max_value can not be blank", "fee_max_value can not be blank")
+	}
+	fixedDmrFee := c.FormValue("fixed_dmr_fee")
+	if fixedDmrFee == "" {
+		return lib.CustomError(http.StatusBadRequest, "fixed_dmr_fee can not be blank", "fixed_dmr_fee can not be blank")
+	}
+	fixedAmountFee := c.FormValue("fixed_amount_fee")
+	if fixedAmountFee == "" {
+		return lib.CustomError(http.StatusBadRequest, "fee_max_value can not be blank", "fee_max_value can not be blank")
+	}
+	pgTnc := c.FormValue("pg_tnc")
+	if pgTnc == "" {
+		return lib.CustomError(http.StatusBadRequest, "pg_tnc can not be blank", "pg_tnc can not be blank")
+	}
+	pgRemarks := c.FormValue("pg_remarks")
+	if pgRemarks == "" {
+		return lib.CustomError(http.StatusBadRequest, "pg_remarks can not be blank", "pg_remarks can not be blank")
+	}
+	paymentLoginUrl := c.FormValue("payment_login_url")
+	if paymentLoginUrl == "" {
+		return lib.CustomError(http.StatusBadRequest, "payment_login_url can not be blank", "payment_login_url can not be blank")
+	}
+	paymentEntryUrl := c.FormValue("payment_entry_url")
+	if paymentEntryUrl == "" {
+		return lib.CustomError(http.StatusBadRequest, "payment_entry_url can not be blank", "payment_entry_url can not be blank")
+	}
+	paymentErrorUrl := c.FormValue("payment_error_url")
+	if paymentErrorUrl == "" {
+		return lib.CustomError(http.StatusBadRequest, "payment_error_url can not be blank", "payment_error_url can not be blank")
+	}
+	paymentSuccessUrl := c.FormValue("payment_success_url")
+	if paymentSuccessUrl == "" {
+		return lib.CustomError(http.StatusBadRequest, "payment_success_url can not be blank", "payment_success_url can not be blank")
+	}
+	pgPrefix := c.FormValue("pg_prefix")
+	if pgPrefix == "" {
+		return lib.CustomError(http.StatusBadRequest, "pg_prefix can not be blank", "pg_prefix can not be blank")
+	}
+	picName := c.FormValue("pic_name")
+	if picName == "" {
+		return lib.CustomError(http.StatusBadRequest, "pic_name can not be blank", "pic_name can not be blank")
+	}
+	picPhoneNo := c.FormValue("pic_phone_no")
+	if picPhoneNo == "" {
+		return lib.CustomError(http.StatusBadRequest, "pic_phone_no can not be blank", "pic_phone_no can not be blank")
+	}
+	picEmailAddress := c.FormValue("pic_email_address")
+	if picEmailAddress == "" {
+		return lib.CustomError(http.StatusBadRequest, "pic_email_address can not be blank", "pic_email_address can not be blank")
+	}
+	recOrder := c.FormValue("rec_order")
+	if recOrder == "" {
+		return lib.CustomError(http.StatusBadRequest, "rec_order can not be blank", "rec_order can not be blank")
+	}
 	params["pchannel_code"] = pChannelCode
 	params["pchannel_name"] = pchannelName
 	params["min_nominal_trx"] = minNominalTrx
 	params["pchannel_name"] = pchannelName
 	params["fee_value"] = feeValue
 	params["has_min_max"] = hasMinMax
-	params["settle_channel"] = settleChannel
+	// params["settle_channel"] = SettleChannel
 	params["settle_payment_method"] = settlePaymentMethod
 	params["value_type"] = valueType
+	params["fee_min_value"] = feeMinValue
+	params["fee_max_value"] = feeMaxValue
+	params["fixed_dmr_fee"] = fixedDmrFee
+	params["fixed_amount_fee"] = fixedAmountFee
+	params["pg_tnc"] = pgTnc
+	params["pg_remarks"] = pgRemarks
+	params["payment_login_url"] = paymentLoginUrl
+	params["payment_entry_url"] = paymentEntryUrl
+	params["payment_error_url"] = paymentErrorUrl
+	params["payment_success_url"] = paymentSuccessUrl
+	params["pg_prefix"] = pgPrefix
+	params["pic_name"] = picName
+	params["pic_phone_no"] = picPhoneNo
+	params["pic_email_address"] = picEmailAddress
 	params["rec_status"] = "1"
 	status, err = models.CreateMsPaymentChannel(params)
 	if err != nil {
@@ -178,6 +252,66 @@ func UpdateMsPaymentChannelController(c echo.Context) error {
 	if valueType == "" {
 		return lib.CustomError(http.StatusBadRequest, "settle_channel can not be blank", "settle_channel can not be blank")
 	}
+	feeMinValue := c.FormValue("fee_min_value")
+	if feeMinValue == "" {
+		return lib.CustomError(http.StatusBadRequest, "fee_min_value can not be blank", "fee_min_value can not be blank")
+	}
+	feeMaxValue := c.FormValue("fee_max_value")
+	if feeMaxValue == "" {
+		return lib.CustomError(http.StatusBadRequest, "fee_max_value can not be blank", "fee_max_value can not be blank")
+	}
+	fixedDmrFee := c.FormValue("fixed_dmr_fee")
+	if fixedDmrFee == "" {
+		return lib.CustomError(http.StatusBadRequest, "fixed_dmr_fee can not be blank", "fixed_dmr_fee can not be blank")
+	}
+	fixedAmountFee := c.FormValue("fixed_amount_fee")
+	if fixedAmountFee == "" {
+		return lib.CustomError(http.StatusBadRequest, "fee_max_value can not be blank", "fee_max_value can not be blank")
+	}
+	pgTnc := c.FormValue("pg_tnc")
+	if pgTnc == "" {
+		return lib.CustomError(http.StatusBadRequest, "pg_tnc can not be blank", "pg_tnc can not be blank")
+	}
+	pgRemarks := c.FormValue("pg_remarks")
+	if pgRemarks == "" {
+		return lib.CustomError(http.StatusBadRequest, "pg_remarks can not be blank", "pg_remarks can not be blank")
+	}
+	paymentLoginUrl := c.FormValue("payment_login_url")
+	if paymentLoginUrl == "" {
+		return lib.CustomError(http.StatusBadRequest, "payment_login_url can not be blank", "payment_login_url can not be blank")
+	}
+	paymentEntryUrl := c.FormValue("payment_entry_url")
+	if paymentEntryUrl == "" {
+		return lib.CustomError(http.StatusBadRequest, "payment_entry_url can not be blank", "payment_entry_url can not be blank")
+	}
+	paymentErrorUrl := c.FormValue("payment_error_url")
+	if paymentErrorUrl == "" {
+		return lib.CustomError(http.StatusBadRequest, "payment_error_url can not be blank", "payment_error_url can not be blank")
+	}
+	paymentSuccessUrl := c.FormValue("payment_success_url")
+	if paymentSuccessUrl == "" {
+		return lib.CustomError(http.StatusBadRequest, "payment_success_url can not be blank", "payment_success_url can not be blank")
+	}
+	pgPrefix := c.FormValue("pg_prefix")
+	if pgPrefix == "" {
+		return lib.CustomError(http.StatusBadRequest, "pg_prefix can not be blank", "pg_prefix can not be blank")
+	}
+	picName := c.FormValue("pic_name")
+	if picName == "" {
+		return lib.CustomError(http.StatusBadRequest, "pic_name can not be blank", "pic_name can not be blank")
+	}
+	picPhoneNo := c.FormValue("pic_phone_no")
+	if picPhoneNo == "" {
+		return lib.CustomError(http.StatusBadRequest, "pic_phone_no can not be blank", "pic_phone_no can not be blank")
+	}
+	picEmailAddress := c.FormValue("pic_email_address")
+	if picEmailAddress == "" {
+		return lib.CustomError(http.StatusBadRequest, "pic_email_address can not be blank", "pic_email_address can not be blank")
+	}
+	recOrder := c.FormValue("rec_order")
+	if recOrder == "" {
+		return lib.CustomError(http.StatusBadRequest, "rec_order can not be blank", "rec_order can not be blank")
+	}
 	params["pchannel_key"] = pChannelKey
 	params["pchannel_code"] = pChannelCode
 	params["pchannel_name"] = pchannelName
@@ -188,6 +322,20 @@ func UpdateMsPaymentChannelController(c echo.Context) error {
 	params["settle_channel"] = settleChannel
 	params["settle_payment_method"] = settlePaymentMethod
 	params["value_type"] = valueType
+	params["fee_min_value"] = feeMinValue
+	params["fee_max_value"] = feeMaxValue
+	params["fixed_dmr_fee"] = fixedDmrFee
+	params["fixed_amount_fee"] = fixedAmountFee
+	params["pg_tnc"] = pgTnc
+	params["pg_remarks"] = pgRemarks
+	params["payment_login_url"] = paymentLoginUrl
+	params["payment_entry_url"] = paymentEntryUrl
+	params["payment_error_url"] = paymentErrorUrl
+	params["payment_success_url"] = paymentSuccessUrl
+	params["pg_prefix"] = pgPrefix
+	params["pic_name"] = picName
+	params["pic_phone_no"] = picPhoneNo
+	params["pic_email_address"] = picEmailAddress
 	params["rec_status"] = "1"
 
 	status, err = models.UpdateMsPaymentChannel(pChannelKey, params)

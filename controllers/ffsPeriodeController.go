@@ -30,9 +30,8 @@ func GetFfsPeriodeDetailController(c echo.Context) error {
 	if periodeKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing periode_key", "Missing periode_key")
 	} else {
-		_, err := strconv.ParseUint(periodeKey, 10, 64)
+		_, err := strconv.ParseUint(periodeKey, 10, 64) //handling error here
 		if err != sql.ErrNoRows {
-			// log.Error("Wrong input for parameter: country_key")
 			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: periode_key", "Wrong input for parameter: periode_key")
 		}
 	}
@@ -54,7 +53,7 @@ func CreateFfsPeriodeController(c echo.Context) error {
 	params["rec_created_by"] = lib.UserIDStr
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
-	periodeDate := c.FormValue("periode_date")
+	periodeDate := c.FormValue("periode_date") //validate date
 	if periodeDate == "" {
 		return lib.CustomError(http.StatusBadRequest, "periode_date can not be blank", "periode_date can not be blank")
 	}

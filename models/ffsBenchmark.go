@@ -34,12 +34,12 @@ func GetBenchmarkModels(c *[]Benchmark) (int, error) {
 	a.benchmark_short_name 
 	FROM ffs_benchmark a 
 	JOIN ms_fund_type b 
-	ON a.fund_type_key = b.fund_type_key WHERE a.rec_status = 1`
+	ON a.fund_type_key = b.fund_type_key WHERE a.rec_status = 1` //order by
 
 	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err.Error())
+		log.Println(err.Error()) // sql.err
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
@@ -60,7 +60,7 @@ func GetBenchmarkDetailModels(c *BenchmarkDetail, BenchmarkKey string) (int, err
 	log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		log.Println(err.Error())
+		log.Println(err.Error()) //sql
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
