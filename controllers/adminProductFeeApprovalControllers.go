@@ -263,7 +263,21 @@ func ProductFeeUpdateRequest(c echo.Context) error {
 
 	params := make(map[string]string)
 
-	
+	feekey := c.FormValue("fee_key")
+	if feekey == "" {
+		// log.Error("Missing required parameter: fee_key cann't be blank")
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fee_key cann't be blank", "Missing required parameter: fee_key cann't be blank")
+	}
+	params["fee_key"] = feekey
+
+	// strfeekey, err := strconv.ParseUint(feekey, 10, 64)
+	// if err == nil && strfeekey > 0 {
+	// 	params["fee_key"] = feekey
+	// } else {
+	// 	// log.Error("Wrong input for parameter: fee_key")
+	// 	return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fee_key", "Missing required parameter: fee_key")
+	// }
+
 	//product_key
 	productkey := c.FormValue("product_key")
 	if productkey == "" {
