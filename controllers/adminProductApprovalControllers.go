@@ -231,11 +231,11 @@ func ProductUpdateRequest(c echo.Context) error {
 	params := make(map[string]string)
 
 	// VALIDASI PARAMETER
-	fee_key := c.FormValue("fee_key")
-	if fee_key == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing fee_key")
-	}
-	params["fee_key"] = fee_key
+	// fee_key := c.FormValue("fee_key")
+	// if fee_key == "" {
+	// 	return lib.CustomError(http.StatusBadRequest, "Missing fee_key")
+	// }
+	// params["fee_key"] = fee_key
 
 	product_key := c.FormValue("product_key")
 	if product_key == "" {
