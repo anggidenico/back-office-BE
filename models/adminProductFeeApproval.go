@@ -93,7 +93,7 @@ func GetProductFeeApprovalDetail(rec_pk string) ProductFeeUpdateDetails {
 	}
 
 	query := `SELECT rec_pk, rec_action, fee_type, product_key, fee_key, fee_code, flag_show_ontnc, fee_annotation, fee_desc, fee_date_start, fee_date_thru, fee_nominal_type, enabled_min_amount, fee_min_amount, enabled_max_amount, fee_max_amount, fee_calc_method, calculation_baseon, period_hold, days_inyear FROM ms_product_fee_request WHERE rec_pk = ` + rec_pk
-	// log.Print(query)
+	log.Print(query)
 	row := tx.QueryRow(query)
 	err = row.Scan(&result.Updates.RecPK, &result.Updates.RecAction, &result.Updates.FeeType, &result.Updates.ProductKey, &result.Updates.FeeKey, &result.Updates.FeeCode, &result.Updates.FlagShowOntnc, &result.Updates.FeeAnnotation, &result.Updates.FeeDesc, &result.Updates.FeeDateStart, &result.Updates.FeeDateThru, &result.Updates.FeeNominalType, &result.Updates.EnabledMinAmount, &result.Updates.FeeMinAmount, &result.Updates.EnabledMaxAmount, &result.Updates.FeeMaxAmount, &result.Updates.FeeCalcMethod, &result.Updates.CalculationBaseon, &result.Updates.PeriodHold, &result.Updates.DaysInyear)
 	if err != nil {
@@ -119,21 +119,23 @@ func GetProductFeeApprovalDetail(rec_pk string) ProductFeeUpdateDetails {
 	days_inyear := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Updates.DaysInyear)
 	result.Updates.DaysInyearName = &days_inyear
 
-	qFeeItem := `SELECT item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item_request WHERE product_fee_key = ` + strconv.FormatUint(*result.Updates.FeeKey, 10)
+	qFeeItem := `SELECT item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item_request WHERE product_fee_key = ` + strconv.FormatUint(*result.Updates.RecPK, 10)
+	log.Println(qFeeItem)
 	rows, err := tx.Query(qFeeItem)
 	if err != nil {
 		tx.Rollback()
 		log.Println(err.Error())
 	}
-	// var FeeItems []ProductFeeItemRequest
+	var FeeItems []ProductFeeItemRequest
 	for rows.Next() {
 		var Item ProductFeeItemRequest
 		if err := rows.Scan(&Item.ItemSeqno, &Item.RowMax, &Item.PrincipleLimit, &Item.FeeValue, &Item.ItemNotes); err != nil {
 			tx.Rollback()
 			log.Println(err.Error())
 		}
-		*result.Updates.FeeItem = append(*result.Updates.FeeItem, Item)
+		FeeItems = append(FeeItems, Item)
 	}
+	*result.Updates.FeeItem = FeeItems
 
 	if *result.Updates.RecAction == "UPDATE" {
 

@@ -538,10 +538,10 @@ func router() *echo.Echo {
 	// PRODUCT BANK ACCOUNT WITH APPROVAL
 	// --- dari sisi maker ---
 	admin.POST("/productbankaccount/create-request", controllers.CreateProductBankRequest)
-	// admin.POST("/productbankaccount/update-request", controllers.)
+	admin.POST("/productbankaccount/update-request", controllers.UpdateProductBankRequest)
 	// --- dari sisi approver ---
-	// admin.GET("/productfee/approval-list", controllers.ProductFeeApprovalList)
-	// admin.GET("/productfee/approval-detail/:rec_pk", controllers.ProductFeeApprovalDetail)
+	admin.GET("/productbankaccount/approval-list", controllers.ProductBankAccountApprovalList)
+	admin.GET("/productbankaccount/approval-detail/:rec_pk", controllers.ProductBankAccountApprovalDetail)
 	// admin.POST("/productfee/approval-action", controllers.ProductFeeApprovalAction)
 
 	// MASTER PAYMENT CHANNEL
