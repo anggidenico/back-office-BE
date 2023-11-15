@@ -4,6 +4,7 @@ import (
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo"
@@ -79,6 +80,10 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 	pchannelName := c.FormValue("pchannel_name")
 	if pchannelName == "" {
 		return lib.CustomError(http.StatusBadRequest, "pchannel_name can not be blank", "pchannel_name can not be blank")
+	} else {
+		if len(pchannelName) > 150 {
+			return lib.CustomError(http.StatusBadRequest, "pchannel_name should be exactly 150 characters", "pchannel_name should be exactly 150 characters")
+		}
 	}
 	minNominalTrx := c.FormValue("min_nominal_trx")
 	if minNominalTrx == "" {
@@ -92,10 +97,21 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 	if hasMinMax == "" {
 		return lib.CustomError(http.StatusBadRequest, "has_min_max can not be blank", "has_min_max can not be blank")
 	}
-	settleChannel := c.FormValue("settle_channel")
-	if settleChannel == "" {
+	settleChannelInput := c.FormValue("settle_channel")
+	if settleChannelInput != "" {
+		if len(settleChannelInput) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "settle_channel should be exactly 11 characters", "settle_channel should be exactly 11 characters")
+		}
+		// Validasi bahwa settleChannelInput adalah bilangan bulat
+		settleChannel, err := strconv.Atoi(settleChannelInput)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "settle_channel should be a number", "settle_channel should be a number")
+		}
+		params["settle_channel"] = strconv.Itoa(settleChannel)
+	} else {
 		return lib.CustomError(http.StatusBadRequest, "settle_channel can not be blank", "settle_channel can not be blank")
 	}
+
 	settlePaymentMethod := c.FormValue("settle_payment_method")
 	if settlePaymentMethod == "" {
 		return lib.CustomError(http.StatusBadRequest, "settle_payment_method can not be blank", "settle_payment_method can not be blank")
@@ -170,7 +186,7 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 	params["pchannel_name"] = pchannelName
 	params["fee_value"] = feeValue
 	params["has_min_max"] = hasMinMax
-	params["settle_channel"] = settleChannel
+	// params["settle_channel"] = SettleChannel
 	params["settle_payment_method"] = settlePaymentMethod
 	params["value_type"] = valueType
 	params["fee_min_value"] = feeMinValue

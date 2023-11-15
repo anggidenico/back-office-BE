@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"errors"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -29,16 +30,13 @@ func GetFfsPeriodeDetailController(c echo.Context) error {
 	periodeKey := c.Param("periode_key")
 	if periodeKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing periode_key", "Missing periode_key")
-	} else {
-		_, err := strconv.ParseUint(periodeKey, 10, 64)
-		if err != sql.ErrNoRows {
-			// log.Error("Wrong input for parameter: country_key")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: periode_key", "Wrong input for parameter: periode_key")
-		}
 	}
 	var detperiode models.FfsPeriodeDetail
 	status, err := models.GetFfsPeriodeDetailModels(&detperiode, periodeKey)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return lib.CustomError(http.StatusNotFound, "Periode key not found", "Periode key not found")
+		}
 		return lib.CustomError(status, err.Error(), err.Error())
 	}
 	var response lib.Response
@@ -54,9 +52,14 @@ func CreateFfsPeriodeController(c echo.Context) error {
 	params["rec_created_by"] = lib.UserIDStr
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
-	periodeDate := c.FormValue("periode_date")
+	periodeDate := c.FormValue("periode_date") //validate date
 	if periodeDate == "" {
 		return lib.CustomError(http.StatusBadRequest, "periode_date can not be blank", "periode_date can not be blank")
+	}
+	expectedDateFormat := "2006-01-02"
+	_, err = time.Parse(expectedDateFormat, periodeDate)
+	if err != nil {
+		return lib.CustomError(http.StatusBadRequest, "periode_date should be a valid date in the format "+expectedDateFormat, "periode_date should be a valid date in the format "+expectedDateFormat)
 	}
 	periodeName := c.FormValue("periode_name")
 	if periodeName == "" {
@@ -66,9 +69,17 @@ func CreateFfsPeriodeController(c echo.Context) error {
 	if dateOpened == "" {
 		return lib.CustomError(http.StatusBadRequest, "date_opened can not be blank", "date_opened can not be blank")
 	}
+	_, err = time.Parse(expectedDateFormat, dateOpened)
+	if err != nil {
+		return lib.CustomError(http.StatusBadRequest, "date_opened should be a valid date in the format "+expectedDateFormat, "date_opened should be a valid date in the format "+expectedDateFormat)
+	}
 	dateClosed := c.FormValue("date_closed")
 	if dateClosed == "" {
 		return lib.CustomError(http.StatusBadRequest, "date_closed can not be blank", "date_closed can not be blank")
+	}
+	_, err = time.Parse(expectedDateFormat, dateClosed)
+	if err != nil {
+		return lib.CustomError(http.StatusBadRequest, "date_closed should be a valid date in the format "+expectedDateFormat, "date_closed should be a valid date in the format "+expectedDateFormat)
 	}
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {
@@ -111,6 +122,11 @@ func UpdateFfsPeriode(c echo.Context) error {
 	if periodeDate == "" {
 		return lib.CustomError(http.StatusBadRequest, "periode_date can not be blank", "periode_date can not be blank")
 	}
+	expectedDateFormat := "2006-01-02"
+	_, err = time.Parse(expectedDateFormat, periodeDate)
+	if err != nil {
+		return lib.CustomError(http.StatusBadRequest, "periode_date should be a valid date in the format "+expectedDateFormat, "periode_date should be a valid date in the format "+expectedDateFormat)
+	}
 	periodeName := c.FormValue("periode_name")
 	if periodeName == "" {
 		return lib.CustomError(http.StatusBadRequest, "periode_name can not be blank", "periode_name can not be blank")
@@ -119,9 +135,17 @@ func UpdateFfsPeriode(c echo.Context) error {
 	if dateOpened == "" {
 		return lib.CustomError(http.StatusBadRequest, "date_opened can not be blank", "date_opened can not be blank")
 	}
+	_, err = time.Parse(expectedDateFormat, dateOpened)
+	if err != nil {
+		return lib.CustomError(http.StatusBadRequest, "date_opened should be a valid date in the format "+expectedDateFormat, "date_opened should be a valid date in the format "+expectedDateFormat)
+	}
 	dateClosed := c.FormValue("date_closed")
 	if dateClosed == "" {
 		return lib.CustomError(http.StatusBadRequest, "date_closed can not be blank", "date_closed can not be blank")
+	}
+	_, err = time.Parse(expectedDateFormat, dateClosed)
+	if err != nil {
+		return lib.CustomError(http.StatusBadRequest, "date_closed should be a valid date in the format "+expectedDateFormat, "date_closed should be a valid date in the format "+expectedDateFormat)
 	}
 	status, err = models.UpdateFfsPeriode(periodeKey, params)
 	if err != nil {

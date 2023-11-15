@@ -1,10 +1,10 @@
 package models
 
 import (
+	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
-	"strings"
 )
 
 type ScEndpointt struct {
@@ -89,53 +89,63 @@ func CreateEndpointSc(params map[string]string) (int, error) {
 	}
 	return http.StatusOK, nil
 }
+
 func UpdateEndpointSc(EndpointKey string, params map[string]string) (int, error) {
-	query := `UPDATE sc_endpoint SET `
-	var setClauses []string
-	var values []interface{}
-
+	query := "UPDATE sc_endpoint SET "
+	// Get params
+	i := 0
 	for key, value := range params {
 		if key != "endpoint_key" {
-			setClauses = append(setClauses, key+" = ?")
-			values = append(values, value)
+
+			query += key + " = '" + value + "'"
+
+			if (len(params) - 2) > i {
+				query += ", "
+			}
+			i++
 		}
 	}
-	query += strings.Join(setClauses, ", ")
-	query += ` WHERE endpoint_key = ?`
-	values = append(values, EndpointKey)
+	query += " WHERE endpoint_key = " + params["endpoint_key"]
 
-	log.Println("========== UpdateRiskProfile ==========>>>", query)
+	log.Println("UpdateEndpointSc:", query)
 
-	_, err := db.Db.Exec(query, values...)
+	resultSQL, err := db.Db.Exec(query)
 	if err != nil {
 		log.Println(err.Error())
-		return http.StatusBadRequest, err
+		return http.StatusInternalServerError, err
 	}
-	return http.StatusOK, nil
-}
-
-func DeleteEndpoint(EndpointKey string, params map[string]string) (int, error) {
-	query := `UPDATE sc_endpoint SET `
-	var setClauses []string
-	var values []interface{}
-
-	for key, value := range params {
-		if key != "endpoint_key" {
-			setClauses = append(setClauses, key+" = ?")
-			values = append(values, value)
-		}
-	}
-	query += strings.Join(setClauses, ", ")
-	query += ` WHERE endpoint_key = ?`
-	values = append(values, EndpointKey)
-
-	log.Println("========== UpdateRiskProfile ==========>>>", query)
-
-	_, err := db.Db.Exec(query, values...)
-	if err != nil {
-		log.Println(err.Error())
-		return http.StatusBadRequest, err
+	rows, _ := resultSQL.RowsAffected()
+	if rows < 1 {
+		log.Println("nothing rows affected")
+		err2 := fmt.Errorf("nothing rows affected")
+		return http.StatusNotFound, err2
 	}
 
 	return http.StatusOK, nil
 }
+
+// func DeleteEndpoint(EndpointKey string, params map[string]string) (int, error) {
+// 	query := `UPDATE sc_endpoint SET `
+// 	var setClauses []string
+// 	var values []interface{}
+
+// 	for key, value := range params {
+// 		if key != "endpoint_key" {
+// 			setClauses = append(setClauses, key+" = ?")
+// 			values = append(values, value)
+// 		}
+// 	}
+// 	query += strings.Join(setClauses, ", ")
+// 	query += ` WHERE endpoint_key = ?`
+// 	values = append(values, EndpointKey)
+
+// 	log.Println("========== Update ==========>>>", query)
+
+// 	_, err := db.Db.Exec(query, values...)
+// 	if err != nil {
+// 		log.Println(err.Error())
+// 		return http.StatusBadRequest, err
+// 	}
+
+// 	return http.StatusOK, nil
+// }
