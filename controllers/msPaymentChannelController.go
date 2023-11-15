@@ -80,6 +80,10 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 	pchannelName := c.FormValue("pchannel_name")
 	if pchannelName == "" {
 		return lib.CustomError(http.StatusBadRequest, "pchannel_name can not be blank", "pchannel_name can not be blank")
+	} else {
+		if len(pchannelName) > 150 {
+			return lib.CustomError(http.StatusBadRequest, "pchannel_name should be exactly 150 characters", "pchannel_name should be exactly 150 characters")
+		}
 	}
 	minNominalTrx := c.FormValue("min_nominal_trx")
 	if minNominalTrx == "" {
@@ -95,6 +99,9 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 	}
 	settleChannelInput := c.FormValue("settle_channel")
 	if settleChannelInput != "" {
+		if len(settleChannelInput) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "settle_channel should be exactly 11 characters", "settle_channel should be exactly 11 characters")
+		}
 		// Validasi bahwa settleChannelInput adalah bilangan bulat
 		settleChannel, err := strconv.Atoi(settleChannelInput)
 		if err != nil {
