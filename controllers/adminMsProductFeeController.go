@@ -22,7 +22,7 @@ func GetListProductFeeAdmin(c echo.Context) error {
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(72)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -167,7 +167,7 @@ func GetProductFeeDetailAdmin(c echo.Context) error {
 	var status int
 	decimal.MarshalJSONWithoutQuotes = true
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(72)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -402,7 +402,7 @@ func GetProductFeeDetailAdmin(c echo.Context) error {
 func DeleteProductFeeAdmin(c echo.Context) error {
 	var err error
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(72)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -466,7 +466,7 @@ func CreateAdminMsProductFee(c echo.Context) error {
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(72)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -766,7 +766,7 @@ func UpdateAdminMsProductFee(c echo.Context) error {
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(72)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -1034,7 +1034,7 @@ func CreateAdminMsProductFeeItem(c echo.Context) error {
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(72)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -1164,7 +1164,7 @@ func UpdateAdminMsProductFeeItem(c echo.Context) error {
 
 	decimal.MarshalJSONWithoutQuotes = true
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(72)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -1300,7 +1300,7 @@ func DeleteAdminMsProductFeeItem(c echo.Context) error {
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(72)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -1400,7 +1400,7 @@ func DetailAdminMsProductFeeItem(c echo.Context) error {
 	var err error
 	decimal.MarshalJSONWithoutQuotes = true
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(72)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")

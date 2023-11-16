@@ -268,7 +268,7 @@ func UpdateProductFeeSettings(c echo.Context) error {
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt() 
+	errorAuth := IsMenuAccessAllowed(72)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -277,7 +277,7 @@ func UpdateProductFeeSettings(c echo.Context) error {
 	params := make(map[string]string)
 
 	//fee_key
-	feekey := c.FormValue("fee_key") 
+	feekey := c.FormValue("fee_key")
 	if feekey == "" {
 		// log.Error("Missing required parameter: fee_key cann't be blank")
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: fee_key cann't be blank", "Missing required parameter: fee_key cann't be blank")

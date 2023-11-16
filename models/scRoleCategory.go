@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -94,11 +95,13 @@ func GetAllScRoleCategory(c *[]ScRoleCategory, limit uint64, offset uint64, para
 	}
 
 	// Main query
-	// log.Println("========== GetAllScRoleCategory ==========>>>", query)
+	//log.Println("========== GetAllScRoleCategory ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		// log.Println(err)
-		return http.StatusBadGateway, err
+		if err != sql.ErrNoRows {
+			// log.Println(err)
+			return http.StatusBadGateway, err
+		}
 	}
 
 	return http.StatusOK, nil

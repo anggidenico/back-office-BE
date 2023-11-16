@@ -994,7 +994,8 @@ func ChangePasswordUser(c echo.Context) error {
 func ChangeRoleUser(c echo.Context) error {
 	var err error
 
-	errorAuth := initAuthHoIt()
+	//errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(117)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -1059,7 +1060,8 @@ func ChangeRoleUser(c echo.Context) error {
 func DeleteUser(c echo.Context) error {
 	var err error
 
-	errorAuth := initAuthHoIt()
+	//errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(117)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
