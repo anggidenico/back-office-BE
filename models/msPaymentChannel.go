@@ -477,16 +477,3 @@ func UpdateMsPaymentChannel(PChannelKey string, params map[string]string) (int, 
 	}
 	return http.StatusOK, nil
 }
-
-// func IsSettleChannelExistsInDatabase(settleChannel int) (bool, error) {
-// 	// Kueri SELECT untuk memeriksa apakah settleChannel sudah ada di dalam database
-// 	query := "SELECT COUNT(*) FROM ms_payment_channel WHERE settle_channel = ?"
-// 	var count int
-
-// 	err := db.QueryRow(query, settleChannel).Scan(&count)
-// 	if err != nil {
-// 		return false, err // Tangani error sesuai kebutuhan Anda
-// 	}
-
-// 	return count > 0, nil
-// }
