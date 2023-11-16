@@ -312,20 +312,36 @@ func UpdateMsPaymentChannelController(c echo.Context) error {
 		}
 		params["min_nominal_trx"] = minNominalTrx
 	}
-
 	feeValue := c.FormValue("fee_value")
+	valueType := c.FormValue("value_type")
 	if feeValue != "" {
-		value, success := new(big.Int).SetString(feeValue, 10)
-		if !success {
+		// Cek apakah fee_value adalah numeric
+		_, err := strconv.ParseFloat(feeValue, 64)
+		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "fee_value must be a numeric value", "fee_value must be a numeric value")
 		}
-		if value.BitLen() > 18*3 { // 3 bits per digit to account for decimal places
-			return lib.CustomError(http.StatusBadRequest, "fee_value should not exceed 18 digits", "fee_value should not exceed 18 digits")
-		}
-	} else {
-		return lib.CustomError(http.StatusBadRequest, "fee_value can not be blank", "fee_value can not be blank")
+		params["fee_value"] = feeValue
 	}
+	// 	// Jika value_type adalah 316, tambahkan validasi khusus
+	// 	if valueType == "316" {
+	// 		if strings.Contains(feeValue, ".") {
+	// 			return lib.CustomError(http.StatusBadRequest, "fee_value for value_type 316 should not be a decimal number", "fee_value for value_type 316 should not be a decimal number")
+	// 		}
+	// 	}
 
+	// } else {
+	// 	return lib.CustomError(http.StatusBadRequest, "fee_value can not be blank", "fee_value can not be blank")
+	// }
+
+	if valueType != "" {
+		if len(valueType) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "value_type should be exactly 11 characters", "value_type should be exactly 11 characters")
+		}
+
+		params["value_type"] = valueType
+	} else {
+		return lib.CustomError(http.StatusBadRequest, "value_type can not be blank", "value_type can not be blank")
+	}
 	hasMinMax := c.FormValue("has_min_max")
 	if hasMinMax == "" {
 		return lib.CustomError(http.StatusBadRequest, "has_min_max can not be blank", "has_min_max can not be blank")
@@ -367,19 +383,6 @@ func UpdateMsPaymentChannelController(c echo.Context) error {
 		params["settle_payment_method"] = strconv.Itoa(settlepaymethod)
 	} else {
 		return lib.CustomError(http.StatusBadRequest, "settle_payment_method can not be blank", "settle_payment_method can not be blank")
-	}
-	valueType := c.FormValue("value_type")
-	if valueType != "" {
-		if len(valueType) > 11 {
-			return lib.CustomError(http.StatusBadRequest, "value_type should be exactly 11 characters", "value_type be exactly 11 characters")
-		}
-		value, err := strconv.Atoi(valueType)
-		if err != nil {
-			return lib.CustomError(http.StatusBadRequest, "value_type should be a number", "value_type should be a number")
-		}
-		params["value_type"] = strconv.Itoa(value)
-	} else {
-		return lib.CustomError(http.StatusBadRequest, "value_type can not be blank", "value_type can not be blank")
 	}
 	feeMinValue := c.FormValue("fee_min_value")
 	if feeMinValue != "" {
