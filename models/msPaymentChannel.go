@@ -1,12 +1,15 @@
 package models
 
 import (
+	"database/sql"
 	"log"
 	"mf-bo-api/config"
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/shopspring/decimal"
 )
@@ -130,6 +133,7 @@ type SettlePaymentMethod struct {
 	SettlePaymentMethodName string `db:"settle_payment_method_name"    json:"settle_payment_method_name"`
 }
 type PaymentChannelDetail struct {
+	PchannelKey             int8             `db:"pchannel_key"            json:"pchannel_key"`
 	PchannelCode            *string          `db:"pchannel_code"            json:"pchannel_code"`
 	PchannelName            *string          `db:"pchannel_name"            json:"pchannel_name"`
 	SettleChannel           uint64           `db:"settle_channel"           json:"settle_channel"`
@@ -308,6 +312,7 @@ func GetPaymentChannelModels(c *[]PaymentChannel) (int, error) {
 	a.settle_payment_method,
 	c.lkp_name settle_payment_method_name, 
 	a.min_nominal_trx,
+	a.fee_value,
 	a.value_type,
 	d.lkp_name value_type_name,
 	a.has_min_max,
@@ -329,18 +334,22 @@ func GetPaymentChannelModels(c *[]PaymentChannel) (int, error) {
 	FROM ms_payment_channel a 
 	JOIN gen_lookup b ON a.settle_channel = b.lookup_key
     JOIN gen_lookup c ON a.settle_payment_method = c.lookup_key
-	JOIN gen_lookup d ON a.value_type = d.lookup_key WHERE a.rec_status = 1`
+	JOIN gen_lookup d ON a.value_type = d.lookup_key WHERE a.rec_status = 1 order by rec_order`
 	// log.Println("====================>>>", query)
+	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err.Error())
-		return http.StatusBadGateway, err
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
 	}
 	return http.StatusOK, nil
 }
 
 func GetDetailPaymentChannelModels(c *PaymentChannelDetail, PChannelKey string) (int, error) {
-	query := `SELECT a.pchannel_code, 
+	query := `SELECT a.pchannel_key,
+	a.pchannel_code, 
 	a.pchannel_name, 
 	a.settle_channel, 
 	b.lkp_name settle_channel_name,
@@ -350,6 +359,7 @@ func GetDetailPaymentChannelModels(c *PaymentChannelDetail, PChannelKey string) 
 	a.value_type,
 	d.lkp_name value_type_name,
 	a.has_min_max,
+	a.fee_value,
 	a.fee_min_value,
 	a.fee_max_value,
 	a.fixed_amount_fee,
@@ -370,12 +380,19 @@ func GetDetailPaymentChannelModels(c *PaymentChannelDetail, PChannelKey string) 
     JOIN gen_lookup c ON a.settle_payment_method = c.lookup_key
 	JOIN gen_lookup d ON a.value_type = d.lookup_key WHERE a.rec_status = 1 AND a.pchannel_key =` + PChannelKey
 
-	// log.Println("====================>>>", query)
+	log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
+
 	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println("PChannelKey not found")
+			return http.StatusBadGateway, err
+		}
+
 		log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
+
 	return http.StatusOK, nil
 }
 
@@ -420,7 +437,7 @@ func CreateMsPaymentChannel(params map[string]string) (int, error) {
 
 	// Combine params to build query
 	query += "(" + fields + ") VALUES(" + values + ")"
-	// log.Println("==========  ==========>>>", query)
+	log.Println("CreateMsPaymentChannel", query)
 
 	tx, err := db.Db.Begin()
 	if err != nil {

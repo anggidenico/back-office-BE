@@ -405,7 +405,6 @@ type FeeItemData struct {
 	// ProductFeeKey uint64 `db:"product_fee_key" json:"product_fee_key"`
 	// ItemSeqno      string          `db:"item_seqno" json:"item_seqno"`
 	// RowMax         uint64          `db:"row_max" json:"row_max"`
-	// RecStatus      uint64          `db:"rec_status" json:"rec_status"`
 	// RecCreatedDate string `db:"rec_created_date" json:"rec_created_date"`
 	// RecCreatedBy string `db:"rec_created_by" json:"rec_created_by"`
 }

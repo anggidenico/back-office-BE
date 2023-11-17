@@ -165,12 +165,13 @@ func router() *echo.Echo {
 	admin.POST("/usermanagement/delete", controllers.DeleteUser).Name = "DeleteUser"
 	admin.POST("/usermanagement/userdata-update", controllers.UpdateAuthScUserLogin).Name = "UpdateAuthScUserLogin"
 
-	//Admin Role Management
+	//Admin Role Management and menuaccess digabung
 	admin.GET("/rolemanagementlist", controllers.GetListRoleManagementAdmin).Name = "GetListRoleManagementAdmin"
-	admin.GET("/rolemanagement/userlist", controllers.GetListUserByRole).Name = "GetListUserByRole"
 	admin.GET("/rolemanagement/:key", controllers.GetDetailRoleManagement).Name = "GetDetailRoleManagement"
 	admin.GET("/rolemanagement/menulist", controllers.GetDetailMenuRoleManagement).Name = "GetDetailMenuRoleManagement"
 	admin.GET("/rolemanagement/rolecategorylist", controllers.GetListRoleCategory).Name = "GetListRoleCategory"
+
+	admin.GET("/rolemanagement/userlist", controllers.GetListUserByRole).Name = "GetListUserByRole"
 	admin.POST("/rolemanagement/delete", controllers.DeleteRoleManagement).Name = "DeleteRoleManagement"
 	admin.POST("/rolemanagement/create", controllers.CreateAdminRoleManagement).Name = "CreateAdminRoleManagement"
 	admin.POST("/rolemanagement/update", controllers.UpdateAdminRoleManagement).Name = "UpdateAdminRoleManagement"
@@ -538,10 +539,10 @@ func router() *echo.Echo {
 	// PRODUCT BANK ACCOUNT WITH APPROVAL
 	// --- dari sisi maker ---
 	admin.POST("/productbankaccount/create-request", controllers.CreateProductBankRequest)
-	// admin.POST("/productbankaccount/update-request", controllers.)
+	admin.POST("/productbankaccount/update-request", controllers.UpdateProductBankRequest)
 	// --- dari sisi approver ---
-	// admin.GET("/productfee/approval-list", controllers.ProductFeeApprovalList)
-	// admin.GET("/productfee/approval-detail/:rec_pk", controllers.ProductFeeApprovalDetail)
+	admin.GET("/productbankaccount/approval-list", controllers.ProductBankAccountApprovalList)
+	admin.GET("/productbankaccount/approval-detail/:rec_pk", controllers.ProductBankAccountApprovalDetail)
 	// admin.POST("/productfee/approval-action", controllers.ProductFeeApprovalAction)
 
 	// MASTER PAYMENT CHANNEL

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -62,17 +63,17 @@ type ScMenuListRoleLogin struct {
 	MenuTypeKey   uint64                 `json:"menu_type_key"`
 	HasEndpoint   uint8                  `json:"has_endpoint"`
 	MenuDesc      *string                `json:"menu_desc"`
-	IsChecked     *bool                  `json:"is_checked"`
+	IsChecked     bool                   `json:"is_checked"`
 	ChildMenu     *[]ScMenuListRoleLogin `json:"child"`
 }
 
 type ListMenuRoleManagement struct {
-	MenuKey    uint64  `db:"menu_key"        json:"menu_key"`
-	ModuleName *string `db:"module_name"     json:"module_name"`
-	MenuParent *uint64 `db:"menu_parent"     json:"menu_parent"`
-	MenuName   string  `db:"menu_name"       json:"menu_name"`
-	MenuDesc   *string `db:"menu_desc"       json:"menu_desc"`
-	// Checked    string  `db:"checked"         json:"checked"`
+	MenuKey    uint64  `db:"menu_key" json:"menu_key"`
+	ModuleName *string `db:"module_name" json:"module_name"`
+	MenuParent *uint64 `db:"menu_parent" json:"menu_parent"`
+	MenuName   string  `db:"menu_name" json:"menu_name"`
+	MenuDesc   *string `db:"menu_desc" json:"menu_desc"`
+	Checked    bool    `db:"is_checked" json:"is_checked"`
 }
 
 type ListMenuRoleUser struct {
@@ -111,11 +112,18 @@ func AdminGetListMenuRole(c *[]ListMenuRoleManagement, roleKey string, isParent 
 	// 		LEFT JOIN sc_app_module AS app ON app.app_module_key = menu.app_module_key
 	// 		WHERE menu.rec_status = 1 AND menu.app_module_key != 1`
 
-	query := `SELECT menu.menu_key AS menu_key, app.app_module_name AS module_name, menu.menu_parent AS menu_parent, menu.menu_name AS menu_name, 
-			menu.menu_desc AS menu_desc
-			FROM sc_menu AS menu 
-			LEFT JOIN sc_app_module AS app ON app.app_module_key = menu.app_module_key 
-			WHERE menu.rec_status = 1 AND menu.app_module_key != 1`
+	query := `SELECT 
+		menu.menu_key AS menu_key, 
+		app.app_module_name AS module_name, 
+		menu.menu_parent AS menu_parent, 
+		menu.menu_name AS menu_name, 
+		menu.menu_desc AS menu_desc,
+		COALESCE(rm.rec_status, 0) AS is_checked
+	FROM sc_menu AS menu 
+	LEFT JOIN sc_app_module AS app ON (app.app_module_key = menu.app_module_key)
+	LEFT JOIN sc_role_menu rm ON (rm.menu_key = menu.menu_key AND rm.role_key = ` + roleKey + `)
+	WHERE menu.rec_status = 1 
+	AND menu.app_module_key != 1`
 
 	if isParent {
 		query += " AND menu.menu_parent IS NULL"
@@ -123,14 +131,16 @@ func AdminGetListMenuRole(c *[]ListMenuRoleManagement, roleKey string, isParent 
 		query += " AND menu.menu_parent IS NOT NULL"
 	}
 
-	query += " ORDER BY menu.app_module_key ASC"
+	query += " ORDER BY menu.app_module_key ASC, menu.rec_order ASC"
 
 	// Main query
-	// log.Println("========== AdminGetListMenuRole ==========>>>", query)
+	//log.Println("========== AdminGetListMenuRole ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		// log.Println(err)
-		return http.StatusBadGateway, err
+		if err != sql.ErrNoRows {
+			//log.Println(err)
+			return http.StatusBadGateway, err
+		}
 	}
 
 	return http.StatusOK, nil
@@ -139,11 +149,13 @@ func AdminGetListMenuRole(c *[]ListMenuRoleManagement, roleKey string, isParent 
 func AdminGetParentMenuListRoleLogin(c *[]ListParentMenuRoleUser, value []string) (int, error) {
 	inQuery := strings.Join(value, ",")
 	query := `SELECT 
-				menu_key AS menu_key,
-				rec_attribute_id2 AS class_name, 
-				menu_page AS menu_page, 
-				rec_attribute_id1 AS icon 
-			 FROM sc_menu WHERE menu_key IN(` + inQuery + `) ORDER BY menu_key ASC`
+				a.menu_key AS menu_key,
+				a.rec_attribute_id2 AS class_name, 
+				a.menu_page AS menu_page, 
+				a.rec_attribute_id1 AS icon 
+			 FROM sc_menu a
+			 WHERE a.menu_key IN (` + inQuery + `) 
+			 ORDER BY a.rec_order ASC`
 
 	// Main query
 	// log.Println("==========  ==========>>>", query)
@@ -164,8 +176,10 @@ func AdminGetMenuListRoleLogin(c *[]ListMenuRoleUser, roleKey string) (int, erro
 				m.rec_attribute_id1 AS icon 
 			FROM sc_endpoint_auth au 
 			INNER JOIN sc_menu AS m ON m.menu_key = au.menu_key 
-			WHERE au.role_key = ` + roleKey + ` AND au.rec_status = 1 AND m.rec_status = 1 
-			GROUP BY au.menu_key ORDER BY m.rec_order`
+			WHERE au.role_key = ` + roleKey + ` 
+			AND au.rec_status = 1 AND m.rec_status = 1 
+			GROUP BY au.menu_key 
+			ORDER BY m.rec_order`
 
 	// Main query
 	// log.Println("==========  ==========>>>", query)

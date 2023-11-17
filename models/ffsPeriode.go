@@ -32,7 +32,7 @@ func GetFfsPeriodeModels(c *[]FfsPeriode) (int, error) {
 	date_opened,
 	date_closed 
 	FROM ffs_periode 
-	WHERE rec_status = 1`
+	WHERE rec_status = 1 order by rec_order`
 
 	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
@@ -55,12 +55,30 @@ func GetFfsPeriodeDetailModels(c *FfsPeriodeDetail, PeriodeKey string) (int, err
 
 	log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
+
 	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println("Periode key not found")
+			return http.StatusBadGateway, err
+		}
+
 		log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
+
 	return http.StatusOK, nil
 }
+
+// 	err := db.Db.Get(c, query)
+// 	if err != nil {
+// 		if err == sql.ErrNoRows {
+// 			log.Println(err.Error())
+// 			return http.StatusBadGateway, err
+// 		}
+// 	}
+// 	return http.StatusOK, nil
+// }
+
 func CreateFfsPeriode(params map[string]string) (int, error) {
 	query := "INSERT INTO ffs_periode"
 	// Get params

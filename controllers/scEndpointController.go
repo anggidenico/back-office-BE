@@ -186,8 +186,9 @@ func DeleteEndpointController(c echo.Context) error {
 	if endpointKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing endpointKey", "Missing endpointKey")
 	}
+	params["endpoint_key"] = endpointKey
 
-	status, err := models.DeleteEndpoint(endpointKey, params)
+	status, err := models.UpdateEndpointSc(endpointKey, params)
 	if err != nil {
 		return lib.CustomError(status, err.Error(), err.Error())
 	}
