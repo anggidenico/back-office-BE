@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -112,21 +113,28 @@ func GetAllScRole(c *[]ScRole, limit uint64, offset uint64, params map[string]st
 	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		// log.Println(err)
-		return http.StatusBadGateway, err
+		if err != sql.ErrNoRows {
+			log.Println(err)
+			return http.StatusBadGateway, err
+		}
 	}
 
 	return http.StatusOK, nil
 }
 
 func GetScRole(c *ScRole, key string) (int, error) {
-	query := `SELECT sc_role.* FROM sc_role 
-				WHERE sc_role.rec_status = 1 AND sc_role.role_key = ` + key
+	query := `SELECT sc_role.* 
+	FROM sc_role 
+	WHERE sc_role.rec_status = 1 
+	AND sc_role.role_key = ` + key
+
 	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		// log.Println(err)
-		return http.StatusNotFound, err
+		if err != sql.ErrNoRows {
+			log.Println(err)
+			return http.StatusNotFound, err
+		}
 	}
 
 	return http.StatusOK, nil
@@ -135,8 +143,9 @@ func GetScRole(c *ScRole, key string) (int, error) {
 func AdminGetAllRoleManagement(c *[]AdminRoleManagement, limit uint64, offset uint64, params map[string]string, nolimit bool, searchLike *string) (int, error) {
 	query := `SELECT
 				role.role_key AS role_key, 
-				cat.role_category_code AS role_category_code,
-				cat.role_category_name AS role_category_name, 
+				cat.role_category_code,
+				cat.role_category_name, 
+				cat.role_category_key,
 				role.role_code AS role_code, 
 				role.role_name AS role_name,
 				role.role_desc AS role_desc 
@@ -198,8 +207,10 @@ func AdminGetAllRoleManagement(c *[]AdminRoleManagement, limit uint64, offset ui
 	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		// log.Println(err)
-		return http.StatusBadGateway, err
+		if err != sql.ErrNoRows {
+			log.Println(err)
+			return http.StatusBadGateway, err
+		}
 	}
 
 	return http.StatusOK, nil
@@ -248,8 +259,10 @@ func AdminCountDataRoleManagement(c *CountData, params map[string]string, search
 	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		// log.Println(err)
-		return http.StatusBadGateway, err
+		if err != sql.ErrNoRows {
+			log.Println(err)
+			return http.StatusBadGateway, err
+		}
 	}
 
 	return http.StatusOK, nil
@@ -366,8 +379,10 @@ func AdminGetValidateUniqueMsRole(c *CountData, paramsAnd map[string]string, upd
 	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
-		// log.Println(err)
-		return http.StatusBadGateway, err
+		if err != sql.ErrNoRows {
+			log.Println(err)
+			return http.StatusBadGateway, err
+		}
 	}
 
 	return http.StatusOK, nil

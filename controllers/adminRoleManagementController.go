@@ -12,14 +12,19 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/gommon/log"
 )
 
+/*
+list of roles
+*/
 func GetListRoleManagementAdmin(c echo.Context) error {
+	PAGE_MENU_KEY := 119
 
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -139,6 +144,7 @@ func GetListRoleManagementAdmin(c echo.Context) error {
 			// log.Error(err.Error())
 			return lib.CustomError(status, err.Error(), "Failed get data")
 		}
+
 		if int(countData.CountData) < int(limit) {
 			pagination = 1
 		} else {
@@ -160,11 +166,11 @@ func GetListRoleManagementAdmin(c echo.Context) error {
 }
 
 func GetListUserByRole(c echo.Context) error {
-
+	PAGE_MENU_KEY := 119
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -263,7 +269,7 @@ func GetListUserByRole(c echo.Context) error {
 	var pagination int
 	var responseData []models.AdminListScUserLoginRole
 
-	if isNew == false {
+	if !isNew {
 		status, err = models.GetAllScUserLogin(&users, limit, offset, params, noLimit)
 		if err != nil {
 			if err != sql.ErrNoRows {
@@ -308,10 +314,14 @@ func GetListUserByRole(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
+/*
+get single row of Role
+*/
 func GetDetailRoleManagement(c echo.Context) error {
+	PAGE_MENU_KEY := 119
 	var err error
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -333,7 +343,6 @@ func GetDetailRoleManagement(c echo.Context) error {
 	var responseData models.AdminRoleManagementDetail
 
 	responseData.RoleKey = role.RoleKey
-
 	responseData.RoleCode = role.RoleCode
 	responseData.RoleName = role.RoleName
 	responseData.RoleDesc = role.RoleDesc
@@ -362,16 +371,16 @@ func GetDetailRoleManagement(c echo.Context) error {
 }
 
 func GetDetailMenuRoleManagement(c echo.Context) error {
+	PAGE_MENU_KEY := 119
 	var err error
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
-		// log.Error("User Autorizer")
+		log.Error("User Autorizer", errorAuth.Error())
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
 	}
 
 	var strRoleKey string
-
 	roleKey := c.QueryParam("role_key")
 	if roleKey != "" {
 		sub, err := strconv.ParseUint(roleKey, 10, 64)
@@ -388,42 +397,50 @@ func GetDetailMenuRoleManagement(c echo.Context) error {
 	var parentMenu []models.ListMenuRoleManagement
 	_, err = models.AdminGetListMenuRole(&parentMenu, strRoleKey, true)
 	if err != nil {
-		// log.Error(err.Error())
-		return lib.CustomError(http.StatusNotFound)
+		//log.Error(err.Error(), "Parent")
+		return lib.CustomError(http.StatusNotFound, err.Error(), "Parent not found")
 	}
 
 	var childMenu []models.ListMenuRoleManagement
 	_, err = models.AdminGetListMenuRole(&childMenu, strRoleKey, false)
 	if err != nil {
-		// log.Error(err.Error())
-		return lib.CustomError(http.StatusNotFound)
+		//log.Error(err.Error(), "Childs")
+		return lib.CustomError(http.StatusNotFound, err.Error(), "Child not found")
 	}
 
 	var responseData []models.ScMenuDetail
+	if len(parentMenu) > 0 {
+		for _, parent := range parentMenu {
+			var data models.ScMenuDetail
+			data.MenuKey = parent.MenuKey
+			data.ModuleName = parent.ModuleName
+			data.MenuName = parent.MenuName
+			data.MenuDesc = parent.MenuDesc
 
-	for _, parent := range parentMenu {
-		var data models.ScMenuDetail
-		data.MenuKey = parent.MenuKey
-		data.ModuleName = parent.ModuleName
-		data.MenuName = parent.MenuName
-		data.MenuDesc = parent.MenuDesc
+			var child []models.ScMenuDetailChild
+			if len(childMenu) > 0 {
+				for _, c := range childMenu {
 
-		var child []models.ScMenuDetailChild
-		for _, c := range childMenu {
-
-			if parent.MenuKey == *c.MenuParent {
-				var cc models.ScMenuDetailChild
-				cc.MenuKey = c.MenuKey
-				cc.MenuName = c.MenuName
-				cc.MenuDesc = c.MenuDesc
-				child = append(child, cc)
+					if parent.MenuKey == *c.MenuParent {
+						var cc models.ScMenuDetailChild
+						cc.MenuKey = c.MenuKey
+						cc.MenuName = c.MenuName
+						cc.MenuDesc = c.MenuDesc
+						cc.IsChecked = c.Checked
+						child = append(child, cc)
+					}
+				}
+			} else {
+				child = nil
 			}
-		}
-		data.ChildMenu = &child
+			data.ChildMenu = &child
 
-		if len(child) > 0 {
+			//if len(child) > 0 {
 			responseData = append(responseData, data)
+			//}
 		}
+	} else {
+		responseData = nil
 	}
 
 	var response lib.Response
@@ -436,10 +453,10 @@ func GetDetailMenuRoleManagement(c echo.Context) error {
 }
 
 func GetListRoleCategory(c echo.Context) error {
-
+	PAGE_MENU_KEY := 119
 	var err error
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -526,13 +543,17 @@ func GetListRoleCategory(c echo.Context) error {
 	}
 
 	var responseData []models.ScRoleCategoryInfo
-	for _, cat := range roleCategory {
-		var data models.ScRoleCategoryInfo
-		data.RoleCategoryKey = cat.RoleCategoryKey
-		data.RoleCategoryCode = cat.RoleCategoryCode
-		data.RoleCategoryName = cat.RoleCategoryName
-		data.RoleCategoryDesc = cat.RoleCategoryDesc
-		responseData = append(responseData, data)
+	if len(roleCategory) > 0 {
+		for _, cat := range roleCategory {
+			var data models.ScRoleCategoryInfo
+			data.RoleCategoryKey = cat.RoleCategoryKey
+			data.RoleCategoryCode = cat.RoleCategoryCode
+			data.RoleCategoryName = cat.RoleCategoryName
+			data.RoleCategoryDesc = cat.RoleCategoryDesc
+			responseData = append(responseData, data)
+		}
+	} else {
+		responseData = nil
 	}
 
 	var response lib.Response
@@ -545,9 +566,10 @@ func GetListRoleCategory(c echo.Context) error {
 }
 
 func CreateAdminRoleManagement(c echo.Context) error {
+	PAGE_MENU_KEY := 119
 	var err error
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -684,10 +706,11 @@ func CreateAdminRoleManagement(c echo.Context) error {
 }
 
 func DeleteRoleManagement(c echo.Context) error {
+	PAGE_MENU_KEY := 119
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -749,9 +772,10 @@ func DeleteRoleManagement(c echo.Context) error {
 }
 
 func UpdateAdminRoleManagement(c echo.Context) error {
+	PAGE_MENU_KEY := 119
 	var err error
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")

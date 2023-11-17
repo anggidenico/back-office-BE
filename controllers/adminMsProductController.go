@@ -14,24 +14,24 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func initAuthHoIt() error {
-	var roleKeyHoIt uint64
-	roleKeyHoIt = 15
+// func initAuthHoIt() error {
+// 	var roleKeyHoIt uint64
+// 	roleKeyHoIt = 15
 
-	if lib.Profile.RoleKey != roleKeyHoIt {
-		// log.Error("User Autorizer")
-		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
-	}
-	return nil
-}
+// 	if lib.Profile.RoleKey != roleKeyHoIt {
+// 		// log.Error("User Autorizer")
+// 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
+// 	}
+// 	return nil
+// }
 
 func GetListProductAdmin(c echo.Context) error {
-
+	PAGE_MENU_KEY := 71
 	var err error
 	var status int
 	decimal.MarshalJSONWithoutQuotes = true
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -396,11 +396,12 @@ func GetListProductAdmin(c echo.Context) error {
 }
 
 func GetProductDetailAdmin(c echo.Context) error {
+	PAGE_MENU_KEY := 71
 	var err error
 	var status int
 	decimal.MarshalJSONWithoutQuotes = true
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -713,10 +714,11 @@ func GetProductDetailAdmin(c echo.Context) error {
 }
 
 func DeleteProductAdmin(c echo.Context) error {
+	PAGE_MENU_KEY := 71
 	var err error
 	decimal.MarshalJSONWithoutQuotes = true
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -766,10 +768,11 @@ func DeleteProductAdmin(c echo.Context) error {
 }
 
 func CreateAdminMsProduct(c echo.Context) error {
+	PAGE_MENU_KEY := 71
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -1504,11 +1507,12 @@ func CreateAdminMsProduct(c echo.Context) error {
 }
 
 func UpdateAdminMsProduct(c echo.Context) error {
+	PAGE_MENU_KEY := 71
 	var err error
 	var status int
 	decimal.MarshalJSONWithoutQuotes = true
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(PAGE_MENU_KEY)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")

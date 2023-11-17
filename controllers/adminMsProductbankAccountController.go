@@ -19,7 +19,7 @@ func GetListProductBankAccountAdmin(c echo.Context) error {
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(73)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -175,7 +175,7 @@ func GetProductBankAccountDetailAdmin(c echo.Context) error {
 	var status int
 	decimal.MarshalJSONWithoutQuotes = true
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(73)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -322,7 +322,7 @@ func GetProductBankAccountDetailAdmin(c echo.Context) error {
 func DeleteProductBankAccountAdmin(c echo.Context) error {
 	var err error
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(73)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -389,7 +389,7 @@ func CreateAdminMsProductBankAccount(c echo.Context) error {
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(73)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -544,7 +544,7 @@ func UpdateAdminMsProductBankAccount(c echo.Context) error {
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(73)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
