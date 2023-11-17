@@ -60,17 +60,33 @@ func CreateEndpointController(c echo.Context) error {
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
 	endpointCode := c.FormValue("endpoint_code")
-	if endpointCode == "" {
+	if endpointCode != "" {
+		if len(endpointCode) > 150 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_code should be <= 150 characters", "endpoint_code should be <= 150 characters")
+		}
+	} else {
 		return lib.CustomError(http.StatusBadRequest, "endpoint_code can not be blank", "endpoint_code can not be blank")
 	}
 	endpointCategoryKey := c.FormValue("endpoint_category_key")
-	if endpointCategoryKey == "" {
+	if endpointCategoryKey != "" {
+		_, err := strconv.Atoi(endpointCategoryKey)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_category_key must be a number", "endpoint_category_key must be a number")
+		}
+		if len(endpointCategoryKey) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_category_key should be <= 11 characters", "endpoint_category_key should be <= 11 characters")
+		}
+	} else {
 		return lib.CustomError(http.StatusBadRequest, "endpoint_category_key can not be blank", "endpoint_category_key can not be blank")
 	}
+
 	endpointName := c.FormValue("endpoint_name")
-	if endpointName == "" {
-		return lib.CustomError(http.StatusBadRequest, "endpoint_name can not be blank", "endpoint_code can not be blank")
+	if endpointName != "" {
+		if len(endpointName) > 150 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_name should be <= 150 characters", "endpoint_name should be <= 150 characters")
+		}
 	}
+
 	endpointVerb := c.FormValue("endpoint_verb")
 	if endpointVerb == "" {
 		return lib.CustomError(http.StatusBadRequest, "endpoint_verb can not be blank", "endpoint_verb can not be blank")

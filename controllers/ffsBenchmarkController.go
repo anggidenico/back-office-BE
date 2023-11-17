@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"database/sql"
+	"errors"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/labstack/echo"
@@ -29,17 +29,14 @@ func GetBenchmarkDetailController(c echo.Context) error {
 	benchmarkKey := c.Param("benchmark_key")
 	if benchmarkKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing benchmark key", "Missing benchmark key")
-	} else {
-		_, err := strconv.ParseUint(benchmarkKey, 10, 64)
-		if err != sql.ErrNoRows {
-			// log.Error("Wrong input for parameter: country_key")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: benchmark_key", "Wrong input for parameter: benchmark_key")
-		}
 	}
 	var detailbenchmark models.BenchmarkDetail
 	status, err := models.GetBenchmarkDetailModels(&detailbenchmark, benchmarkKey)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed get data")
+		if errors.Is(err, sql.ErrNoRows) {
+			return lib.CustomError(http.StatusNotFound, "Periode key not found", "Periode key not found")
+		}
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 
 	var response lib.Response
