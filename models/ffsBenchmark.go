@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -86,12 +87,17 @@ func DeleteBenchmark(BenchmarkKey string, params map[string]string) (int, error)
 
 	log.Println("========== DeleteBenchmark ==========>>>", query)
 
-	_, err := db.Db.Exec(query, values...)
+	resultSQL, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
-
+	rows, _ := resultSQL.RowsAffected()
+	if rows < 1 {
+		log.Println("nothing rows affected")
+		err2 := fmt.Errorf("nothing rows affected")
+		return http.StatusNotFound, err2
+	}
 	return http.StatusOK, nil
 }
 
