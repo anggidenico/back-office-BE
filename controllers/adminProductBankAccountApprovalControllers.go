@@ -161,6 +161,12 @@ func UpdateProductBankRequest(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
 	}
 
+	var productBankAccount models.MsProductBankAccount
+	status, err = models.GetMsProductBankAccount(&productBankAccount, prod_bankacc_key)
+	if err != nil {
+		return lib.CustomError(http.StatusNotFound)
+	}
+
 	//product_key
 	productkey := c.FormValue("product_key")
 	if productkey == "" {
@@ -269,9 +275,9 @@ func UpdateProductBankRequest(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_purpose", "Missing required parameter: bank_account_purpose")
 	}
 
-	paramsBankAcc["rec_status"] = "1"
-	paramsBankAcc["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
-	paramsBankAcc["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+	paramsBankAcc["bank_account_key"] = strconv.FormatUint(*productBankAccount.BankAccountKey, 10)
+	paramsBankAcc["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	paramsBankAcc["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 
 	paramsProductBankAccount["rec_status"] = "1"
 	paramsProductBankAccount["rec_action"] = "UPDATE"
