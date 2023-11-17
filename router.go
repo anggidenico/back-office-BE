@@ -543,7 +543,7 @@ func router() *echo.Echo {
 	// --- dari sisi approver ---
 	admin.GET("/productbankaccount/approval-list", controllers.ProductBankAccountApprovalList)
 	admin.GET("/productbankaccount/approval-detail/:rec_pk", controllers.ProductBankAccountApprovalDetail)
-	// admin.POST("/productfee/approval-action", controllers.ProductFeeApprovalAction)
+	admin.POST("/productbankaccount/approval-action", controllers.ProductBankAccountApprovalAction)
 
 	// MASTER PAYMENT CHANNEL
 	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController).Name = "GetmsPaymentChannelController"
