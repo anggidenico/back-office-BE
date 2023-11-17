@@ -40,9 +40,8 @@ func GetEndpointDetailController(c echo.Context) error {
 	}
 	var detailendpoint models.ScEndpointDetail
 	status, err := models.GetDetailEndpointModels(&detailendpoint, endpointKey)
-	// log.Println("Not Found")
 	if err != nil {
-		// log.Error(err.Error())
+
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
 	var response lib.Response

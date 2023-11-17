@@ -122,6 +122,5 @@ func UpdateAllocSec(AllocSeKey string, params map[string]string) (int, error) {
 		log.Println(err.Error())
 		return http.StatusBadRequest, err
 	}
-
 	return http.StatusOK, nil
 }
