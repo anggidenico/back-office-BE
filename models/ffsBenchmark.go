@@ -16,6 +16,7 @@ type Benchmark struct {
 	BenchmarkShortName string `db:"benchmark_short_name" json:"benchmark_short_name"`
 }
 type BenchmarkDetail struct {
+	BenchmarkKey       int64  `db:"benchmark_key" json:"benchmark_key"`
 	FundTypeKey        int64  `db:"fund_type_key"        json:"fund_type_key"`
 	FundTypeName       string `db:"fund_type_name" json:"fund_type_name"`
 	BenchmarkCode      string `db:"benchmark_code"  json:"benchmark_code"`
@@ -46,7 +47,9 @@ func GetBenchmarkModels(c *[]Benchmark) (int, error) {
 }
 
 func GetBenchmarkDetailModels(c *BenchmarkDetail, BenchmarkKey string) (int, error) {
-	query := `SELECT a.fund_type_key,
+	query := `SELECT 
+	a.benchmark_key,
+	a.fund_type_key,
 	b.fund_type_name, 
 	a.benchmark_code, 
 	a.benchmark_name, 

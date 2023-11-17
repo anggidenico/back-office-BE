@@ -6,6 +6,7 @@ import (
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo"
@@ -77,8 +78,16 @@ func CreateFfsBenchmarkController(c echo.Context) error {
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
 	fundTypeKey := c.FormValue("fund_type_key")
-	if fundTypeKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "fund_type_key can not be blank", "fund_type_key can not be blank")
+	if fundTypeKey != "" {
+		_, err := strconv.Atoi(fundTypeKey)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "fund_type_key should be number", "fund_type_key should be number")
+		}
+		if len(fundTypeKey) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "fund_type_key <= 11 digits", "fund_type_key <= 11 digits")
+		}
+	} else {
+		fundTypeKey = "0"
 	}
 	benchmarkCode := c.FormValue("benchmark_code")
 	if benchmarkCode == "" {
