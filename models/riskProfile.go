@@ -2,6 +2,7 @@
 package models
 
 import (
+	"database/sql"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -34,15 +35,16 @@ type GetDetailRisk struct {
 func GetRiskProfileModels(c *[]RiskProfile) (int, error) {
 	query := `SELECT risk_profile_key,risk_code,risk_name,risk_desc,min_score,max_score,max_flag,rec_order,rec_status FROM ms_risk_profile
 			  WHERE rec_status = 1 order by rec_order`
-	log.Println(query)
+	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err.Error())
-		return http.StatusBadGateway, err
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
 	}
 	return http.StatusOK, nil
 }
-
 func GetDetailRiskProfileModels(c *GetDetailRisk, RiskProfileKey string) (int, error) {
 	query := `SELECT risk_profile_key,
 	risk_code,
@@ -55,16 +57,19 @@ func GetDetailRiskProfileModels(c *GetDetailRisk, RiskProfileKey string) (int, e
 	FROM ms_risk_profile 
 	WHERE risk_profile_key =` + RiskProfileKey
 
-	// var result []GetDetailRisk
-	log.Println("==========  ==========>>>", query)
+	log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
+
 	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println("PChannelKey not found")
+			return http.StatusBadGateway, err
+		}
 		log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
 }
-
 func CreateRiskProfile(params map[string]string) (int, error) {
 	query := "INSERT INTO ms_risk_profile"
 	// Get params

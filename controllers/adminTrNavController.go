@@ -21,7 +21,7 @@ func GetListTrNavAdmin(c echo.Context) error {
 	var status int
 	decimal.MarshalJSONWithoutQuotes = true
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(39)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -249,7 +249,7 @@ func GetNavDetailAdmin(c echo.Context) error {
 	var status int
 	decimal.MarshalJSONWithoutQuotes = true
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(39)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -359,7 +359,7 @@ func DeleteNavAdmin(c echo.Context) error {
 	var err error
 	decimal.MarshalJSONWithoutQuotes = true
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(39)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -411,7 +411,7 @@ func CreateAdminTrNav(c echo.Context) error {
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(39)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
@@ -578,7 +578,7 @@ func UpdateAdminTrNav(c echo.Context) error {
 	var err error
 	var status int
 
-	errorAuth := initAuthHoIt()
+	errorAuth := IsMenuAccessAllowed(39)
 	if errorAuth != nil {
 		// log.Error("User Autorizer")
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
