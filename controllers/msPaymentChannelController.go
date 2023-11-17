@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"database/sql"
+	"errors"
 	"math/big"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
@@ -33,10 +35,11 @@ func GetMsPaymentDetailController(c echo.Context) error {
 	var detailpayment models.PaymentChannelDetail
 	status, err := models.GetDetailPaymentChannelModels(&detailpayment, pChannelKey)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed get data")
+		if errors.Is(err, sql.ErrNoRows) {
+			return lib.CustomError(http.StatusNotFound, "pchannel_key", "pchannel_key not found")
+		}
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
-	// log.Println("Not Found")
-
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
