@@ -18,54 +18,68 @@ func CreateRiskProfile(c echo.Context) error {
 	params["rec_created_by"] = lib.UserIDStr
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
-	risk_code := c.FormValue("risk_code")
-	if risk_code == "" {
-
-		return lib.CustomError(http.StatusBadRequest, "risk_code can not be blank", "risk_code can not be blank")
+	riskCode := c.FormValue("risk_code")
+	if riskCode != "" {
+		if len(riskCode) > 30 {
+			return lib.CustomError(http.StatusBadRequest, "risk_code should be <= 30", "risk_code should be <= 30")
+		}
+	} else {
+		if riskCode == "" {
+			return lib.CustomError(http.StatusBadRequest, "risk_code can not be blank", "risk_code can not be blank")
+		}
 	}
-	params["risk_code"] = risk_code
+	params["risk_code"] = riskCode
 
-	risk_name := c.FormValue("risk_name")
-	if risk_name == "" {
-
-		return lib.CustomError(http.StatusBadRequest, "risk_name can not be blank", "risk_code can not be blank")
+	riskName := c.FormValue("risk_name")
+	if riskName != "" {
+		if len(riskName) > 50 {
+			return lib.CustomError(http.StatusBadRequest, "risk_code should be <= 50", "risk_code should be <= 50")
+		}
 	}
-	params["risk_name"] = risk_name
+	params["risk_name"] = riskName
 
-	risk_desc := c.FormValue("risk_desc")
-	if risk_desc == "" {
-
-		return lib.CustomError(http.StatusBadRequest, "risk_desc can not be blank", "risk_desc can not be blank")
+	riskDesc := c.FormValue("risk_desc")
+	if riskDesc != "" {
+		if len(riskDesc) > 1000 {
+			return lib.CustomError(http.StatusBadRequest, "risk_code should be <= 1000", "risk_code should be <= 1000")
+		}
 	}
-	params["risk_desc"] = risk_desc
+	params["risk_desc"] = riskDesc
 
 	min_score := c.FormValue("min_score")
 	if min_score == "" {
-
 		return lib.CustomError(http.StatusBadRequest, "min_score can not be blank", "min_score can not be blank")
 	}
 	params["min_score"] = min_score
 
 	max_score := c.FormValue("max_score")
 	if max_score == "" {
-
-		return lib.CustomError(http.StatusBadRequest, "max_score can not be blank", "min_score can not be blank")
+		return lib.CustomError(http.StatusBadRequest, "max_score can not be blank", "max_score can not be blank")
 	}
 	params["max_score"] = max_score
 
-	max_flag := c.FormValue("max_flag")
-	if max_flag == "" {
-		return lib.CustomError(http.StatusBadRequest, "max_flag can not be blank", "min_score can not be blank")
+	maxFlag := c.FormValue("max_flag")
+	if maxFlag != "" {
+		if len(maxFlag) > 1 {
+			return lib.CustomError(http.StatusBadRequest, "max_flag should be <= 1", "max_flag should be <= 1")
+		}
+	} else {
+		return lib.CustomError(http.StatusBadRequest, "max_flag can not be blank", "max_flag can not be blank")
 	}
-	params["max_flag"] = max_flag
+	params["max_flag"] = maxFlag
 
-	rec_order := c.FormValue("rec_order")
-	if rec_order == "" {
-
-		return lib.CustomError(http.StatusBadRequest, "rec_order can not be blank", "min_score can not be blank")
+	recOrder := c.FormValue("rec_order")
+	if recOrder != "" {
+		value, err := strconv.Atoi(recOrder)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "rec_order should be numeric", "rec_order should be numeric")
+		}
+		if len(recOrder) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "rec_order should be <= 11 characters", "rec_order should be <= 11 characters")
+		}
+		params["rec_order"] = strconv.Itoa(value)
 	}
 
-	params["rec_order"] = rec_order
 	params["rec_status"] = "1"
 
 	status, err = models.CreateRiskProfile(params)
@@ -145,11 +159,11 @@ func UpdateRiskProfile(c echo.Context) error {
 	riskCode := c.FormValue("risk_code")
 	if riskCode != "" {
 		if len(riskCode) > 30 {
-			return lib.CustomError(http.StatusBadRequest, "risk_code should be <= 30 characters", "risk_code should be <= 30 characters")
+			return lib.CustomError(http.StatusBadRequest, "risk_code should be <= 30", "risk_code should be <= 30")
 		}
 	} else {
 		if riskCode == "" {
-			return lib.CustomError(http.StatusBadRequest, "risk_code cant be blank", "risk_code cant be blank")
+			return lib.CustomError(http.StatusBadRequest, "risk_code can not be blank", "risk_code can not be blank")
 		}
 	}
 	params["risk_code"] = riskCode
@@ -157,42 +171,54 @@ func UpdateRiskProfile(c echo.Context) error {
 	riskName := c.FormValue("risk_name")
 	if riskName != "" {
 		if len(riskName) > 50 {
-			return lib.CustomError(http.StatusBadRequest, "risk_name should be <= 50 characters", "risk_name should be <= 50 characters")
+			return lib.CustomError(http.StatusBadRequest, "risk_code should be <= 50", "risk_code should be <= 50")
 		}
 	}
 	params["risk_name"] = riskName
 
 	riskDesc := c.FormValue("risk_desc")
 	if riskDesc != "" {
-		if len(riskDesc) > 50 {
-			return lib.CustomError(http.StatusBadRequest, "risk_desc should be <= 1000 characters", "risk_desc should be <= 1000 characters")
+		if len(riskDesc) > 1000 {
+			return lib.CustomError(http.StatusBadRequest, "risk_code should be <= 1000", "risk_code should be <= 1000")
 		}
 	}
 	params["risk_desc"] = riskDesc
 
 	min_score := c.FormValue("min_score")
+	if min_score == "" {
+		return lib.CustomError(http.StatusBadRequest, "min_score can not be blank", "min_score can not be blank")
+	}
 	params["min_score"] = min_score
 
 	max_score := c.FormValue("max_score")
+	if max_score == "" {
+		return lib.CustomError(http.StatusBadRequest, "max_score can not be blank", "max_score can not be blank")
+	}
 	params["max_score"] = max_score
 
 	maxFlag := c.FormValue("max_flag")
-	if len(maxFlag) > 1 {
-		return lib.CustomError(http.StatusBadRequest, "max_flag should be 1 character", "max_flag should be 1 character")
+	if maxFlag != "" {
+		if len(maxFlag) > 1 {
+			return lib.CustomError(http.StatusBadRequest, "max_flag should be <= 1", "max_flag should be <= 1")
+		}
+	} else {
+		return lib.CustomError(http.StatusBadRequest, "max_flag can not be blank", "max_flag can not be blank")
 	}
 	params["max_flag"] = maxFlag
 
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {
-		if len(recOrder) > 11 {
-			return lib.CustomError(http.StatusBadRequest, "rec_order should be exactly 11 characters", "rec_order be exactly 11 characters")
-		}
-		_, err := strconv.Atoi(recOrder)
+		value, err := strconv.Atoi(recOrder)
 		if err != nil {
-			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
+			return lib.CustomError(http.StatusBadRequest, "rec_order should be numeric", "rec_order should be numeric")
 		}
-		params["rec_order"] = recOrder
+		if len(recOrder) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "rec_order should be <= 11 characters", "rec_order should be <= 11 characters")
+		}
+		params["rec_order"] = strconv.Itoa(value)
 	}
+
+	// params["rec_status"] = "1"
 	status, err = models.UpdateRiskProfile(riskprofileKey, params)
 	if err != nil {
 		return lib.CustomError(status, err.Error(), "Failed input data")

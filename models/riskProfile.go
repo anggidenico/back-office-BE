@@ -3,6 +3,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -144,10 +145,16 @@ func DeleteRiskProfile(RiskProfileKey string, params map[string]string) (int, er
 
 	log.Println("========== UpdateRiskProfile ==========>>>", query)
 
-	_, err := db.Db.Exec(query, values...)
+	resultSQL, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
 		return http.StatusBadRequest, err
+	}
+	rows, _ := resultSQL.RowsAffected()
+	if rows < 1 {
+		log.Println("nothing rows affected")
+		err2 := fmt.Errorf("nothing rows affected")
+		return http.StatusNotFound, err2
 	}
 
 	return http.StatusOK, nil

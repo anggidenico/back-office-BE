@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"errors"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -29,17 +30,14 @@ func GetBenchmarkDetailController(c echo.Context) error {
 	benchmarkKey := c.Param("benchmark_key")
 	if benchmarkKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing benchmark key", "Missing benchmark key")
-	} else {
-		_, err := strconv.ParseUint(benchmarkKey, 10, 64)
-		if err != sql.ErrNoRows {
-			// log.Error("Wrong input for parameter: country_key")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: benchmark_key", "Wrong input for parameter: benchmark_key")
-		}
 	}
 	var detailbenchmark models.BenchmarkDetail
 	status, err := models.GetBenchmarkDetailModels(&detailbenchmark, benchmarkKey)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed get data")
+		if errors.Is(err, sql.ErrNoRows) {
+			return lib.CustomError(http.StatusNotFound, "Periode key not found", "Periode key not found")
+		}
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 
 	var response lib.Response
@@ -80,8 +78,16 @@ func CreateFfsBenchmarkController(c echo.Context) error {
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
 	fundTypeKey := c.FormValue("fund_type_key")
-	if fundTypeKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "fund_type_key can not be blank", "fund_type_key can not be blank")
+	if fundTypeKey != "" {
+		_, err := strconv.Atoi(fundTypeKey)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "fund_type_key should be number", "fund_type_key should be number")
+		}
+		if len(fundTypeKey) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "fund_type_key <= 11 digits", "fund_type_key <= 11 digits")
+		}
+	} else {
+		fundTypeKey = "0"
 	}
 	benchmarkCode := c.FormValue("benchmark_code")
 	if benchmarkCode == "" {
