@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -122,5 +123,37 @@ func UpdateAllocSec(AllocSeKey string, params map[string]string) (int, error) {
 		log.Println(err.Error())
 		return http.StatusBadRequest, err
 	}
+	return http.StatusOK, nil
+}
+
+func DeleteAllocSec(AllocSecKey string, params map[string]string) (int, error) {
+	query := `UPDATE ffs_alloc_security SET `
+	var setClauses []string
+	var values []interface{}
+
+	for key, value := range params {
+		if key != "alloc_security_key" {
+			setClauses = append(setClauses, key+" = ?")
+			values = append(values, value)
+		}
+	}
+	query += strings.Join(setClauses, ", ")
+	query += ` WHERE alloc_security_key = ?`
+	values = append(values, AllocSecKey)
+
+	log.Println("========== UpdateRiskProfile ==========>>>", query)
+
+	resultSQL, err := db.Db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return http.StatusBadGateway, err
+	}
+	rows, _ := resultSQL.RowsAffected()
+	if rows < 1 {
+		log.Println("nothing rows affected")
+		err2 := fmt.Errorf("nothing rows affected")
+		return http.StatusNotFound, err2
+	}
+
 	return http.StatusOK, nil
 }

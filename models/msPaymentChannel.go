@@ -293,8 +293,6 @@ func GetPaymentChannelByCusomerKey(c *[]SubscribePaymentChannel, product string,
 			LEFT JOIN gen_lookup AS lm ON lm.lookup_key = c.settle_payment_method
 			WHERE p.product_key = ` + product
 
-	// Main query
-	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)

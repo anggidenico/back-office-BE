@@ -581,9 +581,11 @@ func router() *echo.Echo {
 	admin.POST("/delete-ffsperiode", controllers.DeleteFfsPeriode).Name = "DeleteFfsPeriode"
 
 	//Fund Fact Sheet - Portfolio Instrument
-	admin.GET("/get-allocsecurity", controllers.GetAllocSecController).Name = "GetAllocSecController"            // belum validasi
-	admin.POST("/create-alloc-security", controllers.CreateAllocSecController).Name = "CreateAllocSecController" // belum vlaidasi
+	admin.GET("/get-allocsecurity", controllers.GetAllocSecController).Name = "GetAllocSecController"
+	admin.GET("/get-allocsecurity-detail", controllers.GetAllocSecDetailController).Name = "GetAllocSecController"
+	admin.POST("/create-alloc-security", controllers.CreateAllocSecController).Name = "CreateAllocSecController"
 	admin.POST("/update-alloc-security", controllers.UpdateAllocSecController).Name = "UpdateAllocSecController"
+	admin.POST("/delete-alloc-security", controllers.DeleteAllocSecController).Name = "DeleteAllocSecController"
 	return e
 
 }
