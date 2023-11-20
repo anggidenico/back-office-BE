@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"database/sql"
+	"errors"
 	"math/big"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
@@ -33,10 +35,11 @@ func GetMsPaymentDetailController(c echo.Context) error {
 	var detailpayment models.PaymentChannelDetail
 	status, err := models.GetDetailPaymentChannelModels(&detailpayment, pChannelKey)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed get data")
+		if errors.Is(err, sql.ErrNoRows) {
+			return lib.CustomError(http.StatusNotFound, "pchannel_key", "pchannel_key not found")
+		}
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
-	// log.Println("Not Found")
-
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
@@ -98,18 +101,64 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 		params["min_nominal_trx"] = minNominalTrx
 	}
 
+	// feeValue := c.FormValue("fee_value")
+	// if feeValue != "" {
+	// 	// Cek apakah fee_value adalah numeric
+	// 	if len(feeValue) > 18 {
+	// 		return lib.CustomError(http.StatusBadRequest, "kepanjangan yang diinput", "kepanjangan yang diinput")
+	// 	}
+	// 	_, err := strconv.ParseFloat(feeValue, 64)
+	// 	if err != nil {
+	// 		return lib.CustomError(http.StatusBadRequest, "fee_value must be a numeric value", "fee_value must be a numeric value")
+	// 	}
+	// } else {
+	// 	if feeValue == "" {
+	// 		feeValue = "0"
+	// 	}
+	// }
+	// params["fee_value"] = feeValue
+
 	feeValue := c.FormValue("fee_value")
+	valueType := c.FormValue("value_type")
+
+	// Jika value_type adalah 316, cek fee_value
+	// if valueType == "316" {
+	// 	if feeValue == "" {
+	// 		feeValue = "0"
+	// 	} else {
+	// if len(feeValue) > 18 {
+	// 	return lib.CustomError(http.StatusBadRequest, "kepanjangan yang diinput", "kepanjangan yang diinput")
+	// }
 	if feeValue != "" {
-		value, success := new(big.Int).SetString(feeValue, 10)
-		if !success {
+		_, err := strconv.ParseFloat(feeValue, 64)
+		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "fee_value must be a numeric value", "fee_value must be a numeric value")
 		}
-		if value.BitLen() > 18*3 { // 3 bits per digit to account for decimal places
-			return lib.CustomError(http.StatusBadRequest, "fee_value should not exceed 18 digits", "fee_value should not exceed 18 digits")
-		}
-	} else {
-		return lib.CustomError(http.StatusBadRequest, "fee_value can not be blank", "fee_value can not be blank")
 	}
+	// } else {
+	// 	_, err := strconv.Atoi(feeValue)
+	// 	if err != nil {
+	// 		return lib.CustomError(http.StatusBadRequest, "fee_value harus harus angka", "fee_value harus harus angka")
+	// 	}
+	// }
+	// Set nilai fee_value ke dalam params
+	params["fee_value"] = feeValue
+
+	// valueType := c.FormValue("value_type")
+	// if valueType != "" {
+	// 	if len(valueType) > 11 {
+	// 		return lib.CustomError(http.StatusBadRequest, "value_type should be exactly 11 characters", "value_type be exactly 11 characters")
+	// 	}
+	// 	value, err := strconv.Atoi(valueType)
+	// 	if err != nil {
+	// 		return lib.CustomError(http.StatusBadRequest, "value_type should be a number", "value_type should be a number")
+	// 	}
+	// 	if value == 315 {
+
+	// 	}
+	// } else {
+	// 	return lib.CustomError(http.StatusBadRequest, "value_type can not be blank", "value_type can not be blank")
+	// }
 
 	hasMinMax := c.FormValue("has_min_max")
 	if hasMinMax == "" {
@@ -153,19 +202,7 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 	} else {
 		return lib.CustomError(http.StatusBadRequest, "settle_payment_method can not be blank", "settle_payment_method can not be blank")
 	}
-	valueType := c.FormValue("value_type")
-	if valueType != "" {
-		if len(valueType) > 11 {
-			return lib.CustomError(http.StatusBadRequest, "value_type should be exactly 11 characters", "value_type be exactly 11 characters")
-		}
-		value, err := strconv.Atoi(valueType)
-		if err != nil {
-			return lib.CustomError(http.StatusBadRequest, "value_type should be a number", "value_type should be a number")
-		}
-		params["value_type"] = strconv.Itoa(value)
-	} else {
-		return lib.CustomError(http.StatusBadRequest, "value_type can not be blank", "value_type can not be blank")
-	}
+
 	feeMinValue := c.FormValue("fee_min_value") // tanya eka
 
 	feeMaxValue := c.FormValue("fee_max_value") // tanya eka
@@ -312,36 +349,65 @@ func UpdateMsPaymentChannelController(c echo.Context) error {
 		}
 		params["min_nominal_trx"] = minNominalTrx
 	}
+
+	// feeValue := c.FormValue("fee_value")
+	// if feeValue != "" {
+	// 	// Cek apakah fee_value adalah numeric
+	// 	if len(feeValue) > 18 {
+	// 		return lib.CustomError(http.StatusBadRequest, "kepanjangan yang diinput", "kepanjangan yang diinput")
+	// 	}
+	// 	_, err := strconv.ParseFloat(feeValue, 64)
+	// 	if err != nil {
+	// 		return lib.CustomError(http.StatusBadRequest, "fee_value must be a numeric value", "fee_value must be a numeric value")
+	// 	}
+	// } else {
+	// 	if feeValue == "" {
+	// 		feeValue = "0"
+	// 	}
+	// }
+	// params["fee_value"] = feeValue
+
 	feeValue := c.FormValue("fee_value")
 	valueType := c.FormValue("value_type")
-	if feeValue != "" {
-		// Cek apakah fee_value adalah numeric
-		_, err := strconv.ParseFloat(feeValue, 64)
-		if err != nil {
-			return lib.CustomError(http.StatusBadRequest, "fee_value must be a numeric value", "fee_value must be a numeric value")
-		}
-		params["fee_value"] = feeValue
-	}
-	// 	// Jika value_type adalah 316, tambahkan validasi khusus
-	// 	if valueType == "316" {
-	// 		if strings.Contains(feeValue, ".") {
-	// 			return lib.CustomError(http.StatusBadRequest, "fee_value for value_type 316 should not be a decimal number", "fee_value for value_type 316 should not be a decimal number")
-	// 		}
-	// 	}
 
+	// Jika value_type adalah 316, cek fee_value
+	if valueType == "316" {
+		if feeValue == "" {
+			feeValue = "0"
+		} else {
+			if len(feeValue) > 18 {
+				return lib.CustomError(http.StatusBadRequest, "kepanjangan yang diinput", "kepanjangan yang diinput")
+			}
+			_, err := strconv.ParseFloat(feeValue, 64)
+			if err != nil {
+				return lib.CustomError(http.StatusBadRequest, "fee_value must be a numeric value", "fee_value must be a numeric value")
+			}
+		}
+	} else {
+		_, err := strconv.Atoi(feeValue)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "fee_value harus harus angka", "fee_value harus harus angka")
+		}
+	}
+	// Set nilai fee_value ke dalam params
+	params["fee_value"] = feeValue
+
+	// valueType := c.FormValue("value_type")
+	// if valueType != "" {
+	// 	if len(valueType) > 11 {
+	// 		return lib.CustomError(http.StatusBadRequest, "value_type should be exactly 11 characters", "value_type be exactly 11 characters")
+	// 	}
+	// 	value, err := strconv.Atoi(valueType)
+	// 	if err != nil {
+	// 		return lib.CustomError(http.StatusBadRequest, "value_type should be a number", "value_type should be a number")
+	// 	}
+	// 	if value == 315 {
+
+	// 	}
 	// } else {
-	// 	return lib.CustomError(http.StatusBadRequest, "fee_value can not be blank", "fee_value can not be blank")
+	// 	return lib.CustomError(http.StatusBadRequest, "value_type can not be blank", "value_type can not be blank")
 	// }
 
-	if valueType != "" {
-		if len(valueType) > 11 {
-			return lib.CustomError(http.StatusBadRequest, "value_type should be exactly 11 characters", "value_type should be exactly 11 characters")
-		}
-
-		params["value_type"] = valueType
-	} else {
-		return lib.CustomError(http.StatusBadRequest, "value_type can not be blank", "value_type can not be blank")
-	}
 	hasMinMax := c.FormValue("has_min_max")
 	if hasMinMax == "" {
 		return lib.CustomError(http.StatusBadRequest, "has_min_max can not be blank", "has_min_max can not be blank")
@@ -384,28 +450,11 @@ func UpdateMsPaymentChannelController(c echo.Context) error {
 	} else {
 		return lib.CustomError(http.StatusBadRequest, "settle_payment_method can not be blank", "settle_payment_method can not be blank")
 	}
-	feeMinValue := c.FormValue("fee_min_value")
-	if feeMinValue != "" {
-		value, success := new(big.Int).SetString(feeMinValue, 10)
-		if !success {
-			return lib.CustomError(http.StatusBadRequest, "fee_min_value must be a numeric value", "fee_min_value must be a numeric value")
-		}
-		if value.BitLen() > 18*3 { // 3 bits per digit to account for decimal places
-			return lib.CustomError(http.StatusBadRequest, "fee_min_value should not exceed 18 digits", "fee_min_value should not exceed 18 digits")
-		}
-		params["fee_min_value"] = feeMinValue
-	}
-	feeMaxValue := c.FormValue("fee_max_value")
-	if feeMaxValue != "" {
-		value, success := new(big.Int).SetString(feeMaxValue, 10)
-		if !success {
-			return lib.CustomError(http.StatusBadRequest, "fee_max_value must be a numeric value", "fee_max_value must be a numeric value")
-		}
-		if value.BitLen() > 18*3 { // 3 bits per digit to account for decimal places
-			return lib.CustomError(http.StatusBadRequest, "fee_max_value should not exceed 18 digits", "fee_max_value should not exceed 18 digits")
-		}
-		params["fee_max_value"] = feeMaxValue
-	}
+
+	feeMinValue := c.FormValue("fee_min_value") // tanya eka
+
+	feeMaxValue := c.FormValue("fee_max_value") // tanya eka
+
 	fixedDmrFee := c.FormValue("fixed_dmr_fee")
 	if fixedDmrFee != "" {
 		value, success := new(big.Int).SetString(fixedDmrFee, 10)
@@ -479,6 +528,7 @@ func UpdateMsPaymentChannelController(c echo.Context) error {
 		params["rec_order"] = strconv.Itoa(value)
 	}
 	params["rec_order"] = recOrder
+
 	params["pchannel_code"] = pChannelCode
 	params["pchannel_name"] = pchannelName
 	params["pchannel_name"] = pchannelName

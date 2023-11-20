@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"mf-bo-api/config"
 	"mf-bo-api/db"
@@ -292,8 +293,6 @@ func GetPaymentChannelByCusomerKey(c *[]SubscribePaymentChannel, product string,
 			LEFT JOIN gen_lookup AS lm ON lm.lookup_key = c.settle_payment_method
 			WHERE p.product_key = ` + product
 
-	// Main query
-	// log.Println("==========  ==========>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
@@ -413,10 +412,16 @@ func DeleteMsPaymentChannel(PChannelKey string, params map[string]string) (int, 
 
 	log.Println("========== UpdateRiskProfile ==========>>>", query)
 
-	_, err := db.Db.Exec(query, values...)
+	resultSQL, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
 		return http.StatusBadGateway, err
+	}
+	rows, _ := resultSQL.RowsAffected()
+	if rows < 1 {
+		log.Println("nothing rows affected")
+		err2 := fmt.Errorf("nothing rows affected")
+		return http.StatusNotFound, err2
 	}
 
 	return http.StatusOK, nil

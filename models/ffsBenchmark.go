@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -16,6 +17,7 @@ type Benchmark struct {
 	BenchmarkShortName string `db:"benchmark_short_name" json:"benchmark_short_name"`
 }
 type BenchmarkDetail struct {
+	BenchmarkKey       int64  `db:"benchmark_key" json:"benchmark_key"`
 	FundTypeKey        int64  `db:"fund_type_key"        json:"fund_type_key"`
 	FundTypeName       string `db:"fund_type_name" json:"fund_type_name"`
 	BenchmarkCode      string `db:"benchmark_code"  json:"benchmark_code"`
@@ -46,7 +48,9 @@ func GetBenchmarkModels(c *[]Benchmark) (int, error) {
 }
 
 func GetBenchmarkDetailModels(c *BenchmarkDetail, BenchmarkKey string) (int, error) {
-	query := `SELECT a.fund_type_key,
+	query := `SELECT 
+	a.benchmark_key,
+	a.fund_type_key,
 	b.fund_type_name, 
 	a.benchmark_code, 
 	a.benchmark_name, 
@@ -83,12 +87,17 @@ func DeleteBenchmark(BenchmarkKey string, params map[string]string) (int, error)
 
 	log.Println("========== DeleteBenchmark ==========>>>", query)
 
-	_, err := db.Db.Exec(query, values...)
+	resultSQL, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
-
+	rows, _ := resultSQL.RowsAffected()
+	if rows < 1 {
+		log.Println("nothing rows affected")
+		err2 := fmt.Errorf("nothing rows affected")
+		return http.StatusNotFound, err2
+	}
 	return http.StatusOK, nil
 }
 

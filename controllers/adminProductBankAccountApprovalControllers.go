@@ -149,6 +149,24 @@ func UpdateProductBankRequest(c echo.Context) error {
 	paramsProductBankAccount := make(map[string]string)
 	paramsBankAcc := make(map[string]string)
 
+	prod_bankacc_key := c.FormValue("prod_bankacc_key")
+	if prod_bankacc_key == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key cann't be blank", "Missing required parameter: key cann't be blank")
+	}
+	strkey, err := strconv.ParseUint(prod_bankacc_key, 10, 64)
+	if err == nil && strkey > 0 {
+		paramsProductBankAccount["prod_bankacc_key"] = prod_bankacc_key
+	} else {
+		// log.Error("Wrong input for parameter: key")
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: key", "Missing required parameter: key")
+	}
+
+	var productBankAccount models.MsProductBankAccount
+	status, err = models.GetMsProductBankAccount(&productBankAccount, prod_bankacc_key)
+	if err != nil {
+		return lib.CustomError(http.StatusNotFound)
+	}
+
 	//product_key
 	productkey := c.FormValue("product_key")
 	if productkey == "" {
@@ -257,9 +275,9 @@ func UpdateProductBankRequest(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_purpose", "Missing required parameter: bank_account_purpose")
 	}
 
-	paramsBankAcc["rec_status"] = "1"
-	paramsBankAcc["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
-	paramsBankAcc["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+	paramsBankAcc["bank_account_key"] = strconv.FormatUint(*productBankAccount.BankAccountKey, 10)
+	paramsBankAcc["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	paramsBankAcc["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 
 	paramsProductBankAccount["rec_status"] = "1"
 	paramsProductBankAccount["rec_action"] = "UPDATE"
@@ -305,5 +323,45 @@ func ProductBankAccountApprovalDetail(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Data = result
+	return c.JSON(http.StatusOK, response)
+}
+
+func ProductBankAccountApprovalAction(c echo.Context) error {
+	params := make(map[string]string)
+	params["rec_by"] = lib.UserIDStr
+	params["rec_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+
+	RecPK := c.FormValue("rec_pk")
+	if RecPK == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing: rec_pk", "Missing: rec_pk")
+	}
+	params["rec_pk"] = RecPK
+
+	Approval := c.FormValue("approval")
+	if Approval == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing: approval", "Missing: approval")
+	}
+	if Approval == "true" {
+		params["approval"] = "1"
+	} else {
+		params["approval"] = "0"
+	}
+
+	Reason := c.FormValue("reason")
+	if Approval == "false" && Reason == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing: reason", "Missing: reason")
+	}
+	params["reason"] = Reason
+
+	err := models.ProductBankAccountApprovalAction(params)
+	if err != nil {
+		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
+	}
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = nil
 	return c.JSON(http.StatusOK, response)
 }

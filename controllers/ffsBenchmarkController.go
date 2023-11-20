@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"errors"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -29,17 +30,14 @@ func GetBenchmarkDetailController(c echo.Context) error {
 	benchmarkKey := c.Param("benchmark_key")
 	if benchmarkKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing benchmark key", "Missing benchmark key")
-	} else {
-		_, err := strconv.ParseUint(benchmarkKey, 10, 64)
-		if err != sql.ErrNoRows {
-			// log.Error("Wrong input for parameter: country_key")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: benchmark_key", "Wrong input for parameter: benchmark_key")
-		}
 	}
 	var detailbenchmark models.BenchmarkDetail
 	status, err := models.GetBenchmarkDetailModels(&detailbenchmark, benchmarkKey)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed get data")
+		if errors.Is(err, sql.ErrNoRows) {
+			return lib.CustomError(http.StatusNotFound, "benchmark_key not found", "benchmark_key not found")
+		}
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 
 	var response lib.Response
@@ -80,20 +78,35 @@ func CreateFfsBenchmarkController(c echo.Context) error {
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
 	fundTypeKey := c.FormValue("fund_type_key")
-	if fundTypeKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "fund_type_key can not be blank", "fund_type_key can not be blank")
+	if fundTypeKey != "" {
+		_, err := strconv.Atoi(fundTypeKey)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "fund_type_key should be number", "fund_type_key should be number")
+		}
+		if len(fundTypeKey) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "fund_type_key <= 11 digits", "fund_type_key <= 11 digits")
+		}
+	} else {
+		fundTypeKey = "0"
 	}
 	benchmarkCode := c.FormValue("benchmark_code")
-	if benchmarkCode == "" {
-		return lib.CustomError(http.StatusBadRequest, "benchmark_code can not be blank", "benchmark_code can not be blank")
+	if benchmarkCode != "" {
+		if len(benchmarkCode) > 50 {
+			return lib.CustomError(http.StatusBadRequest, "fund_type_key must be <= 50 characters", "fund_type_key must be <= 50 characters")
+		}
 	}
+
 	benchmarkName := c.FormValue("benchmark_name")
-	if benchmarkName == "" {
-		return lib.CustomError(http.StatusBadRequest, "benchmark_name can not be blank", "benchmark_name can not be blank")
+	if benchmarkName != "" {
+		if len(benchmarkName) > 150 {
+			return lib.CustomError(http.StatusBadRequest, "benchmark_name  must be <= 150 character", "benchmark_name must be <= 150 characters")
+		}
 	}
 	benchmarkShortName := c.FormValue("benchmark_short_name")
-	if benchmarkShortName == "" {
-		return lib.CustomError(http.StatusBadRequest, "benchmark_short_name can not be blank", "benchmark_short_name can not be blank")
+	if benchmarkShortName != "" {
+		if len(benchmarkShortName) > 70 {
+			return lib.CustomError(http.StatusBadRequest, "benchmark_short_name must be <= 70 characters", "benchmark_short_name must be <= 70 characters")
+		}
 	}
 	recAttributeID1 := c.FormValue("rec_attribute_id1")
 	if recAttributeID1 == "" {
@@ -131,20 +144,39 @@ func UpdateFfsBenchmarkController(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "benchmark_key can not be blank", "benchmark_key can not be blank")
 	}
 	fundTypeKey := c.FormValue("fund_type_key")
-	if fundTypeKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "fund_type_key can not be blank", "fund_type_key can not be blank")
+	if fundTypeKey != "" {
+		_, err := strconv.Atoi(fundTypeKey)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "fund_type_key should be number", "fund_type_key should be number")
+		}
+		if len(fundTypeKey) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "fund_type_key <= 11 digits", "fund_type_key <= 11 digits")
+		}
+	} else {
+		fundTypeKey = "0"
 	}
 	benchmarkCode := c.FormValue("benchmark_code")
-	if benchmarkCode == "" {
-		return lib.CustomError(http.StatusBadRequest, "benchmark_code can not be blank", "benchmark_code can not be blank")
+	if benchmarkCode != "" {
+		if len(benchmarkCode) > 50 {
+			return lib.CustomError(http.StatusBadRequest, "fund_type_key must be <= 50 characters", "fund_type_key must be <= 50 characters")
+		}
 	}
+
 	benchmarkName := c.FormValue("benchmark_name")
-	if benchmarkName == "" {
-		return lib.CustomError(http.StatusBadRequest, "benchmark_name can not be blank", "benchmark_name can not be blank")
+	if benchmarkName != "" {
+		if len(benchmarkName) > 150 {
+			return lib.CustomError(http.StatusBadRequest, "benchmark_name  must be <= 150 character", "benchmark_name must be <= 150 characters")
+		}
 	}
 	benchmarkShortName := c.FormValue("benchmark_short_name")
-	if benchmarkShortName == "" {
-		return lib.CustomError(http.StatusBadRequest, "benchmark_short_name can not be blank", "benchmark_short_name can not be blank")
+	if benchmarkShortName != "" {
+		if len(benchmarkShortName) > 70 {
+			return lib.CustomError(http.StatusBadRequest, "benchmark_short_name must be <= 70 characters", "benchmark_short_name must be <= 70 characters")
+		}
+	}
+	recAttributeID1 := c.FormValue("rec_attribute_id1")
+	if recAttributeID1 == "" {
+		return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 can not be blank", "rec_attribute_id1 can not be blank")
 	}
 	// recAttributeID1 := c.FormValue("rec_attribute_id1")
 	// if recAttributeID1 == "" {

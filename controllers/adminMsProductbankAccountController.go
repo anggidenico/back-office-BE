@@ -540,7 +540,7 @@ func CreateAdminMsProductBankAccount(c echo.Context) error {
 
 }
 
-func UpdateAdminMsProductBankAccount(c echo.Context) error {
+func UpdateAdminMsProductBankAccount(c echo.Context) error { 
 	var err error
 	var status int
 

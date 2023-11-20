@@ -543,7 +543,7 @@ func router() *echo.Echo {
 	// --- dari sisi approver ---
 	admin.GET("/productbankaccount/approval-list", controllers.ProductBankAccountApprovalList)
 	admin.GET("/productbankaccount/approval-detail/:rec_pk", controllers.ProductBankAccountApprovalDetail)
-	// admin.POST("/productfee/approval-action", controllers.ProductFeeApprovalAction)
+	admin.POST("/productbankaccount/approval-action", controllers.ProductBankAccountApprovalAction)
 
 	// MASTER PAYMENT CHANNEL
 	admin.GET("/get-payment-channel", controllers.GetmsPaymentChannelController).Name = "GetmsPaymentChannelController"
@@ -582,7 +582,10 @@ func router() *echo.Echo {
 
 	//Fund Fact Sheet - Portfolio Instrument
 	admin.GET("/get-allocsecurity", controllers.GetAllocSecController).Name = "GetAllocSecController"
+	admin.GET("/get-allocsecurity-detail", controllers.GetAllocSecDetailController).Name = "GetAllocSecController"
 	admin.POST("/create-alloc-security", controllers.CreateAllocSecController).Name = "CreateAllocSecController"
+	admin.POST("/update-alloc-security", controllers.UpdateAllocSecController).Name = "UpdateAllocSecController"
+	admin.POST("/delete-alloc-security", controllers.DeleteAllocSecController).Name = "DeleteAllocSecController"
 	return e
 
 }
