@@ -121,6 +121,7 @@ func DeleteBenchmarkProduct(BenchProdKey string, params map[string]string) (int,
 
 	return http.StatusOK, nil
 }
+
 func UpdateBenchmarkProduct(BenchProdKey string, params map[string]string) (int, error) {
 	query := `UPDATE ffs_benchmark_product SET `
 	var setClauses []string

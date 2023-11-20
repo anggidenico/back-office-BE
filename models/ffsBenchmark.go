@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"mf-bo-api/db"
@@ -101,58 +102,134 @@ func DeleteBenchmark(BenchmarkKey string, params map[string]string) (int, error)
 	return http.StatusOK, nil
 }
 
+func CheckDuplicateFfsBenchmarkModels(benchmarkCode, benchmarkName string) (bool, string, error) {
+	query := "SELECT bench_prod_key FROM ffs_benchmark_product WHERE benchmark_code = ? AND benchmark_name = ?"
+	var key string
+	err := db.Db.QueryRow(query, benchmarkCode, benchmarkName).Scan(&key)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Tidak ada duplikasi, key di set menjadi ""
+			return false, "", nil
+		}
+		return false, "", err
+	}
+
+	// Duplikasi ditemukan, kembalikan key
+	return true, key, nil
+}
+
+// UpdateBenchmarkProduct updates an existing record in the database.
+// func CreateBenchmarkModels(BenchProdKey string, params map[string]string) (int, error) {
+// 	query := `UPDATE ffs_benchmark_product SET `
+// 	var setClauses []string
+// 	var values []interface{}
+
+// 	for key, value := range params {
+// 		setClauses = append(setClauses, key+" = ?")
+// 		values = append(values, value)
+// 	}
+// 	query += strings.Join(setClauses, ", ")
+// 	query += ` WHERE bench_prod_key = ?`
+// 	values = append(values, BenchProdKey)
+
+// 	log.Println("========== UpdateBenchmarkProduct ==========>>>", query)
+
+// 	_, err := db.Db.Exec(query, values...)
+// 	if err != nil {
+// 		log.Println(err.Error())
+// 		return http.StatusBadGateway, err
+// 	}
+// 	return http.StatusOK, nil
+// }
+
+// models.go
+
+func CheckDuplicateFfsBenchmark(benchmarkCode, benchmarkName string) (bool, string, error) { //dari sini
+	// Query to check for duplicates
+	query := "SELECT benchmark_key FROM ffs_benchmark WHERE benchmark_code = ? OR benchmark_name = ? LIMIT 1"
+	var key string
+	err := db.Db.QueryRow(query, benchmarkCode, benchmarkName).Scan(&key)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// No duplicate found
+			return false, "", nil
+		}
+		// Other error occurred
+		return false, "", err
+	}
+
+	// Duplicate found
+	return true, key, nil
+}
+
 func CreateFfsBenchmark(params map[string]string) (int, error) {
-	query := "INSERT INTO ffs_benchmark"
-	// Get params
-	var fields, values string
+	// Check for duplicate records
+	duplicate, key, err := CheckDuplicateFfsBenchmark(params["benchmark_code"], params["benchmark_name"])
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	// Jika duplikasi ditemukan, perbarui data yang sudah ada
+	if duplicate {
+		status, err := UpdateBenchmark(key, params)
+		if err != nil {
+			return status, err
+		}
+		return http.StatusOK, nil
+	}
+
+	// Jika tidak ada duplikasi, buat data baru
+	fields := ""
+	placeholders := ""
 	var bindvars []interface{}
+
 	for key, value := range params {
 		fields += key + ", "
-		values += "?, "
+		placeholders += "?, "
 		bindvars = append(bindvars, value)
 	}
-	fields = fields[:(len(fields) - 2)]
-	values = values[:(len(values) - 2)]
 
-	// Combine params to build query
-	query += "(" + fields + ") VALUES(" + values + ")"
-	// log.Println("==========  ==========>>>", query)
+	fields = fields[:len(fields)-2]
+	placeholders = placeholders[:len(placeholders)-2]
+
+	query := "INSERT INTO ffs_benchmark (" + fields + ") VALUES (" + placeholders + ")"
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
+
 	_, err = tx.Exec(query, bindvars...)
-	tx.Commit()
 	if err != nil {
-		// log.Error(err)
+		tx.Rollback()
 		return http.StatusBadRequest, err
 	}
+
+	tx.Commit()
+
 	return http.StatusOK, nil
 }
 
-func UpdateFfsBenchmark(BenchmarkKey string, params map[string]string) (int, error) {
+func UpdateBenchmark(benchmarkKey string, params map[string]string) (int, error) {
 	query := `UPDATE ffs_benchmark SET `
 	var setClauses []string
 	var values []interface{}
 
 	for key, value := range params {
-		if key != "benchmark_key" {
-			setClauses = append(setClauses, key+" = ?")
-			values = append(values, value)
-		}
+		setClauses = append(setClauses, key+" = ?")
+		values = append(values, value)
 	}
 	query += strings.Join(setClauses, ", ")
 	query += ` WHERE benchmark_key = ?`
-	values = append(values, BenchmarkKey)
+	values = append(values, benchmarkKey)
 
-	log.Println("========== UpdateFFsBenchmark ==========>>>", query)
+	log.Println("========== UpdateBenchmark ==========>>>", query)
 
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
 		log.Println(err.Error())
-		return http.StatusBadRequest, err
+		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
 }

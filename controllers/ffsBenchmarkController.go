@@ -3,6 +3,7 @@ package controllers
 import (
 	"database/sql"
 	"errors"
+	"log"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -81,7 +82,7 @@ func CreateFfsBenchmarkController(c echo.Context) error {
 	if fundTypeKey != "" {
 		_, err := strconv.Atoi(fundTypeKey)
 		if err != nil {
-			return lib.CustomError(http.StatusBadRequest, "fund_type_key should be number", "fund_type_key should be number")
+			return lib.CustomError(http.StatusBadRequest, "fund_type_key should be a number", "fund_type_key should be a number")
 		}
 		if len(fundTypeKey) > 11 {
 			return lib.CustomError(http.StatusBadRequest, "fund_type_key <= 11 digits", "fund_type_key <= 11 digits")
@@ -92,14 +93,14 @@ func CreateFfsBenchmarkController(c echo.Context) error {
 	benchmarkCode := c.FormValue("benchmark_code")
 	if benchmarkCode != "" {
 		if len(benchmarkCode) > 50 {
-			return lib.CustomError(http.StatusBadRequest, "fund_type_key must be <= 50 characters", "fund_type_key must be <= 50 characters")
+			return lib.CustomError(http.StatusBadRequest, "benchmark_code must be <= 50 characters", "benchmark_code must be <= 50 characters")
 		}
 	}
 
 	benchmarkName := c.FormValue("benchmark_name")
 	if benchmarkName != "" {
 		if len(benchmarkName) > 150 {
-			return lib.CustomError(http.StatusBadRequest, "benchmark_name  must be <= 150 character", "benchmark_name must be <= 150 characters")
+			return lib.CustomError(http.StatusBadRequest, "benchmark_name must be <= 150 characters", "benchmark_name must be <= 150 characters")
 		}
 	}
 	benchmarkShortName := c.FormValue("benchmark_short_name")
@@ -120,19 +121,46 @@ func CreateFfsBenchmarkController(c echo.Context) error {
 	params["rec_attribute_id1"] = recAttributeID1
 	params["rec_status"] = "1"
 
+	// Check for duplicate records
+	duplicate, key, err := models.CheckDuplicateFfsBenchmark(params["benchmark_code"], params["benchmark_name"])
+	if err != nil {
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
+	}
+	log.Println("Duplicate:", duplicate)
+	log.Println("Key:", key)
+	// Jika duplikasi ditemukan, perbarui data yang sudah ada
+	if duplicate {
+		status, err := models.UpdateBenchmark(key, params)
+		if err != nil {
+			log.Println("Failed to update data:", err)
+			return lib.CustomError(status, "Failed to update data", "Failed to update data")
+		}
+		return c.JSON(http.StatusOK, lib.Response{
+			Status: lib.Status{
+				Code:          http.StatusOK,
+				MessageServer: "OK",
+				MessageClient: "OK",
+			},
+			Data: "Data updated successfully",
+		})
+	}
+
+	// Jika tidak ada duplikasi, buat data baru
 	status, err = models.CreateFfsBenchmark(params)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed input data")
+		return lib.CustomError(status, "Failed input data", "Failed input data")
 	}
-	var response lib.Response
-	response.Status.Code = http.StatusOK
-	response.Status.MessageServer = "OK"
-	response.Status.MessageClient = "OK"
-	response.Data = ""
 
-	return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, lib.Response{
+		Status: lib.Status{
+			Code:          http.StatusOK,
+			MessageServer: "OK",
+			MessageClient: "OK",
+		},
+		Data: "Data created successfully",
+	})
 }
-
 func UpdateFfsBenchmarkController(c echo.Context) error {
 	var err error
 	params := make(map[string]string)
@@ -190,64 +218,7 @@ func UpdateFfsBenchmarkController(c echo.Context) error {
 	// params["rec_attribute_id1"] = recAttributeID1
 	params["rec_status"] = "1"
 
-	status, err = models.UpdateFfsBenchmark(benchmarkKey, params)
-	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed input data")
-	}
-	var response lib.Response
-	response.Status.Code = http.StatusOK
-	response.Status.MessageServer = "OK"
-	response.Status.MessageClient = "OK"
-	response.Data = ""
-
-	return c.JSON(http.StatusOK, response)
-}
-func DeleteBenchmarkProdController(c echo.Context) error {
-	params := make(map[string]string)
-	params["rec_status"] = "0"
-	params["rec_deleted_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
-	params["rec_deleted_by"] = lib.UserIDStr
-
-	benchProdKey := c.FormValue("bench_prod_key")
-	if benchProdKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing bench_prod_key", "Missing bench_prod_key")
-	}
-
-	status, err := models.DeleteBenchmarkProduct(benchProdKey, params)
-	if err != nil {
-		return lib.CustomError(status, err.Error(), err.Error())
-	}
-	var response lib.Response
-	response.Status.Code = http.StatusOK
-	response.Status.MessageServer = "OK"
-	response.Status.MessageClient = "Berhasil Menghapus Benchmark Product!"
-	response.Data = ""
-	return c.JSON(http.StatusOK, response)
-}
-func UpdateBenchmarkProdController(c echo.Context) error {
-	var err error
-	params := make(map[string]string)
-	params["rec_modified_by"] = lib.UserIDStr
-	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
-
-	benchProdKey := c.FormValue("bench_prod_key")
-	if benchProdKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "bench_prod_key can not be blank", "brench_prod_key can not be blank")
-	}
-	productKey := c.FormValue("product_key")
-	if productKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "product_key can not be blank", "product_key can not be blank")
-	}
-	benchmarkRatio := c.FormValue("benchmark_ratio")
-	if benchmarkRatio == "" {
-		return lib.CustomError(http.StatusBadRequest, "benchmark_ratio can not be blank", "benchmark_ratio can not be blank")
-	}
-	params["bench_prod_key"] = benchProdKey
-	params["product_key"] = productKey
-	params["benchmark_ratio"] = benchmarkRatio
-	params["rec_status"] = "1"
-
-	status, err = models.UpdateBenchmarkProduct(benchProdKey, params)
+	status, err = models.UpdateBenchmark(benchmarkKey, params)
 	if err != nil {
 		return lib.CustomError(status, err.Error(), "Failed input data")
 	}
