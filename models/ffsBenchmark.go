@@ -16,6 +16,7 @@ type Benchmark struct {
 	BenchmarkCode      string `db:"benchmark_code"  json:"benchmark_code"`
 	BenchmarkName      string `db:"benchmark_name"  json:"benchmark_name"`
 	BenchmarkShortName string `db:"benchmark_short_name" json:"benchmark_short_name"`
+	RecAttributeID1    int64  `db:"rec_attribute_id1" json:"rec_attribute_id1"`
 }
 type BenchmarkDetail struct {
 	BenchmarkKey       int64  `db:"benchmark_key" json:"benchmark_key"`
@@ -34,7 +35,8 @@ func GetBenchmarkModels(c *[]Benchmark) (int, error) {
 	b.fund_type_name, 
 	a.benchmark_code, 
 	a.benchmark_name, 
-	a.benchmark_short_name 
+	a.benchmark_short_name,
+	a.rec_attribute_id1
 	FROM ffs_benchmark a 
 	JOIN ms_fund_type b 
 	ON a.fund_type_key = b.fund_type_key WHERE a.rec_status = 1` //order by

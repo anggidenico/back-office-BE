@@ -110,8 +110,10 @@ func CreateFfsBenchmarkController(c echo.Context) error {
 		}
 	}
 	recAttributeID1 := c.FormValue("rec_attribute_id1")
-	if recAttributeID1 == "" {
-		return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 can not be blank", "rec_attribute_id1 can not be blank")
+	if recAttributeID1 != "" {
+		if len(recAttributeID1) > 50 {
+			return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 must be <= 50 characters", "rec_attribute_id1 must be <= 70 characters")
+		}
 	}
 
 	params["fund_type_key"] = fundTypeKey
@@ -203,13 +205,11 @@ func UpdateFfsBenchmarkController(c echo.Context) error {
 		}
 	}
 	recAttributeID1 := c.FormValue("rec_attribute_id1")
-	if recAttributeID1 == "" {
-		return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 can not be blank", "rec_attribute_id1 can not be blank")
+	if recAttributeID1 != "" {
+		if len(recAttributeID1) > 50 {
+			return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 must be <= 50 characters", "rec_attribute_id1 must be <= 70 characters")
+		}
 	}
-	// recAttributeID1 := c.FormValue("rec_attribute_id1")
-	// if recAttributeID1 == "" {
-	// 	return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 can not be blank", "rec_attribute_id1 can not be blank")
-	// }
 	// params["benchmark_key"] = benchmarkKey
 	params["fund_type_key"] = fundTypeKey
 	params["benchmark_code"] = benchmarkCode
