@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"mf-bo-api/db"
@@ -61,14 +62,20 @@ func GetAllocSecDetailModels(c *AllocSecDetail, AllocSecKey string) (int, error)
 	JOIN ffs_periode c ON a.periode_key = c.periode_key 
 	JOIN ms_securities d ON a.sec_key = d.sec_key 
 	WHERE a.rec_status = 1 
-	AND a.sec_key =` + AllocSecKey
+	AND a.alloc_security_key =` + AllocSecKey
 
 	log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println("PChannelKey not found")
+			return http.StatusBadGateway, err
+		}
+
 		log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
+
 	return http.StatusOK, nil
 }
 func CreateAllocSec(params map[string]string) (int, error) {

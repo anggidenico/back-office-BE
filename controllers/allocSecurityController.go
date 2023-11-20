@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"errors"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -36,25 +37,21 @@ func GetAllocSecDetailController(c echo.Context) error {
 	allocSecKey := c.Param("alloc_security_key")
 	if allocSecKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing alloc_security_key", "Missing alloc_security_key")
-	} else {
-		_, err := strconv.ParseUint(allocSecKey, 10, 64)
-		if err != sql.ErrNoRows {
-			// log.Error("Wrong input for parameter: country_key")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: alloc_security_key", "Wrong input for parameter: alloc_security_key")
-		}
 	}
-	var detailendpoint models.AllocSecDetail
-	status, err := models.GetAllocSecDetailModels(&detailendpoint, allocSecKey)
+	var detail models.AllocSecDetail
+	status, err := models.GetAllocSecDetailModels(&detail, allocSecKey)
 	// log.Println("Not Found")
 	if err != nil {
-		// log.Error(err.Error())
-		return lib.CustomError(status, err.Error(), "Failed get data")
+		if errors.Is(err, sql.ErrNoRows) {
+			return lib.CustomError(http.StatusNotFound, "alloc_sec_key not found", "alloc_sec_key not found")
+		}
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = detailendpoint
+	response.Data = detail
 	return c.JSON(http.StatusOK, response)
 }
 func CreateAllocSecController(c echo.Context) error {
