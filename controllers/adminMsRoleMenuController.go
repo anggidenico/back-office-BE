@@ -8,7 +8,7 @@ import (
 
 func IsMenuAccessAllowed(menu_key int) error {
 	accessType := IsAccessAllowed(menu_key)
-	if accessType.AccessEnable {
+	if accessType.AccessEnable && accessType.AllowedRead {
 		return nil
 	} else {
 		return lib.CustomError(http.StatusUnauthorized, "User Not Allowed to access this page", "User Not Allowed to access this page")
