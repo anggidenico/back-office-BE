@@ -118,12 +118,15 @@ func CreateRequestProductBankAccount(paramsMsBankAccount map[string]string, para
 		for key, value := range paramsMsBankAccount {
 			fields += key + ", "
 			values += "?, "
-			bindvars = append(bindvars, value)
+			if key != "rec_pk" && key != "rec_action" {
+				bindvars = append(bindvars, value)
+			}
 		}
 		fields = fields[:(len(fields) - 2)]
 		values = values[:(len(values) - 2)]
 
 		qInsertMsBankAccount += "(" + fields + ") VALUES(" + values + ")"
+		// qInsertMsBankAccountReq += "(" + fields + ") VALUES(" + values + ")"
 
 		ret, err = tx.Exec(qInsertMsBankAccount, bindvars...)
 		// tx.Commit()
@@ -132,14 +135,33 @@ func CreateRequestProductBankAccount(paramsMsBankAccount map[string]string, para
 			log.Println(err.Error())
 			return err
 		}
+
 		lastID, err = ret.LastInsertId()
 		if err != nil {
 			tx.Rollback()
 			log.Println(err.Error())
 			return err
 		}
+
+		paramsMsBankAccount2 := paramsMsBankAccount
+		paramsMsBankAccount2["bank_account_key"] = strconv.FormatInt(lastID, 10)
+		qInsertMsBankAccountReq := "INSERT INTO ms_bank_account_request"
+		for key, value := range paramsMsBankAccount2 {
+			fields += key + ", "
+			values += "?, "
+			bindvars = append(bindvars, value)
+		}
+		fields = fields[:(len(fields) - 2)]
+		values = values[:(len(values) - 2)]
+		_, err = tx.Exec(qInsertMsBankAccountReq, bindvars...)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err
+		}
+
 	} else {
-		log.Println("paramsMsBankAccount[bank_account_key] =", paramsMsBankAccount["bank_account_key"])
+		// log.Println("paramsMsBankAccount[bank_account_key] =", paramsMsBankAccount["bank_account_key"])
 		lastID, _ = strconv.ParseInt(paramsMsBankAccount["bank_account_key"], 10, 64)
 	}
 
@@ -185,7 +207,7 @@ func ProductBankAccountApprovalAction(params map[string]string) error {
 	recBy := params["rec_by"]
 	recDate := params["rec_date"]
 
-	query := `SELECT t1.rec_pk, t1.rec_action, t1.prod_bankacc_key, t1.product_key, t3.product_name, t1.bank_account_key, t4.bank_name, t4.account_no , t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name
+	qGetProdBankAccReq := `SELECT t1.rec_pk, t1.rec_action, t1.prod_bankacc_key, t1.product_key, t3.product_name, t1.bank_account_key, t4.bank_name, t4.account_no , t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name
 	FROM ms_product_bank_account_request t1
 	INNER JOIN gen_lookup t2 ON t2.lookup_key = t1.bank_account_purpose
 	INNER JOIN ms_product t3 ON t3.product_key = t1.product_key
@@ -196,7 +218,7 @@ func ProductBankAccountApprovalAction(params map[string]string) error {
 	WHERE t1.rec_pk =` + params["rec_pk"]
 
 	var getReqProductBankAcc ProductBankAccountRequest
-	err = db.Db.Get(&getReqProductBankAcc, query)
+	err = db.Db.Get(&getReqProductBankAcc, qGetProdBankAccReq)
 	if err != nil {
 		tx.Rollback()
 		log.Println(err.Error())
@@ -240,7 +262,7 @@ func ProductBankAccountApprovalAction(params map[string]string) error {
 			}
 			fields = fields[:(len(fields) - 2)]
 			values = values[:(len(values) - 2)]
-			query := `INSERT INTO ms_product_fee (` + fields + `) VALUES(` + values + `)`
+			query := `INSERT INTO ms_product_bank_account (` + fields + `) VALUES(` + values + `)`
 
 			resultSQL, err = tx.Exec(query)
 			if err != nil {

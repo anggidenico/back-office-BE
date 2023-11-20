@@ -123,6 +123,7 @@ func CreateProductBankRequest(c echo.Context) error {
 	}
 
 	paramsBankAcc["rec_status"] = "1"
+	paramsBankAcc["rec_action"] = "CREATE"
 	paramsBankAcc["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 	paramsBankAcc["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 
@@ -275,11 +276,11 @@ func UpdateProductBankRequest(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameter: bank_account_purpose", "Missing required parameter: bank_account_purpose")
 	}
 
+	paramsBankAcc["rec_action"] = "UPDATE"
 	paramsBankAcc["bank_account_key"] = strconv.FormatUint(*productBankAccount.BankAccountKey, 10)
-	paramsBankAcc["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
-	paramsBankAcc["rec_modified_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+	paramsBankAcc["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	paramsBankAcc["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
 
-	paramsProductBankAccount["rec_status"] = "1"
 	paramsProductBankAccount["rec_action"] = "UPDATE"
 	paramsProductBankAccount["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 	paramsProductBankAccount["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)

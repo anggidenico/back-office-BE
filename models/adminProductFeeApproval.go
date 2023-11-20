@@ -120,7 +120,7 @@ func GetProductFeeApprovalDetail(rec_pk string) ProductFeeUpdateDetails {
 	result.Updates.DaysInyearName = &days_inyear
 
 	qFeeItem := `SELECT item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item_request WHERE product_fee_key = ` + strconv.FormatUint(*result.Updates.RecPK, 10)
-	log.Println(qFeeItem)
+	// log.Println(qFeeItem)
 	// rows, err := tx.Query(qFeeItem)
 	var FeeItems []ProductFeeItemRequest
 	err = db.Db.Select(&FeeItems, qFeeItem)
@@ -171,20 +171,15 @@ func GetProductFeeApprovalDetail(rec_pk string) ProductFeeUpdateDetails {
 		result.Existing.DaysInyearName = &days_inyear
 
 		qFeeItem2 := `SELECT item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item_request WHERE product_fee_key = ` + strconv.FormatUint(*result.Existing.RecPK, 10)
-		rows, err := tx.Query(qFeeItem2)
+		// log.Println(qFeeItem)
+		// rows, err := tx.Query(qFeeItem)
+		var FeeItems []ProductFeeItemRequest
+		err = db.Db.Select(&FeeItems, qFeeItem2)
 		if err != nil {
 			tx.Rollback()
 			log.Println(err.Error())
 		}
-		// var FeeItems []ProductFeeItemRequest
-		for rows.Next() {
-			var Item ProductFeeItemRequest
-			if err := rows.Scan(&Item.ItemSeqno, &Item.RowMax, &Item.PrincipleLimit, &Item.FeeValue, &Item.ItemNotes); err != nil {
-				tx.Rollback()
-				log.Println(err.Error())
-			}
-			*result.Existing.FeeItem = append(*result.Existing.FeeItem, Item)
-		}
+		result.Existing.FeeItem = &FeeItems
 	}
 
 	tx.Commit()
@@ -284,21 +279,27 @@ func ProductFeeApprovalAction(params map[string]string) error {
 	}
 
 	qGetFeeItemReq := `SELECT item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item_request WHERE product_fee_key = ` + params["rec_pk"]
-	rowsItem, err := tx.Query(qGetFeeItemReq)
+	err = db.Db.Select(&*pf.FeeItem, qGetFeeItemReq)
 	if err != nil {
 		tx.Rollback()
 		log.Println(err.Error())
 		return err
 	}
-	for rowsItem.Next() {
-		var Item ProductFeeItemRequest
-		if err := rowsItem.Scan(&Item.ItemSeqno, &Item.RowMax, &Item.PrincipleLimit, &Item.FeeValue, &Item.ItemNotes); err != nil {
-			tx.Rollback()
-			log.Println(err.Error())
-			return err
-		}
-		*pf.FeeItem = append(*pf.FeeItem, Item)
-	}
+	// rowsItem, err := tx.Query(qGetFeeItemReq)
+	// if err != nil {
+	// 	tx.Rollback()
+	// 	log.Println(err.Error())
+	// 	return err
+	// }
+	// for rowsItem.Next() {
+	// 	var Item ProductFeeItemRequest
+	// 	if err := rowsItem.Scan(&Item.ItemSeqno, &Item.RowMax, &Item.PrincipleLimit, &Item.FeeValue, &Item.ItemNotes); err != nil {
+	// 		tx.Rollback()
+	// 		log.Println(err.Error())
+	// 		return err
+	// 	}
+	// 	*pf.FeeItem = append(*pf.FeeItem, Item)
+	// }
 
 	query1 := `UPDATE ms_product_fee_request SET rec_approval_status = ` + params["approval"] + ` , rec_approved_date = '` + recDate + `' , rec_approved_by = '` + recBy + `' , rec_attribute_id1 = '` + params["reason"] + `' WHERE rec_pk = ` + params["rec_pk"]
 
