@@ -295,6 +295,7 @@ func ProductBankAccountApprovalAction(params map[string]string) error {
 					i++
 				}
 			}
+			queryMsBankAccount += " WHERE bank_account_key = " + strconv.FormatUint(*getReqProductBankAcc.BankAccountKey, 10)
 			resultSQL, err = tx.Exec(queryMsBankAccount)
 			if err != nil {
 				tx.Rollback()
