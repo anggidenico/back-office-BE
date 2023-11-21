@@ -128,10 +128,10 @@ func GetSecuritiesModels(c *[]Securities) (int, error) {
 	FROM ms_securities a 
 	JOIN gen_lookup b ON a.securities_category = b.lookup_key
 	JOIN gen_lookup c ON a.security_type = c.lookup_key
-	JOIN gen_lookup d ON a.security_status = d.lookup_key
-	JOIN ms_currency e ON a.currency_key = e.currency_key
-	JOIN gen_lookup f ON a.sec_classification = f.lookup_key
-	WHERE a.rec_status =1 ORDER BY a.rec_created_date DESC`
+	left JOIN gen_lookup d ON a.security_status = d.lookup_key
+	left JOIN ms_currency e ON a.currency_key = e.currency_key
+	left JOIN gen_lookup f ON a.sec_classification = f.lookup_key
+	WHERE a.rec_status = 1 ORDER BY a.rec_created_date DESC`
 
 	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
@@ -182,14 +182,14 @@ func GetMsSecuritiesDetailModels(c *SecuritiesDetail, SecKey string) (int, error
 	a.security_status,
 	d.lkp_name security_status_name,
 	a.isin_code,
-	a.sec_classification,
-	f.lkp_name security_classification_name
+	a.sec_classification, 
+	f.lkp_name sec_classification_name
 	FROM ms_securities a 
 	JOIN gen_lookup b ON a.securities_category = b.lookup_key
 	JOIN gen_lookup c ON a.security_type = c.lookup_key
-	JOIN gen_lookup d ON a.security_status = d.lookup_key
-	JOIN ms_currency e ON a.currency_key = e.currency_key
-	JOIN gen_lookup f ON a.sec_classification = f.lookup_key
+	left JOIN gen_lookup d ON a.security_status = d.lookup_key
+	left JOIN ms_currency e ON a.currency_key = e.currency_key
+	left JOIN gen_lookup f ON a.sec_classification = f.lookup_key
 	WHERE a.rec_status = 1 
 	AND a.sec_key =` + SecKey
 

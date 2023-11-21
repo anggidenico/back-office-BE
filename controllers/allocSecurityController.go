@@ -40,7 +40,6 @@ func GetAllocSecDetailController(c echo.Context) error {
 	}
 	var detail models.AllocSecDetail
 	status, err := models.GetAllocSecDetailModels(&detail, allocSecKey)
-	// log.Println("Not Found")
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return lib.CustomError(http.StatusNotFound, "alloc_sec_key not found", "alloc_sec_key not found")

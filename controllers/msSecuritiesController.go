@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"database/sql"
+	"errors"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/labstack/echo"
@@ -121,17 +121,14 @@ func GetMsSecuritiesDetailController(c echo.Context) error {
 	secKey := c.Param("sec_key")
 	if secKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing sec_key", "Missing sec_key")
-	} else {
-		_, err := strconv.ParseUint(secKey, 10, 64)
-		if err != sql.ErrNoRows {
-			// log.Error("Wrong input for parameter: country_key")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: sec_key", "Wrong input for parameter: sec_key")
-		}
 	}
 	var detailmssec models.SecuritiesDetail
 	status, err := models.GetMsSecuritiesDetailModels(&detailmssec, secKey)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed input data")
+		if errors.Is(err, sql.ErrNoRows) {
+			return lib.CustomError(http.StatusNotFound, "sec_key not found", "sec_key not found")
+		}
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
