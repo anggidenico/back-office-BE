@@ -580,7 +580,7 @@ func router() *echo.Echo {
 	admin.POST("/update-ffsperiode", controllers.UpdateFfsPeriode).Name = "UpdateFfsPeriode"
 	admin.POST("/delete-ffsperiode", controllers.DeleteFfsPeriode).Name = "DeleteFfsPeriode"
 
-	//Fund Fact Sheet - Portfolio Instrument
+	//Fund Fact Sheet - Portfolio Securities
 	admin.GET("/get-allocsecurity", controllers.GetAllocSecController).Name = "GetAllocSecController"
 	admin.GET("/get-allocsecurity-detail/:alloc_security_key", controllers.GetAllocSecDetailController).Name = "GetAllocSecController"
 	admin.POST("/create-alloc-security", controllers.CreateAllocSecController).Name = "CreateAllocSecController"
