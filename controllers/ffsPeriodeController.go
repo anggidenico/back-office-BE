@@ -147,17 +147,17 @@ func UpdateFfsPeriode(c echo.Context) error {
 	if err != nil {
 		return lib.CustomError(http.StatusBadRequest, "date_closed should be a valid date in the format "+expectedDateFormat, "date_closed should be a valid date in the format "+expectedDateFormat)
 	}
-	status, err = models.UpdateFfsPeriode(periodeKey, params)
-	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed input data")
-	}
+
 	params["periode_key"] = periodeKey
 	params["periode_date"] = periodeDate
 	params["periode_name"] = periodeName
 	params["date_opened"] = dateOpened
 	params["date_closed"] = dateClosed
 	params["rec_status"] = "1"
-
+	status, err = models.UpdateFfsPeriode(periodeKey, params)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed input data")
+	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"

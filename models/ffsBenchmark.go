@@ -120,32 +120,6 @@ func CheckDuplicateFfsBenchmarkModels(benchmarkCode, benchmarkName string) (bool
 	return true, key, nil
 }
 
-// UpdateBenchmarkProduct updates an existing record in the database.
-// func CreateBenchmarkModels(BenchProdKey string, params map[string]string) (int, error) {
-// 	query := `UPDATE ffs_benchmark_product SET `
-// 	var setClauses []string
-// 	var values []interface{}
-
-// 	for key, value := range params {
-// 		setClauses = append(setClauses, key+" = ?")
-// 		values = append(values, value)
-// 	}
-// 	query += strings.Join(setClauses, ", ")
-// 	query += ` WHERE bench_prod_key = ?`
-// 	values = append(values, BenchProdKey)
-
-// 	log.Println("========== UpdateBenchmarkProduct ==========>>>", query)
-
-// 	_, err := db.Db.Exec(query, values...)
-// 	if err != nil {
-// 		log.Println(err.Error())
-// 		return http.StatusBadGateway, err
-// 	}
-// 	return http.StatusOK, nil
-// }
-
-// models.go
-
 func CheckDuplicateFfsBenchmark(benchmarkCode, benchmarkName string) (bool, string, error) { //dari sini
 	// Query to check for duplicates
 	query := "SELECT benchmark_key FROM ffs_benchmark WHERE benchmark_code = ? OR benchmark_name = ? LIMIT 1"
