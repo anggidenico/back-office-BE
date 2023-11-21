@@ -13,8 +13,10 @@ type ProductBankAccountRequest struct {
 	RecAction             string  `db:"rec_action" json:"rec_action"`
 	ProductBankAccountKey *uint64 `db:"product_bankacc_key" json:"product_bankacc_key"`
 	ProductKey            *uint64 `db:"product_key" json:"product_key"`
+	BankKey               *uint64 `db:"bank_key" json:"bank_key"`
 	BankAccountKey        *uint64 `db:"bank_account_key" json:"bank_account_key"`
 	BankAccountPurpose    *uint64 `db:"bank_account_purpose" json:"bank_account_purpose"`
+	SwiftCode             *string `db:"swift_code" json:"swift_code"`
 	// Foreign Key Value
 	AccountNo              *string `db:"account_no" json:"account_no"`
 	ProductName            *string `db:"product_name" json:"product_name"`
@@ -207,12 +209,12 @@ func ProductBankAccountApprovalAction(params map[string]string) error {
 	recBy := params["rec_by"]
 	recDate := params["rec_date"]
 
-	qGetProdBankAccReq := `SELECT t1.rec_pk, t1.rec_action, t1.prod_bankacc_key, t1.product_key, t3.product_name, t1.bank_account_key, t4.bank_name, t4.account_no , t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name
+	qGetProdBankAccReq := `SELECT t1.rec_pk, t1.rec_action, t1.prod_bankacc_key, t1.product_key, t3.product_name, t4.bank_key, t1.bank_account_key, t4.bank_name, t4.account_no , t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name, t4.swift_code
 	FROM ms_product_bank_account_request t1
 	INNER JOIN gen_lookup t2 ON t2.lookup_key = t1.bank_account_purpose
 	INNER JOIN ms_product t3 ON t3.product_key = t1.product_key
 	INNER JOIN (
-		SELECT a1.bank_account_key, a1.bank_account_type, a1.bank_key, a2.bank_name, a1.account_no, a1.account_holder_name FROM ms_bank_account a1 INNER JOIN ms_bank a2 ON a2.bank_key = a1.bank_key WHERE a1.rec_status = 1
+		SELECT a1.bank_account_key, a1.bank_account_type, a1.bank_key, a2.bank_name, a1.account_no, a1.account_holder_name, a1.swift_code FROM ms_bank_account a1 INNER JOIN ms_bank a2 ON a2.bank_key = a1.bank_key WHERE a1.rec_status = 1
 	) t4 ON t1.bank_account_key = t4.bank_account_key
 	
 	WHERE t1.rec_pk =` + params["rec_pk"]
@@ -275,6 +277,31 @@ func ProductBankAccountApprovalAction(params map[string]string) error {
 
 		if getReqProductBankAcc.RecAction == "UPDATE" {
 
+			updMsBankAccount := make(map[string]string)
+			updMsBankAccount["rec_modified_by"] = recBy
+			updMsBankAccount["rec_modified_date"] = recDate
+			updMsBankAccount["bank_account_key"] = strconv.FormatUint(*getReqProductBankAcc.BankAccountKey, 10)
+			updMsBankAccount["account_no"] = *getReqProductBankAcc.AccountNo
+			updMsBankAccount["bank_key"] = strconv.FormatUint(*getReqProductBankAcc.BankKey, 10)
+			updMsBankAccount["swift_code"] = *getReqProductBankAcc.SwiftCode
+			queryMsBankAccount := `UPDATE ms_bank_account SET `
+			i := 0
+			for key, value := range updMsBankAccount {
+				if key != "bank_account_key" {
+					queryMsBankAccount += key + " = '" + value + "'"
+					if (len(updMsBankAccount) - 2) > i {
+						queryMsBankAccount += ", "
+					}
+					i++
+				}
+			}
+			resultSQL, err = tx.Exec(queryMsBankAccount)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err
+			}
+
 			updProductBankAccount := make(map[string]string)
 			updProductBankAccount["rec_modified_by"] = recBy
 			updProductBankAccount["rec_modified_date"] = recDate
@@ -284,19 +311,19 @@ func ProductBankAccountApprovalAction(params map[string]string) error {
 			updProductBankAccount["bank_account_name"] = *getReqProductBankAcc.BankAccountPurposeName + *getReqProductBankAcc.ProductName
 			updProductBankAccount["bank_account_purpose"] = strconv.FormatUint(*getReqProductBankAcc.BankAccountPurpose, 10)
 
-			query := "UPDATE ms_product_bank_account SET "
-			i := 0
+			queryProdBankAcc := "UPDATE ms_product_bank_account SET "
+			i = 0
 			for key, value := range updProductBankAccount {
 				if key != "prod_bankacc_key" {
-					query += key + " = '" + value + "'"
+					queryProdBankAcc += key + " = '" + value + "'"
 					if (len(updProductBankAccount) - 2) > i {
-						query += ", "
+						queryProdBankAcc += ", "
 					}
 					i++
 				}
 			}
-			query += " WHERE prod_bankacc_key = " + updProductBankAccount["prod_bankacc_key"]
-			resultSQL, err = tx.Exec(query)
+			queryProdBankAcc += " WHERE prod_bankacc_key = " + updProductBankAccount["prod_bankacc_key"]
+			resultSQL, err = tx.Exec(queryProdBankAcc)
 			if err != nil {
 				tx.Rollback()
 				log.Println(err.Error())

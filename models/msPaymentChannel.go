@@ -335,7 +335,6 @@ func GetPaymentChannelModels(c *[]PaymentChannel) (int, error) {
     JOIN gen_lookup c ON a.settle_payment_method = c.lookup_key
 	JOIN gen_lookup d ON a.value_type = d.lookup_key WHERE a.rec_status = 1 order by rec_order`
 	// log.Println("====================>>>", query)
-	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -379,7 +378,7 @@ func GetDetailPaymentChannelModels(c *PaymentChannelDetail, PChannelKey string) 
     JOIN gen_lookup c ON a.settle_payment_method = c.lookup_key
 	JOIN gen_lookup d ON a.value_type = d.lookup_key WHERE a.rec_status = 1 AND a.pchannel_key =` + PChannelKey
 
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
 
 	if err != nil {
@@ -410,7 +409,7 @@ func DeleteMsPaymentChannel(PChannelKey string, params map[string]string) (int, 
 	query += ` WHERE pchannel_key = ?`
 	values = append(values, PChannelKey)
 
-	log.Println("========== UpdateRiskProfile ==========>>>", query)
+	// log.Println("========== UpdateRiskProfile ==========>>>", query)
 
 	resultSQL, err := db.Db.Exec(query, values...)
 	if err != nil {
@@ -473,7 +472,7 @@ func UpdateMsPaymentChannel(PChannelKey string, params map[string]string) (int, 
 	query += ` WHERE pchannel_key = ?`
 	values = append(values, PChannelKey)
 
-	log.Println("========== Updatepaymentchannel ==========>>>", query)
+	// log.Println("========== Updatepaymentchannel ==========>>>", query)
 
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {

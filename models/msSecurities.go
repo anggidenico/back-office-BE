@@ -129,7 +129,7 @@ func GetSecuritiesModels(c *[]Securities) (int, error) {
 	JOIN ms_currency e ON a.currency_key = e.currency_key
 	WHERE a.rec_status =1`
 
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())
@@ -152,7 +152,7 @@ func DeleteMsSecurities(SecKey string, params map[string]string) (int, error) {
 	query += ` WHERE sec_key = ?`
 	values = append(values, SecKey)
 
-	log.Println("========== DeleteMsSecurities ==========>>>", query)
+	// log.Println("========== DeleteMsSecurities ==========>>>", query)
 
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
@@ -187,7 +187,7 @@ func GetMsSecuritiesDetailModels(c *SecuritiesDetail, SecKey string) (int, error
 	WHERE a.rec_status = 1 
 	AND a.sec_key =` + SecKey
 
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err.Error())
@@ -210,7 +210,7 @@ func UpdateMsSecurities(SecKey string, params map[string]string) (int, error) {
 	query += ` WHERE sec_key = ?`
 	values = append(values, SecKey)
 
-	log.Println("========== UpdateMsSecurities ==========>>>", query)
+	// log.Println("========== UpdateMsSecurities ==========>>>", query)
 
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
