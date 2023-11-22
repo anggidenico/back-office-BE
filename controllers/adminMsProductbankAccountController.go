@@ -141,6 +141,17 @@ func GetListProductBankAccountAdmin(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, err.Error(), "Failed get data")
 	}
 
+	var resultPBAList []models.AdminMsProductBankAccountList
+	if len(productBankAccountList) > 0 {
+		for _, val := range productBankAccountList {
+			var PBA models.AdminMsProductBankAccountList
+			PBA = val
+			tf := models.ProductBankAccountStatusUpdate(strconv.FormatUint(val.ProdBankaccKey, 10))
+			PBA.StatusUpdate = &tf
+			resultPBAList = append(resultPBAList, PBA)
+		}
+	}
+
 	var countData models.CountData
 	var pagination int
 	if limit > 0 {
@@ -164,7 +175,7 @@ func GetListProductBankAccountAdmin(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Pagination = pagination
-	response.Data = productBankAccountList
+	response.Data = resultPBAList
 
 	return c.JSON(http.StatusOK, response)
 }
@@ -540,7 +551,7 @@ func CreateAdminMsProductBankAccount(c echo.Context) error {
 
 }
 
-func UpdateAdminMsProductBankAccount(c echo.Context) error { 
+func UpdateAdminMsProductBankAccount(c echo.Context) error {
 	var err error
 	var status int
 

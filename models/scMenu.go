@@ -158,7 +158,7 @@ func AdminGetParentMenuListRoleLogin(c *[]ListParentMenuRoleUser, value []string
 			 ORDER BY a.rec_order ASC`
 
 	// Main query
-	// log.Println("==========  ==========>>>", query)
+	// log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
@@ -182,7 +182,7 @@ func AdminGetMenuListRoleLogin(c *[]ListMenuRoleUser, roleKey string) (int, erro
 			ORDER BY m.rec_order`
 
 	// Main query
-	// log.Println("==========  ==========>>>", query)
+	// log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)

@@ -72,12 +72,14 @@ func GetListMenuLogin(c echo.Context) error {
 
 		var child []models.MenuChild
 		for _, c := range listMenuRoleUser {
-			if parent.MenuKey == *c.MenuParent {
-				var cc models.MenuChild
-				cc.Name = c.MenuPage
-				cc.To = c.MenuURL
-				cc.Icon = c.Icon
-				child = append(child, cc)
+			if c.MenuParent != nil {
+				if parent.MenuKey == *c.MenuParent {
+					var cc models.MenuChild
+					cc.Name = c.MenuPage
+					cc.To = c.MenuURL
+					cc.Icon = c.Icon
+					child = append(child, cc)
+				}
 			}
 		}
 		data.Items = &child

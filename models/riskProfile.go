@@ -36,7 +36,7 @@ type GetDetailRisk struct {
 func GetRiskProfileModels(c *[]RiskProfile) (int, error) {
 	query := `SELECT risk_profile_key,risk_code,risk_name,risk_desc,min_score,max_score,max_flag,rec_order,rec_status FROM ms_risk_profile
 			  WHERE rec_status = 1 order by rec_order`
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -58,7 +58,7 @@ func GetDetailRiskProfileModels(c *GetDetailRisk, RiskProfileKey string) (int, e
 	FROM ms_risk_profile 
 	WHERE risk_profile_key =` + RiskProfileKey
 
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
 
 	if err != nil {
@@ -117,7 +117,7 @@ func UpdateRiskProfile(RiskProfileKey string, params map[string]string) (int, er
 	query += ` WHERE risk_profile_key = ?`
 	values = append(values, RiskProfileKey)
 
-	log.Println("========== UpdateRiskProfile ==========>>>", query)
+	// log.Println("========== UpdateRiskProfile ==========>>>", query)
 
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
@@ -143,7 +143,7 @@ func DeleteRiskProfile(RiskProfileKey string, params map[string]string) (int, er
 	query += ` WHERE risk_profile_key = ?`
 	values = append(values, RiskProfileKey)
 
-	log.Println("========== UpdateRiskProfile ==========>>>", query)
+	// log.Println("========== UpdateRiskProfile ==========>>>", query)
 
 	resultSQL, err := db.Db.Exec(query, values...)
 	if err != nil {

@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -49,6 +50,7 @@ type AdminMsProductBankAccountList struct {
 	BankFullname       *string `db:"bank_fullname"         json:"bank_fullname"`
 	AccountNo          string  `db:"account_no"            json:"account_no"`
 	AccountHolderName  string  `db:"account_holder_name"   json:"account_holder_name"`
+	StatusUpdate       *bool   `db:"status_update" json:"status_update"`
 }
 
 type MsProductBankAccountDetailAdmin struct {
@@ -117,6 +119,27 @@ func GetAllMsProductBankAccount(c *[]MsProductBankAccount, params map[string]str
 	}
 
 	return http.StatusOK, nil
+}
+
+func ProductBankAccountStatusUpdate(prod_bankacc_key string) bool {
+	query := `SELECT count(*) FROM ms_product_bank_account_request 
+	WHERE rec_status = 1 AND rec_approval_status IS NULL 
+	AND prod_bankacc_key = ` + prod_bankacc_key
+	// log.Println(query)
+	var count uint64
+	err := db.Db.Get(&count, query)
+	if err != nil {
+		log.Println(err.Error())
+		return false
+	}
+
+	var result bool
+	if count > 0 { // kalau ada request gantung maka false
+		result = false
+	} else {
+		result = true
+	}
+	return result
 }
 
 func AdminGetAllMsProductBankAccount(c *[]AdminMsProductBankAccountList, limit uint64, offset uint64, params map[string]string, nolimit bool, searchLike *string) (int, error) {
