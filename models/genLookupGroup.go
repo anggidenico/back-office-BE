@@ -107,7 +107,7 @@ func AdminGetListDropdownLookupGroup(c *[]ListDropdownLookupGroup) (int, error) 
 }
 
 type OptionGenLookUp struct {
-	Key   string `db:"lookup_key" json:"key"`
+	Key   uint64 `db:"lookup_key" json:"key"`
 	Value string `db:"lkp_name" json:"value"`
 }
 
