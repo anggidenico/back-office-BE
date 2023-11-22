@@ -216,8 +216,6 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 		if value.BitLen() > 18*3 { // 3 bits per digit to account for decimal places
 			return lib.CustomError(http.StatusBadRequest, "fixed_dmr_fee should not exceed 18 digits", "fixed_dmr_fee should not exceed 18 digits")
 		}
-	} else {
-		return lib.CustomError(http.StatusBadRequest, "fixed_dmr_fee can not be blank", "fixed_dmr_fee can not be blank")
 	}
 
 	fixedAmountFee := c.FormValue("fixed_amount_fee")
@@ -350,23 +348,6 @@ func UpdateMsPaymentChannelController(c echo.Context) error {
 		params["min_nominal_trx"] = minNominalTrx
 	}
 
-	// feeValue := c.FormValue("fee_value")
-	// if feeValue != "" {
-	// 	// Cek apakah fee_value adalah numeric
-	// 	if len(feeValue) > 18 {
-	// 		return lib.CustomError(http.StatusBadRequest, "kepanjangan yang diinput", "kepanjangan yang diinput")
-	// 	}
-	// 	_, err := strconv.ParseFloat(feeValue, 64)
-	// 	if err != nil {
-	// 		return lib.CustomError(http.StatusBadRequest, "fee_value must be a numeric value", "fee_value must be a numeric value")
-	// 	}
-	// } else {
-	// 	if feeValue == "" {
-	// 		feeValue = "0"
-	// 	}
-	// }
-	// params["fee_value"] = feeValue
-
 	feeValue := c.FormValue("fee_value")
 	valueType := c.FormValue("value_type")
 
@@ -391,22 +372,6 @@ func UpdateMsPaymentChannelController(c echo.Context) error {
 	}
 	// Set nilai fee_value ke dalam params
 	params["fee_value"] = feeValue
-
-	// valueType := c.FormValue("value_type")
-	// if valueType != "" {
-	// 	if len(valueType) > 11 {
-	// 		return lib.CustomError(http.StatusBadRequest, "value_type should be exactly 11 characters", "value_type be exactly 11 characters")
-	// 	}
-	// 	value, err := strconv.Atoi(valueType)
-	// 	if err != nil {
-	// 		return lib.CustomError(http.StatusBadRequest, "value_type should be a number", "value_type should be a number")
-	// 	}
-	// 	if value == 315 {
-
-	// 	}
-	// } else {
-	// 	return lib.CustomError(http.StatusBadRequest, "value_type can not be blank", "value_type can not be blank")
-	// }
 
 	hasMinMax := c.FormValue("has_min_max")
 	if hasMinMax == "" {
@@ -464,8 +429,6 @@ func UpdateMsPaymentChannelController(c echo.Context) error {
 		if value.BitLen() > 18*3 { // 3 bits per digit to account for decimal places
 			return lib.CustomError(http.StatusBadRequest, "fixed_dmr_fee should not exceed 18 digits", "fixed_dmr_fee should not exceed 18 digits")
 		}
-	} else {
-		return lib.CustomError(http.StatusBadRequest, "fixed_dmr_fee can not be blank", "fixed_dmr_fee can not be blank")
 	}
 
 	fixedAmountFee := c.FormValue("fixed_amount_fee")
@@ -477,8 +440,6 @@ func UpdateMsPaymentChannelController(c echo.Context) error {
 		if value.BitLen() > 18*3 { // 3 bits per digit to account for decimal places
 			return lib.CustomError(http.StatusBadRequest, "fixed_amount_fee should not exceed 18 digits", "fixed_amount_fee should not exceed 18 digits")
 		}
-	} else {
-		return lib.CustomError(http.StatusBadRequest, "fixed_amount_fee can not be blank", "fixed_amount_fee can not be blank")
 	}
 	pgTnc := c.FormValue("pg_tnc")
 

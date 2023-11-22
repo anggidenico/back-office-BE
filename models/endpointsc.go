@@ -19,7 +19,7 @@ type ScEndpointt struct {
 	MenuName           string  `db:"menu_name" json:"menu_name"`
 	MenuPage           string  `db:"menu_page" json:"menu_page"`
 	MenuUrl            *string `db:"menu_url" json:"menu_url"`
-	MenuDesc           string  `db:"menu_desc" json:"menu_desc"`
+	MenuDesc           *string `db:"menu_desc" json:"menu_desc"`
 	EndpointVersion    string  `db:"endpoint_version" json:"endpoint_version"`
 	PrivilegesKey      string  `db:"privileges_key" json:"privileges_key"`
 }

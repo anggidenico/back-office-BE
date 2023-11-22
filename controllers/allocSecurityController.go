@@ -76,9 +76,20 @@ func CreateAllocSecController(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "security_value can not be blank", "security_value can not be blank")
 	}
 	recOrder := c.FormValue("rec_order")
-	if recOrder == "" {
-		return lib.CustomError(http.StatusBadRequest, "rec_order can not be blank", "rec_order can not be blank")
+	if recOrder != "" {
+		if len(recOrder) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "rec_order should be exactly 11 characters", "rec_order be exactly 11 characters")
+		}
+		value, err := strconv.Atoi(recOrder)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
+		}
+
+		params["rec_order"] = strconv.Itoa(value)
+	} else {
+
 	}
+	params["rec_order"] = recOrder
 	params["product_key"] = productKey
 	params["periode_key"] = periodeKey
 	params["sec_key"] = secKey
@@ -150,8 +161,8 @@ func UpdateAllocSecController(c echo.Context) error {
 	}
 	secValue := c.FormValue("security_value")
 	if secValue != "" {
-		if len(secValue) > 11 {
-			return lib.CustomError(http.StatusBadRequest, "security_value must be <= 11 characters", "security_value must be <= 11 characters")
+		if len(secValue) > 9 {
+			return lib.CustomError(http.StatusBadRequest, "security_value must be <= 9 characters", "security_value must be <= 9 characters")
 		}
 		_, err := strconv.Atoi(secValue)
 		if err != nil {
