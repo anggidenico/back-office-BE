@@ -16,7 +16,7 @@ type Benchmark struct {
 	BenchmarkCode      string `db:"benchmark_code"  json:"benchmark_code"`
 	BenchmarkName      string `db:"benchmark_name"  json:"benchmark_name"`
 	BenchmarkShortName string `db:"benchmark_short_name" json:"benchmark_short_name"`
-	RecAttributeID1    int64  `db:"rec_attribute_id1" json:"rec_attribute_id1"`
+	RecAttributeID1    string `db:"rec_attribute_id1" json:"rec_attribute_id1"`
 }
 type BenchmarkDetail struct {
 	BenchmarkKey       int64  `db:"benchmark_key" json:"benchmark_key"`

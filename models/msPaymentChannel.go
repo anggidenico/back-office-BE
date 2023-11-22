@@ -459,26 +459,35 @@ func CreateMsPaymentChannel(params map[string]string) (int, error) {
 }
 
 func UpdateMsPaymentChannel(PChannelKey string, params map[string]string) (int, error) {
-	query := `UPDATE ms_payment_channel SET `
-	var setClauses []string
-	var values []interface{}
-
+	query := "UPDATE ms_payment_channel SET "
+	// Get params
+	i := 0
 	for key, value := range params {
 		if key != "pchannel_key" {
-			setClauses = append(setClauses, key+" = ?")
-			values = append(values, value)
+
+			query += key + " = '" + value + "'"
+
+			if (len(params) - 2) > i {
+				query += ", "
+			}
+			i++
 		}
 	}
-	query += strings.Join(setClauses, ", ")
-	query += ` WHERE pchannel_key = ?`
-	values = append(values, PChannelKey)
+	query += " WHERE pchannel_key = " + params["pchannel_key"]
 
-	log.Println("========== Updatepaymentchannel ==========>>>", query)
+	log.Println("UpdateMsPaymentChannel:", query)
 
-	_, err := db.Db.Exec(query, values...)
+	resultSQL, err := db.Db.Exec(query)
 	if err != nil {
 		log.Println(err.Error())
-		return http.StatusBadRequest, err
+		return http.StatusInternalServerError, err
 	}
+	rows, _ := resultSQL.RowsAffected()
+	if rows < 1 {
+		log.Println("nothing rows affected")
+		err2 := fmt.Errorf("nothing rows affected")
+		return http.StatusNotFound, err2
+	}
+
 	return http.StatusOK, nil
 }

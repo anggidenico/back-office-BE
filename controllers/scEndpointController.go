@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"database/sql"
+	"errors"
+	"mf-bo-api/db"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -31,18 +33,14 @@ func GetEndpointDetailController(c echo.Context) error {
 	endpointKey := c.Param("endpoint_key")
 	if endpointKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing endpoint key", "Missing endpoint key")
-	} else {
-		_, err := strconv.ParseUint(endpointKey, 10, 64)
-		if err != sql.ErrNoRows {
-			// log.Error("Wrong input for parameter: country_key")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: endpoint_key", "Wrong input for parameter: endpoint_key")
-		}
 	}
 	var detailendpoint models.ScEndpointDetail
 	status, err := models.GetDetailEndpointModels(&detailendpoint, endpointKey)
 	if err != nil {
-
-		return lib.CustomError(status, err.Error(), "Failed get data")
+		if errors.Is(err, sql.ErrNoRows) {
+			return lib.CustomError(http.StatusNotFound, "endpoint_key not found", "endpoint_key not found")
+		}
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
@@ -68,13 +66,26 @@ func CreateEndpointController(c echo.Context) error {
 	}
 	endpointCategoryKey := c.FormValue("endpoint_category_key")
 	if endpointCategoryKey != "" {
-		_, err := strconv.Atoi(endpointCategoryKey)
-		if err != nil {
-			return lib.CustomError(http.StatusBadRequest, "endpoint_category_key must be a number", "endpoint_category_key must be a number")
-		}
 		if len(endpointCategoryKey) > 11 {
 			return lib.CustomError(http.StatusBadRequest, "endpoint_category_key should be <= 11 characters", "endpoint_category_key should be <= 11 characters")
 		}
+		categoryKey, err := strconv.Atoi(endpointCategoryKey)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_category_key must be a number", "endpoint_category_key must be a number")
+		}
+		// Periksa apakah nilai categoryKey sudah ada di tabel sc_endpoint_category
+		query := "SELECT COUNT(*) FROM sc_endpoint_category WHERE endpoint_category_key = ?"
+		var count int
+		err = db.Db.QueryRow(query, categoryKey).Scan(&count)
+		if err != nil {
+			// Tangani kesalahan saat menjalankan query
+			return lib.CustomError(http.StatusBadRequest, "error in query", "error in query")
+		}
+		if count == 0 {
+			// Kembalikan kesalahan jika nilai categoryKey tidak ditemukan di tabel sc_endpoint_category
+			return lib.CustomError(http.StatusBadRequest, "Invalid endpoint_category_key", "Invalid endpoint_category_key")
+		}
+
 	} else {
 		return lib.CustomError(http.StatusBadRequest, "endpoint_category_key can not be blank", "endpoint_category_key can not be blank")
 	}
@@ -91,26 +102,61 @@ func CreateEndpointController(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "endpoint_verb can not be blank", "endpoint_verb can not be blank")
 	}
 	endpointUrl := c.FormValue("endpoint_uri")
-	if endpointUrl == "" {
-		return lib.CustomError(http.StatusBadRequest, "endpoint_uri can not be blank", "endpoint_uri can not be blank")
+	if endpointUrl != "" {
+		if len(endpointUrl) > 255 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_name should be <= 255 characters", "endpoint_name should be <= 255 characters")
+		}
+	}
+	endpointRoute := c.FormValue("endpoint_route")
+	if endpointRoute != "" {
+		if len(endpointRoute) > 100 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_route should be <= 100 characters", "endpoint_route should be <= 100 characters")
+		}
+	}
+	endpointController := c.FormValue("endpoint_controller")
+	if endpointController != "" {
+		if len(endpointController) > 50 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_controller should be <= 50 characters", "endpoint_route should be <= 50 characters")
+		}
+	}
+	endpointVersion := c.FormValue("endpoint_version")
+	if endpointVersion != "" {
+		if len(endpointController) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_version must be <= 11 characters", "endpoint_version must be <= 11 characters")
+		}
+		_, err := strconv.Atoi(endpointVersion)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_version must be number", "endpoint_version must be number")
+		}
+	} else {
+		return lib.CustomError(http.StatusBadRequest, "endpoint_version can not be blank", "endpoint_version can not be blank")
 	}
 	menuKey := c.FormValue("menu_key")
-	if menuKey == "" {
+	if menuKey != "" {
+		if len(menuKey) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "menu_key must be <= 11 characters", "menu_key must be <= 11 characters")
+		}
+		_, err := strconv.Atoi(menuKey)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "menu_key must be number", "menu_key must be number")
+		}
+	} else {
 		return lib.CustomError(http.StatusBadRequest, "menu_key can not be blank", "menu_key can not be blank")
 	}
-	privilegesKey := c.FormValue("privileges_key")
-	if privilegesKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "privileges_key can not be blank", "privileges_key can not be blank")
-	}
 	endpointDesc := c.FormValue("endpoint_desc")
-	if endpointDesc == "" {
-		return lib.CustomError(http.StatusBadRequest, "endpoint_desc can not be blank", "endpoint_desc can not be blank")
+	if endpointDesc != "" {
+		if len(endpointDesc) > 255 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_desc should be <= 255 characters", "endpoint_desc should be <= 255 characters")
+		}
 	}
 	params["endpoint_code"] = endpointCode
 	params["endpoint_category_key"] = endpointCategoryKey
 	params["endpoint_name"] = endpointName
 	params["endpoint_verb"] = endpointVerb
 	params["endpoint_uri"] = endpointUrl
+	params["endpoint_route"] = endpointRoute
+	params["endpoint_controller"] = endpointController
+	params["endpoint_desc"] = endpointDesc
 	params["rec_status"] = "1"
 	params["menu_key"] = menuKey
 	params["endpoint_version"] = "1"
@@ -137,44 +183,109 @@ func UpdateEndpointController(c echo.Context) error {
 	if endpointKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing risk_profile_key", "Missing risk_profile_key")
 	}
-
+	endpointCode := c.FormValue("endpoint_code")
+	if endpointCode != "" {
+		if len(endpointCode) > 150 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_code should be <= 150 characters", "endpoint_code should be <= 150 characters")
+		}
+	} else {
+		return lib.CustomError(http.StatusBadRequest, "endpoint_code can not be blank", "endpoint_code can not be blank")
+	}
 	endpointCategoryKey := c.FormValue("endpoint_category_key")
-	if endpointCategoryKey == "" {
+	if endpointCategoryKey != "" {
+		if len(endpointCategoryKey) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_category_key should be <= 11 characters", "endpoint_category_key should be <= 11 characters")
+		}
+		categoryKey, err := strconv.Atoi(endpointCategoryKey)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_category_key must be a number", "endpoint_category_key must be a number")
+		}
+		// Periksa apakah nilai categoryKey sudah ada di tabel sc_endpoint_category
+		query := "SELECT COUNT(*) FROM sc_endpoint_category WHERE endpoint_category_key = ?"
+		var count int
+		err = db.Db.QueryRow(query, categoryKey).Scan(&count)
+		if err != nil {
+			// Tangani kesalahan saat menjalankan query
+			return lib.CustomError(http.StatusBadRequest, "error in query", "error in query")
+		}
+		if count == 0 {
+			// Kembalikan kesalahan jika nilai categoryKey tidak ditemukan di tabel sc_endpoint_category
+			return lib.CustomError(http.StatusBadRequest, "Invalid endpoint_category_key", "Invalid endpoint_category_key")
+		}
+
+	} else {
 		return lib.CustomError(http.StatusBadRequest, "endpoint_category_key can not be blank", "endpoint_category_key can not be blank")
 	}
 
 	endpointName := c.FormValue("endpoint_name")
-	if endpointName == "" {
-		return lib.CustomError(http.StatusBadRequest, "endpoint_name can not be blank", "endpoint_name can not be blank")
+	if endpointName != "" {
+		if len(endpointName) > 150 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_name should be <= 150 characters", "endpoint_name should be <= 150 characters")
+		}
 	}
 
 	endpointVerb := c.FormValue("endpoint_verb")
 	if endpointVerb == "" {
 		return lib.CustomError(http.StatusBadRequest, "endpoint_verb can not be blank", "endpoint_verb can not be blank")
 	}
-	endpointCode := c.FormValue("endpoint_code")
-	if endpointCode == "" {
-		return lib.CustomError(http.StatusBadRequest, "endpoint_code can not be blank", "endpoint_code can not be blank")
-	}
-
 	endpointUrl := c.FormValue("endpoint_uri")
-	if endpointUrl == "" {
-		return lib.CustomError(http.StatusBadRequest, "endpoint_uri can not be blank", "endpoint_uri can not be blank")
+	if endpointUrl != "" {
+		if len(endpointUrl) > 255 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_name should be <= 255 characters", "endpoint_name should be <= 255 characters")
+		}
 	}
-
+	endpointRoute := c.FormValue("endpoint_route")
+	if endpointRoute != "" {
+		if len(endpointRoute) > 100 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_route should be <= 100 characters", "endpoint_route should be <= 100 characters")
+		}
+	}
+	endpointController := c.FormValue("endpoint_controller")
+	if endpointController != "" {
+		if len(endpointController) > 50 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_controller should be <= 50 characters", "endpoint_route should be <= 50 characters")
+		}
+	}
+	endpointVersion := c.FormValue("endpoint_version")
+	if endpointVersion != "" {
+		if len(endpointController) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_version must be <= 11 characters", "endpoint_version must be <= 11 characters")
+		}
+		_, err := strconv.Atoi(endpointVersion)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_version must be number", "endpoint_version must be number")
+		}
+	} else {
+		return lib.CustomError(http.StatusBadRequest, "endpoint_version can not be blank", "endpoint_version can not be blank")
+	}
 	menuKey := c.FormValue("menu_key")
-	if menuKey == "" {
+	if menuKey != "" {
+		if len(menuKey) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "menu_key must be <= 11 characters", "menu_key must be <= 11 characters")
+		}
+		_, err := strconv.Atoi(menuKey)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "menu_key must be number", "menu_key must be number")
+		}
+	} else {
 		return lib.CustomError(http.StatusBadRequest, "menu_key can not be blank", "menu_key can not be blank")
 	}
-	params["endpoint_key"] = endpointKey
+	endpointDesc := c.FormValue("endpoint_desc")
+	if endpointDesc != "" {
+		if len(endpointDesc) > 255 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_desc should be <= 255 characters", "endpoint_desc should be <= 255 characters")
+		}
+	}
+	params["endpoint_code"] = endpointCode
 	params["endpoint_category_key"] = endpointCategoryKey
 	params["endpoint_name"] = endpointName
 	params["endpoint_verb"] = endpointVerb
 	params["endpoint_uri"] = endpointUrl
-	params["menu_key"] = menuKey
-	params["rec_modified_by"] = lib.UserIDStr
-	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	params["endpoint_route"] = endpointRoute
+	params["endpoint_controller"] = endpointController
+	params["endpoint_desc"] = endpointDesc
 	params["rec_status"] = "1"
+	params["menu_key"] = menuKey
 	params["endpoint_version"] = "1"
 	params["privileges_key"] = "READ"
 

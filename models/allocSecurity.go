@@ -7,26 +7,29 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
+
+	"github.com/shopspring/decimal"
 )
 
 type AllocSecurity struct {
-	AllocSecKey   uint64 `db:"alloc_security_key"          json:"alloc_security_key"`
-	ProductKey    uint64 `db:"product_key"          json:"product_key"`
-	ProductName   string `db:"product_name"          json:"product_name"`
-	PeriodeName   string `db:"periode_name"          json:"periode_name"`
-	SecurityKey   uint64 `db:"sec_key"          json:"sec_key"`
-	SecurityName  string `db:"sec_name" json:"sec_name"`
-	SecurityValue string `db:"security_value" json:"security_value"`
+	AllocSecKey   uint64           `db:"alloc_security_key"          json:"alloc_security_key"`
+	ProductKey    uint64           `db:"product_key"          json:"product_key"`
+	ProductName   *string          `db:"product_name"          json:"product_name"`
+	PeriodeName   *string          `db:"periode_name"          json:"periode_name"`
+	SecurityKey   uint64           `db:"sec_key"          json:"sec_key"`
+	SecurityName  *string          `db:"sec_name" json:"sec_name"`
+	SecurityValue *decimal.Decimal `db:"security_value" json:"security_value"`
 }
 type AllocSecDetail struct {
-	AllocSecKey   uint64 `db:"alloc_security_key"          json:"alloc_security_key"`
-	ProductKey    uint64 `db:"product_key"          json:"product_key"`
-	ProductName   string `db:"product_name"          json:"product_name"`
-	PeriodeKey    uint64 `db:"periode_key" json:"periode_key"`
-	PeriodeName   string `db:"periode_name"          json:"periode_name"`
-	SecurityKey   uint64 `db:"sec_key"          json:"sec_key"`
-	SecurityName  string `db:"sec_name" json:"sec_name"`
-	SecurityValue string `db:"security_value" json:"security_value"`
+	AllocSecKey   uint64           `db:"alloc_security_key"          json:"alloc_security_key"`
+	ProductKey    uint64           `db:"product_key"          json:"product_key"`
+	ProductName   *string          `db:"product_name"          json:"product_name"`
+	PeriodeKey    uint64           `db:"periode_key" json:"periode_key"`
+	PeriodeName   string           `db:"periode_name"          json:"periode_name"`
+	SecurityKey   uint64           `db:"sec_key"          json:"sec_key"`
+	SecurityName  *string          `db:"sec_name" json:"sec_name"`
+	SecurityValue *decimal.Decimal `db:"security_value" json:"security_value"`
+	RecOrder      int64            `db:"rec_order" json:"rec_order"`
 }
 
 func GetAllocSecModels(c *[]AllocSecurity) (int, error) {
@@ -59,7 +62,8 @@ func GetAllocSecDetailModels(c *AllocSecDetail, AllocSecKey string) (int, error)
 	c.periode_name, 
 	a.sec_key, 
 	d.sec_name,
-	a.security_value
+	a.security_value,
+	a.rec_order
 	FROM ffs_alloc_security a 
 	JOIN ms_product b ON a.product_key = b.product_key 
 	JOIN ffs_periode c ON a.periode_key = c.periode_key 
