@@ -474,11 +474,7 @@ func UpdateMsPaymentChannel(PChannelKey string, params map[string]string) (int, 
 	}
 	query += " WHERE pchannel_key = " + params["pchannel_key"]
 
-<<<<<<< HEAD
 	log.Println("UpdateMsPaymentChannel:", query)
-=======
-	// log.Println("========== Updatepaymentchannel ==========>>>", query)
->>>>>>> 9a9ce78786aaadaf343d94d3a51ad9cc98aabb5c
 
 	resultSQL, err := db.Db.Exec(query)
 	if err != nil {
