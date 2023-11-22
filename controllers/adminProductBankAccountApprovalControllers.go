@@ -280,10 +280,12 @@ func UpdateProductBankRequest(c echo.Context) error {
 	paramsBankAcc["bank_account_key"] = strconv.FormatUint(*productBankAccount.BankAccountKey, 10)
 	paramsBankAcc["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 	paramsBankAcc["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+	paramsBankAcc["rec_status"] = "1"
 
 	paramsProductBankAccount["rec_action"] = "UPDATE"
 	paramsProductBankAccount["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 	paramsProductBankAccount["rec_created_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+	paramsProductBankAccount["rec_status"] = "1"
 
 	err = models.CreateRequestProductBankAccount(paramsBankAcc, paramsProductBankAccount)
 	if err != nil {

@@ -213,7 +213,7 @@ func AdminGetAllMsProductBankAccount(c *[]AdminMsProductBankAccountList, limit u
 	}
 
 	// Main query
-	// log.Println("==========  ==========>>>", query)
+	log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
