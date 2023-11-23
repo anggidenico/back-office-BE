@@ -11,7 +11,7 @@ import (
 type ProductBankAccountRequest struct {
 	RecPK                 uint64  `db:"rec_pk" json:"rec_pk"`
 	RecAction             string  `db:"rec_action" json:"rec_action"`
-	ProductBankAccountKey *uint64 `db:"product_bankacc_key" json:"product_bankacc_key"`
+	ProductBankAccountKey *uint64 `db:"prod_bankacc_key" json:"prod_bankacc_key"`
 	ProductKey            *uint64 `db:"product_key" json:"product_key"`
 	BankKey               *uint64 `db:"bank_key" json:"bank_key"`
 	BankAccountKey        *uint64 `db:"bank_account_key" json:"bank_account_key"`
@@ -31,13 +31,13 @@ type ProductBankAccountDetail struct {
 }
 
 func ProductBankAccountRequestList() []ProductBankAccountRequest {
-	query := `SELECT t1.rec_pk, t1.rec_action, t1.prod_bankacc_key, t1.product_key, t3.product_name, t1.bank_account_key, t4.bank_name, t4.account_no, t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name 
+	query := `SELECT t1.rec_pk, t1.rec_action, t1.prod_bankacc_key, t1.product_key, t3.product_name, t1.bank_account_key, t4.bank_name, t4.account_no, t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name, t4.bank_key, t1.prod_bankacc_key, t4.swift_code 
 
 	FROM ms_product_bank_account_request t1
 	INNER JOIN gen_lookup t2 ON t2.lookup_key = t1.bank_account_purpose
 	INNER JOIN ms_product t3 ON t3.product_key = t1.product_key
 	INNER JOIN (
-		SELECT a1.bank_account_key, a1.bank_account_type, a1.bank_key, a2.bank_name, a1.account_no, a1.account_holder_name
+		SELECT a1.bank_account_key, a1.bank_account_type, a1.bank_key, a2.bank_name, a1.account_no, a1.account_holder_name, a1.swift_code
 		FROM ms_bank_account a1
 		INNER JOIN ms_bank a2 ON a2.bank_key = a1.bank_key
 		WHERE a1.rec_status = 1
@@ -58,38 +58,74 @@ func ProductBankAccountRequestList() []ProductBankAccountRequest {
 func ProductBankAccountRequestDetail(rec_pk string) ProductBankAccountDetail {
 	var result ProductBankAccountDetail
 
-	query := `SELECT t1.rec_pk, t1.rec_action, t1.prod_bankacc_key, t1.product_key, t3.product_name, t1.bank_account_key, t4.bank_name, t4.account_no , t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name
-	FROM ms_product_bank_account t1
-	INNER JOIN gen_lookup t2 ON t2.lookup_key = t1.bank_account_purpose
-	INNER JOIN ms_product t3 ON t3.product_key = t1.product_key
-	INNER JOIN (
-		SELECT a1.bank_account_key, a1.bank_account_type, a1.bank_key, a2.bank_name, a1.account_no, a1.account_holder_name FROM ms_bank_account a1 INNER JOIN ms_bank a2 ON a2.bank_key = a1.bank_key WHERE a1.rec_status = 1
-	) t4 ON t1.bank_account_key = t4.bank_account_key
-	
-	WHERE t1.rec_pk =` + rec_pk
+	queryGetAction := `SELECT t1.rec_action FROM ms_product_bank_account_request t1 WHERE t1.rec_pk =` + rec_pk
 
-	var getUpdates ProductBankAccountRequest
-	err := db.Db.Get(&getUpdates, query)
+	// var getUpdates ProductBankAccountRequest
+	var getAction string
+	err := db.Db.Get(&getAction, queryGetAction)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	result.Updates = getUpdates
+	if getAction == "CREATE" {
+		queryGetUpdate := `SELECT t1.rec_pk, t1.rec_action, t1.prod_bankacc_key, t1.product_key, t3.product_name, t1.bank_account_key, t4.bank_name, t4.account_no, t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name, t4.bank_key, t1.prod_bankacc_key, t4.swift_code 
 
-	if getUpdates.RecAction == "UPDATE" {
+		FROM ms_product_bank_account_request t1
+		INNER JOIN gen_lookup t2 ON t2.lookup_key = t1.bank_account_purpose
+		INNER JOIN ms_product t3 ON t3.product_key = t1.product_key
+		INNER JOIN (
+			SELECT a1.bank_account_key, a1.bank_account_type, a1.bank_key, a2.bank_name, a1.account_no, a1.account_holder_name, a1.swift_code
+			FROM ms_bank_account a1
+			INNER JOIN ms_bank a2 ON a2.bank_key = a1.bank_key
+			WHERE a1.rec_status = 1
+		) t4 ON t1.bank_account_key = t4.bank_account_key
+		
+		WHERE t1.rec_pk =` + rec_pk
 
-		query2 := `SELECT t1.rec_pk, t1.rec_action, t1.prod_bankacc_key, t1.product_key, t3.product_name, t1.bank_account_key, t4.bank_name, t4.account_no , t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name 
+		var getUpdates ProductBankAccountRequest
+		err = db.Db.Get(&getUpdates, queryGetUpdate)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		result.Updates = getUpdates
+	}
+
+	if getAction == "UPDATE" {
+
+		queryGetUpdate := `SELECT t1.rec_pk, t1.rec_action, t1.prod_bankacc_key, t1.product_key, t3.product_name, t1.bank_account_key, t4.bank_name, t4.account_no, t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name, t4.bank_key, t1.prod_bankacc_key, t4.swift_code 
+
+		FROM ms_product_bank_account_request t1
+		INNER JOIN gen_lookup t2 ON t2.lookup_key = t1.bank_account_purpose
+		INNER JOIN ms_product t3 ON t3.product_key = t1.product_key
+		INNER JOIN (
+			SELECT a1.bank_account_key, a1.bank_account_type, a1.bank_key, a2.bank_name, a1.account_no, a1.account_holder_name, a1.swift_code
+			FROM ms_bank_account_request a1
+			INNER JOIN ms_bank a2 ON a2.bank_key = a1.bank_key
+			WHERE a1.rec_status = 1
+		) t4 ON t1.bank_account_key = t4.bank_account_key
+		
+		WHERE t1.rec_pk =` + rec_pk
+		log.Println("queryGetUpdate", queryGetUpdate)
+		var getUpdates ProductBankAccountRequest
+		err = db.Db.Get(&getUpdates, queryGetUpdate)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		result.Updates = getUpdates
+
+		queryGetExisting := `SELECT t1.prod_bankacc_key, t1.product_key, t3.product_name, t1.bank_account_key, t4.bank_name, t4.account_no , t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name 
 		FROM ms_product_bank_account t1
 		INNER JOIN gen_lookup t2 ON t2.lookup_key = t1.bank_account_purpose
 		INNER JOIN ms_product t3 ON t3.product_key = t1.product_key
 		INNER JOIN (
 			SELECT a1.bank_account_key, a1.bank_account_type, a1.bank_key, a2.bank_name, a1.account_no, a1.account_holder_name FROM ms_bank_account a1 INNER JOIN ms_bank a2 ON a2.bank_key = a1.bank_key WHERE a1.rec_status = 1
-		) t4 ON t1.bank_account_key = t4.bank_account_key
-		
+		) t4 ON t1.bank_account_key = t4.bank_account_key		
 		WHERE t1.prod_bankacc_key =` + strconv.FormatUint(*getUpdates.ProductBankAccountKey, 10)
-
+		log.Println("query2", queryGetExisting)
 		var getExisting ProductBankAccountRequest
-		err := db.Db.Get(&getExisting, query2)
+		err := db.Db.Get(&getExisting, queryGetExisting)
 		if err != nil {
 			log.Println(err.Error())
 		}
@@ -118,9 +154,9 @@ func CreateRequestProductBankAccount(paramsMsBankAccount map[string]string, para
 		var fields, values string
 		var bindvars []interface{}
 		for key, value := range paramsMsBankAccount {
-			fields += key + ", "
-			values += "?, "
 			if key != "rec_pk" && key != "rec_action" {
+				fields += key + ", "
+				values += "?, "
 				bindvars = append(bindvars, value)
 			}
 		}
@@ -128,6 +164,7 @@ func CreateRequestProductBankAccount(paramsMsBankAccount map[string]string, para
 		values = values[:(len(values) - 2)]
 
 		qInsertMsBankAccount += "(" + fields + ") VALUES(" + values + ")"
+		// log.Println(qInsertMsBankAccount)
 		// qInsertMsBankAccountReq += "(" + fields + ") VALUES(" + values + ")"
 
 		ret, err = tx.Exec(qInsertMsBankAccount, bindvars...)
@@ -145,32 +182,33 @@ func CreateRequestProductBankAccount(paramsMsBankAccount map[string]string, para
 			return err
 		}
 
-		paramsMsBankAccount2 := paramsMsBankAccount
-		paramsMsBankAccount2["bank_account_key"] = strconv.FormatInt(lastID, 10)
-		qInsertMsBankAccountReq := "INSERT INTO ms_bank_account_request"
-		for key, value := range paramsMsBankAccount2 {
-			fields += key + ", "
-			values += "?, "
-			bindvars = append(bindvars, value)
-		}
-		fields = fields[:(len(fields) - 2)]
-		values = values[:(len(values) - 2)]
-		_, err = tx.Exec(qInsertMsBankAccountReq, bindvars...)
-		if err != nil {
-			tx.Rollback()
-			log.Println(err.Error())
-			return err
-		}
-
 	} else {
 		// log.Println("paramsMsBankAccount[bank_account_key] =", paramsMsBankAccount["bank_account_key"])
 		lastID, _ = strconv.ParseInt(paramsMsBankAccount["bank_account_key"], 10, 64)
 	}
 
+	paramsMsBankAccount2 := paramsMsBankAccount
+	paramsMsBankAccount2["bank_account_key"] = strconv.FormatInt(lastID, 10)
+	var fields1, values1 string
+	var bindvars1 []interface{}
+	qInsertMsBankAccountReq := "INSERT INTO ms_bank_account_request"
+	for key, value := range paramsMsBankAccount2 {
+		fields1 += key + ", "
+		values1 += "?, "
+		bindvars1 = append(bindvars1, value)
+	}
+	fields1 = fields1[:(len(fields1) - 2)]
+	values1 = values1[:(len(values1) - 2)]
+	_, err = tx.Exec(qInsertMsBankAccountReq, bindvars1...)
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return err
+	}
+
 	// if lastID > 0 {
 	// msBankAccKey := strconv.FormatInt(lastID, 10)
 	paramsProductBankAccount["bank_account_key"] = strconv.FormatInt(lastID, 10)
-
 	qInsertMsBankAccount := "INSERT INTO ms_product_bank_account_request"
 	var fields2, values2 string
 	var bindvars2 []interface{}
@@ -182,7 +220,7 @@ func CreateRequestProductBankAccount(paramsMsBankAccount map[string]string, para
 	fields2 = fields2[:(len(fields2) - 2)]
 	values2 = values2[:(len(values2) - 2)]
 	qInsertMsBankAccount += "(" + fields2 + ") VALUES(" + values2 + ")"
-
+	// log.Println(qInsertMsBankAccount)
 	_, err = tx.Exec(qInsertMsBankAccount, bindvars2...)
 	if err != nil {
 		tx.Rollback()
@@ -227,7 +265,7 @@ func ProductBankAccountApprovalAction(params map[string]string) error {
 		return err
 	}
 
-	query1 := `UPDATE ms_product_request SET rec_approval_status = ` + params["approval"] + ` , rec_approved_date = '` + recDate + `' , rec_approved_by = '` + recBy + `' , rec_attribute_id1 = '` + params["reason"] + `' WHERE rec_pk = ` + params["rec_pk"]
+	query1 := `UPDATE ms_product_bank_account_request SET rec_approval_status = ` + params["approval"] + ` , rec_approved_date = '` + recDate + `' , rec_approved_by = '` + recBy + `' , rec_attribute_id1 = '` + params["reason"] + `' WHERE rec_pk = ` + params["rec_pk"]
 	resultSQL, err = tx.Exec(query1)
 	if err != nil {
 		tx.Rollback()
