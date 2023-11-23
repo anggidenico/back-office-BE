@@ -588,6 +588,10 @@ func router() *echo.Echo {
 	admin.POST("/create-alloc-security", controllers.CreateAllocSecController).Name = "CreateAllocSecController"
 	admin.POST("/update-alloc-security", controllers.UpdateAllocSecController).Name = "UpdateAllocSecController"
 	admin.POST("/delete-alloc-security", controllers.DeleteAllocSecController).Name = "DeleteAllocSecController"
+
+	//Portfolio Sector
+	admin.GET("/get-allocsector-list", controllers.GetAllocSectorController).Name = "GetAllocSectorController"
+	admin.GET("/get-allocsector-detail/:alloc_sector_key", controllers.GetAllocSectorDetailController).Name = "GetAllocSectorDetailController"
 	return e
 
 }

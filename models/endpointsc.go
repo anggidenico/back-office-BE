@@ -9,6 +9,7 @@ import (
 )
 
 type ScEndpointt struct {
+	EndpointKey        int64   `json:"endpoint_key" db:"endpoint_key"`
 	EndpointCode       string  `db:"endpoint_code" json:"endpoint_code"`
 	EndpointName       string  `db:"endpoint_name" json:"endpoint_name"`
 	Method             string  `db:"endpoint_verb" json:"method"`
@@ -48,7 +49,7 @@ type ScMenuu struct {
 }
 
 func GetEndpointscModels(c *[]ScEndpointt) (int, error) {
-	query := `SELECT a.endpoint_code, a.endpoint_name, a.endpoint_verb, a.endpoint_uri,a.endpoint_version,a.endpoint_version,a.privileges_key, b.endpoint_ctg_code, b.endpoint_ctg_desc, b.endpoint_ctg_purpose, c.menu_code, c.menu_name, c.menu_page, c.menu_url, c.menu_desc FROM sc_endpoint AS a 
+	query := `SELECT a.endpoint_key, a.endpoint_code, a.endpoint_name, a.endpoint_verb, a.endpoint_uri,a.endpoint_version,a.endpoint_version,a.privileges_key, b.endpoint_ctg_code, b.endpoint_ctg_desc, b.endpoint_ctg_purpose, c.menu_code, c.menu_name, c.menu_page, c.menu_url, c.menu_desc FROM sc_endpoint AS a 
 	JOIN sc_endpoint_category AS b ON a.endpoint_category_key = b.endpoint_category_key 
 	JOIN sc_menu AS c ON a.menu_key = c.menu_key WHERE a.rec_status = 1 ORDER BY a.rec_order`
 	log.Println("====================>>>", query)
