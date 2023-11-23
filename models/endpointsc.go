@@ -27,7 +27,7 @@ type ScEndpointt struct {
 }
 
 type ScEndpointDetail struct {
-	EndpointKey         string  `db:"endpoint_key" json:"endpoint_key"`
+	EndpointKey         int64   `db:"endpoint_key" json:"endpoint_key"`
 	EndpointCategoryKey string  `db:"endpoint_category_key" json:"endpoint_category_key"`
 	EndPointCode        string  `db:"endpoint_code" json:"endpoint_code"`
 	EndpointName        *string `db:"endpoint_name" json:"endpoint_name"`
