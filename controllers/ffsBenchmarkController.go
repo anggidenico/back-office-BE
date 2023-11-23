@@ -115,12 +115,25 @@ func CreateFfsBenchmarkController(c echo.Context) error {
 			return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 must be <= 50 characters", "rec_attribute_id1 must be <= 70 characters")
 		}
 	}
-
+	recAttributeID2 := c.FormValue("rec_attribute_id2")
+	if recAttributeID2 != "" {
+		if len(recAttributeID2) > 50 {
+			return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 must be <= 50 characters", "rec_attribute_id1 must be <= 70 characters")
+		}
+	}
+	recAttributeID3 := c.FormValue("rec_attribute_id3")
+	if recAttributeID3 != "" {
+		if len(recAttributeID2) > 50 {
+			return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 must be <= 50 characters", "rec_attribute_id1 must be <= 70 characters")
+		}
+	}
 	params["fund_type_key"] = fundTypeKey
 	params["benchmark_code"] = benchmarkCode
 	params["benchmark_name"] = benchmarkName
 	params["benchmark_short_name"] = benchmarkShortName
 	params["rec_attribute_id1"] = recAttributeID1
+	params["rec_attribute_id2"] = recAttributeID2
+	params["rec_attribute_id3"] = recAttributeID3
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
@@ -210,12 +223,25 @@ func UpdateFfsBenchmarkController(c echo.Context) error {
 			return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 must be <= 50 characters", "rec_attribute_id1 must be <= 70 characters")
 		}
 	}
-	// params["benchmark_key"] = benchmarkKey
+	recAttributeID2 := c.FormValue("rec_attribute_id2")
+	if recAttributeID2 != "" {
+		if len(recAttributeID2) > 50 {
+			return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 must be <= 50 characters", "rec_attribute_id1 must be <= 70 characters")
+		}
+	}
+	recAttributeID3 := c.FormValue("rec_attribute_id3")
+	if recAttributeID3 != "" {
+		if len(recAttributeID2) > 50 {
+			return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 must be <= 50 characters", "rec_attribute_id1 must be <= 70 characters")
+		}
+	}
 	params["fund_type_key"] = fundTypeKey
 	params["benchmark_code"] = benchmarkCode
 	params["benchmark_name"] = benchmarkName
 	params["benchmark_short_name"] = benchmarkShortName
-	// params["rec_attribute_id1"] = recAttributeID1
+	params["rec_attribute_id1"] = recAttributeID1
+	params["rec_attribute_id2"] = recAttributeID2
+	params["rec_attribute_id3"] = recAttributeID3
 	params["rec_status"] = "1"
 
 	status, err = models.UpdateBenchmark(benchmarkKey, params)

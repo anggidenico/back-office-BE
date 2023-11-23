@@ -10,23 +10,27 @@ import (
 )
 
 type Benchmark struct {
-	BenchmarkKey       int64  `db:"benchmark_key"        json:"benchmark_key"`
-	FundTypeKey        int64  `db:"fund_type_key"        json:"fund_type_key"`
-	FundTypeName       string `db:"fund_type_name" json:"fund_type_name"`
-	BenchmarkCode      string `db:"benchmark_code"  json:"benchmark_code"`
-	BenchmarkName      string `db:"benchmark_name"  json:"benchmark_name"`
-	BenchmarkShortName string `db:"benchmark_short_name" json:"benchmark_short_name"`
-	RecAttributeID1    string `db:"rec_attribute_id1" json:"rec_attribute_id1"`
+	BenchmarkKey       int64   `db:"benchmark_key"        json:"benchmark_key"`
+	FundTypeKey        int64   `db:"fund_type_key"        json:"fund_type_key"`
+	FundTypeName       string  `db:"fund_type_name" json:"fund_type_name"`
+	BenchmarkCode      string  `db:"benchmark_code"  json:"benchmark_code"`
+	BenchmarkName      string  `db:"benchmark_name"  json:"benchmark_name"`
+	BenchmarkShortName string  `db:"benchmark_short_name" json:"benchmark_short_name"`
+	RecAttributeID1    string  `db:"rec_attribute_id1" json:"rec_attribute_id1"`
+	RecAttributeID2    *string `db:"rec_attribute_id2" json:"rec_attribute_id2"`
+	RecAttributeID3    *string `db:"rec_attribute_id3" json:"rec_attribute_id3"`
 }
 type BenchmarkDetail struct {
-	BenchmarkKey       int64  `db:"benchmark_key" json:"benchmark_key"`
-	FundTypeKey        int64  `db:"fund_type_key"        json:"fund_type_key"`
-	FundTypeName       string `db:"fund_type_name" json:"fund_type_name"`
-	BenchmarkCode      string `db:"benchmark_code"  json:"benchmark_code"`
-	BenchmarkName      string `db:"benchmark_name"  json:"benchmark_name"`
-	BenchmarkShortName string `db:"benchmark_short_name" json:"benchmark_short_name"`
-	RecAttributeID1    string `db:"rec_attribute_id1" json:"rec_attribute_id1"`
-	RecStatus          int8   `db:"rec_status"  json:"rec_status"`
+	BenchmarkKey       int64   `db:"benchmark_key" json:"benchmark_key"`
+	FundTypeKey        int64   `db:"fund_type_key"        json:"fund_type_key"`
+	FundTypeName       string  `db:"fund_type_name" json:"fund_type_name"`
+	BenchmarkCode      string  `db:"benchmark_code"  json:"benchmark_code"`
+	BenchmarkName      string  `db:"benchmark_name"  json:"benchmark_name"`
+	BenchmarkShortName string  `db:"benchmark_short_name" json:"benchmark_short_name"`
+	RecAttributeID1    string  `db:"rec_attribute_id1" json:"rec_attribute_id1"`
+	RecAttributeID2    *string `db:"rec_attribute_id2" json:"rec_attribute_id2"`
+	RecAttributeID3    *string `db:"rec_attribute_id3" json:"rec_attribute_id3"`
+	RecStatus          int8    `db:"rec_status"  json:"rec_status"`
 }
 
 func GetBenchmarkModels(c *[]Benchmark) (int, error) {
@@ -36,7 +40,9 @@ func GetBenchmarkModels(c *[]Benchmark) (int, error) {
 	a.benchmark_code, 
 	a.benchmark_name, 
 	a.benchmark_short_name,
-	a.rec_attribute_id1
+	a.rec_attribute_id1,
+	a.rec_attribute_id2,
+	a.rec_attribute_id3
 	FROM ffs_benchmark a 
 	JOIN ms_fund_type b 
 	ON a.fund_type_key = b.fund_type_key WHERE a.rec_status = 1` //order by
@@ -59,6 +65,8 @@ func GetBenchmarkDetailModels(c *BenchmarkDetail, BenchmarkKey string) (int, err
 	a.benchmark_name, 
 	a.benchmark_short_name,
 	a.rec_attribute_id1,
+	a.rec_attribute_id2,
+	a.rec_attribute_id3,
     a.rec_status
 	FROM ffs_benchmark a 
 	JOIN ms_fund_type b 
