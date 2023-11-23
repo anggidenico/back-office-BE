@@ -143,9 +143,11 @@ func CheckDuplicateAllocSector(periodeKey, productKey int64, sectorKey int64) (b
 func CreateAllocSector(params map[string]interface{}) (int, error) {
 	periodeKey, _ := params["periode_key"].(int64)
 	productKey, _ := params["product_key"].(int64)
+
 	sectorKey, _ := params["sector_key"].(int64)
 	// Check for duplicate records
 	duplicate, key, err := CheckDuplicateAllocSector(periodeKey, productKey, sectorKey)
+	log.Println("Error checking for duplicates:", err)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -154,6 +156,7 @@ func CreateAllocSector(params map[string]interface{}) (int, error) {
 	if duplicate {
 		status, err := UpdateAllocSector(key, params)
 		if err != nil {
+			log.Println("Failed to update data:", err)
 			return status, err
 		}
 		return http.StatusOK, nil
