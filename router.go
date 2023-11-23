@@ -511,6 +511,8 @@ func router() *echo.Echo {
 	admin.POST("/create-endpoint-sc", controllers.CreateEndpointController).Name = "CreateEndpointController"
 	admin.POST("/update-endpoint-sc", controllers.UpdateEndpointController).Name = "UpdateEndpointController"
 	admin.POST("/delete-endpoint-sc", controllers.DeleteEndpointController).Name = "DeleteEndpointController"
+	admin.GET("/get-endpoint-category", controllers.GetEndpointCategoryController).Name = "GetEndpointCategoryController"
+	admin.GET("/sc-menu-endpoint", controllers.GetScMenuController).Name = "GetScMenuController"
 
 	// PRODUCT PAYMENT CHANNEL
 	admin.GET("/product-channel/:product_key", controllers.ProductPaymentChannelList)

@@ -325,3 +325,35 @@ func DeleteEndpointController(c echo.Context) error {
 	response.Data = ""
 	return c.JSON(http.StatusOK, response)
 }
+
+func GetEndpointCategoryController(c echo.Context) error {
+	var endpoint []models.EndpointCategory
+	status, err := models.GetEndpointCategoryModels(&endpoint)
+	if err != nil {
+		// log.Error(err.Error())
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = endpoint
+	return c.JSON(http.StatusOK, response)
+}
+
+func GetScMenuController(c echo.Context) error {
+	var endpoint []models.ScMenuu
+	status, err := models.GetScMenuModels(&endpoint)
+	if err != nil {
+		// log.Error(err.Error())
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = endpoint
+	return c.JSON(http.StatusOK, response)
+}

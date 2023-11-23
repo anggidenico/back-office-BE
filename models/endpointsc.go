@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"mf-bo-api/db"
@@ -35,11 +36,21 @@ type ScEndpointDetail struct {
 	EndpointVersion     string  `db:"endpoint_version" json:"endpoint_version"`
 	PrivilegesKey       string  `db:"privileges_key" json:"privileges_key"`
 }
+type EndpointCategory struct {
+	EndpointCategoryKey string `db:"endpoint_category_key" json:"endpoint_category_key"`
+	EndpointCtgCode     string `db:"endpoint_ctg_code" json:"endpoint_ctg_code"`
+	EndpointCtgName     string `db:"endpoint_ctg_name" json:"endpoint_ctg_name"`
+}
+type ScMenuu struct {
+	MenuKey  string `db:"menu_key" json:"menu_key"`
+	MenuName string `db:"menu_name" json:"menu_name"`
+	MenuCode string `db:"menu_code" json:"menu_code"`
+}
 
 func GetEndpointscModels(c *[]ScEndpointt) (int, error) {
 	query := `SELECT a.endpoint_code, a.endpoint_name, a.endpoint_verb, a.endpoint_uri,a.endpoint_version,a.endpoint_version,a.privileges_key, b.endpoint_ctg_code, b.endpoint_ctg_desc, b.endpoint_ctg_purpose, c.menu_code, c.menu_name, c.menu_page, c.menu_url, c.menu_desc FROM sc_endpoint AS a 
 	JOIN sc_endpoint_category AS b ON a.endpoint_category_key = b.endpoint_category_key 
-	JOIN sc_menu AS c ON a.menu_key = c.menu_key WHERE a.rec_status = 1`
+	JOIN sc_menu AS c ON a.menu_key = c.menu_key WHERE a.rec_status = 1 ORDER BY a.rec_order`
 	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
@@ -149,3 +160,37 @@ func UpdateEndpointSc(EndpointKey string, params map[string]string) (int, error)
 
 // 	return http.StatusOK, nil
 // }
+
+func GetEndpointCategoryModels(c *[]EndpointCategory) (int, error) {
+	query := `SELECT endpoint_category_key,
+	endpoint_ctg_code,
+	endpoint_ctg_name
+	FROM sc_endpoint_category
+	WHERE rec_status = 1 order by rec_order`
+	// log.Println("====================>>>", query)
+	err := db.Db.Select(c, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
+	}
+	return http.StatusOK, nil
+}
+
+func GetScMenuModels(c *[]ScMenuu) (int, error) {
+	query := `SELECT menu_key,
+	menu_code,
+	menu_name
+	FROM sc_menu
+	WHERE rec_status = 1 ORDER BY rec_order`
+	// log.Println("====================>>>", query)
+	err := db.Db.Select(c, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
+	}
+	return http.StatusOK, nil
+}
