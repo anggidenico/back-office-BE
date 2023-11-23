@@ -37,12 +37,12 @@ type ScEndpointDetail struct {
 	PrivilegesKey       string  `db:"privileges_key" json:"privileges_key"`
 }
 type EndpointCategory struct {
-	EndpointCategoryKey string `db:"endpoint_category_key" json:"endpoint_category_key"`
+	EndpointCategoryKey int64  `db:"endpoint_category_key" json:"endpoint_category_key"`
 	EndpointCtgCode     string `db:"endpoint_ctg_code" json:"endpoint_ctg_code"`
 	EndpointCtgName     string `db:"endpoint_ctg_name" json:"endpoint_ctg_name"`
 }
 type ScMenuu struct {
-	MenuKey  string `db:"menu_key" json:"menu_key"`
+	MenuKey  int64  `db:"menu_key" json:"menu_key"`
 	MenuName string `db:"menu_name" json:"menu_name"`
 	MenuCode string `db:"menu_code" json:"menu_code"`
 }
