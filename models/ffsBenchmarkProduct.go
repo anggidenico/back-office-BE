@@ -14,6 +14,7 @@ import (
 type BenchmarkProduct struct {
 	BenchProductKey int64           `db:"bench_prod_key" json:"bench_prod_key"`
 	BenchmarkKey    int64           `db:"benchmark_key" json:"benchmark_key"`
+	BenchmarkName   string          `db:"benchmark_name" json:"benchmark_name"`
 	ProductKey      int64           `db:"product_key" json:"product_key"`
 	ProductCode     string          `db:"product_code" json:"product_code"`
 	ProductNameAlt  string          `db:"product_name_alt" json:"product_name_alt"`
@@ -35,6 +36,7 @@ type BenchmarkProdDetail struct {
 func GetBenchmarkProductModels(c *[]BenchmarkProduct) (int, error) {
 	query := `SELECT a.bench_prod_key,
 	a.benchmark_key,
+	c.benchmark_name,
 	a.product_key,
 	b.product_code,
 	b.product_name,
@@ -44,6 +46,8 @@ func GetBenchmarkProductModels(c *[]BenchmarkProduct) (int, error) {
 	FROM ffs_benchmark_product a 
 	JOIN ms_product b 
 	ON a.product_key = b.product_key 
+	JOIN ffs_benchmark c
+	ON a.benchmark_key = c.benchmark_key
 	WHERE a.rec_status = 1 
 	ORDER BY a.rec_created_date DESC`
 
