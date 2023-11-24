@@ -24,6 +24,7 @@ func GetAllocSectorController(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Data = sector
+	log.Printf("Response Data: %+v\n", response.Data)
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -80,9 +81,12 @@ func CreateAllocSectorController(c echo.Context) error {
 		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
 		}
-		params["rec_order"] = strconv.Itoa(value)
+		params["rec_order"] = value
+	} else {
+		params["rec_order"] = 0
 	}
-	params["rec_order"] = recOrder
+
+	// params["rec_order"] = recOrder
 	params["product_key"] = productKey
 	params["periode_key"] = periodeKey
 	params["sector_key"] = sectorKey
@@ -166,9 +170,12 @@ func UpdateAllocSectorController(c echo.Context) error {
 		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
 		}
-		params["rec_order"] = strconv.Itoa(value)
+		params["rec_order"] = value
+	} else {
+		params["rec_order"] = 0
 	}
-	params["rec_order"] = recOrder
+
+	// params["rec_order"] = recOrder
 	params["alloc_sector_key"] = allocSectorKey
 	params["product_key"] = productKey
 	params["periode_key"] = periodeKey

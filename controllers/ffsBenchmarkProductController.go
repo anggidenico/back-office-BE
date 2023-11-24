@@ -25,6 +25,11 @@ func CreateFfsBenchmarkProductController(c echo.Context) error {
 	if benchmarkRatio == "" {
 		return lib.CustomError(http.StatusBadRequest, "benchmark_ratio can not be blank", "benchmark_ratio can not be blank")
 	}
+	benchmarkKey := c.FormValue("benchmark_key")
+	if benchmarkKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "benchmark_key can not be blank", "benchmark_key can not be blank")
+	}
+	params["benchmark_key"] = benchmarkKey
 	params["product_key"] = productKey
 	params["benchmark_ratio"] = benchmarkRatio
 	params["rec_status"] = "1"
@@ -115,6 +120,11 @@ func UpdateBenchmarkProdController(c echo.Context) error {
 	if benchmarkRatio == "" {
 		return lib.CustomError(http.StatusBadRequest, "benchmark_ratio can not be blank", "benchmark_ratio can not be blank")
 	}
+	benchmarkKey := c.FormValue("benchmark_key")
+	if benchmarkKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "benchmark_key can not be blank", "benchmark_key can not be blank")
+	}
+	params["benchmark_key"] = benchmarkKey
 	params["bench_prod_key"] = benchProdKey
 	params["product_key"] = productKey
 	params["benchmark_ratio"] = benchmarkRatio
@@ -128,7 +138,7 @@ func UpdateBenchmarkProdController(c echo.Context) error {
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = ""
+	response.Data = "Data created successfully"
 
 	return c.JSON(http.StatusOK, response)
 }
