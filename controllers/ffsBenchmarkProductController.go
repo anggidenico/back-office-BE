@@ -116,7 +116,7 @@ func CreateBenchProdController(c echo.Context) error {
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
-	if productKey != 0 || benchmarkKey != 0 {
+	if productKey != 0 && benchmarkKey != 0 {
 		duplicate, key, err := models.CheckDuplicateBenchmarkProd(productKey, benchmarkKey)
 		if err != nil {
 			log.Println("Error checking for duplicates:", err)
