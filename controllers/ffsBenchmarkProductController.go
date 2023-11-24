@@ -15,6 +15,7 @@ import (
 
 func GetFfsBenchmarkProductController(c echo.Context) error {
 	var benchmarkprod []models.BenchmarkProduct
+	log.Println(benchmarkprod)
 	status, err := models.GetBenchmarkProductModels(&benchmarkprod)
 	if err != nil {
 		return lib.CustomError(status, err.Error(), "Failed input data")
