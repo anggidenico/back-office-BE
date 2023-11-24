@@ -13,8 +13,10 @@ type BenchmarkProduct struct {
 	BenchProductKey int64  `db:"bench_prod_key"        json:"bench_prod_key"`
 	ProductKey      int64  `db:"product_key" json:"product_key"`
 	ProductCode     string `db:"product_code" json:"product_code"`
+	ProductNameAlt  string `db:"product_name_alt" json:"product_name_alt"`
 	ProductName     string `db:"product_name" json:"product_name"`
 	BenchmarkRatio  int64  `db:"benchmark_ratio" json:"benchmark_ratio"`
+	RecStatus       int64  `db:"rec_status" json:"rec_status"`
 }
 type BenchmarkProdDetail struct {
 	BenchProductKey int64  `db:"bench_prod_key"  json:"bench_prod_key"`
