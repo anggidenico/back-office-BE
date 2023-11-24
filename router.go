@@ -562,7 +562,7 @@ func router() *echo.Echo {
 	admin.POST("/update-benchmark", controllers.UpdateFfsBenchmarkController).Name = "UpdateFfsBenchmarkController"
 
 	//Product Benchmark
-	admin.POST("/create-benchmark-product", controllers.CreateFfsBenchmarkProductController).Name = "CreateFfsBenchmarkProductController"
+	admin.POST("/create-benchmark-product", controllers.CreateBenchProdController).Name = "CreateFfsBenchmarkProductController"
 	admin.GET("/get-benchmark-product-list", controllers.GetFfsBenchmarkProductController).Name = "GetFfsBenchmarkProductController"
 	admin.GET("/get-benchmark-product/:bench_prod_key", controllers.GetBenchmarkProdDetailController).Name = "GetBenchmarkProdDetailController"
 	admin.POST("/delete-benchmark-product", controllers.DeleteBenchmarkProdController).Name = "DeleteBenchmarkProdController"

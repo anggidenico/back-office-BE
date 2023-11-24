@@ -36,7 +36,29 @@ type AllocSectorDetail struct {
 	SectorValue    decimal.Decimal `db:"sector_value" json:"sector_value"`
 	RecOrder       uint64          `db:"rec_order" json:"rec_order"`
 }
+type SectorKey struct {
+	SectorKey  uint64 `db:"sector_key" json:"sector_key"`
+	SectorCode string `db:"sector_code" json:"sector_code"`
+	SectorName string `db:"sector_name" json:"sector_name"`
+}
 
+func GetSectorSecuModels(c *[]SectorKey) (int, error) {
+	query := `SELECT sector_key,
+	sector_code,
+	sector_name
+	FROM ms_securities_sector
+	WHERE rec_status =1 
+	ORDER BY rec_created_date DESC`
+	log.Println("====================>>>", query)
+	err := db.Db.Select(c, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
+	}
+	return http.StatusOK, nil
+}
 func GetAllocSectorModels(c *[]AllocSector) (int, error) {
 	query := `SELECT a.alloc_sector_key, 
 	a.product_key, 

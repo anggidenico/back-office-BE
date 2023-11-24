@@ -27,7 +27,20 @@ func GetAllocSectorController(c echo.Context) error {
 	log.Printf("Response Data: %+v\n", response.Data)
 	return c.JSON(http.StatusOK, response)
 }
-
+func GetSectorSecuController(c echo.Context) error {
+	var sector []models.SectorKey
+	status, err := models.GetSectorSecuModels(&sector)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = sector
+	log.Printf("Response Data: %+v\n", response.Data)
+	return c.JSON(http.StatusOK, response)
+}
 func GetAllocSectorDetailController(c echo.Context) error {
 	allocSectorKey := c.Param("alloc_sector_key")
 	if allocSectorKey == "" {
