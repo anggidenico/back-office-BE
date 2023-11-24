@@ -594,6 +594,7 @@ func router() *echo.Echo {
 	admin.GET("/get-allocsector-detail/:alloc_sector_key", controllers.GetAllocSectorDetailController).Name = "GetAllocSectorDetailController"
 	admin.POST("/create-alloc-sector", controllers.CreateAllocSectorController).Name = "CreateAllocSectorController"
 	admin.POST("/update-alloc-sector", controllers.UpdateAllocSectorController).Name = "UpdateAllocSectorController"
+	admin.GET("/get-sector-securitieslist", controllers.GetSectorSecuController).Name = "GetSectorSecuController"
 	return e
 
 }
