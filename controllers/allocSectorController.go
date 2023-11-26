@@ -237,3 +237,26 @@ func UpdateAllocSectorController(c echo.Context) error {
 		Data: "Data created successfully",
 	})
 }
+func DeleteAllocSectorController(c echo.Context) error {
+	params := make(map[string]string)
+	params["rec_status"] = "0"
+	params["rec_deleted_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	params["rec_deleted_by"] = lib.UserIDStr
+
+	allocSecKey := c.FormValue("alloc_sector_key")
+	if allocSecKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing alloc_sector_key", "Missing alloc_sector_key")
+	}
+	params["alloc_sector_key"] = allocSecKey
+
+	status, err := models.DeleteAllocSector(allocSecKey, params)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), err.Error())
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "Berhasil hapus AllocSector!"
+	response.Data = ""
+	return c.JSON(http.StatusOK, response)
+}

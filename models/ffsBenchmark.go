@@ -112,22 +112,6 @@ func DeleteBenchmark(BenchmarkKey string, params map[string]string) (int, error)
 	return http.StatusOK, nil
 }
 
-// func CheckDuplicateFfsBenchmarkModels(benchmarkCode, benchmarkName string) (bool, string, error) {
-// 	query := "SELECT bench_prod_key FROM ffs_benchmark_product WHERE benchmark_code = ? AND benchmark_name = ?"
-// 	var key string
-// 	err := db.Db.QueryRow(query, benchmarkCode, benchmarkName).Scan(&key)
-// 	if err != nil {
-// 		if err == sql.ErrNoRows {
-// 			// Tidak ada duplikasi, key di set menjadi ""
-// 			return false, "", nil
-// 		}
-// 		return false, "", err
-// 	}
-
-// 	// Duplikasi ditemukan, kembalikan key
-// 	return true, key, nil
-// }
-
 func CheckDuplicateFfsBenchmark(benchmarkCode, benchmarkName string) (bool, string, error) { //dari sini
 	// Query to check for duplicates
 	query := "SELECT benchmark_key FROM ffs_benchmark WHERE benchmark_code = ? OR benchmark_name = ? LIMIT 1"

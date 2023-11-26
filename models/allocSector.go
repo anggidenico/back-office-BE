@@ -107,7 +107,7 @@ func GetAllocSectorDetailModels(c *AllocSectorDetail, AllocSectorKey string) (in
 	err := db.Db.Get(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			log.Println("Periode key not found")
+			log.Println("alloc_sector_key not found")
 			return http.StatusBadGateway, err
 		}
 		log.Println(err.Error())
