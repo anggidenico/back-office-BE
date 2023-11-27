@@ -203,3 +203,27 @@ func UpdatePriceController(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, response)
 }
+
+func DeletePriceController(c echo.Context) error {
+	params := make(map[string]string)
+	dateLayout := "2006-01-02 15:04:05"
+	params["rec_status"] = "0"
+	params["rec_deleted_date"] = time.Now().Format(dateLayout)
+	params["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+
+	priceKey := c.FormValue("price_key")
+	if priceKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing price_key", "Missing price_key")
+	}
+
+	status, err := models.DeletePriceModels(priceKey, params)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), err.Error())
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "Berhasil hapus FFS-Price!"
+	response.Data = ""
+	return c.JSON(http.StatusOK, response)
+}
