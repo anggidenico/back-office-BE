@@ -383,6 +383,7 @@ func ProductBankAccountApprovalAction(params map[string]string) error {
 			updMsBankAccount["account_no"] = *getReqProductBankAcc.AccountNo
 			updMsBankAccount["bank_key"] = strconv.FormatUint(*getReqProductBankAcc.BankKey, 10)
 			updMsBankAccount["swift_code"] = *getReqProductBankAcc.SwiftCode
+			updMsBankAccount["account_holder_name"] = *getReqProductBankAcc.AccountHolderName
 			queryMsBankAccount := `UPDATE ms_bank_account SET `
 			i := 0
 			for key, value := range updMsBankAccount {
