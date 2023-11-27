@@ -24,9 +24,23 @@ func GetAllocSectorController(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Data = sector
+	log.Printf("Response Data: %+v\n", response.Data)
 	return c.JSON(http.StatusOK, response)
 }
-
+func GetSectorSecuController(c echo.Context) error {
+	var sector []models.SectorKey
+	status, err := models.GetSectorSecuModels(&sector)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = sector
+	log.Printf("Response Data: %+v\n", response.Data)
+	return c.JSON(http.StatusOK, response)
+}
 func GetAllocSectorDetailController(c echo.Context) error {
 	allocSectorKey := c.Param("alloc_sector_key")
 	if allocSectorKey == "" {
@@ -80,9 +94,12 @@ func CreateAllocSectorController(c echo.Context) error {
 		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
 		}
-		params["rec_order"] = strconv.Itoa(value)
+		params["rec_order"] = value
+	} else {
+		params["rec_order"] = 0
 	}
-	params["rec_order"] = recOrder
+
+	// params["rec_order"] = recOrder
 	params["product_key"] = productKey
 	params["periode_key"] = periodeKey
 	params["sector_key"] = sectorKey
@@ -166,9 +183,12 @@ func UpdateAllocSectorController(c echo.Context) error {
 		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
 		}
-		params["rec_order"] = strconv.Itoa(value)
+		params["rec_order"] = value
+	} else {
+		params["rec_order"] = 0
 	}
-	params["rec_order"] = recOrder
+
+	// params["rec_order"] = recOrder
 	params["alloc_sector_key"] = allocSectorKey
 	params["product_key"] = productKey
 	params["periode_key"] = periodeKey
@@ -216,4 +236,27 @@ func UpdateAllocSectorController(c echo.Context) error {
 		},
 		Data: "Data created successfully",
 	})
+}
+func DeleteAllocSectorController(c echo.Context) error {
+	params := make(map[string]string)
+	params["rec_status"] = "0"
+	params["rec_deleted_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	params["rec_deleted_by"] = lib.UserIDStr
+
+	allocSecKey := c.FormValue("alloc_sector_key")
+	if allocSecKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing alloc_sector_key", "Missing alloc_sector_key")
+	}
+	params["alloc_sector_key"] = allocSecKey
+
+	status, err := models.DeleteAllocSector(allocSecKey, params)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), err.Error())
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "Berhasil hapus AllocSector!"
+	response.Data = ""
+	return c.JSON(http.StatusOK, response)
 }

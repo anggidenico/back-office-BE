@@ -2,37 +2,63 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
+
+	"github.com/shopspring/decimal"
 )
 
 type AllocSector struct {
-	AllocSectorKey uint8  `db:"alloc_sector_key" json:"alloc_sector_key"`
-	ProductKey     uint64 `db:"product_key" json:"product_key"`
-	ProductName    string `db:"product_name" json:"product_name"`
-	PeriodeKey     uint64 `db:"periode_key" json:"periode_key"`
-	PeriodeName    string `db:"periode_name" json:"periode_name"`
-	SectorKey      uint64 `db:"sector_key" json:"sector_key"`
-	SectorName     string `db:"sector_name" json:"sector_name"`
-	SectorCode     string `db:"sector_code" json:"sector_code"`
-	SectorValue    uint64 `db:"sector_value" json:"sector_value"`
+	AllocSectorKey uint8           `db:"alloc_sector_key" json:"alloc_sector_key"`
+	ProductKey     uint64          `db:"product_key" json:"product_key"`
+	ProductName    string          `db:"product_name" json:"product_name"`
+	PeriodeKey     uint64          `db:"periode_key" json:"periode_key"`
+	PeriodeName    string          `db:"periode_name" json:"periode_name"`
+	SectorKey      uint64          `db:"sector_key" json:"sector_key"`
+	SectorName     string          `db:"sector_name" json:"sector_name"`
+	SectorCode     string          `db:"sector_code" json:"sector_code"`
+	SectorValue    decimal.Decimal `db:"sector_value" json:"sector_value"`
+	RecOrder       int64           `db:"rec_order" json:"rec_order"`
 }
 type AllocSectorDetail struct {
-	AllocSectorKey uint8  `db:"alloc_sector_key" json:"alloc_sector_key"`
-	ProductKey     uint64 `db:"product_key" json:"product_key"`
-	ProductName    string `db:"product_name" json:"product_name"`
-	PeriodeKey     uint64 `db:"periode_key" json:"periode_key"`
-	PeriodeName    string `db:"periode_name" json:"periode_name"`
-	SectorKey      uint64 `db:"sector_key" json:"sector_key"`
-	SectorName     string `db:"sector_name" json:"sector_name"`
-	SectorCode     string `db:"sector_code" json:"sector_code"`
-	SectorValue    uint64 `db:"sector_value" json:"sector_value"`
-	RecOrder       uint64 `db:"rec_order" json:"rec_order"`
+	AllocSectorKey uint8           `db:"alloc_sector_key" json:"alloc_sector_key"`
+	ProductKey     uint64          `db:"product_key" json:"product_key"`
+	ProductName    string          `db:"product_name" json:"product_name"`
+	PeriodeKey     uint64          `db:"periode_key" json:"periode_key"`
+	PeriodeName    string          `db:"periode_name" json:"periode_name"`
+	SectorKey      uint64          `db:"sector_key" json:"sector_key"`
+	SectorName     string          `db:"sector_name" json:"sector_name"`
+	SectorCode     string          `db:"sector_code" json:"sector_code"`
+	SectorValue    decimal.Decimal `db:"sector_value" json:"sector_value"`
+	RecOrder       uint64          `db:"rec_order" json:"rec_order"`
+}
+type SectorKey struct {
+	SectorKey  uint64 `db:"sector_key" json:"sector_key"`
+	SectorCode string `db:"sector_code" json:"sector_code"`
+	SectorName string `db:"sector_name" json:"sector_name"`
 }
 
+func GetSectorSecuModels(c *[]SectorKey) (int, error) {
+	query := `SELECT sector_key,
+	sector_code,
+	sector_name
+	FROM ms_securities_sector
+	WHERE rec_status =1 
+	ORDER BY rec_created_date DESC`
+	log.Println("====================>>>", query)
+	err := db.Db.Select(c, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
+	}
+	return http.StatusOK, nil
+}
 func GetAllocSectorModels(c *[]AllocSector) (int, error) {
 	query := `SELECT a.alloc_sector_key, 
 	a.product_key, 
@@ -49,8 +75,8 @@ func GetAllocSectorModels(c *[]AllocSector) (int, error) {
 	JOIN ms_product c ON a.product_key = c.product_key 
 	JOIN ms_securities_sector d ON a.sector_key = d.sector_key 
 	WHERE a.rec_status =1 
-	ORDER BY rec_order`
-	// log.Println("====================>>>", query)
+	ORDER BY a.rec_created_date DESC`
+	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -81,7 +107,7 @@ func GetAllocSectorDetailModels(c *AllocSectorDetail, AllocSectorKey string) (in
 	err := db.Db.Get(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			log.Println("Periode key not found")
+			log.Println("alloc_sector_key not found")
 			return http.StatusBadGateway, err
 		}
 		log.Println(err.Error())
@@ -141,10 +167,19 @@ func CheckDuplicateAllocSector(periodeKey, productKey int64, sectorKey int64) (b
 }
 
 func CreateAllocSector(params map[string]interface{}) (int, error) {
-	periodeKey, _ := params["periode_key"].(int64)
-	productKey, _ := params["product_key"].(int64)
+	periodeKey, ok := params["periode_key"].(int64)
+	if !ok {
+		return http.StatusBadRequest, errors.New("invalid periode_key")
+	}
+	productKey, ok := params["product_key"].(int64)
+	if !ok {
+		return http.StatusBadRequest, errors.New("invalid product_key")
+	}
+	sectorKey, ok := params["sector_key"].(int64)
+	if !ok {
+		return http.StatusBadRequest, errors.New("invalid sector_key")
+	}
 
-	sectorKey, _ := params["sector_key"].(int64)
 	// Check for duplicate records
 	duplicate, key, err := CheckDuplicateAllocSector(periodeKey, productKey, sectorKey)
 	log.Println("Error checking for duplicates:", err)

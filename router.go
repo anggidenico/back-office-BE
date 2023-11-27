@@ -562,7 +562,7 @@ func router() *echo.Echo {
 	admin.POST("/update-benchmark", controllers.UpdateFfsBenchmarkController).Name = "UpdateFfsBenchmarkController"
 
 	//Product Benchmark
-	admin.POST("/create-benchmark-product", controllers.CreateFfsBenchmarkProductController).Name = "CreateFfsBenchmarkProductController"
+	admin.POST("/create-benchmark-product", controllers.CreateBenchProdController).Name = "CreateFfsBenchmarkProductController"
 	admin.GET("/get-benchmark-product-list", controllers.GetFfsBenchmarkProductController).Name = "GetFfsBenchmarkProductController"
 	admin.GET("/get-benchmark-product/:bench_prod_key", controllers.GetBenchmarkProdDetailController).Name = "GetBenchmarkProdDetailController"
 	admin.POST("/delete-benchmark-product", controllers.DeleteBenchmarkProdController).Name = "DeleteBenchmarkProdController"
@@ -594,6 +594,12 @@ func router() *echo.Echo {
 	admin.GET("/get-allocsector-detail/:alloc_sector_key", controllers.GetAllocSectorDetailController).Name = "GetAllocSectorDetailController"
 	admin.POST("/create-alloc-sector", controllers.CreateAllocSectorController).Name = "CreateAllocSectorController"
 	admin.POST("/update-alloc-sector", controllers.UpdateAllocSectorController).Name = "UpdateAllocSectorController"
+	admin.GET("/get-sector-securitieslist", controllers.GetSectorSecuController).Name = "GetSectorSecuController"
+	admin.POST("/delete-alloc-sector", controllers.DeleteAllocSectorController).Name = "DeleteAllocSectorController"
+
+	// Price
+	admin.GET("/get-price-list", controllers.GetPriceListController).Name = "GetPriceListController"
+	admin.GET("/get-allocsector-detail/:price_key", controllers.GetPriceDetailController).Name = "GetPriceDetailController"
 	return e
 
 }
