@@ -32,7 +32,7 @@ type ProductBankAccountDetail struct {
 }
 
 func ProductBankAccountRequestList() []ProductBankAccountRequest {
-	query := `SELECT t1.rec_pk, t1.rec_action, t1.prod_bankacc_key, t1.product_key, t3.product_name, t1.bank_account_key, t4.bank_name, t4.account_no, t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name, t4.bank_key, t1.prod_bankacc_key, t4.swift_code,  
+	query := `SELECT t1.rec_pk, t1.rec_action, t1.prod_bankacc_key, t1.product_key, t3.product_name, t1.bank_account_key, t4.bank_name, t4.account_no, t1.bank_account_purpose, t2.lkp_name bank_account_purpose_name, t4.bank_key, t1.prod_bankacc_key, t4.swift_code, t1.bank_account_name
 
 	FROM ms_product_bank_account_request t1
 	INNER JOIN gen_lookup t2 ON t2.lookup_key = t1.bank_account_purpose
