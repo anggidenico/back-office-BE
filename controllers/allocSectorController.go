@@ -222,21 +222,32 @@ func UpdateAllocSectorController(c echo.Context) error {
 			})
 		}
 	}
-	// Jika tidak ada duplikasi, buat data baru
-	status, err = models.CreateAllocSector(params)
-	if err != nil {
-		return lib.CustomError(status, "Failed input data", "Failed input data")
-	}
-
 	return c.JSON(http.StatusOK, lib.Response{
 		Status: lib.Status{
 			Code:          http.StatusOK,
 			MessageServer: "OK",
 			MessageClient: "OK",
 		},
-		Data: "Data created successfully",
+		Data: "No action taken",
 	})
 }
+
+// 	// Jika tidak ada duplikasi, buat data baru
+// 	status, err = models.CreateAllocSector(params)
+// 	if err != nil {
+// 		return lib.CustomError(status, "Failed input data", "Failed input data")
+// 	}
+
+//		return c.JSON(http.StatusOK, lib.Response{
+//			Status: lib.Status{
+//				Code:          http.StatusOK,
+//				MessageServer: "OK",
+//				MessageClient: "OK",
+//			},
+//			Data: "Data created successfully",
+//		})
+//	}
+
 func DeleteAllocSectorController(c echo.Context) error {
 	params := make(map[string]string)
 	params["rec_status"] = "0"

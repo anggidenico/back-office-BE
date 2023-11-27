@@ -600,6 +600,8 @@ func router() *echo.Echo {
 	// Price
 	admin.GET("/get-price-list", controllers.GetPriceListController).Name = "GetPriceListController"
 	admin.GET("/get-allocsector-detail/:price_key", controllers.GetPriceDetailController).Name = "GetPriceDetailController"
+	admin.POST("/create-price-ffs", controllers.CreatePriceController).Name = "CreatePriceController"
+	admin.POST("/update-price-ffs", controllers.UpdatePriceController).Name = "UpdatePriceController"
 	return e
 
 }

@@ -81,7 +81,7 @@ func GetPriceDetailModels(c *PriceList, PriceKey string) (int, error) {
 
 func CheckDuplicateFfsPrice(benchkmarkKey, priceType, priceDate string) (bool, string, error) { //dari sini
 	// Query to check for duplicates
-	query := "SELECT benchmark_key FROM ffs_benchmark WHERE benchmark_key = ? OR price_type = ? OR price_date = ? LIMIT 1"
+	query := "SELECT benchmark_key FROM ffs_price WHERE benchmark_key = ? OR price_type = ? OR price_date = ? LIMIT 1"
 	var key string
 	err := db.Db.QueryRow(query, benchkmarkKey, priceType, priceDate).Scan(&key)
 
