@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -15,13 +16,36 @@ type PriceList struct {
 	BenchmarkKey  int64           `db:"benchmark_key" json:"benchmark_key"`
 	BenchmarkName string          `db:"benchmark_name" json:"benchmark_name"`
 	PriceType     *int64          `db:"price_type" json:"price_type"`
-	PriceTypeName string          `db:"lkp_name" json:"price_type_name"`
-	PriceDate     int64           `db:"price_date" json:"price_date"`
+	PriceName     string          `db:"price_name" json:"price_name"`
+	PriceDate     *string         `db:"price_date" json:"price_date"`
 	PriceValue    decimal.Decimal `db:"price_value" json:"price_value"`
-	PriceRemarks  *int64          `db:"price_remarks" json:"price_remarks"`
+	PriceRemarks  *string         `db:"price_remarks" json:"price_remarks"`
 	RecOrder      *int64          `db:"rec_order" json:"rec_order"`
 }
+type PriceType struct {
+	PriceKey  int64  `db:"price_key" json:"price_key"`
+	PriceType *int64 `db:"price_type" json:"price_type"`
+	PriceName string `db:"price_name" json:"price_name"`
+}
 
+//	func GetPriceTypeModels(c *[]PriceType) (int, error) {
+//		query := `SELECT a.price_key,
+//		a.price_type,
+//		b.lkp_name price_name
+//		FROM
+//		WHERE a.rec_status =1
+//		ORDER BY a.rec_created_date DESC`
+//		log.Println("====================>>>", query)
+//		err := db.Db.Select(c, query)
+//		if err != nil {
+//			if err == sql.ErrNoRows {
+//				log.Println(err.Error())
+//				return http.StatusBadGateway, err
+//			}
+//			return http.StatusNotFound, err
+//		}
+//		return http.StatusOK, nil
+//	}
 func GetPriceListModels(c *[]PriceList) (int, error) {
 	query := `SELECT a.price_key,
 	a.benchmark_key,
@@ -46,9 +70,18 @@ func GetPriceListModels(c *[]PriceList) (int, error) {
 			log.Println(err.Error())
 			return http.StatusBadGateway, err
 		}
+		return http.StatusNotFound, err
 	}
 	return http.StatusOK, nil
 }
+
+// 	if err != nil {
+// 		// log.Error(err)
+// 		return http.StatusNotFound, err
+// 	}
+
+// 	return http.StatusOK, nil
+// }
 
 func GetPriceDetailModels(c *PriceList, PriceKey string) (int, error) {
 	query := `SELECT a.price_key,
@@ -64,7 +97,7 @@ func GetPriceDetailModels(c *PriceList, PriceKey string) (int, error) {
 	JOIN ffs_benchmark b 
 	ON a.benchmark_key = b.benchmark_key
 	JOIN gen_lookup c
-	ON a.price_type = c.lookup_key WHERE a.rec_status = 1 AND a.alloc_sector_key =` + PriceKey
+	ON a.price_type = c.lookup_key WHERE a.rec_status = 1 AND a.price_key =` + PriceKey
 
 	log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
@@ -73,15 +106,14 @@ func GetPriceDetailModels(c *PriceList, PriceKey string) (int, error) {
 			log.Println("price_key not found")
 			return http.StatusBadGateway, err
 		}
-		log.Println(err.Error())
-		return http.StatusBadGateway, err
+		return http.StatusNotFound, err
 	}
 	return http.StatusOK, nil
 }
 
 func CheckDuplicateFfsPrice(benchkmarkKey, priceType, priceDate string) (bool, string, error) { //dari sini
 	// Query to check for duplicates
-	query := "SELECT benchmark_key FROM ffs_benchmark WHERE benchmark_key = ? OR price_type = ? OR price_date = ? LIMIT 1"
+	query := "SELECT benchmark_key FROM ffs_price WHERE benchmark_key = ? OR price_type = ? OR price_date = ? LIMIT 1"
 	var key string
 	err := db.Db.QueryRow(query, benchkmarkKey, priceType, priceDate).Scan(&key)
 
@@ -166,5 +198,37 @@ func UpdatePrice(priceKey string, params map[string]string) (int, error) {
 		log.Println(err.Error())
 		return http.StatusBadGateway, err
 	}
+	return http.StatusOK, nil
+}
+
+func DeletePriceModels(PriceKey string, params map[string]string) (int, error) {
+	query := `UPDATE ffs_price SET `
+	var setClauses []string
+	var values []interface{}
+
+	for key, value := range params {
+		if key != "price_key" {
+			setClauses = append(setClauses, key+" = ?")
+			values = append(values, value)
+		}
+	}
+	query += strings.Join(setClauses, ", ")
+	query += ` WHERE price_key = ?`
+	values = append(values, PriceKey)
+
+	// log.Println("========== UpdateRiskProfile ==========>>>", query)
+
+	resultSQL, err := db.Db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return http.StatusBadRequest, err
+	}
+	rows, _ := resultSQL.RowsAffected()
+	if rows < 1 {
+		log.Println("nothing rows affected")
+		err2 := fmt.Errorf("nothing rows affected")
+		return http.StatusNotFound, err2
+	}
+
 	return http.StatusOK, nil
 }
