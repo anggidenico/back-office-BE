@@ -52,11 +52,15 @@ func GetCityList(paramSearch map[string]string) []CityModels {
 	if len(paramSearch) > 0 {
 		for key, value := range paramSearch {
 			if value != "" {
-				query += ` AND ` + key + ` = '` + value + `'`
+				if key == "city_name" {
+					query += ` AND ` + key + ` LIKE '%` + value + `%'`
+				} else {
+					query += ` AND ` + key + ` = '` + value + `'`
+				}
 			}
 		}
 	}
-	log.Println(query)
+	// log.Println(query)
 	err := db.Db.Select(&result, query)
 	if err != nil {
 		log.Println(err.Error())
