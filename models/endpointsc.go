@@ -52,7 +52,7 @@ func GetEndpointscModels(c *[]ScEndpointt) (int, error) {
 	query := `SELECT a.endpoint_key, a.endpoint_code, a.endpoint_name, a.endpoint_verb, a.endpoint_uri,a.endpoint_version,a.endpoint_version,a.privileges_key, b.endpoint_ctg_code, b.endpoint_ctg_desc, b.endpoint_ctg_purpose, c.menu_code, c.menu_name, c.menu_page, c.menu_url, c.menu_desc FROM sc_endpoint AS a 
 	JOIN sc_endpoint_category AS b ON a.endpoint_category_key = b.endpoint_category_key 
 	JOIN sc_menu AS c ON a.menu_key = c.menu_key WHERE a.rec_status = 1 ORDER BY a.rec_created_date DESC`
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())
@@ -63,7 +63,7 @@ func GetEndpointscModels(c *[]ScEndpointt) (int, error) {
 
 func GetDetailEndpointModels(c *ScEndpointDetail, EndPointKey string) (int, error) {
 	query := `SELECT endpoint_key,endpoint_category_key,endpoint_code,endpoint_name,menu_key,endpoint_verb,endpoint_uri,endpoint_version,privileges_key FROM sc_endpoint WHERE endpoint_key = ` + EndPointKey
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err.Error())
@@ -119,7 +119,7 @@ func UpdateEndpointSc(EndpointKey string, params map[string]string) (int, error)
 	}
 	query += " WHERE endpoint_key = " + params["endpoint_key"]
 
-	log.Println("UpdateEndpointSc:", query)
+	// log.Println("UpdateEndpointSc:", query)
 
 	resultSQL, err := db.Db.Exec(query)
 	if err != nil {
