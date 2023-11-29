@@ -112,8 +112,7 @@ type OptionGenLookUp struct {
 }
 
 func GetOptionByLookupGroupKey(groupKey string) (result []OptionGenLookUp) {
-	query := `SELECT lookup_key, lkp_name FROM gen_lookup 
-	WHERE rec_status = 1 AND lkp_group_key = ` + groupKey
+	query := `SELECT lookup_key, lkp_name FROM gen_lookup WHERE rec_status = 1 AND lkp_group_key = ` + groupKey
 	err := db.Db.Select(&result, query)
 	if err != nil {
 		log.Println(err.Error())

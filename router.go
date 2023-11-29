@@ -467,6 +467,10 @@ func router() *echo.Echo {
 
 	e.GET("/get-lookup-by-group/:group_key", controllers.GetLookupByGroupKey)
 
+	// OA MANUAL FROM CS
+	e.GET("/get-country-list", controllers.GetCountryList)
+	e.GET("/get-city-list/:city_level", controllers.GetCityList)
+
 	// OA DAN PENGKINIAN
 	admin.GET("/new-oarequest-list", controllers.GetNewOAList)
 	admin.GET("/pengkinian-personal-data-list", controllers.GetPengkinianPersonalDataList)
