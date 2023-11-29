@@ -612,6 +612,7 @@ func router() *echo.Echo {
 	admin.GET("/get-invest-purpose", controllers.GetInvestPurposeController).Name = "GetInvestPurposeController"
 	admin.GET("/get-invest-partner", controllers.GetInvestPartnerController).Name = "GetInvestPartnerController"
 	admin.GET("/get-invest-partner-detail/:invest_partner_key", controllers.GetInvestPartnerDetailController).Name = "GetInvestPartnerDetailController"
+	admin.POST("/delete-invest-partner", controllers.DeleteInvestPartnerController).Name = "DeleteInvestPartnerController"
 	return e
 
 }

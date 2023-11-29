@@ -2,9 +2,11 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
+	"strings"
 )
 
 type InvestPartner struct {
@@ -123,5 +125,35 @@ func GetInvestPartnerDetailModels(c *InvestPartner, InvestPartnerKey string) (in
 		}
 		return http.StatusNotFound, err
 	}
+	return http.StatusOK, nil
+}
+
+func DeleteInvestPartnerModels(InvestPartnerKey string, params map[string]string) (int, error) {
+	query := `UPDATE cms_invest_partner SET `
+	var setClauses []string
+	var values []interface{}
+
+	for key, value := range params {
+		if key != "invest_partner_key" {
+			setClauses = append(setClauses, key+" = ?")
+			values = append(values, value)
+		}
+	}
+	query += strings.Join(setClauses, ", ")
+	query += ` WHERE invest_partner_key = ?`
+	values = append(values, InvestPartnerKey)
+
+	resultSQL, err := db.Db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return http.StatusBadRequest, err
+	}
+	rows, _ := resultSQL.RowsAffected()
+	if rows < 1 {
+		log.Println("nothing rows affected")
+		err2 := fmt.Errorf("nothing rows affected")
+		return http.StatusNotFound, err2
+	}
+
 	return http.StatusOK, nil
 }

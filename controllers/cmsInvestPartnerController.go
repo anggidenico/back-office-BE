@@ -7,6 +7,8 @@ import (
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/labstack/echo"
 )
@@ -60,5 +62,28 @@ func GetInvestPartnerDetailController(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Data = invest
+	return c.JSON(http.StatusOK, response)
+}
+func DeleteInvestPartnerController(c echo.Context) error {
+	params := make(map[string]string)
+	dateLayout := "2006-01-02 15:04:05"
+	params["rec_status"] = "0"
+	params["rec_deleted_date"] = time.Now().Format(dateLayout)
+	params["rec_deleted_by"] = strconv.FormatUint(lib.Profile.UserID, 10)
+
+	investPartnerKey := c.FormValue("invest_partner_key")
+	if investPartnerKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing invest_partner_key", "Missing invest_partner_key")
+	}
+
+	status, err := models.DeleteInvestPartnerModels(investPartnerKey, params)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), err.Error())
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "Berhasil hapus CMS Invest Partner!"
+	response.Data = ""
 	return c.JSON(http.StatusOK, response)
 }
