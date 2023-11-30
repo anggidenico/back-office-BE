@@ -157,3 +157,92 @@ func DeleteInvestPartnerModels(InvestPartnerKey string, params map[string]string
 
 	return http.StatusOK, nil
 }
+func CheckDuplicateInvestPartner(partnerCode string) (bool, string, error) { //dari sini
+	// Query to check for duplicates
+	query := "SELECT invest_partner_key FROM cms_invest_partner WHERE partner_code = ? LIMIT 1"
+	var key string
+	err := db.Db.QueryRow(query, partnerCode).Scan(&key)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// No duplicate found
+			return false, "", nil
+		}
+		// Other error occurred
+		return false, "", err
+	}
+
+	// Duplicate found
+	return true, key, nil
+}
+
+func CreateInvestPartner(params map[string]string) (int, error) {
+	// Check for duplicate records
+	duplicate, key, err := CheckDuplicateInvestPartner(params["partner_code"])
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	// Jika duplikasi ditemukan, perbarui data yang sudah ada
+	if duplicate {
+		status, err := UpdateInvestPartner(key, params)
+		if err != nil {
+			return status, err
+		}
+		return http.StatusOK, nil
+	}
+
+	// Jika tidak ada duplikasi, buat data baru
+	fields := ""
+	placeholders := ""
+	var bindvars []interface{}
+
+	for key, value := range params {
+		fields += key + ", "
+		placeholders += "?, "
+		bindvars = append(bindvars, value)
+	}
+
+	fields = fields[:len(fields)-2]
+	placeholders = placeholders[:len(placeholders)-2]
+
+	query := "INSERT INTO cms_invest_partner (" + fields + ") VALUES (" + placeholders + ")"
+
+	tx, err := db.Db.Begin()
+	if err != nil {
+		return http.StatusBadGateway, err
+	}
+
+	_, err = tx.Exec(query, bindvars...)
+	if err != nil {
+		tx.Rollback()
+		return http.StatusBadRequest, err
+	}
+
+	tx.Commit()
+
+	return http.StatusOK, nil
+}
+
+func UpdateInvestPartner(investPartnerKey string, params map[string]string) (int, error) {
+	query := `UPDATE cms_invest_partner SET `
+	var setClauses []string
+	var values []interface{}
+
+	for key, value := range params {
+		setClauses = append(setClauses, key+" = ?")
+		values = append(values, value)
+	}
+	query += strings.Join(setClauses, ", ")
+	query += ` WHERE invest_partner_key = ?`
+	values = append(values, investPartnerKey)
+
+	log.Println("========== UpdateInvestPartner ==========>>>", query)
+
+	_, err := db.Db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return http.StatusBadGateway, err
+	}
+	return http.StatusOK, nil
+}

@@ -28,24 +28,6 @@ type PriceType struct {
 	PriceName string `db:"price_name" json:"price_name"`
 }
 
-//	func GetPriceTypeModels(c *[]PriceType) (int, error) {
-//		query := `SELECT a.price_key,
-//		a.price_type,
-//		b.lkp_name price_name
-//		FROM
-//		WHERE a.rec_status =1
-//		ORDER BY a.rec_created_date DESC`
-//		log.Println("====================>>>", query)
-//		err := db.Db.Select(c, query)
-//		if err != nil {
-//			if err == sql.ErrNoRows {
-//				log.Println(err.Error())
-//				return http.StatusBadGateway, err
-//			}
-//			return http.StatusNotFound, err
-//		}
-//		return http.StatusOK, nil
-//	}
 func GetPriceListModels(c *[]PriceList) (int, error) {
 	query := `SELECT a.price_key,
 	a.benchmark_key,
@@ -74,14 +56,6 @@ func GetPriceListModels(c *[]PriceList) (int, error) {
 	}
 	return http.StatusOK, nil
 }
-
-// 	if err != nil {
-// 		// log.Error(err)
-// 		return http.StatusNotFound, err
-// 	}
-
-// 	return http.StatusOK, nil
-// }
 
 func GetPriceDetailModels(c *PriceList, PriceKey string) (int, error) {
 	query := `SELECT a.price_key,

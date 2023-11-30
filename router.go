@@ -613,6 +613,12 @@ func router() *echo.Echo {
 	admin.GET("/get-invest-partner", controllers.GetInvestPartnerController).Name = "GetInvestPartnerController"
 	admin.GET("/get-invest-partner-detail/:invest_partner_key", controllers.GetInvestPartnerDetailController).Name = "GetInvestPartnerDetailController"
 	admin.POST("/delete-invest-partner", controllers.DeleteInvestPartnerController).Name = "DeleteInvestPartnerController"
+	admin.POST("/create-invest-partner", controllers.CreateInvestPartnerController).Name = "CreateInvestPartnerController"
+	admin.POST("/update-invest-partner", controllers.UpdateInvestPartnerController).Name = "UpdateInvestPartnerController"
+
+	//Master Securities Sector
+	admin.GET("/get-securities-sector-list", controllers.GetSecuritiesSectorController).Name = "GetSecuritiesSectorController"
+	admin.GET("/get-sec-sector-detail/:sector_key", controllers.GetSecSectorDetailController).Name = "GetSecSectorDetailController"
 	return e
 
 }
