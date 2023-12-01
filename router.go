@@ -609,8 +609,6 @@ func router() *echo.Echo {
 	admin.POST("/update-price-ffs", controllers.UpdatePriceController).Name = "UpdatePriceController"
 	admin.POST("/delete-price-ffs", controllers.DeletePriceController).Name = "DeletePriceController"
 
-<<<<<<< HEAD
-=======
 	//CMS-Invest-Partner
 	admin.GET("/get-invest-purpose", controllers.GetInvestPurposeController).Name = "GetInvestPurposeController"
 	admin.GET("/get-invest-partner", controllers.GetInvestPartnerController).Name = "GetInvestPartnerController"
@@ -622,7 +620,7 @@ func router() *echo.Echo {
 	//Master Securities Sector
 	admin.GET("/get-securities-sector-list", controllers.GetSecuritiesSectorController).Name = "GetSecuritiesSectorController"
 	admin.GET("/get-sec-sector-detail/:sector_key", controllers.GetSecSectorDetailController).Name = "GetSecSectorDetailController"
->>>>>>> 510887a48dc2f5d32a98174f7b180209c2f25227
+
 	return e
 
 }
