@@ -8,6 +8,36 @@ import (
 	"github.com/labstack/echo"
 )
 
+func ManualOaRequestCreate(c echo.Context) error {
+	responseData := make(map[string]interface{})
+
+	step := c.Param("step")
+	if step == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing: step", "Missing: step")
+	}
+
+	if step == "1" {
+		err, oa_request_key := SaveStep1(c)
+		responseData["oa_request_key"] = oa_request_key
+		if err != nil {
+			return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
+		}
+	}
+	// else if step == "2" {
+	// 	err = SaveStep2(c)
+	// } else if step == "3" {
+	// 	err = SaveStep3(c)
+	// }
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = responseData
+
+	return c.JSON(http.StatusOK, response)
+}
+
 func GetCountryList(c echo.Context) error {
 	paramSearch := make(map[string]string)
 

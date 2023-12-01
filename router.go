@@ -470,6 +470,7 @@ func router() *echo.Echo {
 	// OA MANUAL FROM CS
 	e.GET("/get-country-list", controllers.GetCountryList)
 	e.GET("/get-city-list/:city_level", controllers.GetCityList)
+	admin.POST("/manual-oarequest-create/:step", controllers.ManualOaRequestCreate)
 
 	// OA DAN PENGKINIAN
 	admin.GET("/new-oarequest-list", controllers.GetNewOAList)
@@ -607,6 +608,7 @@ func router() *echo.Echo {
 	admin.POST("/create-price-ffs", controllers.CreatePriceController).Name = "CreatePriceController"
 	admin.POST("/update-price-ffs", controllers.UpdatePriceController).Name = "UpdatePriceController"
 	admin.POST("/delete-price-ffs", controllers.DeletePriceController).Name = "DeletePriceController"
+
 	return e
 
 }
