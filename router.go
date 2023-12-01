@@ -619,6 +619,9 @@ func router() *echo.Echo {
 	//Master Securities Sector
 	admin.GET("/get-securities-sector-list", controllers.GetSecuritiesSectorController).Name = "GetSecuritiesSectorController"
 	admin.GET("/get-sec-sector-detail/:sector_key", controllers.GetSecSectorDetailController).Name = "GetSecSectorDetailController"
+	admin.POST("/create-securities-sector", controllers.CreateSecuritiesSectorController).Name = "CreateSecuritiesSectorController"
+	admin.POST("/update-securities-sector", controllers.UpdateSecuritiesSectorController).Name = "UpdateSecuritiesSectorController"
+	admin.POST("/delete-securities-sector", controllers.DeleteSecuritiesSectorController).Name = "DeleteSecuritiesSectorController"
 	return e
 
 }
