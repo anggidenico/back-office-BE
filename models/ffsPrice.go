@@ -45,7 +45,7 @@ func GetPriceListModels(c *[]PriceList) (int, error) {
 	ON a.price_type = c.lookup_key
 	WHERE a.rec_status =1 
 	ORDER BY a.rec_created_date DESC`
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -73,7 +73,7 @@ func GetPriceDetailModels(c *PriceList, PriceKey string) (int, error) {
 	JOIN gen_lookup c
 	ON a.price_type = c.lookup_key WHERE a.rec_status = 1 AND a.price_key =` + PriceKey
 
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {

@@ -470,6 +470,7 @@ func router() *echo.Echo {
 	// OA MANUAL FROM CS
 	e.GET("/get-country-list", controllers.GetCountryList)
 	e.GET("/get-city-list/:city_level", controllers.GetCityList)
+	admin.POST("/manual-oarequest-create/:step", controllers.ManualOaRequestCreate)
 
 	// OA DAN PENGKINIAN
 	admin.GET("/new-oarequest-list", controllers.GetNewOAList)
