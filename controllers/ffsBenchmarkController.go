@@ -8,6 +8,7 @@ import (
 	"mf-bo-api/models"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo"
@@ -95,6 +96,7 @@ func CreateFfsBenchmarkController(c echo.Context) error {
 		if len(benchmarkCode) > 50 {
 			return lib.CustomError(http.StatusBadRequest, "benchmark_code must be <= 50 characters", "benchmark_code must be <= 50 characters")
 		}
+		benchmarkCode = strings.ToUpper(benchmarkCode)
 	}
 
 	benchmarkName := c.FormValue("benchmark_name")
@@ -203,8 +205,8 @@ func UpdateFfsBenchmarkController(c echo.Context) error {
 		if len(benchmarkCode) > 50 {
 			return lib.CustomError(http.StatusBadRequest, "fund_type_key must be <= 50 characters", "fund_type_key must be <= 50 characters")
 		}
+		benchmarkCode = strings.ToUpper(benchmarkCode)
 	}
-
 	benchmarkName := c.FormValue("benchmark_name")
 	if benchmarkName != "" {
 		if len(benchmarkName) > 150 {

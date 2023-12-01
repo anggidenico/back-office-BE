@@ -78,6 +78,7 @@ func CreateSecuritiesSectorController(c echo.Context) error {
 		if len(sectorDesc) > 255 {
 			return lib.CustomError(http.StatusBadRequest, "sector_description must be <= 255 characters", "sector_description must be <= 255 characters")
 		}
+		sectorDesc = strings.ToUpper(sectorDesc)
 	}
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {
@@ -170,6 +171,7 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 		if len(sectorDesc) > 255 {
 			return lib.CustomError(http.StatusBadRequest, "sector_description must be <= 255 characters", "sector_description must be <= 255 characters")
 		}
+		sectorDesc = strings.ToUpper(sectorDesc)
 	}
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {

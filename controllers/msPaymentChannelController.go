@@ -8,6 +8,7 @@ import (
 	"mf-bo-api/models"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo"
@@ -82,12 +83,14 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 		if len(pChannelCode) > 50 {
 			return lib.CustomError(http.StatusBadRequest, "pchannel_code harus kurang dari 255 karakter", "pchannel_code harus kurang dari 255 karakter")
 		}
+		pChannelCode = strings.ToUpper(pChannelCode)
 	}
 	pchannelName := c.FormValue("pchannel_name")
 	if pchannelName != "" {
 		if len(pchannelName) > 150 {
 			return lib.CustomError(http.StatusBadRequest, "pchannel_name should be exactly 150 characters", "pchannel_name should be exactly 150 characters")
 		}
+		pchannelName = strings.ToUpper(pchannelName)
 	}
 	minNominalTrx := c.FormValue("min_nominal_trx")
 	if minNominalTrx != "" {
@@ -101,64 +104,17 @@ func CreateMsPaymentChannelController(c echo.Context) error {
 		params["min_nominal_trx"] = minNominalTrx
 	}
 
-	// feeValue := c.FormValue("fee_value")
-	// if feeValue != "" {
-	// 	// Cek apakah fee_value adalah numeric
-	// 	if len(feeValue) > 18 {
-	// 		return lib.CustomError(http.StatusBadRequest, "kepanjangan yang diinput", "kepanjangan yang diinput")
-	// 	}
-	// 	_, err := strconv.ParseFloat(feeValue, 64)
-	// 	if err != nil {
-	// 		return lib.CustomError(http.StatusBadRequest, "fee_value must be a numeric value", "fee_value must be a numeric value")
-	// 	}
-	// } else {
-	// 	if feeValue == "" {
-	// 		feeValue = "0"
-	// 	}
-	// }
-	// params["fee_value"] = feeValue
-
 	feeValue := c.FormValue("fee_value")
 	valueType := c.FormValue("value_type")
 
-	// Jika value_type adalah 316, cek fee_value
-	// if valueType == "316" {
-	// 	if feeValue == "" {
-	// 		feeValue = "0"
-	// 	} else {
-	// if len(feeValue) > 18 {
-	// 	return lib.CustomError(http.StatusBadRequest, "kepanjangan yang diinput", "kepanjangan yang diinput")
-	// }
 	if feeValue != "" {
 		_, err := strconv.ParseFloat(feeValue, 64)
 		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "fee_value must be a numeric value", "fee_value must be a numeric value")
 		}
 	}
-	// } else {
-	// 	_, err := strconv.Atoi(feeValue)
-	// 	if err != nil {
-	// 		return lib.CustomError(http.StatusBadRequest, "fee_value harus harus angka", "fee_value harus harus angka")
-	// 	}
-	// }
-	// Set nilai fee_value ke dalam params
+
 	params["fee_value"] = feeValue
-
-	// valueType := c.FormValue("value_type")
-	// if valueType != "" {
-	// 	if len(valueType) > 11 {
-	// 		return lib.CustomError(http.StatusBadRequest, "value_type should be exactly 11 characters", "value_type be exactly 11 characters")
-	// 	}
-	// 	value, err := strconv.Atoi(valueType)
-	// 	if err != nil {
-	// 		return lib.CustomError(http.StatusBadRequest, "value_type should be a number", "value_type should be a number")
-	// 	}
-	// 	if value == 315 {
-
-	// 	}
-	// } else {
-	// 	return lib.CustomError(http.StatusBadRequest, "value_type can not be blank", "value_type can not be blank")
-	// }
 
 	hasMinMax := c.FormValue("has_min_max")
 	if hasMinMax == "" {

@@ -8,6 +8,7 @@ import (
 	"mf-bo-api/models"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo"
@@ -96,9 +97,13 @@ func CreateEndpointController(c echo.Context) error {
 			return lib.CustomError(http.StatusBadRequest, "endpoint_name should be <= 150 characters", "endpoint_name should be <= 150 characters")
 		}
 	}
-
 	endpointVerb := c.FormValue("endpoint_verb")
-	if endpointVerb == "" {
+	if endpointVerb != "" {
+		if len(endpointVerb) > 20 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_verb should be <= 20 characters", "endpoint_verb should be <= 20 characters")
+		}
+		endpointVerb = strings.ToUpper(endpointVerb)
+	} else {
 		return lib.CustomError(http.StatusBadRequest, "endpoint_verb can not be blank", "endpoint_verb can not be blank")
 	}
 	endpointUrl := c.FormValue("endpoint_uri")
@@ -225,7 +230,12 @@ func UpdateEndpointController(c echo.Context) error {
 	}
 
 	endpointVerb := c.FormValue("endpoint_verb")
-	if endpointVerb == "" {
+	if endpointVerb != "" {
+		if len(endpointVerb) > 20 {
+			return lib.CustomError(http.StatusBadRequest, "endpoint_verb should be <= 20 characters", "endpoint_verb should be <= 20 characters")
+		}
+		endpointVerb = strings.ToUpper(endpointVerb)
+	} else {
 		return lib.CustomError(http.StatusBadRequest, "endpoint_verb can not be blank", "endpoint_verb can not be blank")
 	}
 	endpointUrl := c.FormValue("endpoint_uri")
