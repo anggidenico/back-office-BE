@@ -623,6 +623,10 @@ func router() *echo.Echo {
 	admin.POST("/create-securities-sector", controllers.CreateSecuritiesSectorController).Name = "CreateSecuritiesSectorController"
 	admin.POST("/update-securities-sector", controllers.UpdateSecuritiesSectorController).Name = "UpdateSecuritiesSectorController"
 	admin.POST("/delete-securities-sector", controllers.DeleteSecuritiesSectorController).Name = "DeleteSecuritiesSectorController"
+
+	//Portfolio Instrument
+	admin.POST("/create-alloc-instrument", controllers.CreateAllocInstrumentController).Name = "CreateAllocInstrumentController"
+	admin.POST("/update-alloc-instrument", controllers.UpdateAllocInstrumentController).Name = "UpdateAllocInstrumentController"
 	return e
 
 }

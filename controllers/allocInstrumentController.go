@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"database/sql"
-	"errors"
 	"log"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
@@ -13,57 +11,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func GetAllocSectorController(c echo.Context) error {
-	var sector []models.AllocSector
-	status, err := models.GetAllocSectorModels(&sector)
-	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed get data")
-	}
-	var response lib.Response
-	response.Status.Code = http.StatusOK
-	response.Status.MessageServer = "OK"
-	response.Status.MessageClient = "OK"
-	response.Data = sector
-	log.Printf("Response Data: %+v\n", response.Data)
-	return c.JSON(http.StatusOK, response)
-}
-func GetSectorSecuController(c echo.Context) error {
-	var sector []models.SectorKey
-	status, err := models.GetSectorSecuModels(&sector)
-	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed get data")
-	}
-	var response lib.Response
-	response.Status.Code = http.StatusOK
-	response.Status.MessageServer = "OK"
-	response.Status.MessageClient = "OK"
-	response.Data = sector
-	log.Printf("Response Data: %+v\n", response.Data)
-	return c.JSON(http.StatusOK, response)
-}
-func GetAllocSectorDetailController(c echo.Context) error {
-	allocSectorKey := c.Param("alloc_sector_key")
-	if allocSectorKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing alloc_sector_key", "Missing alloc_sector_key")
-	}
-	var alloc models.AllocSectorDetail
-	status, err := models.GetAllocSectorDetailModels(&alloc, allocSectorKey)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return lib.CustomError(http.StatusNotFound, "alloc_sector_key not found", "alloc_sector_key not found")
-		}
-		return lib.CustomError(status, err.Error(), err.Error())
-	}
-
-	var response lib.Response
-	response.Status.Code = http.StatusOK
-	response.Status.MessageServer = "OK"
-	response.Status.MessageClient = "OK"
-	response.Data = alloc
-	return c.JSON(http.StatusOK, response)
-}
-
-func CreateAllocSectorController(c echo.Context) error {
+func CreateAllocInstrumentController(c echo.Context) error {
 	var err error
 	params := make(map[string]interface{})
 	params["rec_created_by"] = lib.UserIDStr
@@ -77,13 +25,13 @@ func CreateAllocSectorController(c echo.Context) error {
 	if err != nil {
 		return lib.CustomError(http.StatusBadRequest, "Invalid periode_key", "Invalid periode_key")
 	}
-	sectorKey, err := strconv.ParseInt(c.FormValue("sector_key"), 10, 64)
+	instrumentKey, err := strconv.ParseInt(c.FormValue("instrument_key"), 10, 64)
 	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid sector_key", "Invalid sector_key")
+		return lib.CustomError(http.StatusBadRequest, "Invalid instrument_key", "Invalid instrument_key")
 	}
-	sectorValue := c.FormValue("sector_value")
-	if sectorValue == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing sector_value", "Missing sector_value")
+	instrumentValue := c.FormValue("instrument_value")
+	if instrumentValue == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing instrument_value", "Missing instrument_value")
 	}
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {
@@ -102,13 +50,13 @@ func CreateAllocSectorController(c echo.Context) error {
 	// params["rec_order"] = recOrder
 	params["product_key"] = productKey
 	params["periode_key"] = periodeKey
-	params["sector_key"] = sectorKey
-	params["sector_value"] = sectorValue
+	params["instrument_key"] = instrumentKey
+	params["instrument_value"] = instrumentValue
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
-	if productKey != 0 && periodeKey != 0 && sectorKey != 0 {
-		duplicate, key, err := models.CheckDuplicateAllocSector(periodeKey, productKey, sectorKey)
+	if productKey != 0 && periodeKey != 0 && instrumentKey != 0 {
+		duplicate, key, err := models.CheckDuplicateAllocInstrument(periodeKey, productKey, instrumentKey)
 		if err != nil {
 			log.Println("Error checking for duplicates:", err)
 			return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
@@ -117,7 +65,7 @@ func CreateAllocSectorController(c echo.Context) error {
 		log.Println("Key:", key)
 		// Jika duplikasi ditemukan, perbarui data yang sudah ada
 		if duplicate {
-			status, err := models.UpdateAllocSector(key, params)
+			status, err := models.UpdateAllocInstrument(key, params)
 			if err != nil {
 				log.Println("Failed to update data:", err)
 				return lib.CustomError(status, "Failed to update data", "Failed to update data")
@@ -133,8 +81,9 @@ func CreateAllocSectorController(c echo.Context) error {
 		}
 	}
 	// Jika tidak ada duplikasi, buat data baru
-	status, err = models.CreateAllocSector(params)
+	status, err = models.CreateAllocInstrument(params)
 	if err != nil {
+		log.Println(err)
 		return lib.CustomError(status, "Failed input data", "Failed input data")
 	}
 
@@ -148,15 +97,15 @@ func CreateAllocSectorController(c echo.Context) error {
 	})
 }
 
-func UpdateAllocSectorController(c echo.Context) error {
+func UpdateAllocInstrumentController(c echo.Context) error {
 	var err error
 	params := make(map[string]interface{})
 	params["rec_modified_by"] = lib.UserIDStr
 	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
-	allocSectorKey, err := strconv.ParseInt(c.FormValue("alloc_sector_key"), 10, 64)
+	allocInstrumentKey, err := strconv.ParseInt(c.FormValue("alloc_instrument_key"), 10, 64)
 	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid alloc_sector_key", "Invalid alloc_sector_key")
+		return lib.CustomError(http.StatusBadRequest, "Invalid alloc_instrument_key", "Invalid alloc_instrument_key")
 	}
 	productKey, err := strconv.ParseInt(c.FormValue("product_key"), 10, 64)
 	if err != nil {
@@ -166,13 +115,13 @@ func UpdateAllocSectorController(c echo.Context) error {
 	if err != nil {
 		return lib.CustomError(http.StatusBadRequest, "Invalid periode_key", "Invalid periode_key")
 	}
-	sectorKey, err := strconv.ParseInt(c.FormValue("sector_key"), 10, 64)
+	instrumentKey, err := strconv.ParseInt(c.FormValue("instrument_key"), 10, 64)
 	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid sector_key", "Invalid sector_key")
+		return lib.CustomError(http.StatusBadRequest, "Invalid instrument_key", "Invalid instrument_key")
 	}
-	sectorValue := c.FormValue("sector_value")
-	if sectorValue == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing sector_value", "Missing sector_value")
+	instrumentValue := c.FormValue("instrument_value")
+	if instrumentValue == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing instrument_value", "Missing instrument_value")
 	}
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {
@@ -189,16 +138,16 @@ func UpdateAllocSectorController(c echo.Context) error {
 	}
 
 	// params["rec_order"] = recOrder
-	params["alloc_sector_key"] = allocSectorKey
+	params["alloc_instrument_key"] = allocInstrumentKey
 	params["product_key"] = productKey
 	params["periode_key"] = periodeKey
-	params["sector_key"] = sectorKey
-	params["sector_value"] = sectorValue
+	params["instrument_key"] = instrumentKey
+	params["instrument_value"] = instrumentValue
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
-	if productKey != 0 && periodeKey != 0 && sectorKey != 0 {
-		duplicate, key, err := models.CheckDuplicateAllocSector(periodeKey, productKey, sectorKey)
+	if productKey != 0 && periodeKey != 0 && instrumentKey != 0 {
+		duplicate, key, err := models.CheckDuplicateAllocInstrument(periodeKey, productKey, instrumentKey)
 		if err != nil {
 			log.Println("Error checking for duplicates:", err)
 			return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
@@ -207,7 +156,7 @@ func UpdateAllocSectorController(c echo.Context) error {
 		log.Println("Key:", key)
 		// Jika duplikasi ditemukan, perbarui data yang sudah ada
 		if duplicate {
-			status, err := models.UpdateAllocSector(key, params)
+			status, err := models.UpdateAllocInstrument(key, params)
 			if err != nil {
 				log.Println("Failed to update data:", err)
 				return lib.CustomError(status, "Failed to update data", "Failed to update data")
@@ -230,28 +179,4 @@ func UpdateAllocSectorController(c echo.Context) error {
 		},
 		Data: "No action taken",
 	})
-}
-
-func DeleteAllocSectorController(c echo.Context) error {
-	params := make(map[string]string)
-	params["rec_status"] = "0"
-	params["rec_deleted_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
-	params["rec_deleted_by"] = lib.UserIDStr
-
-	allocSecKey := c.FormValue("alloc_sector_key")
-	if allocSecKey == "" {
-		return lib.CustomError(http.StatusBadRequest, "Missing alloc_sector_key", "Missing alloc_sector_key")
-	}
-	params["alloc_sector_key"] = allocSecKey
-
-	status, err := models.DeleteAllocSector(allocSecKey, params)
-	if err != nil {
-		return lib.CustomError(status, err.Error(), err.Error())
-	}
-	var response lib.Response
-	response.Status.Code = http.StatusOK
-	response.Status.MessageServer = "OK"
-	response.Status.MessageClient = "Berhasil hapus AllocSector!"
-	response.Data = ""
-	return c.JSON(http.StatusOK, response)
 }

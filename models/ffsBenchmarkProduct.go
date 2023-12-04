@@ -23,14 +23,15 @@ type BenchmarkProduct struct {
 	RecStatus       int64           `db:"rec_status" json:"rec_status"`
 }
 type BenchmarkProdDetail struct {
-	BenchProductKey int64           `db:"bench_prod_key"  json:"bench_prod_key"`
-	BenchmarkKey    int64           `db:"benchmark_key" json:"benchmark_key"`
-	ProductKey      int64           `db:"product_key" json:"product_key"`
-	ProductCode     string          `db:"product_code" json:"product_code"`
-	ProductName     string          `db:"product_name" json:"product_name"`
-	ProductNameAlt  string          `db:"product_name_alt" json:"product_name_alt"`
-	BenchmarkRatio  decimal.Decimal `db:"benchmark_ratio" json:"benchmark_ratio"`
-	RecStatus       int8            `db:"rec_status" json:"rec_status"`
+	BenchProductKey  int64           `db:"bench_prod_key"  json:"bench_prod_key"`
+	BenchmarkKey     int64           `db:"benchmark_key" json:"benchmark_key"`
+	ProductKey       int64           `db:"product_key" json:"product_key"`
+	ProductCode      string          `db:"product_code" json:"product_code"`
+	ProductName      string          `db:"product_name" json:"product_name"`
+	ProductNameAlt   string          `db:"product_name_alt" json:"product_name_alt"`
+	BenchmarkRatio   decimal.Decimal `db:"benchmark_ratio" json:"benchmark_ratio"`
+	BenchmarkRemarks *string         `db:"benchmark_remarks" json:"benchmark_remarks"`
+	RecStatus        int8            `db:"rec_status" json:"rec_status"`
 }
 
 func GetBenchmarkProductModels(c *[]BenchmarkProduct) (int, error) {
@@ -69,6 +70,7 @@ func GetBenchmarkProductDetailModels(c *BenchmarkProdDetail, BenchProdKey string
 	b.product_name,
 	b.product_name_alt,
 	a.benchmark_ratio,
+	a.benchmark_remarks,
 	a.rec_status
 	FROM ffs_benchmark_product a 
 	JOIN ms_product b 
