@@ -104,7 +104,13 @@ func CreateInvestPartnerController(c echo.Context) error {
 	} else {
 		return lib.CustomError(http.StatusBadRequest, "partner_code cant be blank", "partner_code cant be blank")
 	}
-
+	partnerDesc := c.FormValue("partner_desc")
+	if partnerDesc != "" {
+		if len(partnerDesc) > 150 {
+			return lib.CustomError(http.StatusBadRequest, "partner_desc must be <= 150 characters", "partner_desc must be <= 150 characters")
+		}
+	}
+	params["partner_desc"] = partnerDesc
 	partnerBusinessName := c.FormValue("partner_business_name")
 	if partnerBusinessName != "" {
 		if len(partnerBusinessName) > 50 {
@@ -269,6 +275,13 @@ func UpdateInvestPartnerController(c echo.Context) error {
 			return lib.CustomError(http.StatusBadRequest, "partner_business_name must be <= 50 characters", "partner_business_name must be <= 50 characters")
 		}
 	}
+	partnerDesc := c.FormValue("partner_desc")
+	if partnerDesc != "" {
+		if len(partnerDesc) > 150 {
+			return lib.CustomError(http.StatusBadRequest, "partner_desc must be <= 150 characters", "partner_desc must be <= 150 characters")
+		}
+	}
+	params["partner_desc"] = partnerDesc
 	partnerPicName := c.FormValue("partner_picname")
 	if partnerPicName != "" {
 		if len(partnerPicName) > 150 {
