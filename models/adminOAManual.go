@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"strconv"
@@ -32,8 +33,8 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 		rowsAffected, _ := resSQL.RowsAffected()
 		if rowsAffected == 0 {
 			tx.Rollback()
-			log.Println(err.Error())
-			return err, OaRequestKey
+			log.Println(fmt.Errorf("rowsAffected = 0"))
+			return fmt.Errorf("rowsAffected = 0"), OaRequestKey
 		}
 
 		// GET PERSONAL DATA KEY
@@ -78,10 +79,10 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 			a, _ := resSQL5.RowsAffected()
 			if a == 0 {
 				tx.Rollback()
-				log.Println(err.Error())
-				return err, OaRequestKey
+				log.Println(fmt.Errorf("rowsAffected = 0"))
+				return fmt.Errorf("rowsAffected = 0"), OaRequestKey
 			}
-			*IdCardAddrKey = KTPAddrKey
+			IdCardAddrKey = &KTPAddrKey
 		}
 
 		// GET DOMICILE ADDRESS KEY
@@ -116,15 +117,15 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 			a, _ := resSQL5.RowsAffected()
 			if a == 0 {
 				tx.Rollback()
-				log.Println(err.Error())
-				return err, OaRequestKey
+				log.Println(fmt.Errorf("rowsAffected = 0"))
+				return fmt.Errorf("rowsAffected = 0"), OaRequestKey
 			}
-			*DomicileAddrKey = DomAddrKey
+			DomicileAddrKey = &DomAddrKey
 		}
 
 		// GET OFFICE ADDRESS KEY
 		var OfficeAddrKey *int64
-		qOfficeAddrKey := `SELECT occup_addres_key FROM oa_personal_data WHERE personal_data_key = ` + strconv.FormatInt(PersonalDataKey, 10) + ` ORDER BY personal_data_key DESC LIMIT 1`
+		qOfficeAddrKey := `SELECT occup_address_key FROM oa_personal_data WHERE personal_data_key = ` + strconv.FormatInt(PersonalDataKey, 10) + ` ORDER BY personal_data_key DESC LIMIT 1`
 		err = db.Db.Get(&OfficeAddrKey, qOfficeAddrKey)
 		if err != nil {
 			tx.Rollback()
@@ -157,7 +158,7 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 				log.Println(err.Error())
 				return err, OaRequestKey
 			}
-			*OfficeAddrKey = OffAddrKey
+			OfficeAddrKey = &OffAddrKey
 		}
 
 		paramsPersonalData["personal_data_key"] = strconv.FormatInt(PersonalDataKey, 10)

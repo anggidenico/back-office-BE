@@ -18,6 +18,8 @@ func SaveStep1(c echo.Context) (error, int64) {
 	paramOaRequest["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 	paramOaRequest["oa_step"] = "1"
 	paramOaRequest["oa_status"] = "258"
+	paramOaRequest["oa_request_type"] = "127"
+	paramOaRequest["oa_entry_start"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
 	oa_request_key := c.FormValue("oa_request_key")
 	if oa_request_key != "" {
@@ -238,7 +240,7 @@ func SaveStep2(c echo.Context) (error, int64) {
 	if investment_objectives == "" {
 		return fmt.Errorf("Missing: investment_objectives"), oaRequestKey
 	}
-	paramsPersonalData["investment_objectives"] = investment_objectives
+	paramsPersonalData["invesment_objectives"] = investment_objectives
 
 	paramsOfficeAddr := make(map[string]string)
 	paramsOfficeAddr["rec_status"] = "1"
