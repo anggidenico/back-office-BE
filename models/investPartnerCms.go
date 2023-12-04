@@ -30,13 +30,13 @@ type InvestPartner struct {
 	RecOrder            *int64  `db:"rec_order" json:"recorder_order"`
 }
 type InvestPurpose struct {
-	InvestPartnerKey int64   `db:"invest_partner_key" json:"invest_partner_key"`
 	InvestPurposeKey int64   `db:"invest_purpose_key" json:"invest_purpose_key"`
 	PurposeCode      *string `db:"purpose_code" json:"purpose_code"`
 	PurposeName      *string `db:"purpose_name" json:"purpose_name"`
 }
 
 func GetInvestPurposeModels(c *[]InvestPurpose) (int, error) {
+<<<<<<< HEAD
 	query := `SELECT a.invest_partner_key,
 	a.invest_purpose_key,
 	b.purpose_code,
@@ -47,6 +47,16 @@ func GetInvestPurposeModels(c *[]InvestPurpose) (int, error) {
 	WHERE a.rec_status =1 
 	ORDER BY a.invest_partner_key DESC`
 	// log.Println("====================>>>", query)
+=======
+	query := `SELECT 
+	invest_purpose_key,
+	purpose_code,
+	purpose_name   
+	FROM cms_invest_purpose 
+	WHERE rec_status =1 
+	ORDER BY invest_purpose_key DESC`
+	log.Println("====================>>>", query)
+>>>>>>> 4b900b7b98d7b2faec6d6fa75524ba4cdd3151a3
 	err := db.Db.Select(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
