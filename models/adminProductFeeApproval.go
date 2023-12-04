@@ -278,7 +278,7 @@ func ProductFeeApprovalAction(params map[string]string) error {
 		return err
 	}
 
-	qGetFeeItemReq := `SELECT product_fee_key, item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item_request WHERE product_fee_key = ` + params["rec_pk"]
+	qGetFeeItemReq := `SELECT product_fee_key, item_seqno, row_max, principle_limit, fee_value, item_notes, rec_status FROM ms_product_fee_item_request WHERE product_fee_key = ` + params["rec_pk"]
 	// log.Println(qGetFeeItemReq)
 	var Items []ProductFeeItemRequest
 	err = db.Db.Select(&Items, qGetFeeItemReq)
