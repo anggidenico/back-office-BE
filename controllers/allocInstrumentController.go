@@ -50,8 +50,8 @@ func CreateAllocInstrumentController(c echo.Context) error {
 	// params["rec_order"] = recOrder
 	params["product_key"] = productKey
 	params["periode_key"] = periodeKey
-	params["sector_key"] = instrumentKey
-	params["sector_value"] = instrumentValue
+	params["instrument_key"] = instrumentKey
+	params["instrument_value"] = instrumentValue
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
@@ -103,9 +103,9 @@ func UpdateAllocInstrumentController(c echo.Context) error {
 	params["rec_modified_by"] = lib.UserIDStr
 	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
-	allocSectorKey, err := strconv.ParseInt(c.FormValue("alloc_sector_key"), 10, 64)
+	allocInstrumentKey, err := strconv.ParseInt(c.FormValue("alloc_instrument_key"), 10, 64)
 	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid alloc_sector_key", "Invalid alloc_sector_key")
+		return lib.CustomError(http.StatusBadRequest, "Invalid alloc_instrument_key", "Invalid alloc_instrument_key")
 	}
 	productKey, err := strconv.ParseInt(c.FormValue("product_key"), 10, 64)
 	if err != nil {
@@ -138,11 +138,11 @@ func UpdateAllocInstrumentController(c echo.Context) error {
 	}
 
 	// params["rec_order"] = recOrder
-	params["alloc_sector_key"] = allocSectorKey
+	params["alloc_instrument_key"] = allocInstrumentKey
 	params["product_key"] = productKey
 	params["periode_key"] = periodeKey
-	params["sector_key"] = instrumentKey
-	params["sector_value"] = instrumentValue
+	params["instrument_key"] = instrumentKey
+	params["instrument_value"] = instrumentValue
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
