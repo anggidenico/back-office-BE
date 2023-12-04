@@ -46,7 +46,7 @@ func GetInvestPurposeModels(c *[]InvestPurpose) (int, error) {
 	ON a.invest_purpose_key = b.invest_purpose_key
 	WHERE a.rec_status =1 
 	ORDER BY a.invest_partner_key DESC`
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -82,7 +82,7 @@ func GetInvestPartnerModels(c *[]InvestPartner) (int, error) {
 	ON a.invest_purpose_key = b.invest_purpose_key
 	WHERE a.rec_status =1 
 	ORDER BY a.invest_partner_key DESC`
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {

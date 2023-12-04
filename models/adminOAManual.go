@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalData map[string]string, paramsIDCard map[string]string, paramsDomicile map[string]string) (error, int64) {
+func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalData map[string]string, paramsIDCard map[string]string, paramsDomicile map[string]string, paramsOfficeAddr map[string]string) (error, int64) {
 
 	var OaRequestKey int64
 
@@ -17,11 +17,167 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 		return err, OaRequestKey
 	}
 
-	if _, ok := paramsOARequest["oa_request_key"]; ok { // JIKA TRUE MAKA UPDATE
+	if _, ok := paramsOARequest["oa_request_key"]; ok {
 
-	} else { // JIKA FALSE MAKA CREATE
+		// UPDATE EXISTING OA
+		OaRequestKey, _ = strconv.ParseInt(paramsOARequest["oa_request_key"], 10, 64)
 
-		// var resSQL sql.Result
+		qUpdateOAReq := GenerateUpdateQuery("oa_request", "oa_request_key", paramsOARequest)
+		resSQL, err := tx.Exec(qUpdateOAReq)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+		rowsAffected, _ := resSQL.RowsAffected()
+		if rowsAffected == 0 {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+
+		// GET PERSONAL DATA KEY
+		var PersonalDataKey int64
+		qPersonalDataKey := `SELECT personal_data_key FROM oa_personal_data WHERE oa_request_key = ` + paramsOARequest["oa_request_key"] + ` ORDER BY personal_data_key DESC LIMIT 1`
+		err = db.Db.Get(&PersonalDataKey, qPersonalDataKey)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+
+		// GET ID CARD ADDRESS KEY
+		var IdCardAddrKey *int64
+		qIdCardAddrKey := `SELECT idcard_address_key FROM oa_personal_data WHERE personal_data_key = ` + strconv.FormatInt(PersonalDataKey, 10) + ` ORDER BY personal_data_key DESC LIMIT 1`
+		err = db.Db.Get(&IdCardAddrKey, qIdCardAddrKey)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+		if len(paramsIDCard) > 0 && IdCardAddrKey == nil {
+			// INSERT ID CARD ADDRESS
+			qInsertAddrKTP := GenerateInsertQuery("oa_postal_address", paramsIDCard)
+			resSQL3, err := tx.Exec(qInsertAddrKTP)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			KTPAddrKey, _ := resSQL3.LastInsertId()
+			UpdAddrToPrsnData := make(map[string]string)
+			UpdAddrToPrsnData["personal_data_key"] = strconv.FormatInt(PersonalDataKey, 10)
+			UpdAddrToPrsnData["idcard_address_key"] = strconv.FormatInt(KTPAddrKey, 10)
+			qUpdatePersonalData := GenerateUpdateQuery("oa_personal_data", "personal_data_key", UpdAddrToPrsnData)
+			resSQL5, err := tx.Exec(qUpdatePersonalData)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			a, _ := resSQL5.RowsAffected()
+			if a == 0 {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			*IdCardAddrKey = KTPAddrKey
+		}
+
+		// GET DOMICILE ADDRESS KEY
+		var DomicileAddrKey *int64
+		qDomicileAddrKey := `SELECT domicile_address_key FROM oa_personal_data WHERE personal_data_key = ` + strconv.FormatInt(PersonalDataKey, 10) + ` ORDER BY personal_data_key DESC LIMIT 1`
+		err = db.Db.Get(&DomicileAddrKey, qDomicileAddrKey)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+		if len(paramsDomicile) > 0 && DomicileAddrKey == nil {
+			// INSERT DOMICILE ADDRESS
+			qInsertAddrDomicile := GenerateInsertQuery("oa_postal_address", paramsDomicile)
+			resSQL4, err := tx.Exec(qInsertAddrDomicile)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			DomAddrKey, _ := resSQL4.LastInsertId()
+			UpdAddrToPrsnData := make(map[string]string)
+			UpdAddrToPrsnData["personal_data_key"] = strconv.FormatInt(PersonalDataKey, 10)
+			UpdAddrToPrsnData["domicile_address_key"] = strconv.FormatInt(DomAddrKey, 10)
+			qUpdatePersonalData := GenerateUpdateQuery("oa_personal_data", "personal_data_key", UpdAddrToPrsnData)
+			resSQL5, err := tx.Exec(qUpdatePersonalData)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			a, _ := resSQL5.RowsAffected()
+			if a == 0 {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			*DomicileAddrKey = DomAddrKey
+		}
+
+		// GET OFFICE ADDRESS KEY
+		var OfficeAddrKey *int64
+		qOfficeAddrKey := `SELECT occup_addres_key FROM oa_personal_data WHERE personal_data_key = ` + strconv.FormatInt(PersonalDataKey, 10) + ` ORDER BY personal_data_key DESC LIMIT 1`
+		err = db.Db.Get(&OfficeAddrKey, qOfficeAddrKey)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+		if len(paramsOfficeAddr) > 0 && OfficeAddrKey == nil {
+			// INSERT OFFICE ADDRESS
+			qInsertAddrOffice := GenerateInsertQuery("oa_postal_address", paramsOfficeAddr)
+			resSQL4, err := tx.Exec(qInsertAddrOffice)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			OffAddrKey, _ := resSQL4.LastInsertId()
+			UpdAddrToPrsnData := make(map[string]string)
+			UpdAddrToPrsnData["personal_data_key"] = strconv.FormatInt(PersonalDataKey, 10)
+			UpdAddrToPrsnData["occup_address_key"] = strconv.FormatInt(OffAddrKey, 10)
+			qUpdatePersonalData := GenerateUpdateQuery("oa_personal_data", "personal_data_key", UpdAddrToPrsnData)
+			resSQL5, err := tx.Exec(qUpdatePersonalData)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			a, _ := resSQL5.RowsAffected()
+			if a == 0 {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			*OfficeAddrKey = OffAddrKey
+		}
+
+		paramsPersonalData["personal_data_key"] = strconv.FormatInt(PersonalDataKey, 10)
+		qUpdatePersonalData := GenerateUpdateQuery("oa_personal_data", "personal_data_key", paramsPersonalData)
+		resSQL2, err := tx.Exec(qUpdatePersonalData)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+		rowsAffected, _ = resSQL2.RowsAffected()
+		if rowsAffected == 0 {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+
+	} else {
+
+		// CREATE NEW OA
 
 		qInsertOAReq := GenerateInsertQuery("oa_request", paramsOARequest)
 		resSQL, err := tx.Exec(qInsertOAReq)
@@ -42,40 +198,85 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 		}
 		OaPersonalDataKey, _ := resSQL2.LastInsertId()
 
-		qInsertAddrKTP := GenerateInsertQuery("oa_postal_address", paramsIDCard)
-		resSQL3, err := tx.Exec(qInsertAddrKTP)
-		if err != nil {
-			tx.Rollback()
-			log.Println(err.Error())
-			return err, OaRequestKey
+		if len(paramsIDCard) > 0 {
+			qInsertAddrKTP := GenerateInsertQuery("oa_postal_address", paramsIDCard)
+			resSQL3, err := tx.Exec(qInsertAddrKTP)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			KTPAddrKey, _ := resSQL3.LastInsertId()
+			UpdAddrToPrsnData := make(map[string]string)
+			UpdAddrToPrsnData["personal_data_key"] = strconv.FormatInt(OaPersonalDataKey, 10)
+			UpdAddrToPrsnData["idcard_address_key"] = strconv.FormatInt(KTPAddrKey, 10)
+			qUpdatePersonalData := GenerateUpdateQuery("oa_personal_data", "personal_data_key", UpdAddrToPrsnData)
+			resSQL5, err := tx.Exec(qUpdatePersonalData)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			a, _ := resSQL5.RowsAffected()
+			if a == 0 {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
 		}
-		KTPAddrKey, _ := resSQL3.LastInsertId()
 
-		qInsertAddrDomicile := GenerateInsertQuery("oa_postal_address", paramsDomicile)
-		resSQL4, err := tx.Exec(qInsertAddrDomicile)
-		if err != nil {
-			tx.Rollback()
-			log.Println(err.Error())
-			return err, OaRequestKey
+		if len(paramsDomicile) > 0 {
+			qInsertAddrDomicile := GenerateInsertQuery("oa_postal_address", paramsDomicile)
+			resSQL4, err := tx.Exec(qInsertAddrDomicile)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			DomAddrKey, _ := resSQL4.LastInsertId()
+			UpdAddrToPrsnData := make(map[string]string)
+			UpdAddrToPrsnData["personal_data_key"] = strconv.FormatInt(OaPersonalDataKey, 10)
+			UpdAddrToPrsnData["domicile_address_key"] = strconv.FormatInt(DomAddrKey, 10)
+			qUpdatePersonalData := GenerateUpdateQuery("oa_personal_data", "personal_data_key", UpdAddrToPrsnData)
+			resSQL5, err := tx.Exec(qUpdatePersonalData)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			a, _ := resSQL5.RowsAffected()
+			if a == 0 {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
 		}
-		DomAddrKey, _ := resSQL4.LastInsertId()
 
-		UpdAddrToPrsnData := make(map[string]string)
-		UpdAddrToPrsnData["personal_data_key"] = strconv.FormatInt(OaPersonalDataKey, 10)
-		UpdAddrToPrsnData["idcard_address_key"] = strconv.FormatInt(KTPAddrKey, 10)
-		UpdAddrToPrsnData["domicile_address_key"] = strconv.FormatInt(DomAddrKey, 10)
-		qUpdatePersonalData := GenerateUpdateQuery("oa_personal_data", "personal_data_key", UpdAddrToPrsnData)
-		resSQL5, err := tx.Exec(qUpdatePersonalData)
-		if err != nil {
-			tx.Rollback()
-			log.Println(err.Error())
-			return err, OaRequestKey
-		}
-		a, _ := resSQL5.RowsAffected()
-		if a == 0 {
-			tx.Rollback()
-			log.Println(err.Error())
-			return err, OaRequestKey
+		if len(paramsOfficeAddr) > 0 {
+			qInsertAddrOffice := GenerateInsertQuery("oa_postal_address", paramsOfficeAddr)
+			resSQL4, err := tx.Exec(qInsertAddrOffice)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			OfficeAddrKey, _ := resSQL4.LastInsertId()
+			UpdAddrToPrsnData := make(map[string]string)
+			UpdAddrToPrsnData["personal_data_key"] = strconv.FormatInt(OaPersonalDataKey, 10)
+			UpdAddrToPrsnData["occup_address_key"] = strconv.FormatInt(OfficeAddrKey, 10)
+			qUpdatePersonalData := GenerateUpdateQuery("oa_personal_data", "personal_data_key", UpdAddrToPrsnData)
+			resSQL5, err := tx.Exec(qUpdatePersonalData)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			a, _ := resSQL5.RowsAffected()
+			if a == 0 {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
 		}
 
 	}
@@ -84,38 +285,10 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 	return nil, OaRequestKey
 }
 
-func GenerateInsertQuery(tableName string, params map[string]string) string {
-	query := "INSERT INTO " + tableName
-	var fields, values string
-	var bindvars []interface{}
-	for key, value := range params {
-		fields += key + `, `
-		values += ` '` + value + `', `
-		bindvars = append(bindvars, value)
-	}
-	fields = fields[:(len(fields) - 2)]
-	values = values[:(len(values) - 2)]
+func UpdateOAManual() (error, int64) {
+	var OaRequestKey int64
 
-	query += "(" + fields + ") VALUES(" + values + ")"
-
-	return query
-}
-
-func GenerateUpdateQuery(tableName string, primaryKeyField string, params map[string]string) string {
-	query := `UPDATE ` + tableName + ` SET `
-	i := 0
-	for key, value := range params {
-		if key != primaryKeyField {
-			query += key + " = '" + value + "'"
-			if (len(params) - 2) > i {
-				query += ", "
-			}
-			i++
-		}
-	}
-	query += ` WHERE ` + primaryKeyField + ` = ` + params[primaryKeyField]
-
-	return query
+	return nil, OaRequestKey
 }
 
 type CountryModels struct {

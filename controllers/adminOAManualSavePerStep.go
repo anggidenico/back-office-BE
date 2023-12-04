@@ -17,6 +17,7 @@ func SaveStep1(c echo.Context) (error, int64) {
 	paramOaRequest["rec_created_by"] = lib.UserIDStr
 	paramOaRequest["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 	paramOaRequest["oa_step"] = "1"
+	paramOaRequest["oa_status"] = "258"
 
 	oa_request_key := c.FormValue("oa_request_key")
 	if oa_request_key != "" {
@@ -166,7 +167,95 @@ func SaveStep1(c echo.Context) (error, int64) {
 	}
 	paramsDomicile["postal_code"] = domicile_postal_code
 
-	err, oaRequestKey := models.CreateOrUpdateOAManual(paramOaRequest, paramPersonalData, paramsIDCard, paramsDomicile)
+	paramsOffice := make(map[string]string)
+
+	err, oaRequestKey := models.CreateOrUpdateOAManual(paramOaRequest, paramPersonalData, paramsIDCard, paramsDomicile, paramsOffice)
+	if err != nil {
+		return err, oaRequestKey
+	}
+
+	return nil, oaRequestKey
+}
+
+func SaveStep2(c echo.Context) (error, int64) {
+	var oaRequestKey int64
+
+	paramsOaRequest := make(map[string]string)
+	paramsOaRequest["oa_step"] = "2"
+
+	oa_request_key := c.FormValue("oa_request_key")
+	if oa_request_key == "" {
+		return fmt.Errorf("Missing: oa_request_key"), oaRequestKey
+	}
+	paramsOaRequest["oa_request_key"] = oa_request_key
+
+	site_referer := c.FormValue("site_referer")
+	if site_referer == "" {
+		return fmt.Errorf("Missing: site_referer"), oaRequestKey
+	}
+	paramsOaRequest["site_referer"] = site_referer
+
+	paramsPersonalData := make(map[string]string)
+	paramsPersonalData["oa_request_key"] = oa_request_key
+
+	occupation := c.FormValue("occupation")
+	if occupation == "" {
+		return fmt.Errorf("Missing: occupation"), oaRequestKey
+	}
+	paramsPersonalData["occup_job"] = occupation
+
+	company := c.FormValue("company")
+	if company == "" {
+		return fmt.Errorf("Missing: company"), oaRequestKey
+	}
+	paramsPersonalData["occup_company"] = company
+
+	position := c.FormValue("position")
+	if position == "" {
+		return fmt.Errorf("Missing: position"), oaRequestKey
+	}
+	paramsPersonalData["occup_position"] = position
+
+	business_fields := c.FormValue("business_fields")
+	if business_fields == "" {
+		return fmt.Errorf("Missing: business_fields"), oaRequestKey
+	}
+	paramsPersonalData["occup_business_fields"] = business_fields
+
+	annual_income := c.FormValue("annual_income")
+	if annual_income == "" {
+		return fmt.Errorf("Missing: annual_income"), oaRequestKey
+	}
+	paramsPersonalData["annual_income"] = annual_income
+
+	source_of_income := c.FormValue("source_of_income")
+	if source_of_income == "" {
+		return fmt.Errorf("Missing: source_of_income"), oaRequestKey
+	}
+	paramsPersonalData["sourceof_fund"] = source_of_income
+
+	investment_objectives := c.FormValue("investment_objectives")
+	if investment_objectives == "" {
+		return fmt.Errorf("Missing: investment_objectives"), oaRequestKey
+	}
+	paramsPersonalData["investment_objectives"] = investment_objectives
+
+	paramsOfficeAddr := make(map[string]string)
+	paramsOfficeAddr["rec_status"] = "1"
+	paramsOfficeAddr["rec_created_by"] = lib.UserIDStr
+	paramsOfficeAddr["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	paramsOfficeAddr["address_type"] = "19"
+
+	address := c.FormValue("address")
+	if address == "" {
+		return fmt.Errorf("Missing: address"), oaRequestKey
+	}
+	paramsOfficeAddr["address_line1"] = address
+
+	paramsIdCard := make(map[string]string)
+	paramsDomi := make(map[string]string)
+
+	err, oaRequestKey := models.CreateOrUpdateOAManual(paramsOaRequest, paramsPersonalData, paramsIdCard, paramsDomi, paramsOfficeAddr)
 	if err != nil {
 		return err, oaRequestKey
 	}

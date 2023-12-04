@@ -24,7 +24,7 @@ func GetInvestPurposeController(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Data = invest
-	log.Printf("Response Data: %+v\n", response.Data)
+	// log.Printf("Response Data: %+v\n", response.Data)
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -39,7 +39,7 @@ func GetInvestPartnerController(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Data = invest
-	log.Printf("Response Data: %+v\n", response.Data)
+	// log.Printf("Response Data: %+v\n", response.Data)
 	return c.JSON(http.StatusOK, response)
 }
 

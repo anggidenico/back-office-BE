@@ -267,7 +267,7 @@ func ProductBankAccountApprovalAction(params map[string]string) error {
 
 	qGetLastMsBankAccReq := `SELECT rec_pk FROM ms_bank_account_request 
 	WHERE bank_account_key = ` + getBankAccKey + ` ORDER BY rec_pk DESC LIMIT 1`
-	log.Println(qGetLastMsBankAccReq)
+	// log.Println(qGetLastMsBankAccReq)
 	var getLastMsBankAccReq string
 	err = db.Db.Get(&getLastMsBankAccReq, qGetLastMsBankAccReq)
 	if err != nil {
