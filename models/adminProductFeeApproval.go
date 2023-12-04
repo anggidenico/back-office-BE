@@ -143,7 +143,7 @@ func GetProductFeeApprovalDetail(rec_pk string) ProductFeeUpdateDetails {
 
 	if *result.Updates.RecAction == "UPDATE" {
 
-		query2 := `SELECT rec_pk, rec_action, fee_type, product_key, fee_key, fee_code, flag_show_ontnc, fee_annotation, fee_desc, fee_date_start, fee_date_thru, fee_nominal_type, enabled_min_amount, fee_min_amount, enabled_max_amount, fee_max_amount, fee_calc_method, calculation_baseon, period_hold, days_inyear FROM ms_product_fee_request WHERE fee_key = ` + strconv.FormatUint(*result.Updates.FeeKey, 10)
+		query2 := `SELECT rec_pk, rec_action, fee_type, product_key, fee_key, fee_code, flag_show_ontnc, fee_annotation, fee_desc, fee_date_start, fee_date_thru, fee_nominal_type, enabled_min_amount, fee_min_amount, enabled_max_amount, fee_max_amount, fee_calc_method, calculation_baseon, period_hold, days_inyear FROM ms_product_fee WHERE fee_key = ` + strconv.FormatUint(*result.Updates.FeeKey, 10)
 		// log.Print(query)
 		row := tx.QueryRow(query2)
 		err = row.Scan(&result.Existing.RecPK, &result.Existing.RecAction, &result.Existing.FeeType, &result.Existing.ProductKey, &result.Existing.FeeKey, &result.Existing.FeeCode, &result.Existing.FlagShowOntnc, &result.Existing.FeeAnnotation, &result.Existing.FeeDesc, &result.Existing.FeeDateStart, &result.Existing.FeeDateThru, &result.Existing.FeeNominalType, &result.Existing.EnabledMinAmount, &result.Existing.FeeMinAmount, &result.Existing.EnabledMaxAmount, &result.Existing.FeeMaxAmount, &result.Existing.FeeCalcMethod, &result.Existing.CalculationBaseon, &result.Existing.PeriodHold, &result.Existing.DaysInyear)
@@ -278,7 +278,7 @@ func ProductFeeApprovalAction(params map[string]string) error {
 		return err
 	}
 
-	qGetFeeItemReq := `SELECT item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item_request WHERE product_fee_key = ` + params["rec_pk"]
+	qGetFeeItemReq := `SELECT product_fee_item, item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item_request WHERE product_fee_key = ` + params["rec_pk"]
 	// log.Println(qGetFeeItemReq)
 	var Items []ProductFeeItemRequest
 	err = db.Db.Select(&Items, qGetFeeItemReq)
