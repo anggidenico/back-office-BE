@@ -105,6 +105,24 @@ func SaveStep1(c echo.Context) (error, int64) {
 	}
 	paramPersonalData["education"] = education
 
+	email := c.FormValue("email")
+	if email == "" {
+		return fmt.Errorf("Missing: email"), oaRequestKey
+	}
+	paramPersonalData["email_address"] = email
+
+	mobile_phone_number := c.FormValue("mobile_phone_number")
+	if mobile_phone_number == "" {
+		return fmt.Errorf("Missing: mobile_phone_number"), oaRequestKey
+	}
+	paramPersonalData["phone_mobile"] = mobile_phone_number
+
+	phone_number := c.FormValue("phone_number")
+	if phone_number == "" {
+		return fmt.Errorf("Missing: phone_number"), oaRequestKey
+	}
+	paramPersonalData["phone_home"] = phone_number
+
 	// ADDRESS
 
 	paramsIDCard := make(map[string]string)
@@ -169,9 +187,21 @@ func SaveStep1(c echo.Context) (error, int64) {
 	}
 	paramsDomicile["postal_code"] = domicile_postal_code
 
+	paramsOther := make(map[string]string)
+
+	education_other := c.FormValue("education_other")
+	if education_other != "" {
+		paramsOther[education] = education_other
+	}
+
+	religion_other := c.FormValue("religion_other")
+	if religion_other != "" {
+		paramsOther[religion] = religion_other
+	}
+
 	paramsOffice := make(map[string]string)
 
-	err, oaRequestKey := models.CreateOrUpdateOAManual(paramOaRequest, paramPersonalData, paramsIDCard, paramsDomicile, paramsOffice)
+	err, oaRequestKey := models.CreateOrUpdateOAManual(paramOaRequest, paramPersonalData, paramsIDCard, paramsDomicile, paramsOffice, paramsOther)
 	if err != nil {
 		return err, oaRequestKey
 	}
@@ -254,10 +284,37 @@ func SaveStep2(c echo.Context) (error, int64) {
 	}
 	paramsOfficeAddr["address_line1"] = address
 
+	paramsOther := make(map[string]string)
+
+	occupation_other := c.FormValue("occupation_other")
+	if occupation_other != "" {
+		paramsOther[occupation] = occupation_other
+	}
+
+	position_other := c.FormValue("position_other")
+	if position_other != "" {
+		paramsOther[position] = position_other
+	}
+
+	business_fields_other := c.FormValue("business_fields_other")
+	if business_fields_other != "" {
+		paramsOther[business_fields] = business_fields_other
+	}
+
+	source_of_income_other := c.FormValue("source_of_income_other")
+	if source_of_income_other != "" {
+		paramsOther[source_of_income] = source_of_income_other
+	}
+
+	investment_objectives_other := c.FormValue("investment_objectives_other")
+	if investment_objectives_other != "" {
+		paramsOther[investment_objectives] = investment_objectives_other
+	}
+
 	paramsIdCard := make(map[string]string)
 	paramsDomi := make(map[string]string)
 
-	err, OaRequestKey := models.CreateOrUpdateOAManual(paramsOaRequest, paramsPersonalData, paramsIdCard, paramsDomi, paramsOfficeAddr)
+	err, OaRequestKey := models.CreateOrUpdateOAManual(paramsOaRequest, paramsPersonalData, paramsIdCard, paramsDomi, paramsOfficeAddr, paramsOther)
 	if err != nil {
 		return err, OaRequestKey
 	}
@@ -356,11 +413,28 @@ func SaveStep3(c echo.Context) (error, int64) {
 	}
 	paramsPersonalData["pep_position"] = pep_position
 
+	paramsOther := make(map[string]string)
+
+	relation_occupation_other := c.FormValue("relation_occupation_other")
+	if relation_occupation_other != "" {
+		paramsOther[relation_occupation] = relation_occupation_other
+	}
+
+	relation_business_fields_other := c.FormValue("relation_business_fields_other")
+	if relation_business_fields_other != "" {
+		paramsOther[relation_business_fields] = relation_business_fields_other
+	}
+
+	beneficial_relation_other := c.FormValue("beneficial_relation_other")
+	if beneficial_relation_other != "" {
+		paramsOther[beneficial_relation] = beneficial_relation_other
+	}
+
 	paramsIdCard := make(map[string]string)
 	paramsDomi := make(map[string]string)
 	paramsOfficeAddr := make(map[string]string)
 
-	err, OaRequestKey := models.CreateOrUpdateOAManual(paramsOaRequest, paramsPersonalData, paramsIdCard, paramsDomi, paramsOfficeAddr)
+	err, OaRequestKey := models.CreateOrUpdateOAManual(paramsOaRequest, paramsPersonalData, paramsIdCard, paramsDomi, paramsOfficeAddr, paramsOther)
 	if err != nil {
 		return err, OaRequestKey
 	}

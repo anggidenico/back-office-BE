@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalData map[string]string, paramsIDCard map[string]string, paramsDomicile map[string]string, paramsOfficeAddr map[string]string) (error, int64) {
+func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalData map[string]string, paramsIDCard map[string]string, paramsDomicile map[string]string, paramsOfficeAddress map[string]string, paramsOther map[string]string) (error, int64) {
 
 	var OaRequestKey int64
 
@@ -23,18 +23,20 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 		// UPDATE EXISTING OA
 		OaRequestKey, _ = strconv.ParseInt(paramsOARequest["oa_request_key"], 10, 64)
 
-		qUpdateOAReq := GenerateUpdateQuery("oa_request", "oa_request_key", paramsOARequest)
-		resSQL, err := tx.Exec(qUpdateOAReq)
-		if err != nil {
-			tx.Rollback()
-			log.Println(err.Error())
-			return err, OaRequestKey
-		}
-		rowsAffected, _ := resSQL.RowsAffected()
-		if rowsAffected == 0 {
-			tx.Rollback()
-			log.Println(fmt.Errorf("rowsAffected = 0"))
-			return fmt.Errorf("rowsAffected = 0"), OaRequestKey
+		if len(paramsOARequest) > 1 {
+			qUpdateOAReq := GenerateUpdateQuery("oa_request", "oa_request_key", paramsOARequest)
+			resSQL, err := tx.Exec(qUpdateOAReq)
+			if err != nil {
+				tx.Rollback()
+				log.Println(err.Error())
+				return err, OaRequestKey
+			}
+			rowsAffected, _ := resSQL.RowsAffected()
+			if rowsAffected == 0 {
+				tx.Rollback()
+				log.Println(fmt.Errorf("rowsAffected = 0"))
+				return fmt.Errorf("rowsAffected = 0"), OaRequestKey
+			}
 		}
 
 		// GET PERSONAL DATA KEY
@@ -132,9 +134,9 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 			log.Println(err.Error())
 			return err, OaRequestKey
 		}
-		if len(paramsOfficeAddr) > 0 && OfficeAddrKey == nil {
+		if len(paramsOfficeAddress) > 0 && OfficeAddrKey == nil {
 			// INSERT OFFICE ADDRESS
-			qInsertAddrOffice := GenerateInsertQuery("oa_postal_address", paramsOfficeAddr)
+			qInsertAddrOffice := GenerateInsertQuery("oa_postal_address", paramsOfficeAddress)
 			resSQL4, err := tx.Exec(qInsertAddrOffice)
 			if err != nil {
 				tx.Rollback()
@@ -161,6 +163,59 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 			OfficeAddrKey = &OffAddrKey
 		}
 
+		// INSERT OR UPDATE OTHERS UDF VALUE
+		if len(paramsOther) > 0 {
+			for key, value := range paramsOther {
+				keyInt, _ := strconv.ParseUint(key, 10, 64)
+				var udfInfoData UdfInfo
+				qCekOthers := `SELECT udf_info_key, lookup_key, udf_info_name, udf_info_code FROM udf_info WHERE lookup_key = ` + key
+				err = db.Db.Get(&udfInfoData, qCekOthers)
+				if err != nil {
+					tx.Rollback()
+					log.Println(err.Error())
+					return err, OaRequestKey
+				}
+				if *udfInfoData.LookupKey == keyInt {
+					var udfValueData UdfValue
+					qCekExistUdf := `SELECT udf_value_key, udf_info_key, row_data_key FROM udf_value WHERE udf_info_key = ` + strconv.FormatUint(udfInfoData.UdfInfoKey, 10) + ` AND row_data_key = ` + strconv.FormatInt(PersonalDataKey, 10)
+					err = db.Db.Get(&udfValueData, qCekExistUdf)
+					if err != nil {
+						tx.Rollback()
+						log.Println(err.Error())
+						return err, OaRequestKey
+					}
+
+					if udfValueData.RowDataKey > 0 { // DATA SUDAH ADA JADI UPDATE SAJA
+						paramsUpdateUdf := make(map[string]string)
+						paramsUpdateUdf["udf_value_key"] = strconv.FormatUint(udfValueData.UdfValueKey, 10)
+						paramsUpdateUdf["udf_info_key"] = strconv.FormatUint(udfInfoData.UdfInfoKey, 10)
+						paramsUpdateUdf["row_data_key"] = strconv.FormatInt(PersonalDataKey, 10)
+						paramsUpdateUdf["udf_values"] = value
+						qUpdateUdf := GenerateUpdateQuery("udf_value", "udf_value_key", paramsUpdateUdf)
+						_, err := tx.Exec(qUpdateUdf)
+						if err != nil {
+							tx.Rollback()
+							log.Println(err.Error())
+							return err, OaRequestKey
+						}
+					} else {
+						paramsInsertUdf := make(map[string]string)
+						paramsInsertUdf["udf_info_key"] = strconv.FormatUint(udfInfoData.UdfInfoKey, 10)
+						paramsInsertUdf["row_data_key"] = strconv.FormatInt(PersonalDataKey, 10)
+						paramsInsertUdf["udf_values"] = value
+						qInsertUdf := GenerateInsertQuery("udf_value", paramsInsertUdf)
+						_, err := tx.Exec(qInsertUdf)
+						if err != nil {
+							tx.Rollback()
+							log.Println(err.Error())
+							return err, OaRequestKey
+						}
+					}
+
+				}
+			}
+		}
+
 		paramsPersonalData["personal_data_key"] = strconv.FormatInt(PersonalDataKey, 10)
 		qUpdatePersonalData := GenerateUpdateQuery("oa_personal_data", "personal_data_key", paramsPersonalData)
 		resSQL2, err := tx.Exec(qUpdatePersonalData)
@@ -169,7 +224,7 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 			log.Println(err.Error())
 			return err, OaRequestKey
 		}
-		rowsAffected, _ = resSQL2.RowsAffected()
+		rowsAffected, _ := resSQL2.RowsAffected()
 		if rowsAffected == 0 {
 			tx.Rollback()
 			log.Println(fmt.Errorf("rowsAffected = 0"))
@@ -253,8 +308,8 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 			}
 		}
 
-		if len(paramsOfficeAddr) > 0 {
-			qInsertAddrOffice := GenerateInsertQuery("oa_postal_address", paramsOfficeAddr)
+		if len(paramsOfficeAddress) > 0 {
+			qInsertAddrOffice := GenerateInsertQuery("oa_postal_address", paramsOfficeAddress)
 			resSQL4, err := tx.Exec(qInsertAddrOffice)
 			if err != nil {
 				tx.Rollback()
@@ -277,6 +332,34 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 				tx.Rollback()
 				log.Println(err.Error())
 				return err, OaRequestKey
+			}
+		}
+
+		// INSERT OR UPDATE OTHERS UDF VALUE
+		if len(paramsOther) > 0 {
+			for key, value := range paramsOther {
+				keyInt, _ := strconv.ParseUint(key, 10, 64)
+				var udfInfoData UdfInfo
+				qCekOthers := `SELECT udf_info_key, lookup_key, udf_info_name, udf_info_code FROM udf_info WHERE lookup_key = ` + key
+				err = db.Db.Get(&udfInfoData, qCekOthers)
+				if err != nil {
+					tx.Rollback()
+					log.Println(err.Error())
+					return err, OaRequestKey
+				}
+				if *udfInfoData.LookupKey == keyInt {
+					paramsInsertUdf := make(map[string]string)
+					paramsInsertUdf["udf_info_key"] = strconv.FormatUint(udfInfoData.UdfInfoKey, 10)
+					paramsInsertUdf["row_data_key"] = strconv.FormatInt(OaPersonalDataKey, 10)
+					paramsInsertUdf["udf_values"] = value
+					qInsertUdf := GenerateInsertQuery("udf_value", paramsInsertUdf)
+					_, err := tx.Exec(qInsertUdf)
+					if err != nil {
+						tx.Rollback()
+						log.Println(err.Error())
+						return err, OaRequestKey
+					}
+				}
 			}
 		}
 
