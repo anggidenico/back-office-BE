@@ -155,8 +155,8 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 			a, _ := resSQL5.RowsAffected()
 			if a == 0 {
 				tx.Rollback()
-				log.Println(err.Error())
-				return err, OaRequestKey
+				log.Println(fmt.Errorf("rowsAffected = 0"))
+				return fmt.Errorf("rowsAffected = 0"), OaRequestKey
 			}
 			OfficeAddrKey = &OffAddrKey
 		}
@@ -172,8 +172,8 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 		rowsAffected, _ = resSQL2.RowsAffected()
 		if rowsAffected == 0 {
 			tx.Rollback()
-			log.Println(err.Error())
-			return err, OaRequestKey
+			log.Println(fmt.Errorf("rowsAffected = 0"))
+			return fmt.Errorf("rowsAffected = 0"), OaRequestKey
 		}
 
 	} else {

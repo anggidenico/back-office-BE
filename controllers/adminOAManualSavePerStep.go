@@ -180,20 +180,20 @@ func SaveStep1(c echo.Context) (error, int64) {
 }
 
 func SaveStep2(c echo.Context) (error, int64) {
-	var oaRequestKey int64
+	var OaRequestKey int64
 
 	paramsOaRequest := make(map[string]string)
 	paramsOaRequest["oa_step"] = "2"
 
 	oa_request_key := c.FormValue("oa_request_key")
 	if oa_request_key == "" {
-		return fmt.Errorf("Missing: oa_request_key"), oaRequestKey
+		return fmt.Errorf("Missing: oa_request_key"), OaRequestKey
 	}
 	paramsOaRequest["oa_request_key"] = oa_request_key
 
 	site_referer := c.FormValue("site_referer")
 	if site_referer == "" {
-		return fmt.Errorf("Missing: site_referer"), oaRequestKey
+		return fmt.Errorf("Missing: site_referer"), OaRequestKey
 	}
 	paramsOaRequest["site_referer"] = site_referer
 
@@ -202,43 +202,43 @@ func SaveStep2(c echo.Context) (error, int64) {
 
 	occupation := c.FormValue("occupation")
 	if occupation == "" {
-		return fmt.Errorf("Missing: occupation"), oaRequestKey
+		return fmt.Errorf("Missing: occupation"), OaRequestKey
 	}
 	paramsPersonalData["occup_job"] = occupation
 
 	company := c.FormValue("company")
 	if company == "" {
-		return fmt.Errorf("Missing: company"), oaRequestKey
+		return fmt.Errorf("Missing: company"), OaRequestKey
 	}
 	paramsPersonalData["occup_company"] = company
 
 	position := c.FormValue("position")
 	if position == "" {
-		return fmt.Errorf("Missing: position"), oaRequestKey
+		return fmt.Errorf("Missing: position"), OaRequestKey
 	}
 	paramsPersonalData["occup_position"] = position
 
 	business_fields := c.FormValue("business_fields")
 	if business_fields == "" {
-		return fmt.Errorf("Missing: business_fields"), oaRequestKey
+		return fmt.Errorf("Missing: business_fields"), OaRequestKey
 	}
 	paramsPersonalData["occup_business_fields"] = business_fields
 
 	annual_income := c.FormValue("annual_income")
 	if annual_income == "" {
-		return fmt.Errorf("Missing: annual_income"), oaRequestKey
+		return fmt.Errorf("Missing: annual_income"), OaRequestKey
 	}
 	paramsPersonalData["annual_income"] = annual_income
 
 	source_of_income := c.FormValue("source_of_income")
 	if source_of_income == "" {
-		return fmt.Errorf("Missing: source_of_income"), oaRequestKey
+		return fmt.Errorf("Missing: source_of_income"), OaRequestKey
 	}
 	paramsPersonalData["sourceof_fund"] = source_of_income
 
 	investment_objectives := c.FormValue("investment_objectives")
 	if investment_objectives == "" {
-		return fmt.Errorf("Missing: investment_objectives"), oaRequestKey
+		return fmt.Errorf("Missing: investment_objectives"), OaRequestKey
 	}
 	paramsPersonalData["invesment_objectives"] = investment_objectives
 
@@ -250,17 +250,120 @@ func SaveStep2(c echo.Context) (error, int64) {
 
 	address := c.FormValue("address")
 	if address == "" {
-		return fmt.Errorf("Missing: address"), oaRequestKey
+		return fmt.Errorf("Missing: address"), OaRequestKey
 	}
 	paramsOfficeAddr["address_line1"] = address
 
 	paramsIdCard := make(map[string]string)
 	paramsDomi := make(map[string]string)
 
-	err, oaRequestKey := models.CreateOrUpdateOAManual(paramsOaRequest, paramsPersonalData, paramsIdCard, paramsDomi, paramsOfficeAddr)
+	err, OaRequestKey := models.CreateOrUpdateOAManual(paramsOaRequest, paramsPersonalData, paramsIdCard, paramsDomi, paramsOfficeAddr)
 	if err != nil {
-		return err, oaRequestKey
+		return err, OaRequestKey
 	}
 
-	return nil, oaRequestKey
+	return nil, OaRequestKey
+}
+
+func SaveStep3(c echo.Context) (error, int64) {
+	var OaRequestKey int64
+
+	paramsOaRequest := make(map[string]string)
+
+	oa_request_key := c.FormValue("oa_request_key")
+	if oa_request_key == "" {
+		return fmt.Errorf("Missing: oa_request_key"), OaRequestKey
+	}
+	paramsOaRequest["oa_request_key"] = oa_request_key
+
+	paramsPersonalData := make(map[string]string)
+
+	mother_maiden_name := c.FormValue("mother_maiden_name")
+	if mother_maiden_name == "" {
+		return fmt.Errorf("Missing: mother_maiden_name"), OaRequestKey
+	}
+	paramsPersonalData["mother_maiden_name"] = mother_maiden_name
+
+	relation_type := c.FormValue("relation_type")
+	if relation_type == "" {
+		return fmt.Errorf("Missing: relation_type"), OaRequestKey
+	}
+	paramsPersonalData["relation_type"] = relation_type
+
+	relation_full_name := c.FormValue("relation_full_name")
+	if relation_full_name == "" {
+		return fmt.Errorf("Missing: relation_full_name"), OaRequestKey
+	}
+	paramsPersonalData["relation_full_name"] = relation_full_name
+
+	relation_occupation := c.FormValue("relation_occupation")
+	if relation_occupation == "" {
+		return fmt.Errorf("Missing: relation_occupation"), OaRequestKey
+	}
+	paramsPersonalData["relation_occupation"] = relation_occupation
+
+	relation_business_fields := c.FormValue("relation_business_fields")
+	if relation_business_fields == "" {
+		return fmt.Errorf("Missing: relation_business_fields"), OaRequestKey
+	}
+	paramsPersonalData["relation_business_fields"] = relation_business_fields
+
+	emergency_full_name := c.FormValue("emergency_full_name")
+	if emergency_full_name == "" {
+		return fmt.Errorf("Missing: emergency_full_name"), OaRequestKey
+	}
+	paramsPersonalData["emergency_full_name"] = emergency_full_name
+
+	emergency_relation := c.FormValue("emergency_relation")
+	if emergency_relation == "" {
+		return fmt.Errorf("Missing: emergency_relation"), OaRequestKey
+	}
+	paramsPersonalData["emergency_relation"] = emergency_relation
+
+	emergency_phone_no := c.FormValue("emergency_phone_no")
+	if emergency_phone_no == "" {
+		return fmt.Errorf("Missing: emergency_phone_no"), OaRequestKey
+	}
+	paramsPersonalData["emergency_phone_no"] = emergency_phone_no
+
+	beneficial_full_name := c.FormValue("beneficial_full_name")
+	if beneficial_full_name == "" {
+		return fmt.Errorf("Missing: beneficial_full_name"), OaRequestKey
+	}
+	paramsPersonalData["beneficial_full_name"] = beneficial_full_name
+
+	beneficial_relation := c.FormValue("beneficial_relation")
+	if beneficial_relation == "" {
+		return fmt.Errorf("Missing: beneficial_relation"), OaRequestKey
+	}
+	paramsPersonalData["beneficial_relation"] = beneficial_relation
+
+	pep_status := c.FormValue("pep_status")
+	if pep_status == "" {
+		return fmt.Errorf("Missing: pep_status"), OaRequestKey
+	}
+	paramsPersonalData["pep_status"] = pep_status
+
+	pep_name := c.FormValue("pep_name")
+	if pep_name == "" {
+		return fmt.Errorf("Missing: pep_name"), OaRequestKey
+	}
+	paramsPersonalData["pep_name"] = pep_name
+
+	pep_position := c.FormValue("pep_position")
+	if pep_position == "" {
+		return fmt.Errorf("Missing: pep_position"), OaRequestKey
+	}
+	paramsPersonalData["pep_position"] = pep_position
+
+	paramsIdCard := make(map[string]string)
+	paramsDomi := make(map[string]string)
+	paramsOfficeAddr := make(map[string]string)
+
+	err, OaRequestKey := models.CreateOrUpdateOAManual(paramsOaRequest, paramsPersonalData, paramsIdCard, paramsDomi, paramsOfficeAddr)
+	if err != nil {
+		return err, OaRequestKey
+	}
+
+	return nil, OaRequestKey
 }

@@ -38,7 +38,11 @@ func GenerateInsertQuery(tableName string, params map[string]string) string {
 	var bindvars []interface{}
 	for key, value := range params {
 		fields += key + `, `
-		values += ` '` + value + `', `
+		if value == "" {
+			values += ` NULL, `
+		} else {
+			values += ` '` + value + `', `
+		}
 		bindvars = append(bindvars, value)
 	}
 	fields = fields[:(len(fields) - 2)]
@@ -54,7 +58,11 @@ func GenerateUpdateQuery(tableName string, primaryKeyField string, params map[st
 	i := 0
 	for key, value := range params {
 		if key != primaryKeyField {
-			query += key + " = '" + value + "'"
+			if value == "" {
+				query += key + " = NULL"
+			} else {
+				query += key + " = '" + value + "'"
+			}
 			if (len(params) - 2) > i {
 				query += ", "
 			}
