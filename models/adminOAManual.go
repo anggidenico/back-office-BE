@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"mf-bo-api/db"
@@ -25,17 +26,11 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 
 		if len(paramsOARequest) > 1 {
 			qUpdateOAReq := GenerateUpdateQuery("oa_request", "oa_request_key", paramsOARequest)
-			resSQL, err := tx.Exec(qUpdateOAReq)
+			_, err := tx.Exec(qUpdateOAReq)
 			if err != nil {
 				tx.Rollback()
 				log.Println(err.Error())
 				return err, OaRequestKey
-			}
-			rowsAffected, _ := resSQL.RowsAffected()
-			if rowsAffected == 0 {
-				tx.Rollback()
-				log.Println(fmt.Errorf("rowsAffected = 0"))
-				return fmt.Errorf("rowsAffected = 0"), OaRequestKey
 			}
 		}
 
@@ -110,18 +105,13 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 			UpdAddrToPrsnData["personal_data_key"] = strconv.FormatInt(PersonalDataKey, 10)
 			UpdAddrToPrsnData["domicile_address_key"] = strconv.FormatInt(DomAddrKey, 10)
 			qUpdatePersonalData := GenerateUpdateQuery("oa_personal_data", "personal_data_key", UpdAddrToPrsnData)
-			resSQL5, err := tx.Exec(qUpdatePersonalData)
+			_, err = tx.Exec(qUpdatePersonalData)
 			if err != nil {
 				tx.Rollback()
 				log.Println(err.Error())
 				return err, OaRequestKey
 			}
-			a, _ := resSQL5.RowsAffected()
-			if a == 0 {
-				tx.Rollback()
-				log.Println(fmt.Errorf("rowsAffected = 0"))
-				return fmt.Errorf("rowsAffected = 0"), OaRequestKey
-			}
+
 			DomicileAddrKey = &DomAddrKey
 		}
 
@@ -166,6 +156,7 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 		// INSERT OR UPDATE OTHERS UDF VALUE
 		if len(paramsOther) > 0 {
 			for key, value := range paramsOther {
+
 				keyInt, _ := strconv.ParseUint(key, 10, 64)
 				var udfInfoData UdfInfo
 				qCekOthers := `SELECT udf_info_key, lookup_key, udf_info_name, udf_info_code FROM udf_info WHERE lookup_key = ` + key
@@ -175,41 +166,41 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 					log.Println(err.Error())
 					return err, OaRequestKey
 				}
-				if *udfInfoData.LookupKey == keyInt {
+				if *udfInfoData.LookupKey == keyInt { // JIKA TERMASUK DI LOOKUPKEY PADA TABEL UDF INFO
+
 					var udfValueData UdfValue
 					qCekExistUdf := `SELECT udf_value_key, udf_info_key, row_data_key FROM udf_value WHERE udf_info_key = ` + strconv.FormatUint(udfInfoData.UdfInfoKey, 10) + ` AND row_data_key = ` + strconv.FormatInt(PersonalDataKey, 10)
 					err = db.Db.Get(&udfValueData, qCekExistUdf)
-					if err != nil {
-						tx.Rollback()
-						log.Println(err.Error())
-						return err, OaRequestKey
-					}
-
-					if udfValueData.RowDataKey > 0 { // DATA SUDAH ADA JADI UPDATE SAJA
-						paramsUpdateUdf := make(map[string]string)
-						paramsUpdateUdf["udf_value_key"] = strconv.FormatUint(udfValueData.UdfValueKey, 10)
-						paramsUpdateUdf["udf_info_key"] = strconv.FormatUint(udfInfoData.UdfInfoKey, 10)
-						paramsUpdateUdf["row_data_key"] = strconv.FormatInt(PersonalDataKey, 10)
-						paramsUpdateUdf["udf_values"] = value
-						qUpdateUdf := GenerateUpdateQuery("udf_value", "udf_value_key", paramsUpdateUdf)
-						_, err := tx.Exec(qUpdateUdf)
-						if err != nil {
-							tx.Rollback()
-							log.Println(err.Error())
-							return err, OaRequestKey
-						}
-					} else {
+					if err == sql.ErrNoRows { // JIKA NO ROWS MAKA INPUT BARU
 						paramsInsertUdf := make(map[string]string)
 						paramsInsertUdf["udf_info_key"] = strconv.FormatUint(udfInfoData.UdfInfoKey, 10)
 						paramsInsertUdf["row_data_key"] = strconv.FormatInt(PersonalDataKey, 10)
 						paramsInsertUdf["udf_values"] = value
 						qInsertUdf := GenerateInsertQuery("udf_value", paramsInsertUdf)
-						_, err := tx.Exec(qInsertUdf)
+						_, err = tx.Exec(qInsertUdf)
 						if err != nil {
 							tx.Rollback()
 							log.Println(err.Error())
 							return err, OaRequestKey
 						}
+					}
+					if err == nil {
+
+						paramsUpdateUdf := make(map[string]string)
+						paramsUpdateUdf["udf_value_key"] = strconv.FormatUint(udfValueData.UdfValueKey, 10)
+						paramsUpdateUdf["udf_values"] = value
+						qUpdateUdf := GenerateUpdateQuery("udf_value", "udf_value_key", paramsUpdateUdf)
+						_, err = tx.Exec(qUpdateUdf)
+						if err != nil {
+							tx.Rollback()
+							log.Println(err.Error())
+							return err, OaRequestKey
+						}
+					}
+					if err != nil && err != sql.ErrNoRows {
+						tx.Rollback()
+						log.Println(err.Error())
+						return err, OaRequestKey
 					}
 
 				}
@@ -218,19 +209,12 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 
 		paramsPersonalData["personal_data_key"] = strconv.FormatInt(PersonalDataKey, 10)
 		qUpdatePersonalData := GenerateUpdateQuery("oa_personal_data", "personal_data_key", paramsPersonalData)
-		resSQL2, err := tx.Exec(qUpdatePersonalData)
+		_, err := tx.Exec(qUpdatePersonalData)
 		if err != nil {
 			tx.Rollback()
 			log.Println(err.Error())
 			return err, OaRequestKey
 		}
-		rowsAffected, _ := resSQL2.RowsAffected()
-		if rowsAffected == 0 {
-			tx.Rollback()
-			log.Println(fmt.Errorf("rowsAffected = 0"))
-			return fmt.Errorf("rowsAffected = 0"), OaRequestKey
-		}
-
 	} else {
 
 		// CREATE NEW OA
@@ -369,10 +353,88 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 	return nil, OaRequestKey
 }
 
-func UpdateOAManual() (error, int64) {
-	var OaRequestKey int64
+func CreateOaBankAccount(paramsBankAccount map[string]string) (error, int64) {
+	OaRequestKey, _ := strconv.ParseInt(paramsBankAccount["oa_request_key"], 10, 64)
+
+	tx, err := db.Db.Begin()
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return err, OaRequestKey
+	}
+
+	var ListOaBankAccount []OaRequestBankAccountDetails
+	qGetListOaBankAccount := `SELECT a2.bank_key, a2.bank_account_key, a2.account_no , a2.account_holder_name , a2.branch_name, a1.flag_priority FROM oa_request_bank_account a1 JOIN ms_bank_account a2 ON a1.bank_account_key = a2.bank_account_key AND a2.rec_status = 1 JOIN ms_bank a3 ON a2.bank_key = a3.bank_key WHERE a1.rec_status = 1 AND a1.oa_request_key = ` + strconv.FormatInt(OaRequestKey, 10)
+	err = db.Db.Select(&ListOaBankAccount, qGetListOaBankAccount)
+	if err != nil {
+		tx.Rollback()
+		log.Println(err.Error())
+		return err, OaRequestKey
+	}
+
+	if len(ListOaBankAccount) == 0 { // JIKA TIDAK ADA SAMA SEKALI MAKA CREATE
+
+		insertMsBankAccount := make(map[string]string)
+		insertMsBankAccount["rec_status"] = paramsBankAccount["rec_status"]
+		insertMsBankAccount["rec_created_by"] = paramsBankAccount["rec_created_by"]
+		insertMsBankAccount["rec_created_date"] = paramsBankAccount["rec_created_date"]
+		insertMsBankAccount["bank_key"] = paramsBankAccount["bank_key"]
+		insertMsBankAccount["account_no"] = paramsBankAccount["account_no"]
+		insertMsBankAccount["account_holder_name"] = paramsBankAccount["account_holder_name"]
+		insertMsBankAccount["branch_name"] = paramsBankAccount["branch_name"]
+		insertMsBankAccount["currency_key"] = paramsBankAccount["currency_key"]
+		insertMsBankAccount["bank_account_type"] = "129"
+		insertMsBankAccount["rec_domain"] = "131"
+
+		qInsertMsBankAccount := GenerateInsertQuery("ms_bank_account", insertMsBankAccount)
+		resSQL, err := tx.Exec(qInsertMsBankAccount)
+		// _, err = tx.Exec(qInsertMsBankAccount)
+
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+
+		MsBankAccountKey, err := resSQL.LastInsertId()
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+		// log.Println(MsBankAccountKey)
+
+		insertOaRequestBankAccount := make(map[string]string)
+		insertOaRequestBankAccount["rec_status"] = paramsBankAccount["rec_status"]
+		insertOaRequestBankAccount["rec_created_by"] = paramsBankAccount["rec_created_by"]
+		insertOaRequestBankAccount["rec_created_date"] = paramsBankAccount["rec_created_date"]
+		insertOaRequestBankAccount["oa_request_key"] = strconv.FormatInt(OaRequestKey, 10)
+		insertOaRequestBankAccount["bank_account_key"] = strconv.FormatInt(MsBankAccountKey, 10)
+		insertOaRequestBankAccount["flag_priority"] = paramsBankAccount["flag_priority"]
+		insertOaRequestBankAccount["bank_account_name"] = paramsBankAccount["account_holder_name"]
+
+		qInsertOaRequestBankAccount := GenerateInsertQuery("oa_request_bank_account", insertOaRequestBankAccount)
+		_, err = tx.Exec(qInsertOaRequestBankAccount)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+	}
+
+	tx.Commit()
 
 	return nil, OaRequestKey
+}
+
+type OaRequestBankAccountDetails struct {
+	BankAccountKey  *uint64 `db:"bank_account_key" json:"bank_account_key"`
+	BankKey         *uint64 `db:"bank_key" json:"bank_key"`
+	BankAccountNo   *string `db:"account_no" json:"account_no"`
+	BankAccountName *string `db:"account_holder_name" json:"account_holder_name"`
+	BankBranchName  *string `db:"branch_name" json:"branch_name"`
+	CurrencyKey     *uint64 `db:"currency_key" json:"currency_key"`
+	FlagPriority    *uint64 `db:"flag_priority" json:"flag_priority"`
 }
 
 type CountryModels struct {

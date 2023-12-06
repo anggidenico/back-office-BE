@@ -50,6 +50,8 @@ func GenerateInsertQuery(tableName string, params map[string]string) string {
 
 	query += "(" + fields + ") VALUES(" + values + ")"
 
+	log.Println("GenerateInsertQuery", query)
+
 	return query
 }
 
@@ -70,6 +72,8 @@ func GenerateUpdateQuery(tableName string, primaryKeyField string, params map[st
 		}
 	}
 	query += ` WHERE ` + primaryKeyField + ` = ` + params[primaryKeyField]
+
+	log.Println("GenerateUpdateQuery", query)
 
 	return query
 }
