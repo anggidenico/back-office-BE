@@ -200,7 +200,7 @@ func CreateInvestPartnerController(c echo.Context) error {
 		params["rec_order"] = "0"
 	}
 	var fileUpload *multipart.FileHeader
-	_, err = c.FormFile("rec_image1")
+	fileUpload, err = c.FormFile("rec_image1")
 	if fileUpload != nil {
 		err = os.MkdirAll(config.BasePathImage+"/images/user/"+strconv.FormatUint(lib.Profile.UserID, 10), 0755)
 		if err != nil {
@@ -213,7 +213,7 @@ func CreateInvestPartnerController(c echo.Context) error {
 			// Get file extension
 			extension := filepath.Ext(fileUpload.Filename)
 			// Generate filename
-			filename := "upload_image" + strconv.FormatUint(lib.Profile.UserID, 10) + "_" + lib.RandStringBytesMaskImprSrc(26)
+			filename := "image" + strconv.FormatUint(lib.Profile.UserID, 10) + "_" + lib.RandStringBytesMaskImprSrc(26)
 			// log.Println("Generate filename:", filename)
 			targetDir := config.BasePathImage + "/images/user/" + strconv.FormatUint(lib.Profile.UserID, 10) + "/" + filename + extension
 			// Upload image and move to proper directory

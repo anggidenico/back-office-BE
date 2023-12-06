@@ -81,16 +81,8 @@ func CreateSecuritiesSectorController(c echo.Context) error {
 		sectorDesc = strings.ToUpper(sectorDesc)
 	}
 	secParKey := c.FormValue("sector_parent_key")
-	if secParKey != "" {
-		_, err := strconv.Atoi(secParKey)
-		if err != nil {
-			return lib.CustomError(http.StatusBadRequest, "sector_parent_key should be a number", "sector_parent_key should be a number")
-		}
-		if len(secParKey) > 11 {
-			return lib.CustomError(http.StatusBadRequest, "sector_parent_key should be exactly 11 characters", "sector_parent_key be exactly 11 characters")
-		}
-		params["sector_parent_key"] = secParKey
-	}
+
+	params["sector_parent_key"] = secParKey
 	// else {
 	// 	params["sector_parent_key"] = "NULL" // Set ke string "NULL" untuk kasus ini
 	// }
@@ -121,7 +113,7 @@ func CreateSecuritiesSectorController(c echo.Context) error {
 	log.Println("Key:", key)
 	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		log.Println("Data already exist:", err)
+		log.Println("Error:", err)
 		return lib.CustomError(http.StatusBadRequest, "Data already exist", "Data already exist")
 	}
 
