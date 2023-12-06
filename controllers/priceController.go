@@ -270,13 +270,18 @@ func GetFilterBenchmarkController(c echo.Context) error {
 	endDate := c.QueryParam("end_date")
 	benchmarkKey := c.QueryParam("benchmark_key")
 
-	if startDate == "" || endDate == "" || benchmarkKey == "" {
+	// Jika startDate atau endDate tidak ada, kembalikan error
+	if startDate == "" || endDate == "" {
 		log.Println(err)
 		return lib.CustomError(http.StatusBadRequest, "Missing required parameters", "Missing required parameters")
 	}
 
+	// Tambahkan parameter ke map hanya jika benchmarkKey tidak kosong
+	if benchmarkKey != "" {
+		params["benchmark_key"] = benchmarkKey
+	}
+
 	params["start_date"] = startDate
-	params["benchmark_key"] = benchmarkKey
 	params["end_date"] = endDate
 
 	var getBench []models.PriceList
@@ -285,6 +290,7 @@ func GetFilterBenchmarkController(c echo.Context) error {
 		log.Println("Error:", err)
 		return lib.CustomError(status, err.Error(), err.Error())
 	}
+
 	if len(getBench) == 0 {
 		var response lib.Response
 		response.Status.Code = http.StatusOK
@@ -293,6 +299,7 @@ func GetFilterBenchmarkController(c echo.Context) error {
 		response.Data = getBench
 		return c.JSON(http.StatusOK, response)
 	}
+
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"

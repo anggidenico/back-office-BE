@@ -282,12 +282,26 @@ func GetPriceListFilterModels(priceLists *[]PriceList, startDate string, endDate
 		JOIN gen_lookup c ON a.price_type = c.lookup_key
 		WHERE a.rec_status = 1
 		AND CAST(a.price_date AS DATE) >= ? 
-		AND CAST(a.price_date AS DATE) <= ? 
-		AND a.benchmark_key=?
-		ORDER BY a.price_key DESC`
+		AND CAST(a.price_date AS DATE) <= ?`
+
+	// Jika benchmarkKey tidak kosong, tambahkan kondisi ke query
+	if benchmarkKey != "" {
+		query += " AND a.benchmark_key=?"
+	}
+
+	query += " ORDER BY a.price_key DESC"
 
 	// Gunakan prepared statements untuk mencegah SQL injection
-	if err := db.Db.Select(priceLists, query, startDate, endDate, benchmarkKey); err != nil {
+	// Jumlah parameter yang diharapkan oleh prepared statement sesuai dengan jumlah placeholder dalam query.
+	// Dalam hal ini, kita menggunakan 2 placeholder (start_date dan end_date), atau 3 jika benchmarkKey tidak kosong.
+	var err error
+	if benchmarkKey != "" {
+		err = db.Db.Select(priceLists, query, startDate, endDate, benchmarkKey)
+	} else {
+		err = db.Db.Select(priceLists, query, startDate, endDate)
+	}
+
+	if err != nil {
 		if err == sql.ErrNoRows {
 			log.Println(err.Error())
 			return http.StatusBadGateway, err
