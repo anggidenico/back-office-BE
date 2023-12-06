@@ -7,6 +7,7 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/shopspring/decimal"
 )
@@ -28,32 +29,63 @@ type PriceType struct {
 	PriceName string `db:"price_name" json:"price_name"`
 }
 
-func GetPriceListModels(c *[]PriceList) (int, error) {
-	query := `SELECT a.price_key,
-	a.benchmark_key,
-	b.benchmark_name,
-    a.price_type,
-	c.lkp_name price_name,
-    a.price_date,
-    a.price_value,
-    a.price_remarks,
-	a.rec_order
-	FROM ffs_price a
-	JOIN ffs_benchmark b 
-	ON a.benchmark_key = b.benchmark_key
-	JOIN gen_lookup c
-	ON a.price_type = c.lookup_key
-	WHERE a.rec_status =1 
-	ORDER BY a.rec_created_date DESC`
-	// log.Println("====================>>>", query)
-	err := db.Db.Select(c, query)
-	if err != nil {
+// func GetPriceListModels(c *[]PriceList) (int, error) {
+// 	query := `SELECT a.price_key,
+// 	a.benchmark_key,
+// 	b.benchmark_name,
+//     a.price_type,
+// 	c.lkp_name price_name,
+//     a.price_date,
+//     a.price_value,
+//     a.price_remarks,
+// 	a.rec_order
+// 	FROM ffs_price a
+// 	JOIN ffs_benchmark b
+// 	ON a.benchmark_key = b.benchmark_key
+// 	JOIN gen_lookup c
+// 	ON a.price_type = c.lookup_key
+// 	WHERE a.rec_status =1
+// 	ORDER BY a.rec_created_date DESC`
+// 	// log.Println("====================>>>", query)
+// 	err := db.Db.Select(c, query)
+// 	if err != nil {
+// 		if err == sql.ErrNoRows {
+// 			log.Println(err.Error())
+// 			return http.StatusBadGateway, err
+// 		}
+// 		return http.StatusNotFound, err
+// 	}
+// 	return http.StatusOK, nil
+// }
+
+// GetPriceListModels mengambil semua data harga dari database
+func GetPriceListModels(priceLists *[]PriceList) (int, error) {
+	query := `
+		SELECT
+			a.price_key,
+			a.benchmark_key,
+			b.benchmark_name,
+			a.price_type,
+			c.lkp_name price_name,
+			a.price_date,
+			a.price_value,
+			a.price_remarks,
+			a.rec_order
+		FROM ffs_price a
+		JOIN ffs_benchmark b ON a.benchmark_key = b.benchmark_key
+		JOIN gen_lookup c ON a.price_type = c.lookup_key
+		WHERE a.rec_status = 1
+		ORDER BY a.rec_created_date DESC
+	`
+
+	if err := db.Db.Select(priceLists, query); err != nil {
 		if err == sql.ErrNoRows {
 			log.Println(err.Error())
 			return http.StatusBadGateway, err
 		}
 		return http.StatusNotFound, err
 	}
+
 	return http.StatusOK, nil
 }
 
@@ -202,6 +234,65 @@ func DeletePriceModels(PriceKey string, params map[string]string) (int, error) {
 		log.Println("nothing rows affected")
 		err2 := fmt.Errorf("nothing rows affected")
 		return http.StatusNotFound, err2
+	}
+
+	return http.StatusOK, nil
+}
+
+// FilterByBenchmarkAndDateModels melakukan filter pada PriceList berdasarkan kunci benchmark dan rentang tanggal
+func FilterByBenchmarkAndDateModels(benchmarkKey int64, startDate, endDate time.Time, priceLists []PriceList) []PriceList {
+	var filteredPriceLists []PriceList
+
+	for _, priceList := range priceLists {
+		// Filter by benchmark key
+		if priceList.BenchmarkKey != benchmarkKey {
+			continue
+		}
+
+		// Parse price date string to time.Time
+		priceDate, err := time.Parse("2006-01-02", *priceList.PriceDate)
+		if err != nil {
+			// Handle parsing error
+			continue
+		}
+
+		// Filter by date range
+		if priceDate.After(startDate) && priceDate.Before(endDate) {
+			filteredPriceLists = append(filteredPriceLists, priceList)
+		}
+	}
+
+	return filteredPriceLists
+}
+
+func GetPriceListFilterModels(priceLists *[]PriceList, startDate string, endDate string, benchmarkKey string) (int, error) {
+	query := `
+		SELECT
+			a.price_key,
+			a.benchmark_key,
+			b.benchmark_name,
+			a.price_type,
+			c.lkp_name price_name,
+			DATE_FORMAT(a.price_date,'%d %M %Y') as price_date,
+			a.price_value,
+			a.price_remarks,
+			a.rec_order
+		FROM ffs_price a
+		JOIN ffs_benchmark b ON a.benchmark_key = b.benchmark_key
+		JOIN gen_lookup c ON a.price_type = c.lookup_key
+		WHERE a.rec_status = 1
+		AND CAST(a.price_date AS DATE) >= ? 
+		AND CAST(a.price_date AS DATE) <= ? 
+		AND a.benchmark_key=?
+		ORDER BY a.price_key DESC`
+
+	// Gunakan prepared statements untuk mencegah SQL injection
+	if err := db.Db.Select(priceLists, query, startDate, endDate, benchmarkKey); err != nil {
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
+		return http.StatusNotFound, err
 	}
 
 	return http.StatusOK, nil

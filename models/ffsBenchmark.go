@@ -148,15 +148,21 @@ func CreateFfsBenchmark(params map[string]string) (int, error) {
 	}
 
 	// Jika tidak ada duplikasi, buat data baru
-	fields := ""
+
 	placeholders := ""
 	var bindvars []interface{}
-
+	var fields, values string
 	for key, value := range params {
-		fields += key + ", "
-		placeholders += "?, "
+		fields += key + `, `
+		if value == "" {
+			values += ` NULL, `
+		} else {
+			values += ` '` + value + `', `
+		}
 		bindvars = append(bindvars, value)
 	}
+	fields = fields[:(len(fields) - 2)]
+	values = values[:(len(values) - 2)]
 
 	fields = fields[:len(fields)-2]
 	placeholders = placeholders[:len(placeholders)-2]

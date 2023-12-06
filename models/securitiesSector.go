@@ -11,6 +11,7 @@ import (
 
 type SecuritiesSector struct {
 	SectorKey         int64   `db:"sector_key" json:"sector_key"`
+	SectorParentKey   *int64  `db:"sector_parent_key" json:"sector_parent_key"`
 	SectorCode        *string `db:"sector_code" json:"sector_code"`
 	SectorName        *string `db:"sector_name" json:"sector_name"`
 	SectorDescription *string `db:"sector_description" json:"sector_description"`
@@ -19,6 +20,7 @@ type SecuritiesSector struct {
 
 func GetSecuritiesSectorModels(c *[]SecuritiesSector) (int, error) {
 	query := `SELECT sector_key,
+	sector_parent_key,
 	sector_code,
 	sector_name,
 	sector_description,
@@ -39,6 +41,7 @@ func GetSecuritiesSectorModels(c *[]SecuritiesSector) (int, error) {
 
 func GetSecuritiesSectorDetailModels(c *SecuritiesSector, SectorKey string) (int, error) {
 	query := `SELECT sector_key,
+	sector_parent_key,
 	sector_code,
 	sector_name,
 	sector_description,

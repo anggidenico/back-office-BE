@@ -80,6 +80,16 @@ func CreateSecuritiesSectorController(c echo.Context) error {
 		}
 		sectorDesc = strings.ToUpper(sectorDesc)
 	}
+	SectorParentKey := c.FormValue("sector_parent_key")
+	if SectorParentKey != "" {
+		if len(SectorParentKey) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "sector_parent_key must be <= 11 characters", "sector_parent_key must be <= 11 characters")
+		}
+		_, err = strconv.Atoi(SectorParentKey)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "sector_parent_key must be number", "sector_parent_key must be number")
+		}
+	}
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {
 		if len(recOrder) > 11 {
@@ -93,6 +103,7 @@ func CreateSecuritiesSectorController(c echo.Context) error {
 	} else {
 		params["rec_order"] = "0"
 	}
+	params["sector_parent_key"] = SectorParentKey
 	params["sector_code"] = sectorCode
 	params["sector_name"] = sectorName
 	params["sector_description"] = sectorDesc
@@ -166,6 +177,23 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 	} else {
 		return lib.CustomError(http.StatusBadRequest, "sector_name can not be blank", "sector_name can not be blank")
 	}
+
+	sectorParentKey := c.FormValue("sector_parent_key")
+	// var sectorParentKeyInt int
+	if sectorParentKey != "" {
+		if len(sectorParentKey) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "sector_parent_key must be <= 11 characters", "sector_parent_key must be <= 11 characters")
+		}
+		_, err := strconv.Atoi(sectorParentKey)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "sector_parent_key must be a number", "sector_parent_key must be a number")
+		}
+
+		// Set nilai yang vali
+	} else {
+		// Jika sector_parent_key kosong, set ke nilai yang sesuai dengan definisi null pada tipe int
+		sectorParentKey = "0" // Atau sesuaikan dengan nilai default yang sesuai
+	}
 	sectorDesc := c.FormValue("sector_description")
 	if sectorDesc != "" {
 		if len(sectorDesc) > 255 {
@@ -186,6 +214,7 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 	} else {
 		params["rec_order"] = "0"
 	}
+	params["sector_parent_key"] = sectorParentKey
 	params["sector_code"] = sectorCode
 	params["sector_name"] = sectorName
 	params["sector_description"] = sectorDesc

@@ -608,6 +608,7 @@ func router() *echo.Echo {
 	admin.POST("/create-price-ffs", controllers.CreatePriceController).Name = "CreatePriceController"
 	admin.POST("/update-price-ffs", controllers.UpdatePriceController).Name = "UpdatePriceController"
 	admin.POST("/delete-price-ffs", controllers.DeletePriceController).Name = "DeletePriceController"
+	admin.GET("/get-price-filter", controllers.GetFilterBenchmarkController).Name = "FilterByBenchmarkAndDateController"
 
 	//CMS-Invest-Partner
 	admin.GET("/get-invest-purpose", controllers.GetInvestPurposeController).Name = "GetInvestPurposeController"

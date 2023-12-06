@@ -227,3 +227,76 @@ func DeletePriceController(c echo.Context) error {
 	response.Data = ""
 	return c.JSON(http.StatusOK, response)
 }
+
+// func FilterByBenchmarkAndDateController(c echo.Context) error {
+// 	// Mendapatkan nilai parameter dari URL
+// 	benchmarkKey, err := strconv.ParseInt(c.QueryParam("benchmark_key"), 10, 64)
+// 	if err != nil {
+// 		log.Println(err)
+// 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid benchmark_key"})
+// 	}
+
+// 	startDateString := c.QueryParam("start_date")
+// 	startDate, err := time.Parse("2006-01-02", startDateString)
+// 	if err != nil {
+// 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid start_date"})
+// 	}
+
+// 	endDateString := c.QueryParam("end_date")
+// 	endDate, err := time.Parse("2006-01-02", endDateString)
+// 	if err != nil {
+// 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid end_date"})
+// 	}
+
+// 	// Mendapatkan semua data harga dari models
+// 	var allPrices []models.PriceList
+// 	status, err := models.GetPriceListModels(&allPrices)
+// 	log.Println("data dari db tidak ada :", err)
+// 	if err != nil {
+// 		return c.JSON(status, map[string]string{"error": "Internal Server Error"})
+// 	}
+
+// 	// Melakukan filter berdasarkan benchmark dan rentang tanggal
+// 	filteredPriceLists := models.FilterByBenchmarkAndDateModels(benchmarkKey, startDate, endDate, allPrices)
+// 	log.Println("gagal filter", err)
+// 	// Mengembalikan hasil filter dalam format JSON
+// 	return c.JSON(http.StatusOK, filteredPriceLists)
+// }
+
+func GetFilterBenchmarkController(c echo.Context) error {
+	var err error
+	params := make(map[string]string)
+	startDate := c.QueryParam("start_date")
+	endDate := c.QueryParam("end_date")
+	benchmarkKey := c.QueryParam("benchmark_key")
+
+	if startDate == "" || endDate == "" || benchmarkKey == "" {
+		log.Println(err)
+		return lib.CustomError(http.StatusBadRequest, "Missing required parameters", "Missing required parameters")
+	}
+
+	params["start_date"] = startDate
+	params["benchmark_key"] = benchmarkKey
+	params["end_date"] = endDate
+
+	var getBench []models.PriceList
+	status, err := models.GetPriceListFilterModels(&getBench, startDate, endDate, benchmarkKey)
+	if err != nil {
+		log.Println("Error:", err)
+		return lib.CustomError(status, err.Error(), err.Error())
+	}
+	if len(getBench) == 0 {
+		var response lib.Response
+		response.Status.Code = http.StatusOK
+		response.Status.MessageServer = "OK"
+		response.Status.MessageClient = "No data found for the specified filter criteria"
+		response.Data = getBench
+		return c.JSON(http.StatusOK, response)
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = getBench
+	return c.JSON(http.StatusOK, response)
+}
