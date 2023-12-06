@@ -148,24 +148,14 @@ func CreateFfsBenchmarkController(c echo.Context) error {
 	log.Println("Key:", key)
 	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		status, err := models.UpdateBenchmark(key, params)
-		if err != nil {
-			log.Println("Failed to update data:", err)
-			return lib.CustomError(status, "Failed to update data", "Failed to update data")
-		}
-		return c.JSON(http.StatusOK, lib.Response{
-			Status: lib.Status{
-				Code:          http.StatusOK,
-				MessageServer: "OK",
-				MessageClient: "OK",
-			},
-			Data: "Data updated successfully",
-		})
+		log.Println("Data already exist:", err)
+		return lib.CustomError(http.StatusBadRequest, "Data already exist", "Data already exist")
 	}
 
 	// Jika tidak ada duplikasi, buat data baru
 	status, err = models.CreateFfsBenchmark(params)
 	if err != nil {
+		log.Println(err)
 		return lib.CustomError(status, "Failed input data", "Failed input data")
 	}
 

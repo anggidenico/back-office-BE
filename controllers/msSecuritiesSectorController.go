@@ -80,15 +80,18 @@ func CreateSecuritiesSectorController(c echo.Context) error {
 		}
 		sectorDesc = strings.ToUpper(sectorDesc)
 	}
-	SectorParentKey := c.FormValue("sector_parent_key")
-	if SectorParentKey != "" {
-		if len(SectorParentKey) > 11 {
-			return lib.CustomError(http.StatusBadRequest, "sector_parent_key must be <= 11 characters", "sector_parent_key must be <= 11 characters")
-		}
-		_, err = strconv.Atoi(SectorParentKey)
+	secParKey := c.FormValue("sector_parent_key")
+	if secParKey != "" {
+		_, err := strconv.Atoi(secParKey)
 		if err != nil {
-			return lib.CustomError(http.StatusBadRequest, "sector_parent_key must be number", "sector_parent_key must be number")
+			return lib.CustomError(http.StatusBadRequest, "sector_parent_key should be a number", "sector_parent_key should be a number")
 		}
+		if len(secParKey) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "sector_parent_key should be exactly 11 characters", "sector_parent_key be exactly 11 characters")
+		}
+		params["sector_parent_key"] = secParKey
+	} else {
+		params["sector_parent_key"] = "0"
 	}
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {
@@ -100,17 +103,15 @@ func CreateSecuritiesSectorController(c echo.Context) error {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
 		}
 		params["rec_order"] = strconv.Itoa(value)
-	} else {
-		params["rec_order"] = "0"
 	}
-	params["sector_parent_key"] = SectorParentKey
+	// params["sector_parent_key"] = SectorParentKey
 	params["sector_code"] = sectorCode
 	params["sector_name"] = sectorName
 	params["sector_description"] = sectorDesc
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
-	duplicate, key, err := models.CheckDuplicateSecuritiesSector(sectorCode)
+	duplicate, key, err := models.CheckDuplicateSecuritiesSector(sectorCode, sectorName)
 	if err != nil {
 		log.Println("Error checking for duplicates:", err)
 		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
@@ -119,23 +120,12 @@ func CreateSecuritiesSectorController(c echo.Context) error {
 	log.Println("Key:", key)
 	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		status, err := models.UpdateSecuritiesSector(key, params)
-		if err != nil {
-			log.Println("Failed to update data:", err)
-			return lib.CustomError(status, "Failed to update data", "Failed to update data")
-		}
-		return c.JSON(http.StatusOK, lib.Response{
-			Status: lib.Status{
-				Code:          http.StatusOK,
-				MessageServer: "OK",
-				MessageClient: "OK",
-			},
-			Data: "Data updated successfully",
-		})
+		log.Println("Data already exist:", err)
+		return lib.CustomError(http.StatusBadRequest, "Data already exist", "Data already exist")
 	}
 
 	// Jika tidak ada duplikasi, buat data baru
-	status, err = models.CreateSecuritiesSector(params)
+	status, err := models.CreateSecuritiesSector(params)
 	log.Println("Error create data:", err)
 	if err != nil {
 		return lib.CustomError(status, "Failed input data", "Failed input data")
@@ -219,6 +209,19 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 	params["sector_name"] = sectorName
 	params["sector_description"] = sectorDesc
 	params["rec_status"] = "1"
+
+	duplicate, key, err := models.CheckDuplicateSecuritiesSector(sectorCode, sectorName)
+	if err != nil {
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
+	}
+	log.Println("Duplicate:", duplicate)
+	log.Println("Key:", key)
+	// Jika duplikasi ditemukan, perbarui data yang sudah ada
+	if duplicate {
+		log.Println("datanya udah ada cuy:", err)
+		return lib.CustomError(status, "Data sudah ada bung", "Failed data sudah ada bung")
+	}
 
 	status, err = models.UpdateSecuritiesSector(sectorKey, params)
 	if err != nil {

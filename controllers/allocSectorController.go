@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
+	"github.com/shopspring/decimal"
 )
 
 func GetAllocSectorController(c echo.Context) error {
@@ -28,6 +29,7 @@ func GetAllocSectorController(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 func GetSectorSecuController(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
 	var sector []models.SectorKey
 	status, err := models.GetSectorSecuModels(&sector)
 	if err != nil {
@@ -42,6 +44,7 @@ func GetSectorSecuController(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 func GetAllocSectorDetailController(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
 	allocSectorKey := c.Param("alloc_sector_key")
 	if allocSectorKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing alloc_sector_key", "Missing alloc_sector_key")

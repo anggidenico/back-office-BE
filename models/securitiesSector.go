@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"mf-bo-api/db"
@@ -60,11 +61,11 @@ func GetSecuritiesSectorDetailModels(c *SecuritiesSector, SectorKey string) (int
 	return http.StatusOK, nil
 }
 
-func CheckDuplicateSecuritiesSector(SectorCode string) (bool, string, error) {
+func CheckDuplicateSecuritiesSector(SectorCode, SectorName string) (bool, string, error) {
 	// Query to check for duplicates
-	query := "SELECT sector_key FROM ms_securities_sector WHERE sector_code = ? LIMIT 1"
+	query := "SELECT sector_key FROM ms_securities_sector WHERE sector_code = ? AND sector_name = ? LIMIT 1"
 	var key string
-	err := db.Db.QueryRow(query, SectorCode).Scan(&key)
+	err := db.Db.QueryRow(query, SectorCode, SectorName).Scan(&key)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -81,18 +82,14 @@ func CheckDuplicateSecuritiesSector(SectorCode string) (bool, string, error) {
 
 func CreateSecuritiesSector(params map[string]string) (int, error) {
 	// Check for duplicate records
-	duplicate, key, err := CheckDuplicateSecuritiesSector(params["sector_code"])
+	duplicate, _, err := CheckDuplicateSecuritiesSector(params["sector_code"], params["sector_name"])
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
 
 	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		status, err := UpdateSecuritiesSector(key, params)
-		if err != nil {
-			return status, err
-		}
-		return http.StatusOK, nil
+		return http.StatusBadRequest, errors.New("data duplikat ditemukan")
 	}
 
 	// Jika tidak ada duplikasi, buat data baru
@@ -101,8 +98,8 @@ func CreateSecuritiesSector(params map[string]string) (int, error) {
 	var bindvars []interface{}
 
 	for key, value := range params {
-		fields += key + ", "
-		placeholders += "?, "
+		fields += key + `, `
+		placeholders += `?, `
 		bindvars = append(bindvars, value)
 	}
 

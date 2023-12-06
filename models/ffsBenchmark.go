@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"mf-bo-api/db"
@@ -133,33 +134,29 @@ func CheckDuplicateFfsBenchmark(benchmarkCode, benchmarkName string) (bool, stri
 
 func CreateFfsBenchmark(params map[string]string) (int, error) {
 	// Check for duplicate records
-	duplicate, key, err := CheckDuplicateFfsBenchmark(params["benchmark_code"], params["benchmark_name"])
+	duplicate, _, err := CheckDuplicateFfsBenchmark(params["benchmark_code"], params["benchmark_name"])
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
 
 	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		status, err := UpdateBenchmark(key, params)
-		if err != nil {
-			return status, err
-		}
-		return http.StatusOK, nil
+		return http.StatusBadRequest, errors.New("data duplikat ditemukan")
 	}
 
 	// Jika tidak ada duplikasi, buat data baru
-
 	var placeholders string
 	var bindvars []interface{}
 	var fields string
 	for key, value := range params {
 		fields += key + `, `
 		if value == "" {
-			placeholders += ` NULL, `
+			placeholders += `NULL, `
+			bindvars = append(bindvars, nil) // Gunakan nil untuk nilai NULL
 		} else {
-			placeholders += ` '` + value + `', `
+			placeholders += `?, `
+			bindvars = append(bindvars, value)
 		}
-		bindvars = append(bindvars, value)
 	}
 	fields = fields[:len(fields)-2]
 	placeholders = placeholders[:len(placeholders)-2]
@@ -181,7 +178,6 @@ func CreateFfsBenchmark(params map[string]string) (int, error) {
 
 	return http.StatusOK, nil
 }
-
 func UpdateBenchmark(benchmarkKey string, params map[string]string) (int, error) {
 	query := `UPDATE ffs_benchmark SET `
 	var setClauses []string

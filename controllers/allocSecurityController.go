@@ -10,9 +10,11 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
+	"github.com/shopspring/decimal"
 )
 
 func GetAllocSecController(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
 	var allocsec []models.AllocSecurity
 	status, err := models.GetAllocSecModels(&allocsec)
 	if err != nil {
@@ -34,6 +36,7 @@ func GetAllocSecController(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 func GetAllocSecDetailController(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
 	allocSecKey := c.Param("alloc_security_key")
 	if allocSecKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing alloc_security_key", "Missing alloc_security_key")
