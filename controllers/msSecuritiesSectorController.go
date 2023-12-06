@@ -81,8 +81,12 @@ func CreateSecuritiesSectorController(c echo.Context) error {
 		sectorDesc = strings.ToUpper(sectorDesc)
 	}
 	secParKey := c.FormValue("sector_parent_key")
-
-	params["sector_parent_key"] = secParKey
+	if secParKey != "" {
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "tolong dipilih gan", "tolong pilih gan")
+		}
+		params["sector_parent_key"] = secParKey
+	}
 	// else {
 	// 	params["sector_parent_key"] = "NULL" // Set ke string "NULL" untuk kasus ini
 	// }
