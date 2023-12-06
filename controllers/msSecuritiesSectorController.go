@@ -91,7 +91,7 @@ func CreateSecuritiesSectorController(c echo.Context) error {
 		}
 		params["sector_parent_key"] = secParKey
 	} else {
-		params["sector_parent_key"] = "0"
+		params["sector_parent_key"] = "NULL" // Set ke string "NULL" untuk kasus ini
 	}
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {
@@ -168,21 +168,18 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "sector_name can not be blank", "sector_name can not be blank")
 	}
 
-	sectorParentKey := c.FormValue("sector_parent_key")
-	// var sectorParentKeyInt int
-	if sectorParentKey != "" {
-		if len(sectorParentKey) > 11 {
-			return lib.CustomError(http.StatusBadRequest, "sector_parent_key must be <= 11 characters", "sector_parent_key must be <= 11 characters")
-		}
-		_, err := strconv.Atoi(sectorParentKey)
+	secParKey := c.FormValue("sector_parent_key")
+	if secParKey != "" {
+		_, err := strconv.Atoi(secParKey)
 		if err != nil {
-			return lib.CustomError(http.StatusBadRequest, "sector_parent_key must be a number", "sector_parent_key must be a number")
+			return lib.CustomError(http.StatusBadRequest, "sector_parent_key should be a number", "sector_parent_key should be a number")
 		}
-
-		// Set nilai yang vali
+		if len(secParKey) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "sector_parent_key should be exactly 11 characters", "sector_parent_key be exactly 11 characters")
+		}
+		params["sector_parent_key"] = secParKey
 	} else {
-		// Jika sector_parent_key kosong, set ke nilai yang sesuai dengan definisi null pada tipe int
-		sectorParentKey = "0" // Atau sesuaikan dengan nilai default yang sesuai
+		params["sector_parent_key"] = "NULL" // Set ke string "NULL" untuk kasus ini
 	}
 	sectorDesc := c.FormValue("sector_description")
 	if sectorDesc != "" {
@@ -204,7 +201,7 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 	} else {
 		params["rec_order"] = "0"
 	}
-	params["sector_parent_key"] = sectorParentKey
+	// params["sector_parent_key"] = sectorParentKey
 	params["sector_code"] = sectorCode
 	params["sector_name"] = sectorName
 	params["sector_description"] = sectorDesc

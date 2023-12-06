@@ -75,7 +75,7 @@ func GetAllocSecDetailModels(c *AllocSecDetail, AllocSecKey string) (int, error)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			log.Println("PChannelKey not found")
+			log.Println("AllocSecKey not found")
 			return http.StatusBadGateway, err
 		}
 

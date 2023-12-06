@@ -13,20 +13,27 @@ import (
 type SecuritiesSector struct {
 	SectorKey         int64   `db:"sector_key" json:"sector_key"`
 	SectorParentKey   *int64  `db:"sector_parent_key" json:"sector_parent_key"`
+	ParentSectorName  *string `db:"parent_sector_name" json:"parent_sector_name"`
 	SectorCode        *string `db:"sector_code" json:"sector_code"`
 	SectorName        *string `db:"sector_name" json:"sector_name"`
 	SectorDescription *string `db:"sector_description" json:"sector_description"`
-	RecOrder          int64   `db:"rec_order" json:"rec_order"`
+	RecOrder          *int64  `db:"rec_order" json:"rec_order"`
 }
 
 func GetSecuritiesSectorModels(c *[]SecuritiesSector) (int, error) {
-	query := `SELECT sector_key,
-	sector_parent_key,
-	sector_code,
-	sector_name,
-	sector_description,
-	rec_order FROM ms_securities_sector
-	WHERE rec_status =1 
+	query := `SELECT
+    a.sector_key,
+    a.sector_parent_key,
+    a.sector_code,
+    a.sector_name,
+    a.sector_description,
+    a.rec_order,
+    b.sector_name AS parent_sector_name
+FROM
+    ms_securities_sector a
+LEFT JOIN
+    ms_securities_sector b ON a.sector_parent_key = b.sector_key
+	WHERE a.rec_status = 1 
 	ORDER BY sector_key DESC`
 	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
@@ -41,13 +48,19 @@ func GetSecuritiesSectorModels(c *[]SecuritiesSector) (int, error) {
 }
 
 func GetSecuritiesSectorDetailModels(c *SecuritiesSector, SectorKey string) (int, error) {
-	query := `SELECT sector_key,
-	sector_parent_key,
-	sector_code,
-	sector_name,
-	sector_description,
-	rec_order FROM ms_securities_sector 
-	WHERE rec_status = 1 AND sector_key =` + SectorKey
+	query := `SELECT
+    a.sector_key,
+    a.sector_parent_key,
+    a.sector_code,
+    a.sector_name,
+    a.sector_description,
+    a.rec_order,
+    b.sector_name AS parent_sector_name
+FROM
+    ms_securities_sector a
+LEFT JOIN
+    ms_securities_sector b ON a.sector_parent_key = b.sector_key
+	WHERE a.rec_status = 1 AND a.sector_key =` + SectorKey + `ORDER BY a.sector_key DESC`
 
 	log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
@@ -99,8 +112,12 @@ func CreateSecuritiesSector(params map[string]string) (int, error) {
 
 	for key, value := range params {
 		fields += key + `, `
-		placeholders += `?, `
-		bindvars = append(bindvars, value)
+		if value == "NULL" {
+			placeholders += `NULL, `
+		} else {
+			placeholders += `?, `
+			bindvars = append(bindvars, value)
+		}
 	}
 
 	fields = fields[:len(fields)-2]
