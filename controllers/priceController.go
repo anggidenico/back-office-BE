@@ -267,6 +267,7 @@ func DeletePriceController(c echo.Context) error {
 // }
 
 func GetFilterBenchmarkController(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
 	var err error
 	params := make(map[string]string)
 	startDate := c.QueryParam("start_date")
