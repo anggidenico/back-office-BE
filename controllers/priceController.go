@@ -11,9 +11,11 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
+	"github.com/shopspring/decimal"
 )
 
 func GetPriceListController(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
 	var price []models.PriceList
 	status, err := models.GetPriceListModels(&price)
 	if err != nil {
@@ -29,6 +31,7 @@ func GetPriceListController(c echo.Context) error {
 }
 
 func GetPriceDetailController(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
 	priceKey := c.Param("price_key")
 	if priceKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing price_key", "Missing price_key")

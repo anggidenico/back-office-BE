@@ -149,7 +149,7 @@ func CreateFfsBenchmark(params map[string]string) (int, error) {
 
 	// Jika tidak ada duplikasi, buat data baru
 
-	placeholders := ""
+	var placeholders string
 	var bindvars []interface{}
 	var fields string
 	for key, value := range params {

@@ -13,15 +13,15 @@ import (
 )
 
 type PriceList struct {
-	PriceKey      int64           `db:"price_key" json:"price_key"`
-	BenchmarkKey  int64           `db:"benchmark_key" json:"benchmark_key"`
-	BenchmarkName string          `db:"benchmark_name" json:"benchmark_name"`
-	PriceType     *int64          `db:"price_type" json:"price_type"`
-	PriceName     string          `db:"price_name" json:"price_name"`
-	PriceDate     *string         `db:"price_date" json:"price_date"`
-	PriceValue    decimal.Decimal `db:"price_value" json:"price_value"`
-	PriceRemarks  *string         `db:"price_remarks" json:"price_remarks"`
-	RecOrder      *int64          `db:"rec_order" json:"rec_order"`
+	PriceKey      int64            `db:"price_key" json:"price_key"`
+	BenchmarkKey  int64            `db:"benchmark_key" json:"benchmark_key"`
+	BenchmarkName string           `db:"benchmark_name" json:"benchmark_name"`
+	PriceType     *int64           `db:"price_type" json:"price_type"`
+	PriceName     string           `db:"price_name" json:"price_name"`
+	PriceDate     *string          `db:"price_date" json:"price_date"`
+	PriceValue    *decimal.Decimal `db:"price_value" json:"price_value"`
+	PriceRemarks  *string          `db:"price_remarks" json:"price_remarks"`
+	RecOrder      *int64           `db:"rec_order" json:"rec_order"`
 }
 type PriceType struct {
 	PriceKey  int64  `db:"price_key" json:"price_key"`
@@ -291,9 +291,6 @@ func GetPriceListFilterModels(priceLists *[]PriceList, startDate string, endDate
 
 	query += " ORDER BY a.price_key DESC"
 
-	// Gunakan prepared statements untuk mencegah SQL injection
-	// Jumlah parameter yang diharapkan oleh prepared statement sesuai dengan jumlah placeholder dalam query.
-	// Dalam hal ini, kita menggunakan 2 placeholder (start_date dan end_date), atau 3 jika benchmarkKey tidak kosong.
 	var err error
 	if benchmarkKey != "" {
 		err = db.Db.Select(priceLists, query, startDate, endDate, benchmarkKey)
