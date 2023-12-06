@@ -645,8 +645,8 @@ func GetProductDetailAdmin(c echo.Context) error {
 		}
 	}
 
-	responseData.OjkFee = *product.OjkFee
-	responseData.ProductFeeAmount = *product.ProductFeeAmount
+	responseData.OjkFee = product.OjkFee
+	responseData.ProductFeeAmount = product.ProductFeeAmount
 
 	if product.OverwriteTransactFlag == 1 {
 		responseData.OverwriteTransactFlag = true

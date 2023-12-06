@@ -233,8 +233,8 @@ type AdminMsProductDetail struct {
 	ManagementFee         decimal.Decimal          `json:"management_fee"`
 	CustodianFee          decimal.Decimal          `json:"custodian_fee"`
 	Custodian             *MsCustodianBankInfoList `json:"custodian"`
-	OjkFee                decimal.Decimal          `json:"ojk_fee"`
-	ProductFeeAmount      decimal.Decimal          `json:"product_fee_amount"`
+	OjkFee                *decimal.Decimal         `json:"ojk_fee"`
+	ProductFeeAmount      *decimal.Decimal         `json:"product_fee_amount"`
 	OverwriteTransactFlag bool                     `json:"overwrite_transact_flag"`
 	OverwriteFeeFlag      bool                     `json:"overwrite_fee_flag"`
 	OtherFeeAmount        decimal.Decimal          `json:"other_fee_amount"`

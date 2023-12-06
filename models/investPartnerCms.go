@@ -36,6 +36,16 @@ type InvestPurpose struct {
 }
 
 func GetInvestPurposeModels(c *[]InvestPurpose) (int, error) {
+	// query := `SELECT a.invest_partner_key,
+	// a.invest_purpose_key,
+	// b.purpose_code,
+	// b.purpose_name
+	// FROM cms_invest_partner a
+	// JOIN cms_invest_purpose b
+	// ON a.invest_purpose_key = b.invest_purpose_key
+	// WHERE a.rec_status =1
+	// ORDER BY a.invest_partner_key DESC`
+	// log.Println("====================>>>", query)
 	query := `SELECT 
 	invest_purpose_key,
 	purpose_code,
@@ -43,7 +53,7 @@ func GetInvestPurposeModels(c *[]InvestPurpose) (int, error) {
 	FROM cms_invest_purpose 
 	WHERE rec_status =1 
 	ORDER BY invest_purpose_key DESC`
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -79,7 +89,7 @@ func GetInvestPartnerModels(c *[]InvestPartner) (int, error) {
 	ON a.invest_purpose_key = b.invest_purpose_key
 	WHERE a.rec_status =1 
 	ORDER BY a.invest_partner_key DESC`
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {

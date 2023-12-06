@@ -202,7 +202,7 @@ func UpdateBenchmarkProd(benchProdKey string, params map[string]interface{}) (in
 	query += ` WHERE bench_prod_key = ?`
 	values = append(values, benchProdKey)
 
-	log.Println("========== UpdateBenchmarkProduct ==========>>>", query)
+	// log.Println("========== UpdateBenchmarkProduct ==========>>>", query)
 
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
