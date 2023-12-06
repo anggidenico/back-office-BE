@@ -60,7 +60,7 @@ FROM
     ms_securities_sector a
 LEFT JOIN
     ms_securities_sector b ON a.sector_parent_key = b.sector_key
-	WHERE a.rec_status = 1 AND a.sector_key =` + SectorKey + `ORDER BY a.sector_key DESC`
+	WHERE a.rec_status = 1 AND a.sector_key =` + SectorKey + ` ORDER BY a.sector_key DESC`
 
 	log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)

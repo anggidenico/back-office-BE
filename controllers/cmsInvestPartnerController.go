@@ -4,9 +4,13 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"mf-bo-api/config"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -194,6 +198,34 @@ func CreateInvestPartnerController(c echo.Context) error {
 		params["rec_order"] = strconv.Itoa(value)
 	} else {
 		params["rec_order"] = "0"
+	}
+	var fileUpload *multipart.FileHeader
+	_, err = c.FormFile("rec_image1")
+	if fileUpload != nil {
+		err = os.MkdirAll(config.BasePathImage+"/images/user/"+strconv.FormatUint(lib.Profile.UserID, 10), 0755)
+		if err != nil {
+			// log.Println(err.Error())
+		} else {
+			if fileUpload.Size > int64(lib.MAX_FILE_SIZE) {
+				msgs := "Maximum size is " + lib.MAX_FILE_SIZE_MB + " MB"
+				return lib.CustomError(http.StatusBadRequest, msgs, msgs)
+			}
+			// Get file extension
+			extension := filepath.Ext(fileUpload.Filename)
+			// Generate filename
+			filename := "upload_image" + strconv.FormatUint(lib.Profile.UserID, 10) + "_" + lib.RandStringBytesMaskImprSrc(26)
+			// log.Println("Generate filename:", filename)
+			targetDir := config.BasePathImage + "/images/user/" + strconv.FormatUint(lib.Profile.UserID, 10) + "/" + filename + extension
+			// Upload image and move to proper directory
+			err = lib.UploadImage(fileUpload, targetDir)
+			if err != nil {
+				// log.Println(err)
+				return lib.CustomError(http.StatusInternalServerError)
+			}
+			params["rec_image1"] = filename + extension
+		}
+	} else {
+		return lib.CustomError(http.StatusBadRequest, "Foto KTP tidak boleh kosong", "Foto KTP tidak boleh kosong")
 	}
 	params["invest_purpose_key"] = investPurposeKey
 	params["partner_code"] = partnerCode
