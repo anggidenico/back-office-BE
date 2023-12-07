@@ -207,7 +207,7 @@ func UpdateBenchmark(benchmarkKey string, params map[string]string) (int, error)
 }
 
 func GetBenchmarkStatusByKey(key string) (int, error) {
-	query := "SELECT rec_status FROM ffs_benchmark WHERE sector_key = ?"
+	query := "SELECT rec_status FROM ffs_benchmark WHERE benchmark_key = ?"
 	var status int
 	err := db.Db.QueryRow(query, key).Scan(&status)
 	if err != nil {

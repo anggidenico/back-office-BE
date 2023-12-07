@@ -152,7 +152,6 @@ func CreateFfsBenchmarkController(c echo.Context) error {
 
 			// Set status menjadi aktif (rec_status = 1)
 			params["rec_status"] = "1"
-			// delete(params, "rec_status")
 			// Update data dengan status baru dan nilai-nilai yang baru
 			status, err := models.UpdateBenchmark(key, params)
 			if err != nil {
@@ -258,15 +257,33 @@ func UpdateFfsBenchmarkController(c echo.Context) error {
 	params["rec_attribute_id3"] = recAttributeID3
 	params["rec_status"] = "1"
 
+	duplicate, key, err := models.CheckDuplicateBenchmark(benchmarkCode, benchmarkName)
+	if err != nil {
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
+	}
+	if duplicate {
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		existingDataStatus, err := models.GetBenchmarkStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+		if existingDataStatus != 0 {
+			log.Println("Existing DATA")
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+	}
 	status, err = models.UpdateBenchmark(benchmarkKey, params)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed input data")
+		return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = ""
+	response.Data = "Data updated successfully"
 
 	return c.JSON(http.StatusOK, response)
 }
