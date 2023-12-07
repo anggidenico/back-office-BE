@@ -40,7 +40,15 @@ func ManualOaRequestCreate(c echo.Context) error {
 		if err != nil {
 			return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
 		}
+	} else if step == "5" {
+		err, oa_request_key := SaveStep5(c)
+		responseData["oa_request_key"] = oa_request_key
+		if err != nil {
+			return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
+		}
 	}
+
+
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
