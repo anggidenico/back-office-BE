@@ -17,7 +17,7 @@ type Benchmark struct {
 	BenchmarkCode      string  `db:"benchmark_code"  json:"benchmark_code"`
 	BenchmarkName      string  `db:"benchmark_name"  json:"benchmark_name"`
 	BenchmarkShortName string  `db:"benchmark_short_name" json:"benchmark_short_name"`
-	RecAttributeID1    string  `db:"rec_attribute_id1" json:"rec_attribute_id1"`
+	RecAttributeID1    *string `db:"rec_attribute_id1" json:"rec_attribute_id1"`
 	RecAttributeID2    *string `db:"rec_attribute_id2" json:"rec_attribute_id2"`
 	RecAttributeID3    *string `db:"rec_attribute_id3" json:"rec_attribute_id3"`
 }
@@ -28,7 +28,7 @@ type BenchmarkDetail struct {
 	BenchmarkCode      string  `db:"benchmark_code"  json:"benchmark_code"`
 	BenchmarkName      string  `db:"benchmark_name"  json:"benchmark_name"`
 	BenchmarkShortName string  `db:"benchmark_short_name" json:"benchmark_short_name"`
-	RecAttributeID1    string  `db:"rec_attribute_id1" json:"rec_attribute_id1"`
+	RecAttributeID1    *string `db:"rec_attribute_id1" json:"rec_attribute_id1"`
 	RecAttributeID2    *string `db:"rec_attribute_id2" json:"rec_attribute_id2"`
 	RecAttributeID3    *string `db:"rec_attribute_id3" json:"rec_attribute_id3"`
 	RecStatus          int8    `db:"rec_status"  json:"rec_status"`
@@ -46,13 +46,16 @@ func GetBenchmarkModels(c *[]Benchmark) (int, error) {
 	a.rec_attribute_id3
 	FROM ffs_benchmark a 
 	JOIN ms_fund_type b 
-	ON a.fund_type_key = b.fund_type_key WHERE a.rec_status = 1` //order by
+	ON a.fund_type_key = b.fund_type_key WHERE a.rec_status = 1 ORDER BY a.benchmark_key DESC` //order by
 
 	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err.Error()) // sql.err
-		return http.StatusBadGateway, err
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
+		return http.StatusNotFound, err
 	}
 	return http.StatusOK, nil
 }
@@ -113,11 +116,11 @@ func DeleteBenchmark(BenchmarkKey string, params map[string]string) (int, error)
 	return http.StatusOK, nil
 }
 
-func CheckDuplicateFfsBenchmark(benchmarkCode, benchmarkName string) (bool, string, error) { //dari sini
+func CheckDuplicateBenchmark(BenchmarkCode, BenchmarkName string) (bool, string, error) {
 	// Query to check for duplicates
-	query := "SELECT benchmark_key FROM ffs_benchmark WHERE benchmark_code = ? OR benchmark_name = ? LIMIT 1"
+	query := "SELECT benchmark_key FROM ffs_benchmark WHERE benchmark_code = ? AND benchmark_name = ? LIMIT 1"
 	var key string
-	err := db.Db.QueryRow(query, benchmarkCode, benchmarkName).Scan(&key)
+	err := db.Db.QueryRow(query, BenchmarkCode, BenchmarkName).Scan(&key)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -132,9 +135,9 @@ func CheckDuplicateFfsBenchmark(benchmarkCode, benchmarkName string) (bool, stri
 	return true, key, nil
 }
 
-func CreateFfsBenchmark(params map[string]string) (int, error) {
+func CreateBenchmark(params map[string]string) (int, error) {
 	// Check for duplicate records
-	duplicate, _, err := CheckDuplicateFfsBenchmark(params["benchmark_code"], params["benchmark_name"])
+	duplicate, _, err := CheckDuplicateBenchmark(params["benchmark_code"], params["benchmark_name"])
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -145,19 +148,20 @@ func CreateFfsBenchmark(params map[string]string) (int, error) {
 	}
 
 	// Jika tidak ada duplikasi, buat data baru
-	var placeholders string
+	fields := ""
+	placeholders := ""
 	var bindvars []interface{}
-	var fields string
+
 	for key, value := range params {
 		fields += key + `, `
-		if value == "" {
+		if value == "NULL" {
 			placeholders += `NULL, `
-			bindvars = append(bindvars, nil) // Gunakan nil untuk nilai NULL
 		} else {
 			placeholders += `?, `
 			bindvars = append(bindvars, value)
 		}
 	}
+
 	fields = fields[:len(fields)-2]
 	placeholders = placeholders[:len(placeholders)-2]
 
@@ -178,6 +182,7 @@ func CreateFfsBenchmark(params map[string]string) (int, error) {
 
 	return http.StatusOK, nil
 }
+
 func UpdateBenchmark(benchmarkKey string, params map[string]string) (int, error) {
 	query := `UPDATE ffs_benchmark SET `
 	var setClauses []string
@@ -199,4 +204,19 @@ func UpdateBenchmark(benchmarkKey string, params map[string]string) (int, error)
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
+}
+
+func GetBenchmarkStatusByKey(key string) (int, error) {
+	query := "SELECT rec_status FROM ffs_benchmark WHERE sector_key = ?"
+	var status int
+	err := db.Db.QueryRow(query, key).Scan(&status)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Data tidak ditemukan
+			return 0, nil
+		}
+		// Terjadi error lain
+		return 0, err
+	}
+	return status, nil
 }

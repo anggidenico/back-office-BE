@@ -107,25 +107,57 @@ func CreateSecuritiesSectorController(c echo.Context) error {
 	params["sector_description"] = sectorDesc
 	params["rec_status"] = "1"
 
-	// Check for duplicate records
 	duplicate, key, err := models.CheckDuplicateSecuritiesSector(sectorCode, sectorName)
 	if err != nil {
 		log.Println("Error checking for duplicates:", err)
 		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
 	}
+
 	log.Println("Duplicate:", duplicate)
 	log.Println("Key:", key)
+
 	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		log.Println("Error:", err)
-		return lib.CustomError(http.StatusBadRequest, "Data already exist", "Data already exist")
-	}
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		existingDataStatus, err := models.GetSecuritiesSectorStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusInternalServerError, "Error getting existing data status", "Error getting existing data status")
+		}
 
-	// Jika tidak ada duplikasi, buat data baru
-	status, err := models.CreateSecuritiesSector(params)
-	log.Println("Error create data:", err)
-	if err != nil {
-		return lib.CustomError(status, "Failed input data", "Failed input data")
+		// Jika data sudah dihapus (rec_status = 0), perbarui statusnya menjadi aktif (rec_status = 1)
+		if existingDataStatus == 0 {
+			log.Println("Existing data is deleted. Recreating data.")
+
+			// Set status menjadi aktif (rec_status = 1)
+			params["rec_status"] = "1"
+			// Update data dengan status baru dan nilai-nilai yang baru
+			status, err := models.UpdateSecuritiesSector(key, params)
+			if err != nil {
+				log.Println("Error updating data:", err)
+				return lib.CustomError(status, "Error updating data", "Error updating data")
+			}
+			return c.JSON(http.StatusOK, lib.Response{
+				Status: lib.Status{
+					Code:          http.StatusOK,
+					MessageServer: "OK",
+					MessageClient: "OK",
+				},
+				Data: "Data updated successfully",
+			})
+		} else {
+			// Jika data masih aktif, kembalikan respons kesalahan duplikasi
+			log.Println("Existing data is still active. Duplicate data error.")
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+	} else {
+		// Jika tidak ada duplikasi, buat data baru
+		status, err := models.CreateSecuritiesSector(params)
+		if err != nil {
+			log.Println("Error create data:", err)
+			return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
 	}
 
 	return c.JSON(http.StatusOK, lib.Response{
@@ -167,16 +199,10 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 
 	secParKey := c.FormValue("sector_parent_key")
 	if secParKey != "" {
-		_, err := strconv.Atoi(secParKey)
 		if err != nil {
-			return lib.CustomError(http.StatusBadRequest, "sector_parent_key should be a number", "sector_parent_key should be a number")
-		}
-		if len(secParKey) > 11 {
-			return lib.CustomError(http.StatusBadRequest, "sector_parent_key should be exactly 11 characters", "sector_parent_key be exactly 11 characters")
+			return lib.CustomError(http.StatusBadRequest, "tolong dipilih gan", "tolong pilih gan")
 		}
 		params["sector_parent_key"] = secParKey
-	} else {
-		params["sector_parent_key"] = "NULL" // Set ke string "NULL" untuk kasus ini
 	}
 	sectorDesc := c.FormValue("sector_description")
 	if sectorDesc != "" {
@@ -198,7 +224,7 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 	} else {
 		params["rec_order"] = "0"
 	}
-	// params["sector_parent_key"] = sectorParentKey
+
 	params["sector_code"] = sectorCode
 	params["sector_name"] = sectorName
 	params["sector_description"] = sectorDesc
@@ -209,17 +235,22 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 		log.Println("Error checking for duplicates:", err)
 		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
 	}
-	log.Println("Duplicate:", duplicate)
-	log.Println("Key:", key)
-	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		log.Println("datanya udah ada cuy:", err)
-		return lib.CustomError(status, "Data sudah ada bung", "Failed data sudah ada bung")
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		existingDataStatus, err := models.GetSecuritiesSectorStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+		if existingDataStatus != 0 {
+			log.Println("Existing DATA")
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
 	}
-
 	status, err = models.UpdateSecuritiesSector(sectorKey, params)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed input data")
+		return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
