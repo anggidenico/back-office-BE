@@ -46,13 +46,16 @@ func GetBenchmarkModels(c *[]Benchmark) (int, error) {
 	a.rec_attribute_id3
 	FROM ffs_benchmark a 
 	JOIN ms_fund_type b 
-	ON a.fund_type_key = b.fund_type_key WHERE a.rec_status = 1` //order by
+	ON a.fund_type_key = b.fund_type_key WHERE a.rec_status = 1 ORDER BY a.benchmark_key DESC` //order by
 
 	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err.Error()) // sql.err
-		return http.StatusBadGateway, err
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
+		return http.StatusNotFound, err
 	}
 	return http.StatusOK, nil
 }

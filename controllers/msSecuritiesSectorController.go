@@ -132,7 +132,6 @@ func CreateSecuritiesSectorController(c echo.Context) error {
 
 			// Set status menjadi aktif (rec_status = 1)
 			params["rec_status"] = "1"
-			// delete(params, "rec_status")
 			// Update data dengan status baru dan nilai-nilai yang baru
 			status, err := models.UpdateSecuritiesSector(key, params)
 			if err != nil {
@@ -200,16 +199,10 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 
 	secParKey := c.FormValue("sector_parent_key")
 	if secParKey != "" {
-		_, err := strconv.Atoi(secParKey)
 		if err != nil {
-			return lib.CustomError(http.StatusBadRequest, "sector_parent_key should be a number", "sector_parent_key should be a number")
-		}
-		if len(secParKey) > 11 {
-			return lib.CustomError(http.StatusBadRequest, "sector_parent_key should be exactly 11 characters", "sector_parent_key be exactly 11 characters")
+			return lib.CustomError(http.StatusBadRequest, "tolong dipilih gan", "tolong pilih gan")
 		}
 		params["sector_parent_key"] = secParKey
-	} else {
-		params["sector_parent_key"] = "NULL" // Set ke string "NULL" untuk kasus ini
 	}
 	sectorDesc := c.FormValue("sector_description")
 	if sectorDesc != "" {
@@ -231,7 +224,7 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 	} else {
 		params["rec_order"] = "0"
 	}
-	// params["sector_parent_key"] = sectorParentKey
+
 	params["sector_code"] = sectorCode
 	params["sector_name"] = sectorName
 	params["sector_description"] = sectorDesc
@@ -242,17 +235,22 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 		log.Println("Error checking for duplicates:", err)
 		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
 	}
-	log.Println("Duplicate:", duplicate)
-	log.Println("Key:", key)
-	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		log.Println("datanya udah ada cuy:", err)
-		return lib.CustomError(status, "Data sudah ada bung", "Failed data sudah ada bung")
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		existingDataStatus, err := models.GetSecuritiesSectorStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+		if existingDataStatus != 0 {
+			log.Println("Existing DATA")
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
 	}
-
 	status, err = models.UpdateSecuritiesSector(sectorKey, params)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed input data")
+		return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK

@@ -106,10 +106,14 @@ func GetSecuritiesModels(c *[]Securities) (int, error) {
 	WHERE a.rec_status = 1 ORDER BY a.rec_created_date DESC`
 
 	// log.Println("====================>>>", query)
+	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
-		log.Println(err.Error())
-		return http.StatusBadGateway, err
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
+		return http.StatusNotFound, err
 	}
 	return http.StatusOK, nil
 }
