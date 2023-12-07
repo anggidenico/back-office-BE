@@ -141,8 +141,8 @@ func CreateSecuritiesSector(params map[string]string) (int, error) {
 	return http.StatusOK, nil
 }
 
-func UpdateSecuritiesSector(SectorKey string, params map[string]string) (int, error) {
-	query := `UPDATE ms_securities_sector SET `
+func UpdateSecuritiesSector(key string, params map[string]string) (int, error) {
+	query := "UPDATE ms_securities_sector SET "
 	var setClauses []string
 	var values []interface{}
 
@@ -151,10 +151,10 @@ func UpdateSecuritiesSector(SectorKey string, params map[string]string) (int, er
 		values = append(values, value)
 	}
 	query += strings.Join(setClauses, ", ")
-	query += ` WHERE sector_key = ?`
-	values = append(values, SectorKey)
+	query += " WHERE sector_key = ?"
+	values = append(values, key)
 
-	log.Println("========== UpdateMasterSecuritiesSector ==========>>>", query)
+	log.Println("========== UpdateSecuritiesSector ==========>>>", query)
 
 	_, err := db.Db.Exec(query, values...)
 	if err != nil {
@@ -192,4 +192,19 @@ func DeleteSecuritiesSectorModels(SectorKey string, params map[string]string) (i
 	}
 
 	return http.StatusOK, nil
+}
+
+func GetSecuritiesSectorStatusByKey(key string) (int, error) {
+	query := "SELECT rec_status FROM ms_securities_sector WHERE sector_key = ?"
+	var status int
+	err := db.Db.QueryRow(query, key).Scan(&status)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Data tidak ditemukan
+			return 0, nil
+		}
+		// Terjadi error lain
+		return 0, err
+	}
+	return status, nil
 }
