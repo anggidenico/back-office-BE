@@ -1,6 +1,8 @@
 package models
 
 import (
+	"database/sql"
+	"errors"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -77,36 +79,6 @@ type SecuritiesDetail struct {
 	SecClassificationName  *string `db:"sec_classification_name"    json:"sec_classification_name"`
 }
 
-func CreateMsSecurities(params map[string]string) (int, error) {
-	query := "INSERT INTO ms_securities"
-	// Get params
-	var fields, values string
-	var bindvars []interface{}
-	for key, value := range params {
-		fields += key + ", "
-		values += "?, "
-		bindvars = append(bindvars, value)
-	}
-	fields = fields[:(len(fields) - 2)]
-	values = values[:(len(values) - 2)]
-
-	// Combine params to build query
-	query += "(" + fields + ") VALUES(" + values + ")"
-	// log.Println("==========  ==========>>>", query)
-
-	tx, err := db.Db.Begin()
-	if err != nil {
-		// log.Error(err)
-		return http.StatusBadGateway, err
-	}
-	_, err = tx.Exec(query, bindvars...)
-	tx.Commit()
-	if err != nil {
-		// log.Error(err)
-		return http.StatusBadRequest, err
-	}
-	return http.StatusOK, nil
-}
 func GetSecuritiesModels(c *[]Securities) (int, error) {
 	query := `SELECT a.sec_key,
 	a.sec_code, 
@@ -224,4 +196,71 @@ func UpdateMsSecurities(SecKey string, params map[string]string) (int, error) {
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
+}
+
+func CreateMsSecurities(params map[string]string) (int, error) {
+	// Check for duplicate records
+	duplicate, _, err := CheckDuplicateSecurities(params["sec_code"], params["sec_name"], params["security_type"])
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	// Jika duplikasi ditemukan, perbarui data yang sudah ada
+	if duplicate {
+		return http.StatusBadRequest, errors.New("data duplikat ditemukan")
+	}
+
+	// Jika tidak ada duplikasi, buat data baru
+	fields := ""
+	placeholders := ""
+	var bindvars []interface{}
+
+	for key, value := range params {
+		fields += key + `, `
+		if value == "NULL" {
+			placeholders += `NULL, `
+		} else {
+			placeholders += `?, `
+			bindvars = append(bindvars, value)
+		}
+	}
+
+	fields = fields[:len(fields)-2]
+	placeholders = placeholders[:len(placeholders)-2]
+
+	query := "INSERT INTO ms_securities (" + fields + ") VALUES (" + placeholders + ")"
+
+	tx, err := db.Db.Begin()
+	if err != nil {
+		return http.StatusBadGateway, err
+	}
+
+	_, err = tx.Exec(query, bindvars...)
+	if err != nil {
+		tx.Rollback()
+		return http.StatusBadRequest, err
+	}
+
+	tx.Commit()
+
+	return http.StatusOK, nil
+}
+
+func CheckDuplicateSecurities(SecCode, SecName, SecType string) (bool, string, error) {
+	// Query to check for duplicates
+	query := "SELECT sec_key FROM ms_securities WHERE sec_code = ? AND sec_name = ? AND security_type = ? LIMIT 1"
+	var key string
+	err := db.Db.QueryRow(query, SecCode, SecName, SecType).Scan(&key)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// No duplicate found
+			return false, "", nil
+		}
+		// Other error occurred
+		return false, "", err
+	}
+
+	// Duplicate found
+	return true, key, nil
 }

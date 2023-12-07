@@ -114,49 +114,71 @@ func CreateFfsBenchmarkController(c echo.Context) error {
 	recAttributeID1 := c.FormValue("rec_attribute_id1")
 	if recAttributeID1 != "" {
 		if len(recAttributeID1) > 50 {
-			return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 must be <= 50 characters", "rec_attribute_id1 must be <= 70 characters")
+			return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 should be exactly 50 characters", "rec_attribute_id1 should be exactly 50 characters")
 		}
-	}
-	recAttributeID2 := c.FormValue("rec_attribute_id2")
-	if recAttributeID2 != "" {
-		if len(recAttributeID2) > 50 {
-			return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 must be <= 50 characters", "rec_attribute_id1 must be <= 70 characters")
-		}
-	}
-	recAttributeID3 := c.FormValue("rec_attribute_id3")
-	if recAttributeID3 != "" {
-		if len(recAttributeID2) > 50 {
-			return lib.CustomError(http.StatusBadRequest, "rec_attribute_id1 must be <= 50 characters", "rec_attribute_id1 must be <= 70 characters")
-		}
+		params["rec_attribute_id1"] = recAttributeID1
+	} else {
+		params["rec_attribute_id1"] = "NULL"
 	}
 	params["fund_type_key"] = fundTypeKey
 	params["benchmark_code"] = benchmarkCode
 	params["benchmark_name"] = benchmarkName
 	params["benchmark_short_name"] = benchmarkShortName
-	params["rec_attribute_id1"] = recAttributeID1
-	params["rec_attribute_id2"] = recAttributeID2
-	params["rec_attribute_id3"] = recAttributeID3
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
-	duplicate, key, err := models.CheckDuplicateFfsBenchmark(params["benchmark_code"], params["benchmark_name"])
+	duplicate, key, err := models.CheckDuplicateBenchmark(benchmarkCode, benchmarkName)
 	if err != nil {
 		log.Println("Error checking for duplicates:", err)
 		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
 	}
+
 	log.Println("Duplicate:", duplicate)
 	log.Println("Key:", key)
+
 	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		log.Println("Data already exist:", err)
-		return lib.CustomError(http.StatusBadRequest, "Data already exist", "Data already exist")
-	}
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		existingDataStatus, err := models.GetBenchmarkStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusInternalServerError, "Error getting existing data status", "Error getting existing data status")
+		}
 
-	// Jika tidak ada duplikasi, buat data baru
-	status, err = models.CreateFfsBenchmark(params)
-	if err != nil {
-		log.Println(err)
-		return lib.CustomError(status, "Failed input data", "Failed input data")
+		// Jika data sudah dihapus (rec_status = 0), perbarui statusnya menjadi aktif (rec_status = 1)
+		if existingDataStatus == 0 {
+			log.Println("Existing data is deleted. Recreating data.")
+
+			// Set status menjadi aktif (rec_status = 1)
+			params["rec_status"] = "1"
+			// delete(params, "rec_status")
+			// Update data dengan status baru dan nilai-nilai yang baru
+			status, err := models.UpdateBenchmark(key, params)
+			if err != nil {
+				log.Println("Error updating data:", err)
+				return lib.CustomError(status, "Error updating data", "Error updating data")
+			}
+			return c.JSON(http.StatusOK, lib.Response{
+				Status: lib.Status{
+					Code:          http.StatusOK,
+					MessageServer: "OK",
+					MessageClient: "OK",
+				},
+				Data: "Data updated successfully",
+			})
+		} else {
+			// Jika data masih aktif, kembalikan respons kesalahan duplikasi
+			log.Println("Existing data is still active. Duplicate data error.")
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+	} else {
+		// Jika tidak ada duplikasi, buat data baru
+		status, err := models.CreateBenchmark(params)
+		if err != nil {
+			log.Println("Error create data:", err)
+			return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
 	}
 
 	return c.JSON(http.StatusOK, lib.Response{
