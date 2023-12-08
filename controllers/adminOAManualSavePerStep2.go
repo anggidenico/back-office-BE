@@ -16,7 +16,7 @@ func SaveStep4(c echo.Context) (error, int64) {
 
 	oa_request_key := c.FormValue("oa_request_key")
 	if oa_request_key == "" {
-		return fmt.Errorf("Missing: bank_accounts"), OaRequestKey
+		return fmt.Errorf("Missing: oa_request_key"), OaRequestKey
 
 	}
 
@@ -54,6 +54,43 @@ func SaveStep4(c echo.Context) (error, int64) {
 				return err, OaRequestKey
 			}
 		}
+	}
+
+	return nil, OaRequestKey
+}
+
+func SaveStep5(c echo.Context) (error, int64) {
+	var OaRequestKey int64
+	paramsOaRequest := make(map[string]string)
+	paramsOaRequest["oa_step"] = "5"
+	paramsOaRequest["rec_status"] = "1"
+	paramsOaRequest["rec_created_by"] = lib.UserIDStr
+	paramsOaRequest["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+
+	oa_request_key := c.FormValue("oa_request_key")
+	if oa_request_key == "" {
+		return fmt.Errorf("Missing: oa_request_key"), OaRequestKey
+	}
+	paramsOaRequest["oa_request_key"] = oa_request_key
+
+	quiz_answers := c.FormValue("quiz_answers")
+	if quiz_answers == "" {
+		return fmt.Errorf("Missing: quiz_answers"), OaRequestKey
+	}
+
+	var quiz_array []models.OaQuizAnswer
+	err := json.Unmarshal([]byte(quiz_answers), &quiz_array)
+	if err != nil {
+		return err, OaRequestKey
+	}
+
+	if len(quiz_array) == 0 {
+		return fmt.Errorf("Missing: quiz"), OaRequestKey
+	}
+
+	err, OaRequestKey = models.CreateOrUpdateOaRiskProfileQuiz(paramsOaRequest, quiz_array)
+	if err != nil {
+		return err, OaRequestKey
 	}
 
 	return nil, OaRequestKey
