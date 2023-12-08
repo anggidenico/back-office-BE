@@ -38,6 +38,14 @@ func GetInvestPartnerController(c echo.Context) error {
 	if err != nil {
 		return lib.CustomError(status, err.Error(), "Failed get data")
 	}
+	for i := range invest {
+		// Memeriksa apakah RecImage1 adalah nil sebelum mengakses nilainya
+		if invest[i].RecImage1 != nil {
+			// Menggabungkan URL dengan nilai RecImage1
+			url := config.ImageUrl + "/images/user/" + strconv.FormatUint(lib.Profile.UserID, 10) + "/" + *invest[i].RecImage1
+			invest[i].RecImage1 = &url
+		}
+	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
@@ -219,7 +227,7 @@ func CreateInvestPartnerController(c echo.Context) error {
 			// Upload image and move to proper directory
 			err = lib.UploadImage(fileUpload, targetDir)
 			if err != nil {
-				// log.Println(err)
+				log.Println(err)
 				return lib.CustomError(http.StatusInternalServerError)
 			}
 			params["rec_image1"] = filename + extension
@@ -428,7 +436,7 @@ func UpdateInvestPartnerController(c echo.Context) error {
 			// Get file extension
 			extension := filepath.Ext(fileUpload.Filename)
 			// Generate filename
-			filename := "image" + strconv.FormatUint(lib.Profile.UserID, 10) + "_" + lib.RandStringBytesMaskImprSrc(26)
+			filename := config.BasePathImage + "/images/user/" + strconv.FormatUint(lib.Profile.UserID, 10) + "/" + "image" + strconv.FormatUint(lib.Profile.UserID, 10) + "_" + lib.RandStringBytesMaskImprSrc(26)
 			// log.Println("Generate filename:", filename)
 			targetDir := config.BasePathImage + "/images/user/" + strconv.FormatUint(lib.Profile.UserID, 10) + "/" + filename + extension
 			// Upload image and move to proper directory
