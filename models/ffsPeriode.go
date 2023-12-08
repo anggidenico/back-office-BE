@@ -15,6 +15,9 @@ type FfsPeriode struct {
 	DateOpened  *string `db:"date_opened"          json:"date_opened"`
 	DateClosed  *string `db:"date_closed"          json:"date_closed"`
 	RecStatus   uint8   `db:"rec_status"           json:"rec_status"`
+	Instrument  *bool   `db:"instrument"           json:"instrument"`
+	Sector      *bool   `db:"sector"               json:"sector"`
+	Top10       *bool   `db:"top10"                json:"top10"`
 }
 type FfsPeriodeDetail struct {
 	PeriodeKey  uint64  `db:"periode_key"          json:"periode_key"`
@@ -40,6 +43,25 @@ func GetFfsPeriodeModels(c *[]FfsPeriode) (int, error) {
 		if err != sql.ErrNoRows {
 			log.Println(err.Error())
 			return http.StatusBadGateway, err
+		}
+	}
+	for i := range *c {
+		// Field Instrument diatur ke false jika nil
+		if (*c)[i].Instrument == nil {
+			instrumentDefault := false
+			(*c)[i].Instrument = &instrumentDefault
+		}
+
+		// Field Sector diatur ke false jika nil
+		if (*c)[i].Sector == nil {
+			sectorDefault := false
+			(*c)[i].Sector = &sectorDefault
+		}
+
+		// Field Top10 diatur ke false jika nil
+		if (*c)[i].Top10 == nil {
+			top10Default := false
+			(*c)[i].Top10 = &top10Default
 		}
 	}
 	return http.StatusOK, nil
