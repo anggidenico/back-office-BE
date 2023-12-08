@@ -14,11 +14,14 @@ import (
 func SaveStep4(c echo.Context) (error, int64) {
 	var OaRequestKey int64
 
+	paramsOaRequest := make(map[string]string)
+	paramsOaRequest["oa_step"] = "4"
+
 	oa_request_key := c.FormValue("oa_request_key")
 	if oa_request_key == "" {
 		return fmt.Errorf("Missing: oa_request_key"), OaRequestKey
-
 	}
+	paramsOaRequest["oa_request_key"] = oa_request_key
 
 	bank_accounts := c.FormValue("bank_accounts")
 	if bank_accounts == "" {
@@ -49,7 +52,7 @@ func SaveStep4(c echo.Context) (error, int64) {
 			params["currency_key"] = strconv.FormatUint(*data.CurrencyKey, 10)
 			params["flag_priority"] = strconv.FormatUint(*data.FlagPriority, 10)
 
-			err, OaRequestKey = models.CreateOaBankAccount(params)
+			err, OaRequestKey = models.CreateOaBankAccount(paramsOaRequest, params)
 			if err != nil {
 				return err, OaRequestKey
 			}
@@ -93,5 +96,31 @@ func SaveStep5(c echo.Context) (error, int64) {
 		return err, OaRequestKey
 	}
 
+	return nil, OaRequestKey
+}
+
+func SaveStep6(c echo.Context) (error, int64) {
+	var OaRequestKey int64
+
+	paramsOaRequest := make(map[string]string)
+	paramsOaRequest["oa_step"] = "6"
+
+	oa_request_key := c.FormValue("oa_request_key")
+	if oa_request_key == "" {
+		return fmt.Errorf("Missing: oa_request_key"), OaRequestKey
+	}
+	paramsOaRequest["oa_request_key"] = oa_request_key
+
+	getParamsData := models.GetOptionByLookupGroupKey("105")
+	if len(getParamsData) > 0 {
+		for _, data := range getParamsData {
+			file_upload, err := c.FormFile("file_upload_" + strconv.FormatUint(data.Key, 10))
+			if err != nil {
+				return err, OaRequestKey
+			}
+		}
+	}
+
+	OaRequestKey, _ = strconv.ParseInt(paramsOaRequest["oa_request_key"], 10, 64)
 	return nil, OaRequestKey
 }
