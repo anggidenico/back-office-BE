@@ -28,6 +28,7 @@ type InvestPartner struct {
 	PartnerDateStarted  *string `db:"partner_date_started" json:"partner_date_started"`
 	PartnerDateExpired  *string `db:"partner_date_expired" json:"partner_date_expired"`
 	PartnerBannerHits   *int64  `db:"partner_banner_hits" json:"partner_banner_hits"`
+	RecImage1           *string `db:"rec_image1" json:"rec_image1"`
 	RecOrder            *int64  `db:"rec_order" json:"recorder_order"`
 }
 type InvestPurpose struct {
@@ -84,6 +85,7 @@ func GetInvestPartnerModels(c *[]InvestPartner) (int, error) {
 	a.partner_date_started,
 	a.partner_date_expired,
 	a.partner_banner_hits,
+	a.rec_image1,
 	a.rec_order   
 	FROM cms_invest_partner a
 	JOIN cms_invest_purpose b 
