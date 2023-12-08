@@ -113,12 +113,12 @@ func SaveStep6(c echo.Context) (error, int64) {
 
 	getParamsData := models.GetOptionByLookupGroupKey("105")
 	if len(getParamsData) > 0 {
-		for _, data := range getParamsData {
-			file_upload, err := c.FormFile("file_upload_" + strconv.FormatUint(data.Key, 10))
-			if err != nil {
-				return err, OaRequestKey
-			}
-		}
+		// for _, data := range getParamsData {
+		// file_upload, err := c.FormFile("file_upload_" + strconv.FormatUint(data.Key, 10))
+		// if err != nil {
+		// 	return err, OaRequestKey
+		// }
+		// }
 	}
 
 	OaRequestKey, _ = strconv.ParseInt(paramsOaRequest["oa_request_key"], 10, 64)
