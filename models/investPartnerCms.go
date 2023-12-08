@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"mf-bo-api/db"
@@ -164,11 +165,11 @@ func DeleteInvestPartnerModels(InvestPartnerKey string, params map[string]string
 
 	return http.StatusOK, nil
 }
-func CheckDuplicateInvestPartner(partnerCode string) (bool, string, error) { //dari sini
+func CheckDuplicateInvestPartner(PartnerCode, PartnerBusName string) (bool, string, error) {
 	// Query to check for duplicates
-	query := "SELECT invest_partner_key FROM cms_invest_partner WHERE partner_code = ? LIMIT 1"
+	query := "SELECT invest_partner_key FROM cms_invest_partner WHERE partner_code = ? AND partner_business_name = ? LIMIT 1"
 	var key string
-	err := db.Db.QueryRow(query, partnerCode).Scan(&key)
+	err := db.Db.QueryRow(query, PartnerCode, PartnerBusName).Scan(&key)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -185,18 +186,14 @@ func CheckDuplicateInvestPartner(partnerCode string) (bool, string, error) { //d
 
 func CreateInvestPartner(params map[string]string) (int, error) {
 	// Check for duplicate records
-	duplicate, key, err := CheckDuplicateInvestPartner(params["partner_code"])
+	duplicate, _, err := CheckDuplicateSecuritiesSector(params["partner_code"], params["partner_business_name"])
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
 
 	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		status, err := UpdateInvestPartner(key, params)
-		if err != nil {
-			return status, err
-		}
-		return http.StatusOK, nil
+		return http.StatusBadRequest, errors.New("data duplikat ditemukan")
 	}
 
 	// Jika tidak ada duplikasi, buat data baru
@@ -205,9 +202,13 @@ func CreateInvestPartner(params map[string]string) (int, error) {
 	var bindvars []interface{}
 
 	for key, value := range params {
-		fields += key + ", "
-		placeholders += "?, "
-		bindvars = append(bindvars, value)
+		fields += key + `, `
+		if value == "NULL" {
+			placeholders += `NULL, `
+		} else {
+			placeholders += `?, `
+			bindvars = append(bindvars, value)
+		}
 	}
 
 	fields = fields[:len(fields)-2]
@@ -229,6 +230,20 @@ func CreateInvestPartner(params map[string]string) (int, error) {
 	tx.Commit()
 
 	return http.StatusOK, nil
+}
+func GetInvestPartnerStatusByKey(key string) (int, error) {
+	query := "SELECT rec_status FROM cms_invest_partner WHERE invest_partner_key = ?"
+	var status int
+	err := db.Db.QueryRow(query, key).Scan(&status)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Data tidak ditemukan
+			return 0, nil
+		}
+		// Terjadi error lain
+		return 0, err
+	}
+	return status, nil
 }
 
 func UpdateInvestPartner(investPartnerKey string, params map[string]string) (int, error) {

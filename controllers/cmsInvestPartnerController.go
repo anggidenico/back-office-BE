@@ -240,35 +240,57 @@ func CreateInvestPartnerController(c echo.Context) error {
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
-	duplicate, key, err := models.CheckDuplicateInvestPartner(params["partner_code"])
+	duplicate, key, err := models.CheckDuplicateInvestPartner(partnerCode, partnerBusinessName)
 	if err != nil {
 		log.Println("Error checking for duplicates:", err)
 		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
 	}
+
 	log.Println("Duplicate:", duplicate)
 	log.Println("Key:", key)
+
 	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		status, err := models.UpdateInvestPartner(key, params)
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		existingDataStatus, err := models.GetInvestPartnerStatusByKey(key)
 		if err != nil {
-			log.Println("Failed to update data:", err)
-			return lib.CustomError(status, "Failed to update data", "Failed to update data")
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusInternalServerError, "Error getting existing data status", "Error getting existing data status")
 		}
-		return c.JSON(http.StatusOK, lib.Response{
-			Status: lib.Status{
-				Code:          http.StatusOK,
-				MessageServer: "OK",
-				MessageClient: "OK",
-			},
-			Data: "Data updated successfully",
-		})
-	}
 
-	// Jika tidak ada duplikasi, buat data baru
-	status, err = models.CreateInvestPartner(params)
-	log.Println("Error create data:", err)
-	if err != nil {
-		return lib.CustomError(status, "Failed input data", "Failed input data")
+		// Jika data sudah dihapus (rec_status = 0), perbarui statusnya menjadi aktif (rec_status = 1)
+		if existingDataStatus == 0 {
+			log.Println("Existing data is deleted. Recreating data.")
+
+			// Set status menjadi aktif (rec_status = 1)
+			params["rec_status"] = "1"
+			// Update data dengan status baru dan nilai-nilai yang baru
+			status, err := models.UpdateInvestPartner(key, params)
+			if err != nil {
+				log.Println("Error updating data:", err)
+				return lib.CustomError(status, "Error updating data", "Error updating data")
+			}
+			return c.JSON(http.StatusOK, lib.Response{
+				Status: lib.Status{
+					Code:          http.StatusOK,
+					MessageServer: "OK",
+					MessageClient: "OK",
+				},
+				Data: "Data updated successfully",
+			})
+		} else {
+			// Jika data masih aktif, kembalikan respons kesalahan duplikasi
+			log.Println("Existing data is still active. Duplicate data error.")
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+	} else {
+		// Jika tidak ada duplikasi, buat data baru
+		status, err := models.CreateInvestPartner(params)
+		if err != nil {
+			log.Println("Error create data:", err)
+			return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
 	}
 
 	return c.JSON(http.StatusOK, lib.Response{
@@ -392,6 +414,34 @@ func UpdateInvestPartnerController(c echo.Context) error {
 	} else {
 		params["rec_order"] = "0"
 	}
+	var fileUpload *multipart.FileHeader
+	fileUpload, err = c.FormFile("rec_image1")
+	if fileUpload != nil {
+		err = os.MkdirAll(config.BasePathImage+"/images/user/"+strconv.FormatUint(lib.Profile.UserID, 10), 0755)
+		if err != nil {
+			// log.Println(err.Error())
+		} else {
+			if fileUpload.Size > int64(lib.MAX_FILE_SIZE) {
+				msgs := "Maximum size is " + lib.MAX_FILE_SIZE_MB + " MB"
+				return lib.CustomError(http.StatusBadRequest, msgs, msgs)
+			}
+			// Get file extension
+			extension := filepath.Ext(fileUpload.Filename)
+			// Generate filename
+			filename := "image" + strconv.FormatUint(lib.Profile.UserID, 10) + "_" + lib.RandStringBytesMaskImprSrc(26)
+			// log.Println("Generate filename:", filename)
+			targetDir := config.BasePathImage + "/images/user/" + strconv.FormatUint(lib.Profile.UserID, 10) + "/" + filename + extension
+			// Upload image and move to proper directory
+			err = lib.UploadImage(fileUpload, targetDir)
+			if err != nil {
+				// log.Println(err)
+				return lib.CustomError(http.StatusInternalServerError)
+			}
+			params["rec_image1"] = filename + extension
+		}
+	} else {
+		return lib.CustomError(http.StatusBadRequest, "Foto KTP tidak boleh kosong", "Foto KTP tidak boleh kosong")
+	}
 	params["invest_purpose_key"] = investPurposeKey
 	params["partner_code"] = partnerCode
 	params["partner_business_name"] = partnerBusinessName
@@ -404,9 +454,27 @@ func UpdateInvestPartnerController(c echo.Context) error {
 	params["partner_url"] = partnerUrl
 	params["rec_status"] = "1"
 
+	duplicate, key, err := models.CheckDuplicateInvestPartner(partnerCode, partnerBusinessName)
+	if err != nil {
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
+	}
+	if duplicate {
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		existingDataStatus, err := models.GetInvestPartnerStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+		if existingDataStatus != 0 {
+			log.Println("Existing DATA")
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+	}
 	status, err = models.UpdateInvestPartner(investPartnerKey, params)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed input data")
+		return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
