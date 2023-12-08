@@ -186,7 +186,7 @@ func CheckDuplicateInvestPartner(PartnerCode, PartnerBusName string) (bool, stri
 
 func CreateInvestPartner(params map[string]string) (int, error) {
 	// Check for duplicate records
-	duplicate, _, err := CheckDuplicateSecuritiesSector(params["partner_code"], params["partner_business_name"])
+	duplicate, _, err := CheckDuplicateInvestPartner(params["partner_code"], params["partner_business_name"])
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
