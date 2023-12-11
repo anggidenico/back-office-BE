@@ -14,7 +14,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func CustomerUpdateFile(c echo.Context) error {
+func CustomerUpdateFile(c echo.Context) error { 
 	maxCountFile := 15
 	// maxFileSize = 1000
 

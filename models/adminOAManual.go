@@ -353,7 +353,7 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 	return nil, OaRequestKey
 }
 
-func CreateOaBankAccount(paramsBankAccount map[string]string) (error, int64) {
+func CreateOaBankAccount(paramsOARequest map[string]string, paramsBankAccount map[string]string) (error, int64) {
 	OaRequestKey, _ := strconv.ParseInt(paramsBankAccount["oa_request_key"], 10, 64)
 
 	tx, err := db.Db.Begin()
@@ -361,6 +361,16 @@ func CreateOaBankAccount(paramsBankAccount map[string]string) (error, int64) {
 		tx.Rollback()
 		log.Println(err.Error())
 		return err, OaRequestKey
+	}
+
+	if len(paramsOARequest) > 1 {
+		qUpdateOAReq := GenerateUpdateQuery("oa_request", "oa_request_key", paramsOARequest)
+		_, err := tx.Exec(qUpdateOAReq)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
 	}
 
 	var ListOaBankAccount []OaRequestBankAccountDetails
@@ -435,6 +445,16 @@ func CreateOrUpdateOaRiskProfileQuiz(paramsOaRequest map[string]string, paramsQu
 		tx.Rollback()
 		log.Println(err.Error())
 		return err, OaRequestKey
+	}
+
+	if len(paramsOaRequest) > 1 {
+		qUpdateOaRequest := GenerateUpdateQuery("oa_request", "oa_request_key", paramsOaRequest)
+		_, err := tx.Exec(qUpdateOaRequest)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
 	}
 
 	var total_score int64
