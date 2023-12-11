@@ -88,11 +88,72 @@ func GetMsSecuritiesController(c echo.Context) error {
 	if err != nil {
 		return lib.CustomError(status, err.Error(), err.Error())
 	}
+
+	var responseData []models.SecuritiesResponse
+	if len(sec) > 0 {
+		for _, data := range sec {
+			var rData models.SecuritiesResponse
+			rData.SecKey = data.SecKey
+			rData.CouponName = data.CouponName
+			rData.SecParentKey = data.SecParentKey
+			rData.SecCode = data.SecCode
+			rData.SecName = data.SecName
+			rData.CouponType = data.CouponType
+			rData.CurrencyCode = data.CurrencyCode
+			rData.CurrencyName = data.CurrencyName
+			rData.CurrencyKey = data.CurrencyKey
+			rData.DateIssued = data.DateIssued
+			rData.DateMatured = data.DateMatured
+			rData.IsinCode = data.IsinCode
+			rData.ParticipantKey = data.ParticipantKey
+			rData.ParticipantName = data.ParticipantName
+			rData.RecOrder = data.RecOrder
+			rData.SecClassification = data.SecClassification
+			rData.SecClassificationName = data.SecClassificationName
+			rData.SecParates = data.SecParates
+			rData.SecPrincipleValue = data.SecPrincipleValue
+			rData.SecShares = data.SecShares
+			rData.SecTenorMonth = data.SecTenorMonth
+			rData.SecuritiesCategory = data.SecuritiesCategory
+			rData.SecuritiesCategoryName = data.SecuritiesCategoryName
+			rData.SecurityStatus = data.SecurityStatus
+			rData.SecurityType = data.SecurityType
+			rData.SecurityTypeName = data.SecurityTypeName
+			rData.StocKMarketName = data.StocKMarketName
+			rData.StockMarket = data.StockMarket
+			rData.TaxRates = data.TaxRates
+
+			if *data.FlagSyariah == 1 {
+				*rData.FlagSyariah = true
+			} else if *data.FlagSyariah == 0 {
+				*rData.FlagSyariah = false
+			} else if data.FlagSyariah == nil {
+				rData.FlagSyariah = nil
+			}
+
+			if *data.FlagHasCoupon == 1 {
+				*rData.FlagHasCoupon = true
+			} else if *data.FlagHasCoupon == 0 {
+				*rData.FlagHasCoupon = false
+			} else if data.FlagHasCoupon == nil {
+				rData.FlagHasCoupon = nil
+			}
+			if *data.FlagIsBreakable == 1 {
+				*rData.FlagIsBreakable = true
+			} else if *data.FlagIsBreakable == 0 {
+				*rData.FlagIsBreakable = false
+			} else if data.FlagIsBreakable == nil {
+				rData.FlagIsBreakable = nil
+			}
+
+		}
+	}
+
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = sec
+	response.Data = responseData
 	return c.JSON(http.StatusOK, response)
 }
 func DeleteMsSecuritiesController(c echo.Context) error {
