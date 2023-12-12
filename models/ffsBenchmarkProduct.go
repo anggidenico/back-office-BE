@@ -112,7 +112,7 @@ func DeleteBenchmarkProduct(BenchProdKey string, params map[string]string) (int,
 	return http.StatusOK, nil
 }
 
-func CheckDuplicateBenchmarkProd(productKey int64, benchmarkKey int64) (bool, string, error) { //dari sini
+func CheckDuplicateBenchmarkProd(productKey, benchmarkKey string) (bool, string, error) { //dari sini
 	// Query to check for duplicates
 	query := "SELECT bench_prod_key FROM ffs_benchmark_product WHERE product_key = ? OR benchmark_key = ? LIMIT 1"
 	var key string
@@ -132,29 +132,15 @@ func CheckDuplicateBenchmarkProd(productKey int64, benchmarkKey int64) (bool, st
 }
 
 func CreateBenchmarkProd(params map[string]interface{}) (int, error) {
-	benchmarkKey, ok := params["benchmark_key"].(int64)
-	if !ok {
-		return http.StatusBadRequest, errors.New("invalid benchmark_key")
-	}
-	productKey, ok := params["product_key"].(int64)
-	if !ok {
-		return http.StatusBadRequest, errors.New("invalid product_key")
-	}
 	// Check for duplicate records
-	duplicate, key, err := CheckDuplicateBenchmarkProd(benchmarkKey, productKey)
-	log.Println("Error checking for duplicates:", err)
+	duplicate, _, err := CheckDuplicateBenchmarkProd(params["product_key"].(string), params["benchmark_key"].(string))
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
 
 	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		status, err := UpdateBenchmarkProd(key, params)
-		if err != nil {
-			log.Println("Failed to update data:", err)
-			return status, err
-		}
-		return http.StatusOK, nil
+		return http.StatusBadRequest, errors.New("data duplikat ditemukan")
 	}
 
 	// Jika tidak ada duplikasi, buat data baru
@@ -163,9 +149,13 @@ func CreateBenchmarkProd(params map[string]interface{}) (int, error) {
 	var bindvars []interface{}
 
 	for key, value := range params {
-		fields += key + ", "
-		placeholders += "?, "
-		bindvars = append(bindvars, value)
+		fields += key + `, `
+		if value == "NULL" {
+			placeholders += `NULL, `
+		} else {
+			placeholders += `?, `
+			bindvars = append(bindvars, value)
+		}
 	}
 
 	fields = fields[:len(fields)-2]
@@ -188,7 +178,6 @@ func CreateBenchmarkProd(params map[string]interface{}) (int, error) {
 
 	return http.StatusOK, nil
 }
-
 func UpdateBenchmarkProd(benchProdKey string, params map[string]interface{}) (int, error) {
 	query := `UPDATE ffs_benchmark_product SET `
 	var setClauses []string
@@ -210,4 +199,19 @@ func UpdateBenchmarkProd(benchProdKey string, params map[string]interface{}) (in
 		return http.StatusBadGateway, err
 	}
 	return http.StatusOK, nil
+}
+
+func GetBenchmarkProdStatusByKey(key string) (int, error) {
+	query := "SELECT rec_status FROM ffs_benchmark_product WHERE bench_prod_key = ?"
+	var status int
+	err := db.Db.QueryRow(query, key).Scan(&status)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Data tidak ditemukan
+			return 0, nil
+		}
+		// Terjadi error lain
+		return 0, err
+	}
+	return status, nil
 }

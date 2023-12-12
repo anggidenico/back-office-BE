@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -91,44 +92,70 @@ func GetFfsPeriodeDetailModels(c *FfsPeriodeDetail, PeriodeKey string) (int, err
 	return http.StatusOK, nil
 }
 
-// 	err := db.Db.Get(c, query)
-// 	if err != nil {
-// 		if err == sql.ErrNoRows {
-// 			log.Println(err.Error())
-// 			return http.StatusBadGateway, err
-// 		}
-// 	}
-// 	return http.StatusOK, nil
-// }
+func CheckDuplicatePeriode(PeriodeName string) (bool, string, error) {
+	// Query to check for duplicates
+	query := "SELECT periode_key FROM ffs_periode WHERE periode_name = ? LIMIT 1"
+	var key string
+	err := db.Db.QueryRow(query, PeriodeName).Scan(&key)
 
-func CreateFfsPeriode(params map[string]string) (int, error) {
-	query := "INSERT INTO ffs_periode"
-	// Get params
-	var fields, values string
-	var bindvars []interface{}
-	for key, value := range params {
-		fields += key + ", "
-		values += "?, "
-		bindvars = append(bindvars, value)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// No duplicate found
+			return false, "", nil
+		}
+		// Other error occurred
+		return false, "", err
 	}
-	fields = fields[:(len(fields) - 2)]
-	values = values[:(len(values) - 2)]
 
-	// Combine params to build query
-	query += "(" + fields + ") VALUES(" + values + ")"
-	// log.Println("==========  ==========>>>", query)
+	// Duplicate found
+	return true, key, nil
+}
+
+func CreatePeriode(params map[string]string) (int, error) {
+	// Check for duplicate records
+	duplicate, _, err := CheckDuplicatePeriode(params["periode_name"])
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	// Jika duplikasi ditemukan, perbarui data yang sudah ada
+	if duplicate {
+		return http.StatusBadRequest, errors.New("data duplikat ditemukan")
+	}
+
+	// Jika tidak ada duplikasi, buat data baru
+	fields := ""
+	placeholders := ""
+	var bindvars []interface{}
+
+	for key, value := range params {
+		fields += key + `, `
+		if value == "NULL" {
+			placeholders += `NULL, `
+		} else {
+			placeholders += `?, `
+			bindvars = append(bindvars, value)
+		}
+	}
+
+	fields = fields[:len(fields)-2]
+	placeholders = placeholders[:len(placeholders)-2]
+
+	query := "INSERT INTO ffs_periode (" + fields + ") VALUES (" + placeholders + ")"
 
 	tx, err := db.Db.Begin()
 	if err != nil {
-		// log.Error(err)
 		return http.StatusBadGateway, err
 	}
+
 	_, err = tx.Exec(query, bindvars...)
-	tx.Commit()
 	if err != nil {
-		// log.Error(err)
+		tx.Rollback()
 		return http.StatusBadRequest, err
 	}
+
+	tx.Commit()
+
 	return http.StatusOK, nil
 }
 func UpdateFfsPeriode(PeriodeKey string, params map[string]string) (int, error) {
@@ -180,4 +207,19 @@ func DeleteFfsPeriode(PeriodeKey string, params map[string]string) (int, error) 
 	}
 
 	return http.StatusOK, nil
+}
+
+func GetPeriodeStatusByKey(key string) (int, error) {
+	query := "SELECT rec_status FROM ffs_periode WHERE periode_key = ?"
+	var status int
+	err := db.Db.QueryRow(query, key).Scan(&status)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Data tidak ditemukan
+			return 0, nil
+		}
+		// Terjadi error lain
+		return 0, err
+	}
+	return status, nil
 }

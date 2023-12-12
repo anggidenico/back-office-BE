@@ -206,7 +206,7 @@ func GetSecuritiesModels(c *[]Securities) (int, error) {
 	LEFT JOIN gen_lookup j ON a.coupon_type = j.lookup_key
 	WHERE a.rec_status = 1 ORDER BY a.rec_created_date DESC`
 
-	// log.Println("====================>>>", query)
+	log.Println(query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {

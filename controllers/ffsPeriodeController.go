@@ -3,6 +3,7 @@ package controllers
 import (
 	"database/sql"
 	"errors"
+	"log"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
@@ -95,18 +96,67 @@ func CreateFfsPeriodeController(c echo.Context) error {
 	params["date_closed"] = dateClosed
 	params["rec_status"] = "1"
 
-	status, err = models.CreateFfsPeriode(params)
+	duplicate, key, err := models.CheckDuplicatePeriode(periodeName)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed input data")
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
 	}
 
-	var response lib.Response
-	response.Status.Code = http.StatusOK
-	response.Status.MessageServer = "OK"
-	response.Status.MessageClient = "OK"
-	response.Data = ""
+	log.Println("Duplicate:", duplicate)
+	log.Println("Key:", key)
 
-	return c.JSON(http.StatusOK, response)
+	// Jika duplikasi ditemukan, perbarui data yang sudah ada
+	if duplicate {
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		existingDataStatus, err := models.GetPeriodeStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusInternalServerError, "Error getting existing data status", "Error getting existing data status")
+		}
+
+		// Jika data sudah dihapus (rec_status = 0), perbarui statusnya menjadi aktif (rec_status = 1)
+		if existingDataStatus == 0 {
+			log.Println("Existing data is deleted. Recreating data.")
+
+			// Set status menjadi aktif (rec_status = 1)
+			params["rec_status"] = "1"
+			// Update data dengan status baru dan nilai-nilai yang baru
+			status, err := models.UpdateFfsPeriode(key, params)
+			if err != nil {
+				log.Println("Error updating data:", err)
+				return lib.CustomError(status, "Error updating data", "Error updating data")
+			}
+			return c.JSON(http.StatusOK, lib.Response{
+				Status: lib.Status{
+					Code:          http.StatusOK,
+					MessageServer: "OK",
+					MessageClient: "OK",
+				},
+				Data: "Data updated successfully",
+			})
+		} else {
+			// Jika data masih aktif, kembalikan respons kesalahan duplikasi
+			log.Println("Existing data is still active. Duplicate data error.")
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+	} else {
+		// Jika tidak ada duplikasi, buat data baru
+		status, err := models.CreatePeriode(params)
+		if err != nil {
+			log.Println("Error create data:", err)
+			return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+	}
+
+	return c.JSON(http.StatusOK, lib.Response{
+		Status: lib.Status{
+			Code:          http.StatusOK,
+			MessageServer: "OK",
+			MessageClient: "OK",
+		},
+		Data: "Data created successfully",
+	})
 }
 func UpdateFfsPeriode(c echo.Context) error {
 	var err error
@@ -118,6 +168,7 @@ func UpdateFfsPeriode(c echo.Context) error {
 	if periodeKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing risk_profile_key", "Missing risk_profile_key")
 	}
+
 	periodeDate := c.FormValue("periode_date")
 	if periodeDate == "" {
 		return lib.CustomError(http.StatusBadRequest, "periode_date can not be blank", "periode_date can not be blank")
@@ -154,18 +205,39 @@ func UpdateFfsPeriode(c echo.Context) error {
 	params["date_opened"] = dateOpened
 	params["date_closed"] = dateClosed
 	params["rec_status"] = "1"
+
+	duplicate, key, err := models.CheckDuplicatePeriode(periodeName)
+	if err != nil {
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
+	}
+	if duplicate {
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		_, err := models.GetPeriodeStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+
+		if key != periodeKey {
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data", "Duplicate data")
+		}
+
+	}
 	status, err = models.UpdateFfsPeriode(periodeKey, params)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed input data")
+		return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = ""
+	response.Data = "Data updated successfully"
 
 	return c.JSON(http.StatusOK, response)
 }
+
 func DeleteFfsPeriode(c echo.Context) error {
 	params := make(map[string]string)
 	dateLayout := "2006-01-02 15:04:05"

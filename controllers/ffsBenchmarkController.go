@@ -270,10 +270,7 @@ func UpdateFfsBenchmarkController(c echo.Context) error {
 			log.Println("Error getting existing data status:", err)
 			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
 		}
-		// if existingDataStatus != 0 {
-		// 	log.Println("Existing DATA")
-		// 	return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
-		// }
+
 		if key != benchmarkKey {
 			return lib.CustomError(http.StatusBadRequest, "Duplicate data", "Duplicate data")
 		}

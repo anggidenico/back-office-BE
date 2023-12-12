@@ -76,13 +76,13 @@ func CreateBenchProdController(c echo.Context) error {
 	params["rec_created_by"] = lib.UserIDStr
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
-	productKey, err := strconv.ParseInt(c.FormValue("product_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid product_key", "Invalid product_key")
+	productKey := c.FormValue("product_key")
+	if productKey != "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing product_key", "Missing product_key")
 	}
-	benchmarkKey, err := strconv.ParseInt(c.FormValue("benchmark_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid benchmark_key", "Invalid benchmark_key")
+	benchmarkKey := c.FormValue("benchmark_key")
+	if benchmarkKey != "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing benchmark_key", "Missing benchmark_key")
 	}
 	benchmarkRatio, err := strconv.ParseInt(c.FormValue("benchmark_ratio"), 10, 64)
 	if err != nil {
@@ -117,20 +117,36 @@ func CreateBenchProdController(c echo.Context) error {
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
-	if productKey != 0 && benchmarkKey != 0 {
-		duplicate, key, err := models.CheckDuplicateBenchmarkProd(productKey, benchmarkKey)
+	duplicate, key, err := models.CheckDuplicateBenchmarkProd(productKey, benchmarkKey)
+	if err != nil {
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
+	}
+
+	log.Println("Duplicate:", duplicate)
+	log.Println("Key:", key)
+
+	// Jika duplikasi ditemukan, perbarui data yang sudah ada
+	if duplicate {
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		existingDataStatus, err := models.GetBenchmarkProdStatusByKey(key)
 		if err != nil {
-			log.Println("Error checking for duplicates:", err)
-			return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusInternalServerError, "Error getting existing data status", "Error getting existing data status")
 		}
-		log.Println("Duplicate:", duplicate)
-		log.Println("Key:", key)
-		// Jika duplikasi ditemukan, perbarui data yang sudah ada
-		if duplicate {
+
+		// Jika data sudah dihapus (rec_status = 0), perbarui statusnya menjadi aktif (rec_status = 1)
+		if existingDataStatus == 0 {
+			log.Println("Existing data is deleted. Recreating data.")
+
+			// Set status menjadi aktif (rec_status = 1)
+			params["rec_status"] = "1"
+			// Update data dengan status baru dan nilai-nilai yang baru
 			status, err := models.UpdateBenchmarkProd(key, params)
 			if err != nil {
-				log.Println("Failed to update data:", err)
-				return lib.CustomError(status, "Failed to update data", "Failed to update data")
+				log.Println("Error updating data:", err)
+				return lib.CustomError(status, "Error updating data", "Error updating data")
 			}
 			return c.JSON(http.StatusOK, lib.Response{
 				Status: lib.Status{
@@ -140,12 +156,18 @@ func CreateBenchProdController(c echo.Context) error {
 				},
 				Data: "Data updated successfully",
 			})
+		} else {
+			// Jika data masih aktif, kembalikan respons kesalahan duplikasi
+			log.Println("Existing data is still active. Duplicate data error.")
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
 		}
-	}
-	// Jika tidak ada duplikasi, buat data baru
-	status, err = models.CreateBenchmarkProd(params)
-	if err != nil {
-		return lib.CustomError(status, "Failed input data", "Failed input data")
+	} else {
+		// Jika tidak ada duplikasi, buat data baru
+		status, err := models.CreateBenchmarkProd(params)
+		if err != nil {
+			log.Println("Error create data:", err)
+			return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
 	}
 
 	return c.JSON(http.StatusOK, lib.Response{
@@ -164,17 +186,17 @@ func UpdateBenchmarkProdController(c echo.Context) error {
 	params["rec_modified_by"] = lib.UserIDStr
 	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
-	benchProdKey, err := strconv.ParseInt(c.FormValue("bench_prod_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid bench_prod_key", "Invalid bench_prod_key")
+	benchProdKey := c.FormValue("bench_prod_key")
+	if benchProdKey != "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing bench_prod_key", "Missing bench_prod_key")
 	}
-	productKey, err := strconv.ParseInt(c.FormValue("product_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid product_key", "Invalid product_key")
+	productKey := c.FormValue("product_key")
+	if productKey != "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing product_key", "Missing product_key")
 	}
-	benchmarkKey, err := strconv.ParseInt(c.FormValue("benchmark_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid benchmark_key", "Invalid benchmark_key")
+	benchmarkKey := c.FormValue("benchmark_key")
+	if benchmarkKey != "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing benchmark_key", "Missing benchmark_key")
 	}
 	benchmarkRatio, err := strconv.ParseInt(c.FormValue("benchmark_ratio"), 10, 64)
 	if err != nil {
@@ -207,43 +229,37 @@ func UpdateBenchmarkProdController(c echo.Context) error {
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
-	if productKey != 0 && benchmarkKey != 0 {
-		duplicate, key, err := models.CheckDuplicateBenchmarkProd(productKey, benchmarkKey)
-		if err != nil {
-			log.Println("Error checking for duplicates:", err)
-			return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
-		}
-		log.Println("Duplicate:", duplicate)
-		log.Println("Key:", key)
-		// Jika duplikasi ditemukan, perbarui data yang sudah ada
-		if duplicate {
-			status, err := models.UpdateBenchmarkProd(key, params)
-			if err != nil {
-				log.Println("Failed to update data:", err)
-				return lib.CustomError(status, "Failed to update data", "Failed to update data")
-			}
-			return c.JSON(http.StatusOK, lib.Response{
-				Status: lib.Status{
-					Code:          http.StatusOK,
-					MessageServer: "OK",
-					MessageClient: "OK",
-				},
-				Data: "Data updated successfully",
-			})
-		}
-	}
-	// Jika tidak ada duplikasi, buat data baru
-	status, err = models.CreateBenchmarkProd(params)
+	duplicate, key, err := models.CheckDuplicateBenchmarkProd(productKey, benchmarkKey)
 	if err != nil {
-		return lib.CustomError(status, "Failed input data", "Failed input data")
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
 	}
+	if duplicate {
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		_, err := models.GetBenchmarkProdStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+		// if existingDataStatus != 0 {
+		// 	log.Println("Existing DATA")
+		// 	return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		// }
+		if key != benchProdKey {
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data", "Duplicate data")
+		}
 
-	return c.JSON(http.StatusOK, lib.Response{
-		Status: lib.Status{
-			Code:          http.StatusOK,
-			MessageServer: "OK",
-			MessageClient: "OK",
-		},
-		Data: "Data created successfully",
-	})
+	}
+	status, err = models.UpdateBenchmarkProd(benchProdKey, params)
+	if err != nil {
+		return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = "Data updated successfully"
+
+	return c.JSON(http.StatusOK, response)
 }

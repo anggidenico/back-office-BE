@@ -138,6 +138,7 @@ func GetMsSecuritiesController(c echo.Context) error {
 			} else if data.FlagHasCoupon == nil {
 				rData.FlagHasCoupon = nil
 			}
+
 			if *data.FlagIsBreakable == 1 {
 				*rData.FlagIsBreakable = true
 			} else if *data.FlagIsBreakable == 0 {
@@ -145,6 +146,42 @@ func GetMsSecuritiesController(c echo.Context) error {
 			} else if data.FlagIsBreakable == nil {
 				rData.FlagIsBreakable = nil
 			}
+			// if data.FlagSyariah != nil {
+			// 	parsedValue, err := strconv.Atoi(string(*data.FlagSyariah))
+			// 	if err == nil {
+			// 		rData.FlagSyariah = parsedValue == 1
+			// 	} else {
+			// 		// Handle error, misformatted data, or default value accordingly
+			// 		rData.FlagSyariah = false
+			// 	}
+			// } else {
+			// 	rData.FlagSyariah = nil
+			// }
+
+			// if data.FlagHasCoupon != nil {
+			// 	parsedValue, err := strconv.Atoi(string(*data.FlagHasCoupon))
+			// 	if err == nil {
+			// 		rData.FlagHasCoupon = parsedValue == 1
+			// 	} else {
+			// 		// Handle error, misformatted data, or default value accordingly
+			// 		rData.FlagHasCoupon = false
+			// 	}
+			// } else {
+			// 	rData.FlagHasCoupon = nil
+			// }
+
+			// if data.FlagIsBreakable != nil {
+			// 	parsedValue, err := strconv.Atoi(string(*data.FlagIsBreakable))
+			// 	if err == nil {
+			// 		rData.FlagIsBreakable = parsedValue == 1
+			// 	} else {
+			// 		// Handle error, misformatted data, or default value accordingly
+			// 		rData.FlagIsBreakable = false
+			// 	}
+			// } else {
+			// 	rData.FlagIsBreakable = nil
+			// }
+			responseData = append(responseData, rData)
 
 		}
 	}

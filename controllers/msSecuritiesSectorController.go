@@ -238,14 +238,13 @@ func UpdateSecuritiesSectorController(c echo.Context) error {
 	if duplicate {
 		log.Println("Duplicate data found.")
 		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
-		existingDataStatus, err := models.GetSecuritiesSectorStatusByKey(key)
+		_, err := models.GetSecuritiesSectorStatusByKey(key)
 		if err != nil {
 			log.Println("Error getting existing data status:", err)
 			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
 		}
-		if existingDataStatus != 0 {
-			log.Println("Existing DATA")
-			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		if key != sectorKey {
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data", "Duplicate data")
 		}
 	}
 	status, err = models.UpdateSecuritiesSector(sectorKey, params)
