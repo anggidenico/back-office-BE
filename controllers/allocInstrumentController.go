@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"database/sql"
+	"errors"
 	"log"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
@@ -213,5 +215,51 @@ func GetAllocInstrumentController(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Data = instrument
+	return c.JSON(http.StatusOK, response)
+}
+
+func DeleteAllocInstrumentController(c echo.Context) error {
+	params := make(map[string]string)
+	params["rec_status"] = "0"
+	params["rec_deleted_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+	params["rec_deleted_by"] = lib.UserIDStr
+
+	allocInstrumentKey := c.FormValue("alloc_instrument_key")
+	if allocInstrumentKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing alloc_instrument_key", "Missing alloc_instrument_key")
+	}
+
+	status, err := models.DeleteAllocInstrument(allocInstrumentKey, params)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), err.Error())
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "Berhasil Menghapus PortFolio Instrument!"
+	response.Data = ""
+	return c.JSON(http.StatusOK, response)
+}
+
+func GetAllocInstrumentDetailController(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
+	allocInstrumentKey := c.Param("alloc_instrument_key")
+	if allocInstrumentKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing alloc_instrument_key", "Missing alloc_instrument_key")
+	}
+	var value models.AllocInstrument
+	status, err := models.GetAllInstrumentDetailModels(&value, allocInstrumentKey)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return lib.CustomError(http.StatusNotFound, "alloc_instrument_key not found", "alloc_instrument_key not found")
+		}
+		return lib.CustomError(status, err.Error(), err.Error())
+	}
+
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = value
 	return c.JSON(http.StatusOK, response)
 }

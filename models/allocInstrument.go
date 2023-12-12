@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -151,6 +152,60 @@ func GetAllocInstrumentModels(c *[]AllocInstrument) (int, error) {
 			return http.StatusBadGateway, err
 		}
 		return http.StatusNotFound, err
+	}
+	return http.StatusOK, nil
+}
+
+func GetAllInstrumentDetailModels(c *AllocInstrument, AllocInstrumentKey string) (int, error) {
+	query := `SELECT a.alloc_instrument_key,
+	a.product_key,
+	b.product_name,
+	a.periode_key,
+	c.periode_name,
+	a.instrument_key,
+	d.instrument_name,
+	a.rec_order
+	FROM ffs_alloc_instrument a
+	JOIN ms_product b ON a.product_key = b.product_key
+	JOIN ffs_periode c ON a.periode_key = c.periode_key
+	JOIN ms_instrument d ON a.instrument_key = d.instrument_key WHERE a.rec_status = 1 AND a.alloc_instrument_key =` + AllocInstrumentKey
+
+	log.Println("====================>>>", query)
+	err := db.Db.Get(c, query)
+	if err != nil {
+		log.Println(err.Error()) //sql
+		return http.StatusBadGateway, err
+	}
+	return http.StatusOK, nil
+}
+
+func DeleteAllocInstrument(AllocInstrumentKey string, params map[string]string) (int, error) {
+	query := `UPDATE ffs_alloc_instrument SET `
+	var setClauses []string
+	var values []interface{}
+
+	for key, value := range params {
+		if key != "alloc_instrument_key" {
+			setClauses = append(setClauses, key+" = ?")
+			values = append(values, value)
+		}
+	}
+	query += strings.Join(setClauses, ", ")
+	query += ` WHERE alloc_instrument_key = ?`
+	values = append(values, AllocInstrumentKey)
+
+	log.Println("========== DeletePortfolioInstrument ==========>>>", query)
+
+	resultSQL, err := db.Db.Exec(query, values...)
+	if err != nil {
+		log.Println(err.Error())
+		return http.StatusBadGateway, err
+	}
+	rows, _ := resultSQL.RowsAffected()
+	if rows < 1 {
+		log.Println("nothing rows affected")
+		err2 := fmt.Errorf("nothing rows affected")
+		return http.StatusNotFound, err2
 	}
 	return http.StatusOK, nil
 }

@@ -26,7 +26,7 @@ type FfsPeriodeDetail struct {
 	PeriodeName string  `db:"periode_name"         json:"periode_name"`
 	DateOpened  *string `db:"date_opened"          json:"date_opened"`
 	DateClosed  *string `db:"date_closed"          json:"date_closed"`
-	RecStatus   uint8   `db:"rec_status"           json:"rec_status"`
+	RecOrder    uint8   `db:"rec_order"           json:"rec_order"`
 }
 
 func GetFfsPeriodeModels(c *[]FfsPeriode) (int, error) {
@@ -72,7 +72,9 @@ func GetFfsPeriodeDetailModels(c *FfsPeriodeDetail, PeriodeKey string) (int, err
 	periode_date,
 	periode_name,
 	date_opened,
-	date_closed FROM ffs_periode
+	date_closed,
+	rec_order
+	FROM ffs_periode
 	WHERE rec_status = 1 
 	AND periode_key =` + PeriodeKey
 
