@@ -145,7 +145,7 @@ func SaveStep6(c echo.Context) (error, int64) {
 				createFile["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 				createFile["rec_created_by"] = lib.UserIDStr
 				createFile["file_name"] = filename
-				createFile["file_extension"] = extension
+				createFile["file_ext"] = extension
 				createFile["file_path"] = "/images/oa_manual/" + oa_request_key + "/" + filename + extension
 				createFile["file_url"] = config.ImageUrl + "/images/oa_manual/" + oa_request_key + "/" + filename + extension
 
