@@ -218,6 +218,21 @@ func GetAllocInstrumentController(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
+func GetAllocInstrumentKeyController(c echo.Context) error {
+
+	var instrument []models.AllocInstrumentKey
+	status, err := models.GetAllocInstrumentKeyModels(&instrument)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = instrument
+	return c.JSON(http.StatusOK, response)
+}
+
 func DeleteAllocInstrumentController(c echo.Context) error {
 	params := make(map[string]string)
 	params["rec_status"] = "0"

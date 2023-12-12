@@ -23,6 +23,30 @@ type AllocInstrument struct {
 	InstrumentValue    decimal.Decimal `db:"instrument_value" json:"instrument_value"`
 	RecOrder           *int64          `db:"rec_order" json:"rec_order"`
 }
+type AllocInstrumentKey struct {
+	IntrumentKey   int64  `db:"instrument_key" json:"instrument_key"`
+	InstrumentCode string `db:"instrument_code" json:"instrument_code"`
+	InstrumentName string `db:"instrument_name" json:"instrument_name"`
+}
+
+func GetAllocInstrumentKeyModels(c *[]AllocInstrumentKey) (int, error) {
+	query := `SELECT instrument_key,
+	instrument_code,
+	instrument_name
+	FROM ms_instrument
+	WHERE rec_status = 1 ORDER BY instrument_key DESC` //order by
+
+	log.Println("====================>>>", query)
+	err := db.Db.Select(c, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
+		return http.StatusNotFound, err
+	}
+	return http.StatusOK, nil
+}
 
 func CheckDuplicateAllocInstrument(productKey, periodeKey, instrumentKey string) (bool, string, error) {
 	// Query to check for duplicates
