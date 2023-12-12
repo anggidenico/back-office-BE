@@ -9,25 +9,27 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
+	"github.com/shopspring/decimal"
 )
 
 func CreateAllocInstrumentController(c echo.Context) error {
 	var err error
-	params := make(map[string]interface{})
+	params := make(map[string]string)
 	params["rec_created_by"] = lib.UserIDStr
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
-	productKey, err := strconv.ParseInt(c.FormValue("product_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid product_key", "Invalid product_key")
+	productKey := c.FormValue("product_key")
+	if productKey == "" {
+		log.Println(err)
+		return lib.CustomError(http.StatusBadRequest, "Missing product_key", "Missing product_key")
 	}
-	periodeKey, err := strconv.ParseInt(c.FormValue("periode_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid periode_key", "Invalid periode_key")
+	periodeKey := c.FormValue("periode_key")
+	if periodeKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing periode_key", "Missing periode_key")
 	}
-	instrumentKey, err := strconv.ParseInt(c.FormValue("instrument_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid instrument_key", "Invalid instrument_key")
+	instrumentKey := c.FormValue("instrument_key")
+	if instrumentKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing instrument_key", "Missing instrument_key")
 	}
 	instrumentValue := c.FormValue("instrument_value")
 	if instrumentValue == "" {
@@ -42,9 +44,9 @@ func CreateAllocInstrumentController(c echo.Context) error {
 		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
 		}
-		params["rec_order"] = value
+		params["rec_order"] = strconv.Itoa(value)
 	} else {
-		params["rec_order"] = 0
+		params["rec_order"] = "0"
 	}
 
 	// params["rec_order"] = recOrder
@@ -55,20 +57,36 @@ func CreateAllocInstrumentController(c echo.Context) error {
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
-	if productKey != 0 && periodeKey != 0 && instrumentKey != 0 {
-		duplicate, key, err := models.CheckDuplicateAllocInstrument(periodeKey, productKey, instrumentKey)
+	duplicate, key, err := models.CheckDuplicateAllocInstrument(productKey, periodeKey, instrumentKey)
+	if err != nil {
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
+	}
+
+	log.Println("Duplicate:", duplicate)
+	log.Println("Key:", key)
+
+	// Jika duplikasi ditemukan, perbarui data yang sudah ada
+	if duplicate {
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		existingDataStatus, err := models.GetAllocInstrumentStatusByKey(key)
 		if err != nil {
-			log.Println("Error checking for duplicates:", err)
-			return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusInternalServerError, "Error getting existing data status", "Error getting existing data status")
 		}
-		log.Println("Duplicate:", duplicate)
-		log.Println("Key:", key)
-		// Jika duplikasi ditemukan, perbarui data yang sudah ada
-		if duplicate {
+
+		// Jika data sudah dihapus (rec_status = 0), perbarui statusnya menjadi aktif (rec_status = 1)
+		if existingDataStatus == 0 {
+			log.Println("Existing data is deleted. Recreating data.")
+
+			// Set status menjadi aktif (rec_status = 1)
+			params["rec_status"] = "1"
+			// Update data dengan status baru dan nilai-nilai yang baru
 			status, err := models.UpdateAllocInstrument(key, params)
 			if err != nil {
-				log.Println("Failed to update data:", err)
-				return lib.CustomError(status, "Failed to update data", "Failed to update data")
+				log.Println("Error updating data:", err)
+				return lib.CustomError(status, "Error updating data", "Error updating data")
 			}
 			return c.JSON(http.StatusOK, lib.Response{
 				Status: lib.Status{
@@ -78,13 +96,18 @@ func CreateAllocInstrumentController(c echo.Context) error {
 				},
 				Data: "Data updated successfully",
 			})
+		} else {
+			// Jika data masih aktif, kembalikan respons kesalahan duplikasi
+			log.Println("Existing data is still active. Duplicate data error.")
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
 		}
-	}
-	// Jika tidak ada duplikasi, buat data baru
-	status, err = models.CreateAllocInstrument(params)
-	if err != nil {
-		log.Println(err)
-		return lib.CustomError(status, "Failed input data", "Failed input data")
+	} else {
+		// Jika tidak ada duplikasi, buat data baru
+		status, err := models.CreateAllocInstrument(params)
+		if err != nil {
+			log.Println("Error create data:", err)
+			return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
 	}
 
 	return c.JSON(http.StatusOK, lib.Response{
@@ -99,25 +122,25 @@ func CreateAllocInstrumentController(c echo.Context) error {
 
 func UpdateAllocInstrumentController(c echo.Context) error {
 	var err error
-	params := make(map[string]interface{})
+	params := make(map[string]string)
 	params["rec_modified_by"] = lib.UserIDStr
 	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
-	allocInstrumentKey, err := strconv.ParseInt(c.FormValue("alloc_instrument_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid alloc_instrument_key", "Invalid alloc_instrument_key")
+	allocInstrumentKey := c.FormValue("alloc_instrument_key")
+	if allocInstrumentKey != "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing alloc_instrument_key", "Missing alloc_instrument_key")
 	}
-	productKey, err := strconv.ParseInt(c.FormValue("product_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid product_key", "Invalid product_key")
+	productKey := c.FormValue("product_key")
+	if productKey != "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing product_key", "Missing product_key")
 	}
-	periodeKey, err := strconv.ParseInt(c.FormValue("periode_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid periode_key", "Invalid periode_key")
+	periodeKey := c.FormValue("periode_key")
+	if periodeKey != "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing periode_key", "Missing periode_key")
 	}
-	instrumentKey, err := strconv.ParseInt(c.FormValue("instrument_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid instrument_key", "Invalid instrument_key")
+	instrumentKey := c.FormValue("instrument_key")
+	if instrumentKey != "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing instrument_key", "Missing instrument_key")
 	}
 	instrumentValue := c.FormValue("instrument_value")
 	if instrumentValue == "" {
@@ -132,9 +155,9 @@ func UpdateAllocInstrumentController(c echo.Context) error {
 		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
 		}
-		params["rec_order"] = value
+		params["rec_order"] = strconv.Itoa(value)
 	} else {
-		params["rec_order"] = 0
+		params["rec_order"] = "0"
 	}
 
 	// params["rec_order"] = recOrder
@@ -146,37 +169,49 @@ func UpdateAllocInstrumentController(c echo.Context) error {
 	params["rec_status"] = "1"
 
 	// Check for duplicate records
-	if productKey != 0 && periodeKey != 0 && instrumentKey != 0 {
-		duplicate, key, err := models.CheckDuplicateAllocInstrument(periodeKey, productKey, instrumentKey)
-		if err != nil {
-			log.Println("Error checking for duplicates:", err)
-			return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
-		}
-		log.Println("Duplicate:", duplicate)
-		log.Println("Key:", key)
-		// Jika duplikasi ditemukan, perbarui data yang sudah ada
-		if duplicate {
-			status, err := models.UpdateAllocInstrument(key, params)
-			if err != nil {
-				log.Println("Failed to update data:", err)
-				return lib.CustomError(status, "Failed to update data", "Failed to update data")
-			}
-			return c.JSON(http.StatusOK, lib.Response{
-				Status: lib.Status{
-					Code:          http.StatusOK,
-					MessageServer: "OK",
-					MessageClient: "OK",
-				},
-				Data: "Data updated successfully",
-			})
-		}
+	duplicate, key, err := models.CheckDuplicateAllocInstrument(productKey, periodeKey, instrumentKey)
+	if err != nil {
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
 	}
-	return c.JSON(http.StatusOK, lib.Response{
-		Status: lib.Status{
-			Code:          http.StatusOK,
-			MessageServer: "OK",
-			MessageClient: "OK",
-		},
-		Data: "No action taken",
-	})
+	if duplicate {
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		_, err := models.GetAllocInstrumentStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+
+		if key != allocInstrumentKey {
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data", "Duplicate data")
+		}
+
+	}
+	status, err = models.UpdateAllocInstrument(allocInstrumentKey, params)
+	if err != nil {
+		return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = "Data updated successfully"
+
+	return c.JSON(http.StatusOK, response)
+}
+
+func GetAllocInstrumentController(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
+	var instrument []models.AllocInstrument
+	status, err := models.GetAllocInstrumentModels(&instrument)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = instrument
+	return c.JSON(http.StatusOK, response)
 }

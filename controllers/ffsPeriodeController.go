@@ -84,11 +84,16 @@ func CreateFfsPeriodeController(c echo.Context) error {
 	}
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {
-		_, err := strconv.ParseUint(recOrder, 10, 64)
-		if err != nil {
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
+		if len(recOrder) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "rec_order should be exactly 11 characters", "rec_order be exactly 11 characters")
 		}
-		params["rec_order"] = recOrder
+		value, err := strconv.Atoi(recOrder)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
+		}
+		params["rec_order"] = strconv.Itoa(value)
+	} else {
+		params["rec_order"] = "0"
 	}
 	params["periode_date"] = periodeDate
 	params["periode_name"] = periodeName
@@ -198,7 +203,19 @@ func UpdateFfsPeriode(c echo.Context) error {
 	if err != nil {
 		return lib.CustomError(http.StatusBadRequest, "date_closed should be a valid date in the format "+expectedDateFormat, "date_closed should be a valid date in the format "+expectedDateFormat)
 	}
-
+	recOrder := c.FormValue("rec_order")
+	if recOrder != "" {
+		if len(recOrder) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "rec_order should be exactly 11 characters", "rec_order be exactly 11 characters")
+		}
+		value, err := strconv.Atoi(recOrder)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
+		}
+		params["rec_order"] = strconv.Itoa(value)
+	} else {
+		params["rec_order"] = "0"
+	}
 	params["periode_key"] = periodeKey
 	params["periode_date"] = periodeDate
 	params["periode_name"] = periodeName

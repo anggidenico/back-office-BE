@@ -3,9 +3,11 @@ package controllers
 import (
 	"database/sql"
 	"errors"
+	"log"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo"
@@ -123,64 +125,35 @@ func GetMsSecuritiesController(c echo.Context) error {
 			rData.StockMarket = data.StockMarket
 			rData.TaxRates = data.TaxRates
 
-			if *data.FlagSyariah == 1 {
-				*rData.FlagSyariah = true
-			} else if *data.FlagSyariah == 0 {
-				*rData.FlagSyariah = false
-			} else if data.FlagSyariah == nil {
-				rData.FlagSyariah = nil
-			}
-
-			if *data.FlagHasCoupon == 1 {
-				*rData.FlagHasCoupon = true
-			} else if *data.FlagHasCoupon == 0 {
-				*rData.FlagHasCoupon = false
-			} else if data.FlagHasCoupon == nil {
-				rData.FlagHasCoupon = nil
-			}
-
-			if *data.FlagIsBreakable == 1 {
-				*rData.FlagIsBreakable = true
-			} else if *data.FlagIsBreakable == 0 {
-				*rData.FlagIsBreakable = false
-			} else if data.FlagIsBreakable == nil {
-				rData.FlagIsBreakable = nil
-			}
-			// if data.FlagSyariah != nil {
-			// 	parsedValue, err := strconv.Atoi(string(*data.FlagSyariah))
-			// 	if err == nil {
-			// 		rData.FlagSyariah = parsedValue == 1
-			// 	} else {
-			// 		// Handle error, misformatted data, or default value accordingly
-			// 		rData.FlagSyariah = false
-			// 	}
-			// } else {
+			// if *data.FlagSyariah == 1 {
+			// 	*rData.FlagSyariah = true
+			// } else if *data.FlagSyariah == 0 {
+			// 	*rData.FlagSyariah = false
+			// } else if data.FlagSyariah == nil {
 			// 	rData.FlagSyariah = nil
 			// }
 
-			// if data.FlagHasCoupon != nil {
-			// 	parsedValue, err := strconv.Atoi(string(*data.FlagHasCoupon))
-			// 	if err == nil {
-			// 		rData.FlagHasCoupon = parsedValue == 1
-			// 	} else {
-			// 		// Handle error, misformatted data, or default value accordingly
-			// 		rData.FlagHasCoupon = false
-			// 	}
-			// } else {
+			// if *data.FlagHasCoupon == 1 {
+			// 	*rData.FlagHasCoupon = true
+			// } else if *data.FlagHasCoupon == 0 {
+			// 	*rData.FlagHasCoupon = false
+			// } else if data.FlagHasCoupon == nil {
 			// 	rData.FlagHasCoupon = nil
 			// }
 
-			// if data.FlagIsBreakable != nil {
-			// 	parsedValue, err := strconv.Atoi(string(*data.FlagIsBreakable))
-			// 	if err == nil {
-			// 		rData.FlagIsBreakable = parsedValue == 1
-			// 	} else {
-			// 		// Handle error, misformatted data, or default value accordingly
-			// 		rData.FlagIsBreakable = false
-			// 	}
-			// } else {
+			// if *data.FlagIsBreakable == 1 {
+			// 	*rData.FlagIsBreakable = true
+			// } else if *data.FlagIsBreakable == 0 {
+			// 	*rData.FlagIsBreakable = false
+			// } else if data.FlagIsBreakable == nil {
 			// 	rData.FlagIsBreakable = nil
 			// }
+			rData.FlagHasCoupon = convertInt8ToBool(data.FlagHasCoupon)
+			// Menggunakan fungsi bantu untuk konversi nilai FlagSyariah
+			rData.FlagSyariah = convertInt8ToBool(data.FlagSyariah)
+			// Menggunakan fungsi bantu untuk konversi nilai FlagIsBreakable
+			rData.FlagIsBreakable = convertInt8ToBool(data.FlagIsBreakable)
+
 			responseData = append(responseData, rData)
 
 		}
@@ -192,6 +165,27 @@ func GetMsSecuritiesController(c echo.Context) error {
 	response.Status.MessageClient = "OK"
 	response.Data = responseData
 	return c.JSON(http.StatusOK, response)
+}
+func convertFlagToBool(flag *int64) *bool {
+	if flag != nil {
+		strValue := strconv.FormatInt(*flag, 10)
+		flagValue, err := strconv.Atoi(strValue)
+		if err != nil {
+			log.Println("Error converting flag value:", err)
+			return nil
+		}
+		boolValue := flagValue == 1
+		return &boolValue
+	}
+	return nil
+}
+
+func convertInt8ToBool(value *int8) *bool {
+	if value != nil {
+		boolValue := *value == 1
+		return &boolValue
+	}
+	return nil
 }
 func DeleteMsSecuritiesController(c echo.Context) error {
 	params := make(map[string]string)

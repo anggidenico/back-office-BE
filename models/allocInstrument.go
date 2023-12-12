@@ -7,13 +7,27 @@ import (
 	"mf-bo-api/db"
 	"net/http"
 	"strings"
+
+	"github.com/shopspring/decimal"
 )
 
-func CheckDuplicateAllocInstrument(periodeKey int64, productKey int64, instrumentKey int64) (bool, string, error) { //dari sini
+type AllocInstrument struct {
+	AllocInstrumentKey int64           `db:"alloc_instrument_key" json:"alloc_instrument_key"`
+	ProductKey         int64           `db:"product_key" json:"product_key"`
+	ProductName        string          `db:"product_name" json:"product_name"`
+	PeriodeKey         int64           `db:"periode_key" json:"periode_key"`
+	PeriodeName        string          `db:"periode_name" json:"periode_name"`
+	InstrumentKey      int64           `db:"instrument_key" json:"instrument_key"`
+	InstrumentName     string          `db:"instrument_name" json:"instrument_name"`
+	InstrumentValue    decimal.Decimal `db:"instrument_value" json:"instrument_value"`
+	RecOrder           *int64          `db:"rec_order" json:"rec_order"`
+}
+
+func CheckDuplicateAllocInstrument(productKey, periodeKey, instrumentKey string) (bool, string, error) {
 	// Query to check for duplicates
-	query := "SELECT alloc_instrument_key FROM ffs_alloc_instrument WHERE product_key = ? OR periode_key = ? OR instrument_key = ? LIMIT 1"
+	query := "SELECT alloc_instrument_key FROM ffs_alloc_instrument WHERE product_key = ? AND periode_key = ? AND instrument_key = ? LIMIT 1"
 	var key string
-	err := db.Db.QueryRow(query, periodeKey, productKey, instrumentKey).Scan(&key)
+	err := db.Db.QueryRow(query, productKey, periodeKey, instrumentKey).Scan(&key)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -28,35 +42,16 @@ func CheckDuplicateAllocInstrument(periodeKey int64, productKey int64, instrumen
 	return true, key, nil
 }
 
-func CreateAllocInstrument(params map[string]interface{}) (int, error) {
-	periodeKey, ok := params["periode_key"].(int64)
-	if !ok {
-		return http.StatusBadRequest, errors.New("invalid periode_key")
-	}
-	productKey, ok := params["product_key"].(int64)
-	if !ok {
-		return http.StatusBadRequest, errors.New("invalid product_key")
-	}
-	instrumentKey, ok := params["instrument_key"].(int64)
-	if !ok {
-		return http.StatusBadRequest, errors.New("invalid instrument_key")
-	}
-
+func CreateAllocInstrument(params map[string]string) (int, error) {
 	// Check for duplicate records
-	duplicate, key, err := CheckDuplicateAllocInstrument(periodeKey, productKey, instrumentKey)
-	log.Println("Error checking for duplicates:", err)
+	duplicate, _, err := CheckDuplicateAllocInstrument(params["product_key"], params["periode_key"], params["instrument_key"])
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
 
 	// Jika duplikasi ditemukan, perbarui data yang sudah ada
 	if duplicate {
-		status, err := UpdateAllocInstrument(key, params)
-		if err != nil {
-			log.Println("Failed to update data:", err)
-			return status, err
-		}
-		return http.StatusOK, nil
+		return http.StatusBadRequest, errors.New("data duplikat ditemukan")
 	}
 
 	// Jika tidak ada duplikasi, buat data baru
@@ -65,9 +60,13 @@ func CreateAllocInstrument(params map[string]interface{}) (int, error) {
 	var bindvars []interface{}
 
 	for key, value := range params {
-		fields += key + ", "
-		placeholders += "?, "
-		bindvars = append(bindvars, value)
+		fields += key + `, `
+		if value == "NULL" {
+			placeholders += `NULL, `
+		} else {
+			placeholders += `?, `
+			bindvars = append(bindvars, value)
+		}
 	}
 
 	fields = fields[:len(fields)-2]
@@ -91,7 +90,7 @@ func CreateAllocInstrument(params map[string]interface{}) (int, error) {
 	return http.StatusOK, nil
 }
 
-func UpdateAllocInstrument(allocInstrumentKey string, params map[string]interface{}) (int, error) {
+func UpdateAllocInstrument(allocInstrumentKey string, params map[string]string) (int, error) {
 	query := `UPDATE ffs_alloc_instrument SET `
 	var setClauses []string
 	var values []interface{}
@@ -110,6 +109,48 @@ func UpdateAllocInstrument(allocInstrumentKey string, params map[string]interfac
 	if err != nil {
 		log.Println(err.Error())
 		return http.StatusBadGateway, err
+	}
+	return http.StatusOK, nil
+}
+
+func GetAllocInstrumentStatusByKey(key string) (int, error) {
+	query := "SELECT rec_status FROM ffs_alloc_instrument WHERE alloc_instrument_key = ?"
+	var status int
+	err := db.Db.QueryRow(query, key).Scan(&status)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Data tidak ditemukan
+			return 0, nil
+		}
+		// Terjadi error lain
+		return 0, err
+	}
+	return status, nil
+}
+
+func GetAllocInstrumentModels(c *[]AllocInstrument) (int, error) {
+	query := `SELECT a.alloc_instrument_key,
+	a.product_key,
+	b.product_name,
+	a.periode_key,
+	c.periode_name,
+	a.instrument_key,
+	d.instrument_name,
+	a.rec_order
+	FROM ffs_alloc_instrument a
+	JOIN ms_product b ON a.product_key = b.product_key
+	JOIN ffs_periode c ON a.periode_key = c.periode_key
+	JOIN ms_instrument d ON a.instrument_key = d.instrument_key
+	WHERE a.rec_status = 1 ORDER BY a.alloc_instrument_key DESC` //order by
+
+	log.Println("====================>>>", query)
+	err := db.Db.Select(c, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
+		return http.StatusNotFound, err
 	}
 	return http.StatusOK, nil
 }

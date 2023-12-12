@@ -628,6 +628,7 @@ func router() *echo.Echo {
 	//Portfolio Instrument
 	admin.POST("/create-alloc-instrument", controllers.CreateAllocInstrumentController).Name = "CreateAllocInstrumentController"
 	admin.POST("/update-alloc-instrument", controllers.UpdateAllocInstrumentController).Name = "UpdateAllocInstrumentController"
+	admin.GET("/get-alloc-instrument", controllers.GetAllocInstrumentController).Name = "GetAllocInstrumentController"
 	return e
 
 }
