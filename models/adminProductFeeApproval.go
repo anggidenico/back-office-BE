@@ -490,31 +490,39 @@ func ProductFeeApprovalAction(params map[string]string) error {
 						principleLimit := data.PrincipleLimit.String()
 						feeValue := data.FeeValue.String()
 						itemNotes := *data.ItemNotes
-						recstatus := strconv.FormatUint(*data.RecStatus, 10)
+						recstatus := "1"
 						seqNo := strconv.FormatInt(int64(i), 10)
 						rowMax := "0"
 						if i == len(*pf.FeeItem)-1 {
 							rowMax = "1"
 						}
 
-						if *data.ProductFeeItemKey > 0 {
-							// JIKA ADA FEE ITEM KEY MAKA UPDATE
-							queryItem = `UPDATE ms_product_fee_item SET 
-							principle_limit = ` + principleLimit + `, 
-							fee_value = ` + feeValue + `, 
-							item_notes = '` + itemNotes + `',
-							item_seqno = '` + seqNo + `',
-							row_max = '` + rowMax + `', 
-							rec_status = '` + recstatus + `', 
-							rec_modified_date = '` + recDate + `', 
-							rec_modified_by = ` + recBy + `
-							WHERE product_fee_item_key = ` + strconv.FormatUint(*data.ProductFeeItemKey, 10)
-						} else {
-							// JIKA TIDAK ADA FEE ITEM KEY MAKA CREATE
-							recstatus = `1`
-							queryItem = `INSERT INTO ms_product_fee_item(product_fee_key,item_seqno,row_max,principle_limit,fee_value,item_notes,rec_status,rec_created_date,rec_created_by) 
-							VALUES('` + feeKey + `','` + seqNo + `','` + rowMax + `','` + principleLimit + `','` + feeValue + `','` + itemNotes + `','` + recstatus + `','` + params["rec_modified_date"] + `','` + params["rec_modified_by"] + `'),`
+						qDisableLastFeeItem := `UPDATE ms_product_fee_item SET rec_status = 0 WHERE product_fee_item_key = ` + strconv.FormatUint(*data.ProductFeeItemKey, 10)
+						_, err = tx.Exec(qDisableLastFeeItem)
+						if err != nil {
+							tx.Rollback()
+							log.Println(err.Error())
+							return err
 						}
+
+						// if *data.ProductFeeItemKey > 0 {
+						// 	// JIKA ADA FEE ITEM KEY MAKA UPDATE
+						// 	queryItem = `UPDATE ms_product_fee_item SET
+						// 	principle_limit = ` + principleLimit + `,
+						// 	fee_value = ` + feeValue + `,
+						// 	item_notes = '` + itemNotes + `',
+						// 	item_seqno = '` + seqNo + `',
+						// 	row_max = '` + rowMax + `',
+						// 	rec_status = '` + recstatus + `',
+						// 	rec_modified_date = '` + recDate + `',
+						// 	rec_modified_by = ` + recBy + `
+						// 	WHERE product_fee_item_key = ` + strconv.FormatUint(*data.ProductFeeItemKey, 10)
+						// } else {
+						// JIKA TIDAK ADA FEE ITEM KEY MAKA CREATE
+						recstatus = `1`
+						queryItem = `INSERT INTO ms_product_fee_item(product_fee_key,item_seqno,row_max,principle_limit,fee_value,item_notes,rec_status,rec_created_date,rec_created_by) 
+							VALUES('` + feeKey + `','` + seqNo + `','` + rowMax + `','` + principleLimit + `','` + feeValue + `','` + itemNotes + `','` + recstatus + `','` + params["rec_modified_date"] + `','` + params["rec_modified_by"] + `'),`
+						// }
 						// log.Println("query update fee item:", queryItem)
 						_, err = tx.Exec(queryItem)
 						if err != nil {

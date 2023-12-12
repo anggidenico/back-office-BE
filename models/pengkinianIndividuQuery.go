@@ -264,7 +264,7 @@ func GetPersonalDataOnlyQuery(c *PengkinianPersonalDataModels, oa_request_key st
 
 	WHERE t1.rec_status = 1  AND t2.rec_status = 1 AND t1.oa_request_key = ` + oa_request_key
 
-	log.Println(query)
+	// log.Println(query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		log.Println(err.Error())
