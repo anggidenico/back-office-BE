@@ -156,7 +156,7 @@ func CustomerUpdateFile(c echo.Context) error {
 							return lib.CustomError(http.StatusBadRequest, err.Error(), "Missing required parameter: file_upload_file_upload_"+strconv.FormatUint(uint64(i), 10))
 						}
 						// Get file extension
-						extension := filepath.Ext(file.Filename)
+						extension := filepath.Ext(file.Filename) 
 						// Generate filename
 						filename := lib.RandStringBytesMaskImprSrc(50)
 						createFile["file_name"] = filename + extension

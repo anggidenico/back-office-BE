@@ -3,9 +3,13 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"mf-bo-api/config"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo"
@@ -113,12 +117,44 @@ func SaveStep6(c echo.Context) (error, int64) {
 
 	getParamsData := models.GetOptionByLookupGroupKey("105")
 	if len(getParamsData) > 0 {
-		// for _, data := range getParamsData {
-		// file_upload, err := c.FormFile("file_upload_" + strconv.FormatUint(data.Key, 10))
-		// if err != nil {
-		// 	return err, OaRequestKey
-		// }
-		// }
+		for _, data := range getParamsData {
+			file_upload, err := c.FormFile("file_upload_" + strconv.FormatUint(data.Key, 10))
+			if err != nil {
+				return err, OaRequestKey
+			}
+
+			if file_upload != nil {
+				err = os.MkdirAll(config.BasePathImage+"/images/oa_manual/"+oa_request_key, 0755)
+				if err != nil {
+					return err, OaRequestKey
+				}
+
+				extension := filepath.Ext(file_upload.Filename)
+				filename := strings.ReplaceAll(data.Value, " ", "_") + "_" + lib.RandStringBytesMaskImprSrc(26)
+				targetDir := config.BasePathImage + "/images/oa_manual/" + oa_request_key + "/" + filename + extension
+				err = lib.UploadImage(file_upload, targetDir)
+				if err != nil {
+					return err, OaRequestKey
+				}
+				// paramsOaPersonalData["pic_selfie_ktp"] = filename + extension
+
+				createFile := make(map[string]string)
+				createFile["ref_fk_key"] = oa_request_key
+				createFile["ref_fk_domain"] = "oa_request"
+				createFile["rec_status"] = "1"
+				createFile["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
+				createFile["rec_created_by"] = lib.UserIDStr
+				createFile["file_name"] = filename
+				createFile["file_extension"] = extension
+				createFile["file_path"] = "/images/oa_manual/" + oa_request_key + "/" + filename + extension
+				createFile["file_url"] = config.ImageUrl + "/images/oa_manual/" + oa_request_key + "/" + filename + extension
+
+				err, _ = models.CreateOrUpdateFileOaManual(paramsOaRequest, createFile)
+				if err != nil {
+					return err, OaRequestKey
+				}
+			}
+		}
 	}
 
 	OaRequestKey, _ = strconv.ParseInt(paramsOaRequest["oa_request_key"], 10, 64)
