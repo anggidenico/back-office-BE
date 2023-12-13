@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"database/sql"
-	"errors"
+	"log"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo"
@@ -13,7 +13,8 @@ import (
 
 func CreateMsSecuritiesController(c echo.Context) error {
 	var err error
-	params := make(map[string]string)
+	// params := make(map[string]string)
+	params := make(map[string]interface{})
 	params["rec_created_by"] = lib.UserIDStr
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
@@ -24,6 +25,17 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	secName := c.FormValue("sec_name")
 	if secName == "" {
 		return lib.CustomError(http.StatusBadRequest, "sec_name can not be blank", "sec_name can not be blank")
+	}
+
+	secParentKey := c.FormValue("sec_parent_key")
+	if secParentKey != "" {
+		value, err := strconv.Atoi(secParentKey)
+		if err != nil {
+			return lib.CustomError(value, "sec_parent_key must be number", "sec_parent_key must be number")
+		}
+		params["sec_parent_key"] = secParentKey
+	} else {
+		params["sec_parent_key"] = nil
 	}
 
 	secCategory := c.FormValue("securities_category")
@@ -46,17 +58,146 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	if isinCode == "" {
 		return lib.CustomError(http.StatusBadRequest, "isin_code can not be blank", "isin_code can not be blank")
 	}
+	// sectorKey := c.FormValue("sector_key")
+	// if sectorKey == "" {
+	// 	return lib.CustomError(http.StatusBadRequest, "sector_key can not be blank", "sector_key can not be blank")
+	// }
+
 	secClassification := c.FormValue("sec_classification")
 	if secClassification == "" {
 		return lib.CustomError(http.StatusBadRequest, "sec_classification can not be blank", "sec_classification can not be blank")
 	}
+	secTenorMonth := c.FormValue("sec_tenor_month")
+	if secTenorMonth != "" {
+		value, err := strconv.Atoi(secTenorMonth)
+		if err != nil {
+			return lib.CustomError(value, "sec_tenor_month must be number", "sec_tenor_month must be number")
+		}
+		params["sec_tenor_month"] = secTenorMonth
+	} else {
+		params["sec_tenor_month"] = nil
+	}
+
+	securityStatus := c.FormValue("security_status")
+	params["security_status"] = securityStatus
+
+	secShares := c.FormValue("sec_shares")
+	if secShares != "" {
+		value, err := strconv.Atoi(secShares)
+		if err != nil {
+			return lib.CustomError(value, "sec_shares must be number", "sec_shares must be number")
+		}
+		params["sec_shares"] = secShares
+	} else {
+		params["sec_shares"] = nil
+	}
+
+	flagSyariahStr := c.FormValue("flag_syariah")
+	flagSyariah, err := strconv.ParseBool(flagSyariahStr)
+	if err != nil {
+		return lib.CustomError(http.StatusBadRequest, "Invalid value for flag_syariah", err.Error())
+	}
+	params["flag_syariah"] = flagSyariah
+
+	flagIsBreakableStr := c.FormValue("flag_is_breakable")
+	flagIsBreakable, err := strconv.ParseBool(flagIsBreakableStr)
+	if err != nil {
+		return lib.CustomError(http.StatusBadRequest, "Invalid value for flag_is_breakable", err.Error())
+	}
+	params["flag_is_breakable"] = flagIsBreakable
+
+	flaghasCouponStr := c.FormValue("flag_has_coupon")
+	flagHasCoupon, err := strconv.ParseBool(flaghasCouponStr)
+	if err != nil {
+		return lib.CustomError(http.StatusBadRequest, "Invalid value for flag_has_coupon", err.Error())
+	}
+	params["flag_has_coupon"] = flagHasCoupon
+
+	stockMarket := c.FormValue("stock_market")
+	if stockMarket != "" {
+		value, err := strconv.Atoi(stockMarket)
+		if err != nil {
+			return lib.CustomError(value, "stock_market must be number", "stock_market must be number")
+		}
+		params["stock_market"] = stockMarket
+	} else {
+		params["stock_market"] = nil
+	}
+
+	secPaRates := c.FormValue("sec_pa_rates")
+	if secPaRates != "" {
+		value, err := strconv.Atoi(secPaRates)
+		if err != nil {
+			return lib.CustomError(value, "sec_pa_rates must be number", "sec_pa_rates must be number")
+		}
+		params["sec_pa_rates"] = secPaRates
+	} else {
+		params["sec_pa_rates"] = nil
+	}
+	secPrincipleValue := c.FormValue("sec_principle_value")
+	if secPrincipleValue != "" {
+		value, err := strconv.Atoi(secPrincipleValue)
+		if err != nil {
+			return lib.CustomError(value, "sec_principle_value must be number", "sec_principle_value must be number")
+		}
+		params["sec_principle_value"] = secPrincipleValue
+	} else {
+		params["sec_principle_value"] = nil
+	}
+
+	taxRates := c.FormValue("tax_rates")
+	if taxRates != "" {
+		value, err := strconv.Atoi(taxRates)
+		if err != nil {
+			return lib.CustomError(value, "tax_rates must be number", "tax_rates must be number")
+		}
+		params["tax_rates"] = taxRates
+	} else {
+		params["tax_rates"] = nil
+	}
+
+	participantKey := c.FormValue("participant_key")
+	if participantKey != "" {
+		value, err := strconv.Atoi(participantKey)
+		if err != nil {
+			return lib.CustomError(value, "participant_key must be number", "participant_key must be number")
+		}
+		params["participant_key"] = participantKey
+	} else {
+		params["participant_key"] = nil
+	}
+
+	couponType := c.FormValue("coupon_type")
+	if couponType != "" {
+		value, err := strconv.Atoi(couponType)
+		if err != nil {
+			return lib.CustomError(value, "coupon_type must be number", "coupon_type must be number")
+		}
+		params["coupon_type"] = couponType
+	} else {
+		params["coupon_type"] = nil
+	}
+
+	recOrder := c.FormValue("rec_order")
+	if recOrder != "" {
+		if len(recOrder) > 11 {
+			return lib.CustomError(http.StatusBadRequest, "rec_order should be exactly 11 characters", "rec_order be exactly 11 characters")
+		}
+		value, err := strconv.Atoi(recOrder)
+		if err != nil {
+			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
+		}
+		params["rec_order"] = strconv.Itoa(value)
+	} else {
+		params["rec_order"] = "0"
+	}
+
 	today := time.Now()
 	pastDue := today.AddDate(1, 0, 0)
 	pastDueDate := pastDue.Format(lib.TIMESTAMPFORMAT)
 
 	dateIs := today.AddDate(1, -1, -2)
 	dateIssued := dateIs.Format(lib.TIMESTAMPFORMAT)
-
 	params["sec_code"] = secCode
 	params["sec_name"] = secName
 	params["securities_category"] = secCategory
@@ -69,18 +210,67 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	params["date_matured"] = pastDueDate
 	params["rec_status"] = "1"
 
-	status, err = models.CreateMsSecurities(params)
+	duplicate, key, err := models.CheckDuplicateSecurities(secCode, secName, secType)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed input data")
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
 	}
 
-	var response lib.Response
-	response.Status.Code = http.StatusOK
-	response.Status.MessageServer = "OK"
-	response.Status.MessageClient = "OK"
-	response.Data = ""
+	log.Println("Duplicate:", duplicate)
+	log.Println("Key:", key)
 
-	return c.JSON(http.StatusOK, response)
+	// Jika duplikasi ditemukan, perbarui data yang sudah ada
+	if duplicate {
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		existingDataStatus, err := models.GetSecuritiesStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusInternalServerError, "Error getting existing data status", "Error getting existing data status")
+		}
+
+		// Jika data sudah dihapus (rec_status = 0), perbarui statusnya menjadi aktif (rec_status = 1)
+		if existingDataStatus == 0 {
+			log.Println("Existing data is deleted. Recreating data.")
+
+			// Set status menjadi aktif (rec_status = 1)
+			params["rec_status"] = "1"
+			// Update data dengan status baru dan nilai-nilai yang baru
+			status, err := models.UpdateMsSecurities(key, params)
+			if err != nil {
+				log.Println("Error updating data:", err)
+				return lib.CustomError(status, "Error updating data", "Error updating data")
+			}
+			return c.JSON(http.StatusOK, lib.Response{
+				Status: lib.Status{
+					Code:          http.StatusOK,
+					MessageServer: "OK",
+					MessageClient: "OK",
+				},
+				Data: "Data updated successfully",
+			})
+		} else {
+			// Jika data masih aktif, kembalikan respons kesalahan duplikasi
+			log.Println("Existing data is still active. Duplicate data error.")
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+	} else {
+		// Jika tidak ada duplikasi, buat data baru
+		status, err := models.CreateMsSecurities(params)
+		if err != nil {
+			log.Println("Error create data:", err)
+			return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+	}
+
+	return c.JSON(http.StatusOK, lib.Response{
+		Status: lib.Status{
+			Code:          http.StatusOK,
+			MessageServer: "OK",
+			MessageClient: "OK",
+		},
+		Data: "Data created successfully",
+	})
 }
 
 func GetMsSecuritiesController(c echo.Context) error {
@@ -124,41 +314,25 @@ func GetMsSecuritiesController(c echo.Context) error {
 			rData.StockMarket = data.StockMarket
 			rData.TaxRates = data.TaxRates
 
-			// if data.FlagSyariah != nil {
-			// 	rData.FlagSyariah = convertToBoolean(data.FlagSyariah)
-			// } else {
-			// 	rData.FlagSyariah = nil
-			// }
-			// if data.FlagHasCoupon != nil {
-			// 	rData.FlagHasCoupon = convertToBoolean(data.FlagHasCoupon)
-			// } else {
-			// 	rData.FlagHasCoupon = nil
-			// }
-			// if data.FlagIsBreakable != nil {
-			// 	rData.FlagIsBreakable = convertToBoolean(data.FlagIsBreakable)
-			// } else {
-			// 	rData.FlagIsBreakable = nil
-			// }
-			if data.FlagSyariah != nil {
-				flagHasCouponValue := (*data.FlagSyariah == "true")
-				rData.FlagSyariah = &flagHasCouponValue
+			if len(data.FlagSyariah) > 0 {
+				flagSyariahValue := data.FlagSyariah[0] == 1
+				rData.FlagSyariah = &flagSyariahValue
 			} else {
 				rData.FlagSyariah = nil
 			}
-			if data.FlagHasCoupon != nil {
-				flagHasCouponValue := (*data.FlagHasCoupon == "true")
-				rData.FlagHasCoupon = &flagHasCouponValue
+			if len(data.FlagIsBreakable) > 0 {
+				flagBreakableValue := data.FlagSyariah[0] == 1
+				rData.FlagIsBreakable = &flagBreakableValue
 			} else {
-				rData.FlagHasCoupon = nil
+				rData.FlagIsBreakable = nil
 			}
-			if data.FlagIsBreakable != nil {
-				flagHasCouponValue := (*data.FlagIsBreakable == "true")
-				rData.FlagIsBreakable = &flagHasCouponValue
+			if len(data.FlagHasCoupon) > 0 {
+				flagCouponValue := data.FlagHasCoupon[0] == 1
+				rData.FlagHasCoupon = &flagCouponValue
 			} else {
 				rData.FlagIsBreakable = nil
 			}
 			responseData = append(responseData, rData)
-
 		}
 	}
 
@@ -169,43 +343,6 @@ func GetMsSecuritiesController(c echo.Context) error {
 	response.Data = responseData
 	return c.JSON(http.StatusOK, response)
 }
-func convertToBoolean(value *string) *bool {
-	if value == nil {
-		return nil
-	}
-
-	boolValue := (*value == "0")
-	return &boolValue
-}
-
-// func convertToBoolean(value *[]uint8) *bool {
-// 	if value == nil {
-// 		return nil
-// 	}
-
-// 	stringValue := string(*value)
-// 	if stringValue == "1" {
-// 		boolValue := true
-// 		return &boolValue
-// 	} else {
-// 		boolValue := false
-// 		return &boolValue
-// 	}
-// }
-
-// func GetMsSecuritiesController(c echo.Context) error {
-// 	var instrument []models.Securities
-// 	status, err := models.GetSecuritiesModels(&instrument)
-// 	if err != nil {
-// 		return lib.CustomError(status, err.Error(), "Failed get data")
-// 	}
-// 	var response lib.Response
-// 	response.Status.Code = http.StatusOK
-// 	response.Status.MessageServer = "OK"
-// 	response.Status.MessageClient = "OK"
-// 	response.Data = instrument
-// 	return c.JSON(http.StatusOK, response)
-// }
 
 func DeleteMsSecuritiesController(c echo.Context) error {
 	params := make(map[string]string)
@@ -234,24 +371,83 @@ func GetMsSecuritiesDetailController(c echo.Context) error {
 	if secKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing sec_key", "Missing sec_key")
 	}
-	var detailmssec models.SecuritiesDetail
-	status, err := models.GetMsSecuritiesDetailModels(&detailmssec, secKey)
+
+	var sec models.SecuritiesDetail
+	status, err := models.GetMsSecuritiesDetailModels(&sec, secKey)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return lib.CustomError(http.StatusNotFound, "sec_key not found", "sec_key not found")
-		}
 		return lib.CustomError(status, err.Error(), err.Error())
 	}
+
+	var responseData models.SecuritiesResponse
+	var rData models.SecuritiesResponse
+
+	rData.SecKey = sec.SecKey
+	rData.CouponName = sec.CouponName
+	rData.SecParentKey = sec.SecParentKey
+	rData.SecCode = sec.SecCode
+	rData.SecName = sec.SecName
+	rData.CouponType = sec.CouponType
+	rData.CurrencyCode = sec.CurrencyCode
+	rData.CurrencyName = sec.CurrencyName
+	rData.CurrencyKey = sec.CurrencyKey
+	rData.DateIssued = sec.DateIssued
+	rData.DateMatured = sec.DateMatured
+	rData.IsinCode = sec.IsinCode
+	rData.ParticipantKey = sec.ParticipantKey
+	rData.ParticipantName = sec.ParticipantName
+	rData.RecOrder = sec.RecOrder
+	rData.SecClassification = sec.SecClassification
+	rData.SecClassificationName = sec.SecClassificationName
+	rData.SecParates = sec.SecParates
+	rData.SecPrincipleValue = sec.SecPrincipleValue
+	rData.SecShares = sec.SecShares
+	rData.SecTenorMonth = sec.SecTenorMonth
+	rData.SecuritiesCategory = sec.SecuritiesCategory
+	rData.SecuritiesCategoryName = sec.SecuritiesCategoryName
+	rData.SecurityStatus = sec.SecurityStatus
+	rData.SecurityType = sec.SecurityType
+	rData.SecurityTypeName = sec.SecurityTypeName
+	rData.SectorKey = sec.SectorKey
+	rData.SectorName = sec.SectorName
+	rData.SecTenorMonth = sec.SecTenorMonth
+	rData.SecurityStatusName = sec.SecurityStatusName
+	rData.StocKMarketName = sec.StocKMarketName
+	rData.StockMarket = sec.StockMarket
+	rData.TaxRates = sec.TaxRates
+
+	if len(sec.FlagSyariah) > 0 {
+		flagSyariahValue := sec.FlagSyariah[0] == 1
+		rData.FlagSyariah = &flagSyariahValue
+	} else {
+		rData.FlagSyariah = nil
+	}
+	if len(sec.FlagIsBreakable) > 0 {
+		flagBreakableValue := sec.FlagIsBreakable[0] == 1
+		rData.FlagIsBreakable = &flagBreakableValue
+	} else {
+		rData.FlagIsBreakable = nil
+	}
+	if len(sec.FlagHasCoupon) > 0 {
+		flagCouponValue := sec.FlagHasCoupon[0] == 1
+		rData.FlagHasCoupon = &flagCouponValue
+	} else {
+		rData.FlagHasCoupon = nil
+	}
+
+	responseData = rData
+
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = detailmssec
+	response.Data = responseData
+
 	return c.JSON(http.StatusOK, response)
 }
+
 func UpdateMsSecuritiesController(c echo.Context) error {
 	var err error
-	params := make(map[string]string)
+	params := make(map[string]interface{})
 	params["rec_modified_by"] = lib.UserIDStr
 	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
@@ -309,15 +505,34 @@ func UpdateMsSecuritiesController(c echo.Context) error {
 	params["date_matured"] = pastDueDate
 	params["rec_status"] = "1"
 
+	duplicate, key, err := models.CheckDuplicateSecurities(secCode, secName, secType)
+	if err != nil {
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
+	}
+	if duplicate {
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		_, err := models.GetSecuritiesStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+
+		if key != secKey {
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data", "Duplicate data")
+		}
+
+	}
 	status, err = models.UpdateMsSecurities(secKey, params)
 	if err != nil {
-		return lib.CustomError(status, err.Error(), "Failed input data")
+		return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
 	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = ""
+	response.Data = "Data updated successfully"
 
 	return c.JSON(http.StatusOK, response)
 }

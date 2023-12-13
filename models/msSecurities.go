@@ -65,7 +65,7 @@ type Securities struct {
 	SecClassification      *uint64          `db:"sec_classification"    json:"sec_classification"`
 	SecClassificationName  *string          `db:"sec_classification_name"    json:"sec_classification_name"`
 	SecShares              *uint64          `db:"sec_shares" json:"sec_shares"`
-	FlagSyariah            *string          `db:"flag_syariah" json:"flag_syariah"`
+	FlagSyariah            []byte           `db:"flag_syariah" json:"flag_syariah"`
 	StockMarket            *uint64          `db:"stock_market" json:"stock_market"`
 	StocKMarketName        *string          `db:"stock_market_name" json:"stock_market_name"`
 	SecParates             *decimal.Decimal `db:"sec_pa_rates" json:"sec_pa_rates"`
@@ -73,12 +73,14 @@ type Securities struct {
 	TaxRates               *decimal.Decimal `db:"tax_rates" json:"tax_rates"`
 	ParticipantKey         *int64           `db:"participant_key" json:"participant_key"`
 	ParticipantName        *string          `db:"participant_name" json:"participant_name"`
-	FlagHasCoupon          *string          `db:"flag_has_coupon" json:"flag_has_coupon"`
+	FlagHasCoupon          []byte           `db:"flag_has_coupon" json:"flag_has_coupon"`
 	CouponType             *int64           `db:"coupon_type" json:"coupon_type"`
 	CouponName             *string          `db:"coupon_name" json:"coupon_name"`
-	FlagIsBreakable        *string          `db:"flag_is_breakable" json:"flag_is_breakable"`
+	FlagIsBreakable        []byte           `db:"flag_is_breakable" json:"flag_is_breakable"`
 	RecOrder               *int64           `db:"rec_order" json:"rec_order"`
 }
+
+// Value converts Int64Bool to a database value.
 
 type SecuritiesResponse struct {
 	SecKey       uint64  `db:"sec_key"               json:"sec_key"`
@@ -143,7 +145,7 @@ type SecuritiesDetail struct {
 	SecClassification      *uint64          `db:"sec_classification"    json:"sec_classification"`
 	SecClassificationName  *string          `db:"sec_classification_name"    json:"sec_classification_name"`
 	SecShares              *uint64          `db:"sec_shares" json:"sec_shares"`
-	FlagSyariah            *string          `db:"flag_syariah" json:"flag_syariah"`
+	FlagSyariah            []byte           `db:"flag_syariah" json:"flag_syariah"`
 	StockMarket            *uint64          `db:"stock_market" json:"stock_market"`
 	StocKMarketName        *string          `db:"stock_market_name" json:"stock_market_name"`
 	SecParates             *decimal.Decimal `db:"sec_pa_rates" json:"sec_pa_rates"`
@@ -151,60 +153,62 @@ type SecuritiesDetail struct {
 	TaxRates               *decimal.Decimal `db:"tax_rates" json:"tax_rates"`
 	ParticipantKey         *int64           `db:"participant_key" json:"participant_key"`
 	ParticipantName        *string          `db:"participant_name" json:"participant_name"`
-	FlagHasCoupon          *string          `db:"flag_has_coupon" json:"flag_has_coupon"`
+	FlagHasCoupon          []byte           `db:"flag_has_coupon" json:"flag_has_coupon"`
 	CouponType             *int64           `db:"coupon_type" json:"coupon_type"`
 	CouponName             *string          `db:"coupon_name" json:"coupon_name"`
-	FlagIsBreakable        *string          `db:"flag_is_breakable" json:"flag_is_breakable"`
+	FlagIsBreakable        []byte           `db:"flag_is_breakable" json:"flag_is_breakable"`
 	RecOrder               *int64           `db:"rec_order" json:"rec_order"`
 }
 
 func GetSecuritiesModels(c *[]Securities) (int, error) {
-	query := `SELECT a.sec_key,
-	a.sec_parent_key,
-	a.sec_code, 
-	a.sec_name,
-	a.securities_category,
-	b.lkp_name securities_category_name,
-	a.security_type,
-	c.lkp_name security_type_name,
-	a.sector_key,
-	g.sector_name,
-	a.date_issued,
-	a.date_matured,
-	a.sec_tenor_month,
-	a.currency_key,
-	e.code currency_code,
-	e.name currency_name,
-	a.security_status,
-	d.lkp_name security_status_name,
-	a.isin_code,
-	a.sec_classification, 
-	f.lkp_name sec_classification_name,
-	a.sec_shares,
-	a.flag_syariah,
-	a.stock_market,
-	h.lkp_name stock_market_name,
-	a.sec_pa_rates,
-	a.sec_principle_value,
-	a.tax_rates,
-	a.participant_key,
-	i.participant_name,
-	a.flag_has_coupon,
-	a.coupon_type,
-	j.lkp_name coupon_name,
-	a.flag_is_breakable,
-	a.rec_order
-	FROM ms_securities a 
-	JOIN gen_lookup b ON a.securities_category = b.lookup_key
-	JOIN gen_lookup c ON a.security_type = c.lookup_key
-	LEFT JOIN gen_lookup d ON a.security_status = d.lookup_key
-	LEFT JOIN ms_currency e ON a.currency_key = e.currency_key
-	LEFT JOIN gen_lookup f ON a.sec_classification = f.lookup_key
-	JOIN ms_securities_sector g ON a.sector_key = g.sector_key
-	LEFT JOIN gen_lookup h ON a.stock_market = h.lookup_key
-	JOIN ms_participant i ON a.participant_key = i.participant_key
-	LEFT JOIN gen_lookup j ON a.coupon_type = j.lookup_key
-	WHERE a.rec_status = 1 ORDER BY a.rec_created_date DESC`
+	query := `SELECT
+    a.sec_key,
+    a.sec_parent_key,
+    a.sec_code,
+    a.sec_name,
+    a.securities_category,
+    b.lkp_name securities_category_name,
+    a.security_type,
+    c.lkp_name security_type_name,
+    a.sector_key,
+    g.sector_name,
+    a.date_issued,
+    a.date_matured,
+    a.sec_tenor_month,
+    a.currency_key,
+    e.code currency_code,
+    e.name currency_name,
+    a.security_status,
+    d.lkp_name security_status_name,
+    a.isin_code,
+    a.sec_classification,
+    f.lkp_name sec_classification_name,
+    a.sec_shares,
+    a.flag_syariah,
+    a.stock_market,
+    h.lkp_name stock_market_name,
+    a.sec_pa_rates,
+    a.sec_principle_value,
+    a.tax_rates,
+    a.participant_key,
+    i.participant_name,
+    a.flag_has_coupon,
+    a.coupon_type,
+    j.lkp_name coupon_name,
+    a.flag_is_breakable,
+    a.rec_order
+FROM ms_securities a
+LEFT JOIN gen_lookup b ON a.securities_category = b.lookup_key
+LEFT JOIN gen_lookup c ON a.security_type = c.lookup_key
+LEFT JOIN gen_lookup d ON a.security_status = d.lookup_key
+LEFT JOIN ms_currency e ON a.currency_key = e.currency_key
+LEFT JOIN gen_lookup f ON a.sec_classification = f.lookup_key
+LEFT JOIN ms_securities_sector g ON a.sector_key = g.sector_key
+LEFT JOIN gen_lookup h ON a.stock_market = h.lookup_key
+LEFT JOIN ms_participant i ON a.participant_key = i.participant_key
+LEFT JOIN gen_lookup j ON a.coupon_type = j.lookup_key
+WHERE a.rec_status = 1
+ORDER BY a.sec_key DESC;`
 
 	log.Println(query)
 
@@ -219,14 +223,6 @@ func GetSecuritiesModels(c *[]Securities) (int, error) {
 
 	return http.StatusOK, nil
 }
-
-// func convertToBoolean(value *bool) *bool {
-// 	if value == nil {
-// 		return nil
-// 	}
-
-// 	return value
-// }
 
 func DeleteMsSecurities(SecKey string, params map[string]string) (int, error) {
 	query := `UPDATE ms_securities SET `
@@ -254,51 +250,52 @@ func DeleteMsSecurities(SecKey string, params map[string]string) (int, error) {
 	return http.StatusOK, nil
 }
 func GetMsSecuritiesDetailModels(c *SecuritiesDetail, SecKey string) (int, error) {
-	query := `SELECT a.sec_key,
-	a.sec_parent_key,
-	a.sec_code, 
-	a.sec_name,
-	a.securities_category,
-	b.lkp_name securities_category_name,
-	a.security_type,
-	c.lkp_name security_type_name,
-	a.sector_key,
-	g.sector_name,
-	a.date_issued,
-	a.date_matured,
-	a.sec_tenor_month,
-	a.currency_key,
-	e.code currency_code,
-	e.name currency_name,
-	a.security_status,
-	d.lkp_name security_status_name,
-	a.isin_code,
-	a.sec_classification, 
-	f.lkp_name sec_classification_name,
-	a.sec_shares,
-	a.flag_syariah,
-	a.stock_market,
-	h.lkp_name stock_market_name,
-	a.sec_pa_rates,
-	a.sec_principle_value,
-	a.tax_rates,
-	a.participant_key,
-	i.participant_name,
-	a.flag_has_coupon,
-	a.coupon_type,
-	j.lkp_name coupon_name,
-	a.flag_is_breakable,
-	a.rec_order
-	FROM ms_securities a 
-	JOIN gen_lookup b ON a.securities_category = b.lookup_key
-	JOIN gen_lookup c ON a.security_type = c.lookup_key
-	LEFT JOIN gen_lookup d ON a.security_status = d.lookup_key
-	LEFT JOIN ms_currency e ON a.currency_key = e.currency_key
-	LEFT JOIN gen_lookup f ON a.sec_classification = f.lookup_key
-	JOIN ms_securities_sector g ON a.sector_key = g.sector_key
-	LEFT JOIN gen_lookup h ON a.stock_market = h.lookup_key
-	JOIN ms_participant i ON a.participant_key = i.participant_key
-	LEFT JOIN gen_lookup j ON a.coupon_type = j.lookup_key
+	query := `SELECT
+    a.sec_key,
+    a.sec_parent_key,
+    a.sec_code,
+    a.sec_name,
+    a.securities_category,
+    b.lkp_name securities_category_name,
+    a.security_type,
+    c.lkp_name security_type_name,
+    a.sector_key,
+    g.sector_name,
+    a.date_issued,
+    a.date_matured,
+    a.sec_tenor_month,
+    a.currency_key,
+    e.code currency_code,
+    e.name currency_name,
+    a.security_status,
+    d.lkp_name security_status_name,
+    a.isin_code,
+    a.sec_classification,
+    f.lkp_name sec_classification_name,
+    a.sec_shares,
+    a.flag_syariah,
+    a.stock_market,
+    h.lkp_name stock_market_name,
+    a.sec_pa_rates,
+    a.sec_principle_value,
+    a.tax_rates,
+    a.participant_key,
+    i.participant_name,
+    a.flag_has_coupon,
+    a.coupon_type,
+    j.lkp_name coupon_name,
+    a.flag_is_breakable,
+    a.rec_order
+FROM ms_securities a
+LEFT JOIN gen_lookup b ON a.securities_category = b.lookup_key
+LEFT JOIN gen_lookup c ON a.security_type = c.lookup_key
+LEFT JOIN gen_lookup d ON a.security_status = d.lookup_key
+LEFT JOIN ms_currency e ON a.currency_key = e.currency_key
+LEFT JOIN gen_lookup f ON a.sec_classification = f.lookup_key
+LEFT JOIN ms_securities_sector g ON a.sector_key = g.sector_key
+LEFT JOIN gen_lookup h ON a.stock_market = h.lookup_key
+LEFT JOIN ms_participant i ON a.participant_key = i.participant_key
+LEFT JOIN gen_lookup j ON a.coupon_type = j.lookup_key
 	WHERE a.rec_status = 1 
 	AND a.sec_key =` + SecKey
 
@@ -310,7 +307,7 @@ func GetMsSecuritiesDetailModels(c *SecuritiesDetail, SecKey string) (int, error
 	}
 	return http.StatusOK, nil
 }
-func UpdateMsSecurities(SecKey string, params map[string]string) (int, error) {
+func UpdateMsSecurities(SecKey string, params map[string]interface{}) (int, error) {
 	query := `UPDATE ms_securities SET `
 	var setClauses []string
 	var values []interface{}
@@ -335,9 +332,9 @@ func UpdateMsSecurities(SecKey string, params map[string]string) (int, error) {
 	return http.StatusOK, nil
 }
 
-func CreateMsSecurities(params map[string]string) (int, error) {
+func CreateMsSecurities(params map[string]interface{}) (int, error) {
 	// Check for duplicate records
-	duplicate, _, err := CheckDuplicateSecurities(params["sec_code"], params["sec_name"], params["security_type"])
+	duplicate, _, err := CheckDuplicateSecurities(params["sec_code"].(string), params["sec_name"].(string), params["security_type"].(string))
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -402,26 +399,17 @@ func CheckDuplicateSecurities(SecCode, SecName, SecType string) (bool, string, e
 	return true, key, nil
 }
 
-// Manual konversi nilai *bool
-// for i := range *c {
-// 	// Handle nilai-nilai yang mungkin NULL
-// 	if (*c)[i].FlagSyariah == nil {
-// 		flagSyariah := uint8(0) // Atau sesuaikan dengan nilai default yang sesuai
-// 		(*c)[i].FlagSyariah = &flagSyariah
-
-// 	}
-// }
-// for i := range *c {
-// 	// Handle nilai-nilai yang mungkin NULL
-// 	if (*c)[i].FlagHasCoupon == nil {
-// 		flagSyariah := uint8(0) // Atau sesuaikan dengan nilai default yang sesuai
-// 		(*c)[i].FlagHasCoupon = &flagSyariah
-// 	}
-// }
-// for i := range *c {
-// 	// Handle nilai-nilai yang mungkin NULL
-// 	if (*c)[i].FlagIsBreakable == nil {
-// 		flagSyariah := uint8(0) // Atau sesuaikan dengan nilai default yang sesuai
-// 		(*c)[i].FlagIsBreakable = &flagSyariah
-// 	}
-// }
+func GetSecuritiesStatusByKey(key string) (int, error) {
+	query := "SELECT rec_status FROM ms_securities WHERE sec_key = ?"
+	var status int
+	err := db.Db.QueryRow(query, key).Scan(&status)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Data tidak ditemukan
+			return 0, nil
+		}
+		// Terjadi error lain
+		return 0, err
+	}
+	return status, nil
+}
