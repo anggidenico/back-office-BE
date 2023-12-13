@@ -65,7 +65,7 @@ type Securities struct {
 	SecClassification      *uint64          `db:"sec_classification"    json:"sec_classification"`
 	SecClassificationName  *string          `db:"sec_classification_name"    json:"sec_classification_name"`
 	SecShares              *uint64          `db:"sec_shares" json:"sec_shares"`
-	FlagSyariah            bool             `db:"flag_syariah" json:"flag_syariah"`
+	FlagSyariah            *string          `db:"flag_syariah" json:"flag_syariah"`
 	StockMarket            *uint64          `db:"stock_market" json:"stock_market"`
 	StocKMarketName        *string          `db:"stock_market_name" json:"stock_market_name"`
 	SecParates             *decimal.Decimal `db:"sec_pa_rates" json:"sec_pa_rates"`
@@ -216,22 +216,17 @@ func GetSecuritiesModels(c *[]Securities) (int, error) {
 		}
 		return http.StatusNotFound, err
 	}
-	// for i := range *c {
-	// 	(*c)[i].FlagSyariah = convertToBoolean((*c)[i].FlagSyariah)
-	// 	(*c)[i].FlagHasCoupon = convertToBoolean((*c)[i].FlagHasCoupon)
-	// 	(*c)[i].FlagIsBreakable = convertToBoolean((*c)[i].FlagIsBreakable)
-	// }
+
 	return http.StatusOK, nil
 }
 
-// func convertToBoolean(value *bool) *bool {
-// 	if value == nil {
-// 		return nil
-// 	}
+func convertToBoolean(value *bool) *bool {
+	if value == nil {
+		return nil
+	}
 
-// 	boolValue := *value == true
-// 	return &boolValue
-// }
+	return value
+}
 
 func DeleteMsSecurities(SecKey string, params map[string]string) (int, error) {
 	query := `UPDATE ms_securities SET `

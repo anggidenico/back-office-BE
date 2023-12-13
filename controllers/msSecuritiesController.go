@@ -124,28 +124,39 @@ func GetMsSecuritiesController(c echo.Context) error {
 			rData.StockMarket = data.StockMarket
 			rData.TaxRates = data.TaxRates
 
-			if data.FlagSyariah {
-				*rData.FlagSyariah = true
-			} else {
-				*rData.FlagSyariah = false
-			}
-
-			// if *data.FlagHasCoupon == 1 {
-			// 	*rData.FlagHasCoupon = true
-			// } else if *data.FlagHasCoupon == 0 {
-			// 	*rData.FlagHasCoupon = false
-			// } else if data.FlagHasCoupon == nil {
+			// if data.FlagSyariah != nil {
+			// 	rData.FlagSyariah = convertToBoolean(data.FlagSyariah)
+			// } else {
+			// 	rData.FlagSyariah = nil
+			// }
+			// if data.FlagHasCoupon != nil {
+			// 	rData.FlagHasCoupon = convertToBoolean(data.FlagHasCoupon)
+			// } else {
 			// 	rData.FlagHasCoupon = nil
 			// }
-
-			// if *data.FlagIsBreakable == 1 {
-			// 	*rData.FlagIsBreakable = true
-			// } else if *data.FlagIsBreakable == 0 {
-			// 	*rData.FlagIsBreakable = false
-			// } else if data.FlagIsBreakable == nil {
+			// if data.FlagIsBreakable != nil {
+			// 	rData.FlagIsBreakable = convertToBoolean(data.FlagIsBreakable)
+			// } else {
 			// 	rData.FlagIsBreakable = nil
 			// }
-
+			if data.FlagSyariah != nil {
+				flagHasCouponValue := (*data.FlagSyariah == "true")
+				rData.FlagSyariah = &flagHasCouponValue
+			} else {
+				rData.FlagSyariah = nil
+			}
+			if data.FlagHasCoupon != nil {
+				flagHasCouponValue := (*data.FlagHasCoupon == "true")
+				rData.FlagHasCoupon = &flagHasCouponValue
+			} else {
+				rData.FlagHasCoupon = nil
+			}
+			if data.FlagIsBreakable != nil {
+				flagHasCouponValue := (*data.FlagIsBreakable == "true")
+				rData.FlagIsBreakable = &flagHasCouponValue
+			} else {
+				rData.FlagIsBreakable = nil
+			}
 			responseData = append(responseData, rData)
 
 		}
@@ -158,8 +169,31 @@ func GetMsSecuritiesController(c echo.Context) error {
 	response.Data = responseData
 	return c.JSON(http.StatusOK, response)
 }
+func convertToBoolean(value *string) *bool {
+	if value == nil {
+		return nil
+	}
 
-// func GetSecuritiesController(c echo.Context) error {
+	boolValue := (*value == "1")
+	return &boolValue
+}
+
+// func convertToBoolean(value *[]uint8) *bool {
+// 	if value == nil {
+// 		return nil
+// 	}
+
+// 	stringValue := string(*value)
+// 	if stringValue == "1" {
+// 		boolValue := true
+// 		return &boolValue
+// 	} else {
+// 		boolValue := false
+// 		return &boolValue
+// 	}
+// }
+
+// func GetMsSecuritiesController(c echo.Context) error {
 // 	var instrument []models.Securities
 // 	status, err := models.GetSecuritiesModels(&instrument)
 // 	if err != nil {

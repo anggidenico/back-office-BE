@@ -161,6 +161,7 @@ func GetAllocInstrumentModels(c *[]AllocInstrument) (int, error) {
 	c.periode_name,
 	a.instrument_key,
 	d.instrument_name,
+	a.instrument_value,
 	a.rec_order
 	FROM ffs_alloc_instrument a
 	JOIN ms_product b ON a.product_key = b.product_key
@@ -188,6 +189,7 @@ func GetAllInstrumentDetailModels(c *AllocInstrument, AllocInstrumentKey string)
 	c.periode_name,
 	a.instrument_key,
 	d.instrument_name,
+	a.instrument_value,
 	a.rec_order
 	FROM ffs_alloc_instrument a
 	JOIN ms_product b ON a.product_key = b.product_key
