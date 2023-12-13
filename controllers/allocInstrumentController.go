@@ -129,19 +129,19 @@ func UpdateAllocInstrumentController(c echo.Context) error {
 	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
 	allocInstrumentKey := c.FormValue("alloc_instrument_key")
-	if allocInstrumentKey != "" {
+	if allocInstrumentKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing alloc_instrument_key", "Missing alloc_instrument_key")
 	}
 	productKey := c.FormValue("product_key")
-	if productKey != "" {
+	if productKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing product_key", "Missing product_key")
 	}
 	periodeKey := c.FormValue("periode_key")
-	if periodeKey != "" {
+	if periodeKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing periode_key", "Missing periode_key")
 	}
 	instrumentKey := c.FormValue("instrument_key")
-	if instrumentKey != "" {
+	if instrumentKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing instrument_key", "Missing instrument_key")
 	}
 	instrumentValue := c.FormValue("instrument_value")

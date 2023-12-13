@@ -174,7 +174,7 @@ func convertToBoolean(value *string) *bool {
 		return nil
 	}
 
-	boolValue := (*value == "1")
+	boolValue := (*value == "0")
 	return &boolValue
 }
 

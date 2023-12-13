@@ -220,13 +220,13 @@ func GetSecuritiesModels(c *[]Securities) (int, error) {
 	return http.StatusOK, nil
 }
 
-func convertToBoolean(value *bool) *bool {
-	if value == nil {
-		return nil
-	}
+// func convertToBoolean(value *bool) *bool {
+// 	if value == nil {
+// 		return nil
+// 	}
 
-	return value
-}
+// 	return value
+// }
 
 func DeleteMsSecurities(SecKey string, params map[string]string) (int, error) {
 	query := `UPDATE ms_securities SET `
