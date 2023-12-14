@@ -50,10 +50,7 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	if currencyKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "currency_key can not be blank", "currency_key can not be blank")
 	}
-	secStatus := c.FormValue("security_status")
-	if secStatus == "" {
-		return lib.CustomError(http.StatusBadRequest, "security_status can not be blank", "security_status can not be blank")
-	}
+
 	isinCode := c.FormValue("isin_code")
 	if isinCode == "" {
 		return lib.CustomError(http.StatusBadRequest, "isin_code can not be blank", "isin_code can not be blank")
@@ -79,7 +76,15 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	}
 
 	securityStatus := c.FormValue("security_status")
-	params["security_status"] = securityStatus
+	if securityStatus != "" {
+		value, err := strconv.Atoi(securityStatus)
+		if err != nil {
+			return lib.CustomError(value, "security_status must be number", "security_status must be number")
+		}
+		params["security_status"] = securityStatus
+	} else {
+		params["security_status"] = nil
+	}
 
 	secShares := c.FormValue("sec_shares")
 	if secShares != "" {
@@ -203,7 +208,7 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	params["securities_category"] = secCategory
 	params["security_type"] = secType
 	params["currency_key"] = currencyKey
-	params["security_status"] = secStatus
+
 	params["isin_code"] = isinCode
 	params["sec_classification"] = secClassification
 	params["date_issued"] = dateIssued
