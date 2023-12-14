@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
+	"github.com/shopspring/decimal"
 )
 
 func CreateMsSecuritiesController(c echo.Context) error {
@@ -301,6 +302,7 @@ func CreateMsSecuritiesController(c echo.Context) error {
 }
 
 func GetMsSecuritiesController(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
 	var sec []models.Securities
 	status, err := models.GetSecuritiesModels(&sec)
 	if err != nil {
@@ -394,6 +396,7 @@ func DeleteMsSecuritiesController(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 func GetMsSecuritiesDetailController(c echo.Context) error {
+	decimal.MarshalJSONWithoutQuotes = true
 	secKey := c.Param("sec_key")
 	if secKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing sec_key", "Missing sec_key")
@@ -730,5 +733,20 @@ func UpdateMsSecuritiesController(c echo.Context) error {
 	response.Status.MessageClient = "OK"
 	response.Data = "Data updated successfully"
 
+	return c.JSON(http.StatusOK, response)
+}
+
+func GetParticipantKeyController(c echo.Context) error {
+	var value []models.ParticipantList
+	status, err := models.GetParticipantListModels(&value)
+	if err != nil {
+		return lib.CustomError(status, err.Error(), "Failed get data")
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = value
+	// log.Printf("Response Data: %+v\n", response.Data)
 	return c.JSON(http.StatusOK, response)
 }

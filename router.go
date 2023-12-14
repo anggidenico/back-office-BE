@@ -579,6 +579,7 @@ func router() *echo.Echo {
 	admin.POST("/delete-securities-list", controllers.DeleteMsSecuritiesController).Name = "DeleteMsSecuritiesController"
 	admin.GET("/get-securities-detail/:sec_key", controllers.GetMsSecuritiesDetailController).Name = "GetMsSecuritiesDetailController"
 	admin.POST("/update-securities", controllers.UpdateMsSecuritiesController).Name = "UpdateMsSecuritiesController"
+	admin.GET("/get-participant", controllers.GetParticipantKeyController).Name = "GetParticipantKeyController"
 
 	//Fund Fact Sheet - Periode
 	admin.GET("/get-periode-list", controllers.GetFfsPeriodeController).Name = "GetFfsPeriodeController"
@@ -632,6 +633,15 @@ func router() *echo.Echo {
 	admin.GET("/get-alloc-instrument-detail/:alloc_instrument_key", controllers.GetAllocInstrumentDetailController).Name = "GetAllocInstrumentDetailController"
 	admin.POST("/delete-alloc-instrument", controllers.DeleteAllocInstrumentController).Name = "DeleteAllocInstrumentController"
 	admin.GET("/get-instrument", controllers.GetAllocInstrumentKeyController).Name = "GetAllocInstrumentKeyController"
+
+	//FFS - Product Info
+	admin.POST("/create-product-info-value", controllers.CreateProdInfoValController).Name = "CreateProdInfoValController"
+	admin.POST("/update-product-info-value", controllers.UpdateProductInfoValueController).Name = "UpdateProductInfoValueController"
+	admin.GET("/get-product-info-value-list", controllers.GetProductInfoValueController).Name = "GetProductInfoValueController"
+	admin.GET("/get-product-info-value-detail/:product_info_value_key", controllers.GetProdInfoValDetailController).Name = "GetProdInfoValDetailController"
+	admin.POST("/delete-product-info-value", controllers.DeleteProductInfoValueController).Name = "DeleteProductInfoValueController"
+	admin.GET("/get-product-info", controllers.GetProductInfoKeyController).Name = "GetProductInfoKeyController"
+
 	return e
 
 }

@@ -159,6 +159,33 @@ type SecuritiesDetail struct {
 	FlagIsBreakable        []byte           `db:"flag_is_breakable" json:"flag_is_breakable"`
 	RecOrder               *int64           `db:"rec_order" json:"rec_order"`
 }
+type ParticipantList struct {
+	ParticipantKey  int64  `db:"participant_key" json:"participant_key"`
+	ParticipantCode string `db:"participant_code" json:"participant_code"`
+	ParticipantName string `db:"participant_name" json:"participant"`
+}
+
+func GetParticipantListModels(c *[]ParticipantList) (int, error) {
+	query := `SELECT participant_key,
+	participant_code,
+	participant_name
+	FROM ms_participant
+WHERE rec_status = 1
+ORDER BY participant_key ASC`
+
+	log.Println(query)
+
+	err := db.Db.Select(c, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println(err.Error())
+			return http.StatusBadGateway, err
+		}
+		return http.StatusNotFound, err
+	}
+
+	return http.StatusOK, nil
+}
 
 func GetSecuritiesModels(c *[]Securities) (int, error) {
 	query := `SELECT
