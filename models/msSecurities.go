@@ -172,7 +172,7 @@ func GetParticipantListModels(c *[]ParticipantList) (int, error) {
 WHERE rec_status = 1
 ORDER BY participant_key ASC`
 
-	log.Println(query)
+	// log.Println(query)
 
 	err := db.Db.Select(c, query)
 	if err != nil {
@@ -236,7 +236,7 @@ LEFT JOIN gen_lookup j ON a.coupon_type = j.lookup_key
 WHERE a.rec_status = 1
 ORDER BY a.sec_key DESC;`
 
-	log.Println(query)
+	// log.Println(query)
 
 	err := db.Db.Select(c, query)
 	if err != nil {
