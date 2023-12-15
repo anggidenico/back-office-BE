@@ -371,18 +371,13 @@ func CreateMsSecurities(params map[string]string) (int, error) {
 
 	sec_code := params["sec_code"]
 	sec_name := params["sec_name"]
-	security_type := params["security_type"]
 
 	QueryCekDuplicate := `SELECT COUNT(*) FROM ms_securities WHERE rec_status = 1 `
 	if sec_code != "" {
-		QueryCekDuplicate += ` OR sec_code = '` + sec_code + `' `
+		QueryCekDuplicate += ` AND sec_code = '` + sec_code + `' `
 	}
 	if sec_name != "" {
-
-		QueryCekDuplicate += ` OR sec_name = '` + sec_name + `' `
-	}
-	if security_type != "" {
-		QueryCekDuplicate += ` OR security_type = '` + security_type + `' `
+		QueryCekDuplicate += ` AND sec_name = '` + sec_name + `' `
 	}
 
 	log.Println(QueryCekDuplicate)
