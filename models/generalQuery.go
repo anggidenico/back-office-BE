@@ -71,7 +71,7 @@ func GenerateUpdateQuery(tableName string, primaryKeyField string, params map[st
 			i++
 		}
 	}
-	query += ` WHERE ` + primaryKeyField + ` = ` + params[primaryKeyField]
+	query += ` WHERE ` + primaryKeyField + ` = '` + params[primaryKeyField] + `'`
 
 	log.Println("GenerateUpdateQuery", query)
 

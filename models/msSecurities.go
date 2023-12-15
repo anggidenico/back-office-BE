@@ -48,8 +48,8 @@ type Securities struct {
 	SecName                string           `db:"sec_name"              json:"sec_name"`
 	SecuritiesCategory     uint64           `db:"securities_category"   json:"securities_category"`
 	SecuritiesCategoryName string           `db:"securities_category_name" json:"securities_category_name"`
-	SecurityType           uint64           `db:"security_type"         json:"security_type"`
-	SecurityTypeName       string           `db:"security_type_name"         json:"security_type_name"`
+	SecurityType           *uint64          `db:"security_type"         json:"security_type"`
+	SecurityTypeName       *string          `db:"security_type_name"         json:"security_type_name"`
 	SectorKey              *uint64          `db:"sector_key" json:"sector_key"`
 	SectorName             *string          `db:"sector_name" json:"sector_name"`
 	DateIssued             *string          `db:"date_issued"           json:"date_issued"`
@@ -89,8 +89,8 @@ type SecuritiesResponse struct {
 	SecName                string           `db:"sec_name"              json:"sec_name"`
 	SecuritiesCategory     uint64           `db:"securities_category"   json:"securities_category"`
 	SecuritiesCategoryName string           `db:"securities_category_name" json:"securities_category_name"`
-	SecurityType           uint64           `db:"security_type"         json:"security_type"`
-	SecurityTypeName       string           `db:"security_type_name"         json:"security_type_name"`
+	SecurityType           *uint64          `db:"security_type"         json:"security_type"`
+	SecurityTypeName       *string          `db:"security_type_name"         json:"security_type_name"`
 	SectorKey              *uint64          `db:"sector_key" json:"sector_key"`
 	SectorName             *string          `db:"sector_name" json:"sector_name"`
 	DateIssued             *string          `db:"date_issued"           json:"date_issued"`
@@ -128,8 +128,8 @@ type SecuritiesDetail struct {
 	SecName                string           `db:"sec_name"              json:"sec_name"`
 	SecuritiesCategory     uint64           `db:"securities_category"   json:"securities_category"`
 	SecuritiesCategoryName string           `db:"securities_category_name" json:"securities_category_name"`
-	SecurityType           uint64           `db:"security_type"         json:"security_type"`
-	SecurityTypeName       string           `db:"security_type_name"         json:"security_type_name"`
+	SecurityType           *uint64          `db:"security_type"         json:"security_type"`
+	SecurityTypeName       *string          `db:"security_type_name"         json:"security_type_name"`
 	SectorKey              *uint64          `db:"sector_key" json:"sector_key"`
 	SectorName             *string          `db:"sector_name" json:"sector_name"`
 	DateIssued             *string          `db:"date_issued"           json:"date_issued"`
