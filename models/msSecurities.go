@@ -378,7 +378,7 @@ func CreateMsSecurities(params map[string]interface{}) (int, error) {
 
 	for key, value := range params {
 		fields += key + `, `
-		if value == "NULL" {
+		if value == "" {
 			placeholders += `NULL, `
 		} else {
 			placeholders += `?, `
