@@ -58,7 +58,7 @@ func GetAllocSecDetailController(c echo.Context) error {
 }
 func CreateAllocSecController(c echo.Context) error {
 	var err error
-	params := make(map[string]string)
+	params := make(map[string]interface{})
 	params["rec_created_by"] = lib.UserIDStr
 	params["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
@@ -83,21 +83,18 @@ func CreateAllocSecController(c echo.Context) error {
 		if len(recOrder) > 11 {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be exactly 11 characters", "rec_order be exactly 11 characters")
 		}
-		value, err := strconv.Atoi(recOrder)
+
 		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
 		}
-
-		params["rec_order"] = strconv.Itoa(value)
 	} else {
-
+		params["rec_order"] = nil
 	}
-	params["rec_order"] = recOrder
+
 	params["product_key"] = productKey
 	params["periode_key"] = periodeKey
 	params["sec_key"] = secKey
 	params["security_value"] = secValue
-	params["rec_order"] = recOrder
 	params["rec_status"] = "1"
 
 	status, err = models.CreateAllocSec(params)
@@ -115,7 +112,7 @@ func CreateAllocSecController(c echo.Context) error {
 }
 func UpdateAllocSecController(c echo.Context) error {
 	var err error
-	params := make(map[string]string)
+	params := make(map[string]interface{})
 	params["rec_modified_by"] = lib.UserIDStr
 	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
@@ -181,13 +178,14 @@ func UpdateAllocSecController(c echo.Context) error {
 		if len(recOrder) > 11 {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be exactly 11 characters", "rec_order be exactly 11 characters")
 		}
-		value, err := strconv.Atoi(recOrder)
+
 		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
 		}
-		params["rec_order"] = strconv.Itoa(value)
+	} else {
+		params["rec_order"] = nil
 	}
-	params["rec_order"] = recOrder
+
 	params["product_key"] = productKey
 	params["periode_key"] = periodeKey
 	params["sec_key"] = secKey
