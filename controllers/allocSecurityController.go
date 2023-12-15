@@ -183,6 +183,7 @@ func UpdateAllocSecController(c echo.Context) error {
 		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
 		}
+		params["rec_order"] = recOrder
 	} else {
 		params["rec_order"] = nil
 	}
