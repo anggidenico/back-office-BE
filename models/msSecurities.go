@@ -374,25 +374,27 @@ func CreateMsSecurities(params map[string]string) (int, error) {
 
 	var CountDupCode, CountDupName int64
 
-	QueryCekDuplicate := `SELECT COUNT(*) FROM ms_securities WHERE rec_status = 1 `
 	if sec_code != "" {
+		QueryCekDuplicate := `SELECT COUNT(*) FROM ms_securities WHERE rec_status = 1 `
 		QueryCekDuplicate += ` AND sec_code = '` + sec_code + `' `
 		err = db.Db.Get(&CountDupCode, QueryCekDuplicate)
 		if err != nil {
 			tx.Rollback()
 			return http.StatusBadGateway, err
 		}
+		log.Println(QueryCekDuplicate)
 	}
+
 	if sec_name != "" {
+		QueryCekDuplicate := `SELECT COUNT(*) FROM ms_securities WHERE rec_status = 1 `
 		QueryCekDuplicate += ` AND sec_name = '` + sec_name + `' `
 		err = db.Db.Get(&CountDupName, QueryCekDuplicate)
 		if err != nil {
 			tx.Rollback()
 			return http.StatusBadGateway, err
 		}
+		log.Println(QueryCekDuplicate)
 	}
-
-	log.Println(QueryCekDuplicate)
 
 	if CountDupCode > 0 {
 		return http.StatusBadRequest, fmt.Errorf("sec_code %v sudah ada ", sec_code)
