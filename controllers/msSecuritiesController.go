@@ -224,9 +224,9 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	params["date_matured"] = pastDueDate
 	params["rec_status"] = "1"
 
-	_, err = models.CreateMsSecurities(params)
+	status, err = models.CreateMsSecurities(params)
 	if err != nil {
-
+		return lib.CustomError(status, err.Error(), err.Error())
 	}
 
 	// duplicate, key, err := models.CheckDuplicateSecurities(secCode, secName, secType)

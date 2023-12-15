@@ -366,7 +366,7 @@ func CreateMsSecurities(params map[string]string) (int, error) {
 		return http.StatusBadGateway, err
 	}
 
-	QueryCekDuplicate := `SELECT COUNT(*) FROM ms_securities WHERE sec_code = ` + params["sec_code"] + ` AND sec_name = ` + params["sec_name"] + ` AND security_type = ` + params["security_type"] + ` LIMIT 1`
+	QueryCekDuplicate := `SELECT COUNT(*) FROM ms_securities WHERE rec_status = 1 AND ( sec_code = ` + params["sec_code"] + ` OR sec_name = ` + params["sec_name"] + ` OR security_type = ` + params["security_type"] + `)`
 
 	var CountDup int64
 	err = db.Db.Get(&CountDup, QueryCekDuplicate)
