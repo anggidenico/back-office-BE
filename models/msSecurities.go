@@ -402,12 +402,14 @@ func CreateMsSecurities(params map[string]string) (int, error) {
 		return http.StatusBadRequest, fmt.Errorf("sec_name %v sudah ada ", sec_name)
 	}
 
-	// queryInsert := GenerateInsertQuery("ms_securities", params)
-	// _, err = tx.Exec(queryInsert)
-	// if err != nil {
-	// 	tx.Rollback()
-	// 	return http.StatusBadGateway, err
-	// }
+	if CountDupCode == 0 && CountDupName == 0 {
+		queryInsert := GenerateInsertQuery("ms_securities", params)
+		_, err = tx.Exec(queryInsert)
+		if err != nil {
+			tx.Rollback()
+			return http.StatusBadGateway, err
+		}
+	}
 
 	// duplicate, _, err := CheckDuplicateSecurities(params["sec_code"].(string), params["sec_name"].(string), params["security_type"].(string))
 	// if err != nil {
