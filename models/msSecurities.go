@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -392,26 +393,7 @@ func CreateMsSecurities(params map[string]string) (int, error) {
 	}
 	if CountDup > 0 {
 
-		queryUpdate := GenerateUpdateQuery("ms_securities", "sec_code", params)
-		_, err = tx.Exec(queryUpdate)
-		if err != nil {
-			tx.Rollback()
-			return http.StatusBadGateway, err
-		}
-
-		queryUpdate = GenerateUpdateQuery("ms_securities", "sec_name", params)
-		_, err = tx.Exec(queryUpdate)
-		if err != nil {
-			tx.Rollback()
-			return http.StatusBadGateway, err
-		}
-
-		queryUpdate = GenerateUpdateQuery("ms_securities", "security_type", params)
-		_, err = tx.Exec(queryUpdate)
-		if err != nil {
-			tx.Rollback()
-			return http.StatusBadGateway, err
-		}
+		return http.StatusBadRequest, errors.New("data sudah ada")
 
 	} else {
 
