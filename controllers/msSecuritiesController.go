@@ -332,24 +332,18 @@ func GetMsSecuritiesController(c echo.Context) error {
 			rData.StockMarket = data.StockMarket
 			rData.TaxRates = data.TaxRates
 
-			if len(data.FlagSyariah) > 0 {
-				flagSyariahValue := data.FlagSyariah[0] == 1
-				rData.FlagSyariah = &flagSyariahValue
-			} else {
-				rData.FlagSyariah = nil
+			if data.FlagSyariah != nil {
+				rData.FlagSyariah = *data.FlagSyariah == 1
 			}
-			if len(data.FlagIsBreakable) > 0 {
-				flagBreakableValue := data.FlagSyariah[0] == 1
-				rData.FlagIsBreakable = &flagBreakableValue
-			} else {
-				rData.FlagIsBreakable = nil
+
+			if data.FlagIsBreakable != nil {
+				rData.FlagIsBreakable = *data.FlagIsBreakable == 1
 			}
-			if len(data.FlagHasCoupon) > 0 {
-				flagCouponValue := data.FlagHasCoupon[0] == 1
-				rData.FlagHasCoupon = &flagCouponValue
-			} else {
-				rData.FlagIsBreakable = nil
+
+			if data.FlagHasCoupon != nil {
+				rData.FlagHasCoupon = *data.FlagHasCoupon == 1
 			}
+
 			responseData = append(responseData, rData)
 		}
 	}
@@ -435,27 +429,15 @@ func GetMsSecuritiesDetailController(c echo.Context) error {
 	rData.TaxRates = sec.TaxRates
 
 	if sec.FlagSyariah != nil {
-		if *sec.FlagSyariah == 1 {
-			*rData.FlagSyariah = true
-		} else {
-			*rData.FlagSyariah = false
-		}
-	}
-
-	if sec.FlagHasCoupon != nil {
-		if *sec.FlagHasCoupon == 1 {
-			*rData.FlagHasCoupon = true
-		} else {
-			*rData.FlagHasCoupon = false
-		}
+		rData.FlagSyariah = *sec.FlagSyariah == 1
 	}
 
 	if sec.FlagIsBreakable != nil {
-		if *sec.FlagIsBreakable == 1 {
-			*rData.FlagIsBreakable = true
-		} else {
-			*rData.FlagIsBreakable = false
-		}
+		rData.FlagIsBreakable = *sec.FlagIsBreakable == 1
+	}
+
+	if sec.FlagHasCoupon != nil {
+		rData.FlagHasCoupon = *sec.FlagHasCoupon == 1
 	}
 
 	responseData = rData
