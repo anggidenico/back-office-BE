@@ -212,6 +212,36 @@ func AdminCreateLookup(c echo.Context) error {
 		params["lkp_desc"] = lkpDesc
 	}
 
+	lkp_val1 := c.FormValue("lkp_val1")
+	if lkp_val1 != "" {
+		params["lkp_val1"] = lkp_val1
+	}
+
+	lkp_val2 := c.FormValue("lkp_val2")
+	if lkp_val2 != "" {
+		params["lkp_val2"] = lkp_val2
+	}
+
+	lkp_val3 := c.FormValue("lkp_val3")
+	if lkp_val3 != "" {
+		params["lkp_val3"] = lkp_val3
+	}
+
+	lkp_text1 := c.FormValue("lkp_text1")
+	if lkp_text1 != "" {
+		params["lkp_text1"] = lkp_text1
+	}
+
+	lkp_text2 := c.FormValue("lkp_text2")
+	if lkp_text2 != "" {
+		params["lkp_text2"] = lkp_text2
+	}
+
+	lkp_text3 := c.FormValue("lkp_text3")
+	if lkp_text3 != "" {
+		params["lkp_text3"] = lkp_text3
+	}
+
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
@@ -301,6 +331,36 @@ func AdminUpdateLookup(c echo.Context) error {
 		params["lkp_desc"] = lkpDesc
 	}
 
+	lkp_val1 := c.FormValue("lkp_val1")
+	if lkp_val1 != "" {
+		params["lkp_val1"] = lkp_val1
+	}
+
+	lkp_val2 := c.FormValue("lkp_val2")
+	if lkp_val2 != "" {
+		params["lkp_val2"] = lkp_val2
+	}
+
+	lkp_val3 := c.FormValue("lkp_val3")
+	if lkp_val3 != "" {
+		params["lkp_val3"] = lkp_val3
+	}
+
+	lkp_text1 := c.FormValue("lkp_text1")
+	if lkp_text1 != "" {
+		params["lkp_text1"] = lkp_text1
+	}
+
+	lkp_text2 := c.FormValue("lkp_text2")
+	if lkp_text2 != "" {
+		params["lkp_text2"] = lkp_text2
+	}
+
+	lkp_text3 := c.FormValue("lkp_text3")
+	if lkp_text3 != "" {
+		params["lkp_text3"] = lkp_text3
+	}
+
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
@@ -353,27 +413,27 @@ func AdminDetailLookup(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Lookup not found", "Lookup not found")
 	}
 
-	responseData := make(map[string]interface{})
-	responseData["lookup_key"] = lookup.LookupKey
-	responseData["lkp_group_key"] = lookup.LkpGroupKey
-	responseData["lkp_code"] = lookup.LkpCode
-	responseData["lkp_name"] = lookup.LkpName
-	if lookup.LkpDesc != nil {
-		responseData["lkp_desc"] = *lookup.LkpDesc
-	} else {
-		responseData["lkp_desc"] = ""
-	}
-	if lookup.RecOrder != nil {
-		responseData["rec_order"] = *lookup.RecOrder
-	} else {
-		responseData["rec_order"] = ""
-	}
+	// responseData := make(map[string]interface{})
+	// responseData["lookup_key"] = lookup.LookupKey
+	// responseData["lkp_group_key"] = lookup.LkpGroupKey
+	// responseData["lkp_code"] = lookup.LkpCode
+	// responseData["lkp_name"] = lookup.LkpName
+	// if lookup.LkpDesc != nil {
+	// 	responseData["lkp_desc"] = *lookup.LkpDesc
+	// } else {
+	// 	responseData["lkp_desc"] = ""
+	// }
+	// if lookup.RecOrder != nil {
+	// 	responseData["rec_order"] = *lookup.RecOrder
+	// } else {
+	// 	responseData["rec_order"] = ""
+	// }
 
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
-	response.Data = responseData
+	response.Data = lookup
 
 	return c.JSON(http.StatusOK, response)
 }
