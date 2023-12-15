@@ -30,7 +30,7 @@ type AllocSecDetail struct {
 	SecurityKey   uint64           `db:"sec_key"          json:"sec_key"`
 	SecurityName  *string          `db:"sec_name" json:"sec_name"`
 	SecurityValue *decimal.Decimal `db:"security_value" json:"security_value"`
-	RecOrder      int64            `db:"rec_order" json:"rec_order"`
+	RecOrder      *int64           `db:"rec_order" json:"rec_order"`
 }
 
 func GetAllocSecModels(c *[]AllocSecurity) (int, error) {
