@@ -2,7 +2,7 @@ package models
 
 import (
 	"database/sql"
-	"errors"
+	"fmt"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -372,36 +372,42 @@ func CreateMsSecurities(params map[string]string) (int, error) {
 	sec_code := params["sec_code"]
 	sec_name := params["sec_name"]
 
+	var CountDupCode, CountDupName int64
+
 	QueryCekDuplicate := `SELECT COUNT(*) FROM ms_securities WHERE rec_status = 1 `
 	if sec_code != "" {
 		QueryCekDuplicate += ` AND sec_code = '` + sec_code + `' `
-	}
-	if sec_name != "" {
-		QueryCekDuplicate += ` AND sec_name = '` + sec_name + `' `
-	}
-
-	log.Println(QueryCekDuplicate)
-
-	var CountDup int64
-	err = db.Db.Get(&CountDup, QueryCekDuplicate)
-	if err != nil {
-		tx.Rollback()
-		return http.StatusBadGateway, err
-	}
-	if CountDup > 0 {
-
-		return http.StatusBadRequest, errors.New("data sudah ada")
-
-	} else {
-
-		queryInsert := GenerateInsertQuery("ms_securities", params)
-		_, err = tx.Exec(queryInsert)
+		err = db.Db.Get(&CountDupCode, QueryCekDuplicate)
 		if err != nil {
 			tx.Rollback()
 			return http.StatusBadGateway, err
 		}
-
 	}
+	if sec_name != "" {
+		QueryCekDuplicate += ` AND sec_name = '` + sec_name + `' `
+		err = db.Db.Get(&CountDupName, QueryCekDuplicate)
+		if err != nil {
+			tx.Rollback()
+			return http.StatusBadGateway, err
+		}
+	}
+
+	log.Println(QueryCekDuplicate)
+
+	if CountDupCode > 0 {
+		return http.StatusBadRequest, fmt.Errorf("sec_code %v sudah ada ", sec_code)
+	}
+
+	if CountDupName > 0 {
+		return http.StatusBadRequest, fmt.Errorf("sec_name %v sudah ada ", sec_name)
+	}
+
+	// queryInsert := GenerateInsertQuery("ms_securities", params)
+	// _, err = tx.Exec(queryInsert)
+	// if err != nil {
+	// 	tx.Rollback()
+	// 	return http.StatusBadGateway, err
+	// }
 
 	// duplicate, _, err := CheckDuplicateSecurities(params["sec_code"].(string), params["sec_name"].(string), params["security_type"].(string))
 	// if err != nil {
