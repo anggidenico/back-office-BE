@@ -385,6 +385,8 @@ func CreateMsSecurities(params map[string]string) (int, error) {
 		QueryCekDuplicate += ` OR security_type = '` + security_type + `' `
 	}
 
+	log.Println(QueryCekDuplicate)
+
 	var CountDup int64
 	err = db.Db.Get(&CountDup, QueryCekDuplicate)
 	if err != nil {
