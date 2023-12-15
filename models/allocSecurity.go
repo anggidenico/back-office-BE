@@ -19,6 +19,7 @@ type AllocSecurity struct {
 	SecurityKey   uint64           `db:"sec_key"          json:"sec_key"`
 	SecurityName  *string          `db:"sec_name" json:"sec_name"`
 	SecurityValue *decimal.Decimal `db:"security_value" json:"security_value"`
+	RecOrder      *int64           `db:"rec_order" json:"rec_order"`
 }
 type AllocSecDetail struct {
 	AllocSecKey   uint64           `db:"alloc_security_key"          json:"alloc_security_key"`
@@ -29,7 +30,7 @@ type AllocSecDetail struct {
 	SecurityKey   uint64           `db:"sec_key"          json:"sec_key"`
 	SecurityName  *string          `db:"sec_name" json:"sec_name"`
 	SecurityValue *decimal.Decimal `db:"security_value" json:"security_value"`
-	RecOrder      int64            `db:"rec_order" json:"rec_order"`
+	RecOrder      *int64           `db:"rec_order" json:"rec_order"`
 }
 
 func GetAllocSecModels(c *[]AllocSecurity) (int, error) {
@@ -85,7 +86,7 @@ func GetAllocSecDetailModels(c *AllocSecDetail, AllocSecKey string) (int, error)
 
 	return http.StatusOK, nil
 }
-func CreateAllocSec(params map[string]string) (int, error) {
+func CreateAllocSec(params map[string]interface{}) (int, error) {
 	query := "INSERT INTO ffs_alloc_security"
 	// Get params
 	var fields, values string
@@ -115,7 +116,7 @@ func CreateAllocSec(params map[string]string) (int, error) {
 	}
 	return http.StatusOK, nil
 }
-func UpdateAllocSec(AllocSeKey string, params map[string]string) (int, error) {
+func UpdateAllocSec(AllocSeKey string, params map[string]interface{}) (int, error) {
 	query := `UPDATE ffs_alloc_security SET `
 	var setClauses []string
 	var values []interface{}

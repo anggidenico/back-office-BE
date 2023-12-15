@@ -105,7 +105,7 @@ func CreateBenchProdController(c echo.Context) error {
 		}
 		params["rec_order"] = value
 	} else {
-		params["rec_order"] = 0
+		params["rec_order"] = nil
 	}
 
 	// params["rec_order"] = recOrder
