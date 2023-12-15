@@ -25,7 +25,7 @@ func GetAllocSectorController(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Data = sector
-	log.Printf("Response Data: %+v\n", response.Data)
+	// log.Printf("Response Data: %+v\n", response.Data)
 	return c.JSON(http.StatusOK, response)
 }
 func GetSectorSecuController(c echo.Context) error {
@@ -40,7 +40,7 @@ func GetSectorSecuController(c echo.Context) error {
 	response.Status.MessageServer = "OK"
 	response.Status.MessageClient = "OK"
 	response.Data = sector
-	log.Printf("Response Data: %+v\n", response.Data)
+	// log.Printf("Response Data: %+v\n", response.Data)
 	return c.JSON(http.StatusOK, response)
 }
 func GetAllocSectorDetailController(c echo.Context) error {
