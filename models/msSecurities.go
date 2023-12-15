@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"errors"
 	"log"
 	"mf-bo-api/db"
 	"net/http"
@@ -359,48 +358,91 @@ func UpdateMsSecurities(SecKey string, params map[string]interface{}) (int, erro
 	return http.StatusOK, nil
 }
 
-func CreateMsSecurities(params map[string]interface{}) (int, error) {
+func CreateMsSecurities(params map[string]string) (int, error) {
 	// Check for duplicate records
-	duplicate, _, err := CheckDuplicateSecurities(params["sec_code"].(string), params["sec_name"].(string), params["security_type"].(string))
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-
-	// Jika duplikasi ditemukan, perbarui data yang sudah ada
-	if duplicate {
-		return http.StatusBadRequest, errors.New("data duplikat ditemukan")
-	}
-
-	// Jika tidak ada duplikasi, buat data baru
-	fields := ""
-	placeholders := ""
-	var bindvars []interface{}
-
-	for key, value := range params {
-		fields += key + `, `
-		if value == "" {
-			placeholders += `NULL, `
-		} else {
-			placeholders += `?, `
-			bindvars = append(bindvars, value)
-		}
-	}
-
-	fields = fields[:len(fields)-2]
-	placeholders = placeholders[:len(placeholders)-2]
-
-	query := "INSERT INTO ms_securities (" + fields + ") VALUES (" + placeholders + ")"
 
 	tx, err := db.Db.Begin()
 	if err != nil {
 		return http.StatusBadGateway, err
 	}
 
-	_, err = tx.Exec(query, bindvars...)
+	QueryCekDuplicate := `SELECT COUNT(*) FROM ms_securities WHERE sec_code = ` + params["sec_code"] + ` AND sec_name = ` + params["sec_name"] + ` AND security_type = ` + params["security_type"] + ` LIMIT 1`
+
+	var CountDup int64
+	err = db.Db.Get(&CountDup, QueryCekDuplicate)
 	if err != nil {
 		tx.Rollback()
-		return http.StatusBadRequest, err
+		return http.StatusBadGateway, err
 	}
+	if CountDup > 0 {
+
+		queryUpdate := GenerateUpdateQuery("ms_securities", "sec_code", params)
+		_, err = tx.Exec(queryUpdate)
+		if err != nil {
+			tx.Rollback()
+			return http.StatusBadGateway, err
+		}
+
+		queryUpdate = GenerateUpdateQuery("ms_securities", "sec_name", params)
+		_, err = tx.Exec(queryUpdate)
+		if err != nil {
+			tx.Rollback()
+			return http.StatusBadGateway, err
+		}
+
+		queryUpdate = GenerateUpdateQuery("ms_securities", "security_type", params)
+		_, err = tx.Exec(queryUpdate)
+		if err != nil {
+			tx.Rollback()
+			return http.StatusBadGateway, err
+		}
+
+	} else {
+
+		queryInsert := GenerateInsertQuery("ms_securities", params)
+		_, err = tx.Exec(queryInsert)
+		if err != nil {
+			tx.Rollback()
+			return http.StatusBadGateway, err
+		}
+
+	}
+
+	// duplicate, _, err := CheckDuplicateSecurities(params["sec_code"].(string), params["sec_name"].(string), params["security_type"].(string))
+	// if err != nil {
+	// 	return http.StatusInternalServerError, err
+	// }
+
+	// // Jika duplikasi ditemukan, perbarui data yang sudah ada
+	// if duplicate {
+	// 	return http.StatusBadRequest, errors.New("data duplikat ditemukan")
+	// }
+
+	// Jika tidak ada duplikasi, buat data baru
+	// fields := ""
+	// placeholders := ""
+	// var bindvars []interface{}
+
+	// for key, value := range params {
+	// 	fields += key + `, `
+	// 	if value == "" {
+	// 		placeholders += `NULL, `
+	// 	} else {
+	// 		placeholders += `?, `
+	// 		bindvars = append(bindvars, value)
+	// 	}
+	// }
+
+	// fields = fields[:len(fields)-2]
+	// placeholders = placeholders[:len(placeholders)-2]
+
+	// query := "INSERT INTO ms_securities (" + fields + ") VALUES (" + placeholders + ")"
+
+	// _, err = tx.Exec(query, bindvars...)
+	// if err != nil {
+	// 	tx.Rollback()
+	// 	return http.StatusBadRequest, err
+	// }
 
 	tx.Commit()
 
