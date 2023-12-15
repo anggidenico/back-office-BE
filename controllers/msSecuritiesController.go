@@ -434,23 +434,28 @@ func GetMsSecuritiesDetailController(c echo.Context) error {
 	rData.StockMarket = sec.StockMarket
 	rData.TaxRates = sec.TaxRates
 
-	if len(sec.FlagSyariah) > 0 {
-		flagSyariahValue := sec.FlagSyariah[0] == 1
-		rData.FlagSyariah = &flagSyariahValue
-	} else {
-		rData.FlagSyariah = nil
+	if sec.FlagSyariah != nil {
+		if *sec.FlagSyariah == 1 {
+			*rData.FlagSyariah = true
+		} else {
+			*rData.FlagSyariah = false
+		}
 	}
-	if len(sec.FlagIsBreakable) > 0 {
-		flagBreakableValue := sec.FlagIsBreakable[0] == 1
-		rData.FlagIsBreakable = &flagBreakableValue
-	} else {
-		rData.FlagIsBreakable = nil
+
+	if sec.FlagHasCoupon != nil {
+		if *sec.FlagHasCoupon == 1 {
+			*rData.FlagHasCoupon = true
+		} else {
+			*rData.FlagHasCoupon = false
+		}
 	}
-	if len(sec.FlagHasCoupon) > 0 {
-		flagCouponValue := sec.FlagHasCoupon[0] == 1
-		rData.FlagHasCoupon = &flagCouponValue
-	} else {
-		rData.FlagHasCoupon = nil
+
+	if sec.FlagIsBreakable != nil {
+		if *sec.FlagIsBreakable == 1 {
+			*rData.FlagIsBreakable = true
+		} else {
+			*rData.FlagIsBreakable = false
+		}
 	}
 
 	responseData = rData

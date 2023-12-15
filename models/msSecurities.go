@@ -145,7 +145,7 @@ type SecuritiesDetail struct {
 	SecClassification      *uint64          `db:"sec_classification"    json:"sec_classification"`
 	SecClassificationName  *string          `db:"sec_classification_name"    json:"sec_classification_name"`
 	SecShares              *uint64          `db:"sec_shares" json:"sec_shares"`
-	FlagSyariah            []byte           `db:"flag_syariah" json:"flag_syariah"`
+	FlagSyariah            *uint64          `db:"flag_syariah" json:"flag_syariah"`
 	StockMarket            *uint64          `db:"stock_market" json:"stock_market"`
 	StocKMarketName        *string          `db:"stock_market_name" json:"stock_market_name"`
 	SecParates             *decimal.Decimal `db:"sec_pa_rates" json:"sec_pa_rates"`
@@ -153,10 +153,10 @@ type SecuritiesDetail struct {
 	TaxRates               *decimal.Decimal `db:"tax_rates" json:"tax_rates"`
 	ParticipantKey         *int64           `db:"participant_key" json:"participant_key"`
 	ParticipantName        *string          `db:"participant_name" json:"participant_name"`
-	FlagHasCoupon          []byte           `db:"flag_has_coupon" json:"flag_has_coupon"`
+	FlagHasCoupon          *uint64          `db:"flag_has_coupon" json:"flag_has_coupon"`
 	CouponType             *int64           `db:"coupon_type" json:"coupon_type"`
 	CouponName             *string          `db:"coupon_name" json:"coupon_name"`
-	FlagIsBreakable        []byte           `db:"flag_is_breakable" json:"flag_is_breakable"`
+	FlagIsBreakable        *uint64          `db:"flag_is_breakable" json:"flag_is_breakable"`
 	RecOrder               *int64           `db:"rec_order" json:"rec_order"`
 }
 type ParticipantList struct {
