@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -449,7 +448,7 @@ func GetAllOaRequestIndividu(c *[]OaRequest, limit uint64, offset uint64, nolimi
 	}
 
 	// Main query
-	log.Println("GetAllOaRequestIndividu", query)
+	// log.Println("GetAllOaRequestIndividu", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)

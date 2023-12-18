@@ -47,7 +47,7 @@ func GetAllocSecModels(c *[]AllocSecurity) (int, error) {
 	JOIN ms_securities d ON a.sec_key = d.sec_key 
 	WHERE a.rec_status = 1`
 
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		log.Println(err.Error())
@@ -72,7 +72,7 @@ func GetAllocSecDetailModels(c *AllocSecDetail, AllocSecKey string) (int, error)
 	WHERE a.rec_status = 1 
 	AND a.alloc_security_key =` + AllocSecKey
 
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {

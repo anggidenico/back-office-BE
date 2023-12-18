@@ -90,6 +90,13 @@ func UpdateQuizQuestion(c echo.Context) error {
 		UpdateMaps["quiz_option_type"] = quizOptionType
 	}
 
+	rec_order := c.FormValue("rec_order")
+	if rec_order == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing rec_order", "Missing rec_order")
+	} else {
+		UpdateMaps["rec_order"] = rec_order
+	}
+
 	err := models.UpdateQuizQuestion(quizQuestionKey, UpdateMaps)
 	if err != nil {
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
@@ -150,6 +157,13 @@ func CreateQuizQuestion(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing quiz_option_type", "Missing quiz_option_type")
 	} else {
 		insertMaps["quiz_option_type"] = quizOptionType
+	}
+
+	rec_order := c.FormValue("rec_order")
+	if rec_order == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing rec_order", "Missing rec_order")
+	} else {
+		insertMaps["rec_order"] = rec_order
 	}
 
 	err := models.CreateQuizQuestion(insertMaps)
@@ -216,6 +230,13 @@ func CreateQuizOption(c echo.Context) error {
 		insertMaps["quiz_option_score"] = quizOptionScore
 	}
 
+	rec_order := c.FormValue("rec_order")
+	if rec_order == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing rec_order", "Missing rec_order")
+	} else {
+		insertMaps["rec_order"] = rec_order
+	}
+
 	err := models.CreateQuizOption(insertMaps)
 	if err != nil {
 		return lib.CustomError(http.StatusInternalServerError, err.Error(), err.Error())
@@ -267,6 +288,13 @@ func UpdateQuizOption(c echo.Context) error {
 		return lib.CustomError(http.StatusBadRequest, "Missing quiz_option_score", "Missing quiz_option_score")
 	} else {
 		UpdateMaps["quiz_option_score"] = quizOptionScore
+	}
+
+	rec_order := c.FormValue("rec_order")
+	if rec_order == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing rec_order", "Missing rec_order")
+	} else {
+		UpdateMaps["rec_order"] = rec_order
 	}
 
 	err := models.UpdateQuizOption(quizOptionKey, UpdateMaps)

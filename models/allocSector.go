@@ -76,7 +76,7 @@ func GetAllocSectorModels(c *[]AllocSector) (int, error) {
 	JOIN ms_securities_sector d ON a.sector_key = d.sector_key 
 	WHERE a.rec_status =1 
 	ORDER BY a.rec_created_date DESC`
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -103,7 +103,7 @@ func GetAllocSectorDetailModels(c *AllocSectorDetail, AllocSectorKey string) (in
 	JOIN ms_product c ON a.product_key = c.product_key 
 	JOIN ms_securities_sector d ON a.sector_key = d.sector_key WHERE a.rec_status = 1 AND a.alloc_sector_key =` + AllocSectorKey
 
-	log.Println("====================>>>", query)
+	// log.Println("====================>>>", query)
 	err := db.Db.Get(c, query)
 	if err != nil {
 		if err == sql.ErrNoRows {

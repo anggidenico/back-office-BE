@@ -108,6 +108,7 @@ func SaveStep6(c echo.Context) (error, int64) {
 
 	paramsOaRequest := make(map[string]string)
 	paramsOaRequest["oa_step"] = "6"
+	paramsOaRequest["oa_status"] = "258"
 
 	oa_request_key := c.FormValue("oa_request_key")
 	if oa_request_key == "" {

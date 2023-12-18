@@ -17,7 +17,7 @@ func SaveStep1(c echo.Context) (error, int64) {
 	paramOaRequest["rec_created_by"] = lib.UserIDStr
 	paramOaRequest["rec_created_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 	paramOaRequest["oa_step"] = "1"
-	paramOaRequest["oa_status"] = "258"
+	paramOaRequest["oa_status"] = "444"
 	paramOaRequest["oa_request_type"] = "127"
 	paramOaRequest["oa_entry_start"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
@@ -25,6 +25,12 @@ func SaveStep1(c echo.Context) (error, int64) {
 	if oa_request_key != "" {
 		paramOaRequest["oa_request_key"] = oa_request_key
 	}
+
+	oa_source := c.FormValue("oa_source")
+	if oa_source == "" {
+		return fmt.Errorf("Missing: oa_source"), oaRequestKey
+	}
+	paramOaRequest["oa_source"] = oa_source
 
 	branch_key := c.FormValue("branch_key")
 	if branch_key == "" {
