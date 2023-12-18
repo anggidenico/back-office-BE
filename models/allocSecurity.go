@@ -156,7 +156,7 @@ func DeleteAllocSec(AllocSecKey string, params map[string]string) (int, error) {
 	query += ` WHERE alloc_security_key = ?`
 	values = append(values, AllocSecKey)
 
-	log.Println("========== UpdateRiskProfile ==========>>>", query)
+	log.Println("UPDATE ALLOC SECURITY", query)
 
 	resultSQL, err := db.Db.Exec(query, values...)
 	if err != nil {

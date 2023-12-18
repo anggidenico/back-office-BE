@@ -251,3 +251,18 @@ func UpdateAllocSector(allocSectorKey string, params map[string]interface{}) (in
 	}
 	return http.StatusOK, nil
 }
+
+func GetAllocSectorStatusByKey(key string) (int, error) {
+	query := "SELECT rec_status FROM ffs_alloc_sector WHERE alloc_sector_key = ?"
+	var status int
+	err := db.Db.QueryRow(query, key).Scan(&status)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Data tidak ditemukan
+			return 0, nil
+		}
+		// Terjadi error lain
+		return 0, err
+	}
+	return status, nil
+}
