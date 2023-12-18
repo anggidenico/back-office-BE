@@ -12,7 +12,7 @@ type QuizQuestionData struct {
 
 func GetQuizQuestion() (result []QuizQuestionData) {
 	query := `SELECT t1.quiz_question_key, t1.quiz_title FROM cms_quiz_question t1
-	WHERE t1.rec_status = 1 AND t1.quiz_header_key = 2`
+	WHERE t1.rec_status = 1 AND t1.quiz_header_key = 2 ORDER BY t1.rec_order`
 
 	// log.Println("========== GetQuizQuestion ==========>>>", query)
 
@@ -25,11 +25,11 @@ func GetQuizQuestion() (result []QuizQuestionData) {
 }
 
 type QuizOptionData struct {
-	QuizOptionKey   uint64  `db:"quiz_option_key" json:"quiz_option_key"`
-	QuizOptionLabel string  `db:"quiz_option_label" json:"quiz_option_label"`
-	QuizOptionTitle string  `db:"quiz_option_title" json:"quiz_option_title"`
-	QuizOptionScore uint64  `db:"quiz_option_score" json:"quiz_option_score"`
-	QuizOptionOrder *uint64 `db:"quiz_option_order" json:"quiz_option_order"`
+	QuizOptionKey   uint64 `db:"quiz_option_key" json:"quiz_option_key"`
+	QuizOptionLabel string `db:"quiz_option_label" json:"quiz_option_label"`
+	QuizOptionTitle string `db:"quiz_option_title" json:"quiz_option_title"`
+	QuizOptionScore uint64 `db:"quiz_option_score" json:"quiz_option_score"`
+	RecOrder        *uint8 `db:"rec_order" json:"rec_order"`
 }
 
 func GetQuizOption(QuizQuestionKey string) (result []QuizOptionData) {
@@ -38,8 +38,8 @@ func GetQuizOption(QuizQuestionKey string) (result []QuizOptionData) {
 	t1.quiz_option_label, 
 	t1.quiz_option_title, 
 	t1.quiz_option_score,
-	t1.rec_order as quiz_option_order
-	FROM cms_quiz_options t1 WHERE t1.rec_status = 1 AND t1.quiz_question_key = ` + QuizQuestionKey
+	t1.rec_order
+	FROM cms_quiz_options t1 WHERE t1.rec_status = 1 AND t1.quiz_question_key = ` + QuizQuestionKey + ` ORDER BY t1.rec_order`
 
 	// log.Println("========== GetQuizOption ==========>>>", query)
 
@@ -52,23 +52,23 @@ func GetQuizOption(QuizQuestionKey string) (result []QuizOptionData) {
 }
 
 type QuizQuestionDetail struct {
-	QuizQuestionKey    uint64  `db:"quiz_question_key" json:"quiz_question_key"`
-	QuizHeaderKey      uint64  `db:"quiz_header_key" json:"quiz_header_key"`
-	QuizHeaderName     string  `db:"quiz_header_name" json:"quiz_header_name"`
-	QuizOptionTypeKey  uint64  `db:"quiz_option_type_key" json:"quiz_option_type_key"`
-	QuizOptionTypeName string  `db:"quiz_option_type_name" json:"quiz_option_type_name"`
-	QuizQuestionTitle  string  `db:"quiz_title" json:"quiz_title"`
-	QuizQuestionOrder  *uint64 `db:"quiz_question_order" json:"quiz_question_order"`
+	QuizQuestionKey    uint64 `db:"quiz_question_key" json:"quiz_question_key"`
+	QuizHeaderKey      uint64 `db:"quiz_header_key" json:"quiz_header_key"`
+	QuizHeaderName     string `db:"quiz_header_name" json:"quiz_header_name"`
+	QuizOptionTypeKey  uint64 `db:"quiz_option_type_key" json:"quiz_option_type_key"`
+	QuizOptionTypeName string `db:"quiz_option_type_name" json:"quiz_option_type_name"`
+	QuizQuestionTitle  string `db:"quiz_title" json:"quiz_title"`
+	RecOrder           *uint8 `db:"rec_order" json:"rec_order"`
 }
 
 func GetQuestionDetail(QuizQuestionKey string) (result QuizQuestionDetail) {
 	query := `SELECT t1.quiz_question_key, t2.quiz_header_key, t2.quiz_name quiz_header_name, 
-	t1.quiz_title, t1.rec_order quiz_question_order, t3.lookup_key quiz_option_type_key,
+	t1.quiz_title, t1.rec_order, t3.lookup_key quiz_option_type_key,
 	t3.lkp_name quiz_option_type_name
 	FROM cms_quiz_question t1
 	INNER JOIN cms_quiz_header t2 ON t1.quiz_header_key = t2.quiz_header_key
 	INNER JOIN gen_lookup t3 ON t3.lookup_key = t1.quiz_option_type
-	WHERE t1.quiz_question_key = ` + QuizQuestionKey
+	WHERE t1.quiz_question_key = ` + QuizQuestionKey + ` ORDER BY t1.rec_order`
 
 	err := db.Db.Get(&result, query)
 	if err != nil {
@@ -110,10 +110,11 @@ type QuizOptionDetail struct {
 	QuizOptionLabel string `db:"quiz_option_label" json:"quiz_option_label"`
 	QuizOptionTitle string `db:"quiz_option_title" json:"quiz_option_title"`
 	QuizOptionScore uint64 `db:"quiz_option_score" json:"quiz_option_score"`
+	RecOrder        *uint8 `db:"rec_order" json:"rec_order"`
 }
 
 func GetOptionDetail(QuizOptionKey string) (result QuizOptionDetail) {
-	query := `SELECT quiz_question_key, quiz_option_key, quiz_option_label, quiz_option_title, quiz_option_score 
+	query := `SELECT quiz_question_key, quiz_option_key, quiz_option_label, quiz_option_title, quiz_option_score, rec_order 
 	FROM cms_quiz_options WHERE rec_status = 1 AND quiz_option_key = ` + QuizOptionKey
 
 	err := db.Db.Get(&result, query)
