@@ -79,21 +79,8 @@ func GetQuestionDetail(QuizQuestionKey string) (result QuizQuestionDetail) {
 }
 
 func UpdateQuizQuestion(QuizQuestionKey string, params map[string]string) error {
-	query := `UPDATE cms_quiz_question SET `
-	i := 0
-	for key, value := range params {
-		if key != "quiz_question_key" {
-			query += key + " = '" + value + "'"
+	query := GenerateUpdateQuery("cms_quiz_question", "quiz_question_key", params)
 
-			if (len(params) - 1) > i {
-				query += ", "
-			}
-			i++
-		}
-	}
-	query += ` WHERE quiz_question_key = ` + QuizQuestionKey
-
-	log.Println(query)
 	_, err := db.Db.Exec(query)
 	if err != nil {
 		log.Println(err.Error())
@@ -105,22 +92,9 @@ func UpdateQuizQuestion(QuizQuestionKey string, params map[string]string) error 
 
 func CreateQuizQuestion(params map[string]string) error {
 
-	query := "INSERT INTO cms_quiz_question "
+	query := GenerateInsertQuery("cms_quiz_question", params)
 
-	var fields, values string
-	var bindvars []interface{}
-
-	for key, value := range params {
-		fields += key + ", "
-		values += ` "` + value + `", `
-		bindvars = append(bindvars, value)
-	}
-	fields = fields[:(len(fields) - 2)]
-	values = values[:(len(values) - 2)]
-
-	query += "(" + fields + ") VALUES(" + values + ")"
-
-	log.Println(query)
+	// log.Println(query)
 	_, err := db.Db.Exec(query)
 	if err != nil {
 		log.Println(err.Error())
@@ -152,22 +126,8 @@ func GetOptionDetail(QuizOptionKey string) (result QuizOptionDetail) {
 
 func CreateQuizOption(params map[string]string) error {
 
-	query := "INSERT INTO cms_quiz_options "
+	query := GenerateInsertQuery("cms_quiz_options", params)
 
-	var fields, values string
-	var bindvars []interface{}
-
-	for key, value := range params {
-		fields += key + ", "
-		values += ` "` + value + `", `
-		bindvars = append(bindvars, value)
-	}
-	fields = fields[:(len(fields) - 2)]
-	values = values[:(len(values) - 2)]
-
-	query += "(" + fields + ") VALUES(" + values + ")"
-
-	log.Println(query)
 	_, err := db.Db.Exec(query)
 	if err != nil {
 		log.Println(err.Error())
@@ -178,19 +138,7 @@ func CreateQuizOption(params map[string]string) error {
 }
 
 func UpdateQuizOption(QuizOptionKey string, params map[string]string) error {
-	query := `UPDATE cms_quiz_options SET `
-	i := 0
-	for key, value := range params {
-		if key != "quiz_option_key" {
-			query += key + " = '" + value + "'"
-
-			if (len(params) - 1) > i {
-				query += ", "
-			}
-			i++
-		}
-	}
-	query += ` WHERE quiz_option_key = ` + QuizOptionKey
+	query := GenerateUpdateQuery("cms_quiz_options", "quiz_option_key", params)
 
 	log.Println(query)
 	_, err := db.Db.Exec(query)
