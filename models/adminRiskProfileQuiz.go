@@ -8,10 +8,11 @@ import (
 type QuizQuestionData struct {
 	QuizQuestionKey   uint64 `db:"quiz_question_key" json:"quiz_question_key"`
 	QuizQuestionTitle string `db:"quiz_title" json:"quiz_title"`
+	RecOrder          *uint8 `db:"rec_order" json:"rec_order"`
 }
 
 func GetQuizQuestion() (result []QuizQuestionData) {
-	query := `SELECT t1.quiz_question_key, t1.quiz_title FROM cms_quiz_question t1
+	query := `SELECT t1.quiz_question_key, t1.quiz_title, t1.rec_order FROM cms_quiz_question t1
 	WHERE t1.rec_status = 1 AND t1.quiz_header_key = 2 ORDER BY t1.rec_order`
 
 	// log.Println("========== GetQuizQuestion ==========>>>", query)
