@@ -3,6 +3,7 @@ package lib
 import (
 	_ "errors"
 	"io"
+	"log"
 	_ "log"
 	"mime/multipart"
 	"os"
@@ -16,7 +17,7 @@ func UploadImage(file *multipart.FileHeader, target string) error {
 	}
 	defer src.Close()
 
-	// log.Println("========== SOURCE UPLOAD ==========>>>", src)
+	log.Println("UPLOAD SOURCE:", src)
 
 	// Prepare destination file
 	dst, err := os.Create(target)
@@ -25,12 +26,13 @@ func UploadImage(file *multipart.FileHeader, target string) error {
 	}
 	defer dst.Close()
 
-	// log.Println("========== DESTINASI UPLOAD ==========>>>", dst)
+	log.Println("UPLOAD DESTINATION:", dst)
 
 	// Copy
 	_, err = io.Copy(dst, src)
 
 	if err != nil {
+		log.Println(err.Error())
 		return err
 	} else {
 		// log.Println("========== PROSES UPLOAD ==========>>>", checks)
