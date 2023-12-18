@@ -157,9 +157,9 @@ func UpdateAllocSectorController(c echo.Context) error {
 	params["rec_modified_by"] = lib.UserIDStr
 	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
-	allocSectorKey, err := strconv.ParseInt(c.FormValue("alloc_sector_key"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid alloc_sector_key", "Invalid alloc_sector_key")
+	allocSectorKey := c.FormValue("alloc_sector_key")
+	if allocSectorKey == "" {
+		return lib.CustomError(http.StatusBadRequest, "Invalid product_key", "Invalid product_key")
 	}
 	productKey, err := strconv.ParseInt(c.FormValue("product_key"), 10, 64)
 	if err != nil {
@@ -199,40 +199,39 @@ func UpdateAllocSectorController(c echo.Context) error {
 	params["sector_value"] = sectorValue
 	params["rec_status"] = "1"
 
-	// Check for duplicate records
-	if productKey != 0 && periodeKey != 0 && sectorKey != 0 {
-		duplicate, key, err := models.CheckDuplicateAllocSector(periodeKey, productKey, sectorKey)
-		if err != nil {
-			log.Println("Error checking for duplicates:", err)
-			return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
-		}
-		log.Println("Duplicate:", duplicate)
-		log.Println("Key:", key)
-		// Jika duplikasi ditemukan, perbarui data yang sudah ada
-		if duplicate {
-			status, err := models.UpdateAllocSector(key, params)
-			if err != nil {
-				log.Println("Failed to update data:", err)
-				return lib.CustomError(status, "Failed to update data", "Failed to update data")
-			}
-			return c.JSON(http.StatusOK, lib.Response{
-				Status: lib.Status{
-					Code:          http.StatusOK,
-					MessageServer: "OK",
-					MessageClient: "OK",
-				},
-				Data: "Data updated successfully",
-			})
-		}
+	duplicate, key, err := models.CheckDuplicateAllocSector(periodeKey, productKey, sectorKey)
+	if err != nil {
+		log.Println("Error checking for duplicates:", err)
+		return lib.CustomError(http.StatusInternalServerError, "Error checking for duplicates", "Error checking for duplicates")
 	}
-	return c.JSON(http.StatusOK, lib.Response{
-		Status: lib.Status{
-			Code:          http.StatusOK,
-			MessageServer: "OK",
-			MessageClient: "OK",
-		},
-		Data: "No action taken",
-	})
+	if duplicate {
+		log.Println("Duplicate data found.")
+		// Cek apakah data yang sudah ada masih aktif atau sudah dihapus
+		_, err := models.GetBenchmarkProdStatusByKey(key)
+		if err != nil {
+			log.Println("Error getting existing data status:", err)
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		}
+		// if existingDataStatus != 0 {
+		// 	log.Println("Existing DATA")
+		// 	return lib.CustomError(http.StatusBadRequest, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+		// }
+		if key != allocSectorKey {
+			return lib.CustomError(http.StatusBadRequest, "Duplicate data", "Duplicate data")
+		}
+
+	}
+	status, err = models.UpdateAllocSector(allocSectorKey, params)
+	if err != nil {
+		return lib.CustomError(status, "Duplicate data. Unable to input data.", "Duplicate data. Unable to input data.")
+	}
+	var response lib.Response
+	response.Status.Code = http.StatusOK
+	response.Status.MessageServer = "OK"
+	response.Status.MessageClient = "OK"
+	response.Data = "Data updated successfully"
+
+	return c.JSON(http.StatusOK, response)
 }
 
 func DeleteAllocSectorController(c echo.Context) error {

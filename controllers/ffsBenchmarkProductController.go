@@ -187,15 +187,15 @@ func UpdateBenchmarkProdController(c echo.Context) error {
 	params["rec_modified_date"] = time.Now().Format(lib.TIMESTAMPFORMAT)
 
 	benchProdKey := c.FormValue("bench_prod_key")
-	if benchProdKey != "" {
+	if benchProdKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing bench_prod_key", "Missing bench_prod_key")
 	}
 	productKey := c.FormValue("product_key")
-	if productKey != "" {
+	if productKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing product_key", "Missing product_key")
 	}
 	benchmarkKey := c.FormValue("benchmark_key")
-	if benchmarkKey != "" {
+	if benchmarkKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing benchmark_key", "Missing benchmark_key")
 	}
 	benchmarkRatio, err := strconv.ParseInt(c.FormValue("benchmark_ratio"), 10, 64)
