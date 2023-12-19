@@ -157,7 +157,18 @@ func SaveStep6(c echo.Context) (error, int64) {
 				createFile["file_url"] = config.ImageUrl + "/images/oa_manual/" + oa_request_key + "/" + filename + extension
 				createFile["file_notes"] = file_remarks
 
-				err, _ = models.CreateOrUpdateFileOaManual(paramsOaRequest, createFile)
+				updatePersonalData := make(map[string]string)
+				if data.Key == 579 {
+					updatePersonalData["pic_ktp"] = filename + extension
+				}
+				if data.Key == 580 {
+					updatePersonalData["pic_selfie_ktp"] = filename + extension
+				}
+				if data.Key == 481 {
+					updatePersonalData["rec_image1"] = filename + extension
+				}
+
+				err, _ = models.CreateOrUpdateFileOaManual(paramsOaRequest, updatePersonalData, createFile)
 				if err != nil {
 					return err, OaRequestKey
 				}

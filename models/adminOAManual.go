@@ -36,7 +36,7 @@ func CreateOrUpdateOAManual(paramsOARequest map[string]string, paramsPersonalDat
 
 		// GET PERSONAL DATA KEY
 		var PersonalDataKey int64
-		qPersonalDataKey := `SELECT personal_data_key FROM oa_personal_data WHERE oa_request_key = ` + paramsOARequest["oa_request_key"] + ` ORDER BY personal_data_key DESC LIMIT 1`
+		qPersonalDataKey := `SELECT personal_data_key FROM oa_personal_data WHERE rec_status = 1 AND oa_request_key = ` + paramsOARequest["oa_request_key"] + ` ORDER BY personal_data_key DESC LIMIT 1`
 		err = db.Db.Get(&PersonalDataKey, qPersonalDataKey)
 		if err != nil {
 			tx.Rollback()

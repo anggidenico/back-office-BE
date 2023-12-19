@@ -242,7 +242,7 @@ func CreateOrUpdateOaRiskProfileQuiz(paramsOaRequest map[string]string, paramsQu
 	return nil, OaRequestKey
 }
 
-func CreateOrUpdateFileOaManual(paramsOaRequest map[string]string, paramsFile map[string]string) (error, int64) {
+func CreateOrUpdateFileOaManual(paramsOaRequest map[string]string, paramsPersonalData map[string]string, paramsFile map[string]string) (error, int64) {
 	OaRequestKey, _ := strconv.ParseInt(paramsOaRequest["oa_request_key"], 10, 64)
 
 	tx, err := db.Db.Begin()
@@ -255,6 +255,25 @@ func CreateOrUpdateFileOaManual(paramsOaRequest map[string]string, paramsFile ma
 	if len(paramsOaRequest) > 1 {
 		qUpdateOaRequest := GenerateUpdateQuery("oa_request", "oa_request_key", paramsOaRequest)
 		_, err := tx.Exec(qUpdateOaRequest)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+	}
+
+	if len(paramsPersonalData) > 0 {
+		var PersonalDataKey int64
+		qPersonalDataKey := `SELECT personal_data_key FROM oa_personal_data WHERE rec_status = 1 AND oa_request_key = ` + paramsOaRequest["oa_request_key"] + ` ORDER BY personal_data_key DESC LIMIT 1`
+		err = db.Db.Get(&PersonalDataKey, qPersonalDataKey)
+		if err != nil {
+			tx.Rollback()
+			log.Println(err.Error())
+			return err, OaRequestKey
+		}
+		paramsPersonalData["personal_data_key"] = strconv.FormatInt(PersonalDataKey, 10)
+		qUpdatePersonalData := GenerateUpdateQuery("oa_personal_data", "personal_data_key", paramsPersonalData)
+		_, err := tx.Exec(qUpdatePersonalData)
 		if err != nil {
 			tx.Rollback()
 			log.Println(err.Error())
