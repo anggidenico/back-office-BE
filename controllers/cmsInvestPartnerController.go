@@ -68,7 +68,11 @@ func GetInvestPartnerDetailController(c echo.Context) error {
 		}
 		return lib.CustomError(status, err.Error(), err.Error())
 	}
-
+	if invest.RecImage1 != nil {
+		// Menggabungkan URL dengan nilai RecImage1
+		url := config.ImageUrl + "/images/user/" + strconv.FormatUint(lib.Profile.UserID, 10) + "/" + *invest.RecImage1
+		invest.RecImage1 = &url
+	}
 	var response lib.Response
 	response.Status.Code = http.StatusOK
 	response.Status.MessageServer = "OK"

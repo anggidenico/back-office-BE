@@ -38,16 +38,6 @@ type InvestPurpose struct {
 }
 
 func GetInvestPurposeModels(c *[]InvestPurpose) (int, error) {
-	// query := `SELECT a.invest_partner_key,
-	// a.invest_purpose_key,
-	// b.purpose_code,
-	// b.purpose_name
-	// FROM cms_invest_partner a
-	// JOIN cms_invest_purpose b
-	// ON a.invest_purpose_key = b.invest_purpose_key
-	// WHERE a.rec_status =1
-	// ORDER BY a.invest_partner_key DESC`
-	// log.Println("====================>>>", query)
 	query := `SELECT 
 	invest_purpose_key,
 	purpose_code,
@@ -206,7 +196,7 @@ func CreateInvestPartner(params map[string]string) (int, error) {
 
 	for key, value := range params {
 		fields += key + `, `
-		if value == "NULL" {
+		if value == "" {
 			placeholders += `NULL, `
 		} else {
 			placeholders += `?, `

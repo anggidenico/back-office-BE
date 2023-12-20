@@ -642,6 +642,10 @@ func router() *echo.Echo {
 	admin.POST("/delete-product-info-value", controllers.DeleteProductInfoValueController).Name = "DeleteProductInfoValueController"
 	admin.GET("/get-product-info", controllers.GetProductInfoKeyController).Name = "GetProductInfoKeyController"
 
+	//Message Posting
+	admin.GET("/get-auto-invest-regis-list", controllers.GetAutoInvestRegisController).Name = "GetAutoInvestRegisController"
+	admin.GET("/get-auto-invest-regis-detail/:autoinvest_key", controllers.GetAutoInvestRegisDetailController).Name = "GetAutoInvestRegisDetailController"
+	admin.POST("/delete-auto-invest-regis", controllers.DeleteAutoInvestRegisController).Name = "DeleteAutoInvestRegisController"
 	return e
 
 }

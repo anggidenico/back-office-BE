@@ -413,42 +413,6 @@ func CreateMsSecurities(params map[string]string) (int, error) {
 		}
 	}
 
-	// duplicate, _, err := CheckDuplicateSecurities(params["sec_code"].(string), params["sec_name"].(string), params["security_type"].(string))
-	// if err != nil {
-	// 	return http.StatusInternalServerError, err
-	// }
-
-	// // Jika duplikasi ditemukan, perbarui data yang sudah ada
-	// if duplicate {
-	// 	return http.StatusBadRequest, errors.New("data duplikat ditemukan")
-	// }
-
-	// Jika tidak ada duplikasi, buat data baru
-	// fields := ""
-	// placeholders := ""
-	// var bindvars []interface{}
-
-	// for key, value := range params {
-	// 	fields += key + `, `
-	// 	if value == "" {
-	// 		placeholders += `NULL, `
-	// 	} else {
-	// 		placeholders += `?, `
-	// 		bindvars = append(bindvars, value)
-	// 	}
-	// }
-
-	// fields = fields[:len(fields)-2]
-	// placeholders = placeholders[:len(placeholders)-2]
-
-	// query := "INSERT INTO ms_securities (" + fields + ") VALUES (" + placeholders + ")"
-
-	// _, err = tx.Exec(query, bindvars...)
-	// if err != nil {
-	// 	tx.Rollback()
-	// 	return http.StatusBadRequest, err
-	// }
-
 	tx.Commit()
 
 	return http.StatusOK, nil

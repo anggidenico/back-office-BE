@@ -45,7 +45,7 @@ func GetAllocSecModels(c *[]AllocSecurity) (int, error) {
 	JOIN ms_product b ON a.product_key = b.product_key 
 	JOIN ffs_periode c ON a.periode_key = c.periode_key 
 	JOIN ms_securities d ON a.sec_key = d.sec_key 
-	WHERE a.rec_status = 1`
+	WHERE a.rec_status = 1 ORDER BY a.alloc_security_key DESC`
 
 	// log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
