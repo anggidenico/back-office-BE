@@ -238,8 +238,8 @@ func ProductFeeCreateRequest(paramsFee map[string]string, feeItems []FeeItemData
 		recCreatedBy := paramsFee["rec_created_by"]
 		recAction := paramsFee["rec_action"]
 
-		if _, ok := paramsFee["product_fee_key"]; ok {
-			productFeeKey = paramsFee["product_fee_key"]
+		if _, ok := paramsFee["fee_key"]; ok {
+			productFeeKey = paramsFee["fee_key"]
 		}
 
 		queryItem += `('` + productFeeKey + `','` + seqNo + `','` + rowMax + `','` + principleLimit + `','` + feeValue + `','` + itemNotes + `','` + recStatus + `','` + recCreatedDate + `','` + recCreatedBy + `','` + recAction + `'),`
