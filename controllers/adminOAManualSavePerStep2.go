@@ -6,6 +6,7 @@ import (
 	"mf-bo-api/config"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
+	"mime/multipart"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -119,6 +120,11 @@ func SaveStep6(c echo.Context) (error, int64) {
 	getParamsData := models.GetOptionByLookupGroupKey("105")
 	if len(getParamsData) > 0 {
 		for _, data := range getParamsData {
+
+			file_remarks := c.FormValue("file_remarks_" + strconv.FormatUint(data.Key, 10))
+
+			var file_upload *multipart.FileHeader
+
 			file_upload, err := c.FormFile("file_upload_" + strconv.FormatUint(data.Key, 10))
 			if err != nil {
 				return err, OaRequestKey
@@ -149,8 +155,20 @@ func SaveStep6(c echo.Context) (error, int64) {
 				createFile["file_ext"] = extension
 				createFile["file_path"] = "/images/oa_manual/" + oa_request_key + "/" + filename + extension
 				createFile["file_url"] = config.ImageUrl + "/images/oa_manual/" + oa_request_key + "/" + filename + extension
+				createFile["file_notes"] = file_remarks
 
-				err, _ = models.CreateOrUpdateFileOaManual(paramsOaRequest, createFile)
+				updatePersonalData := make(map[string]string)
+				if data.Key == 579 {
+					updatePersonalData["pic_ktp"] = filename + extension
+				}
+				if data.Key == 580 {
+					updatePersonalData["pic_selfie_ktp"] = filename + extension
+				}
+				if data.Key == 481 {
+					updatePersonalData["rec_image1"] = filename + extension
+				}
+
+				err, _ = models.CreateOrUpdateFileOaManual(paramsOaRequest, updatePersonalData, createFile)
 				if err != nil {
 					return err, OaRequestKey
 				}

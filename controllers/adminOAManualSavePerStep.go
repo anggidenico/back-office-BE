@@ -410,13 +410,13 @@ func SaveStep3(c echo.Context) (error, int64) {
 
 	pep_name := c.FormValue("pep_name")
 	if pep_name == "" {
-		return fmt.Errorf("Missing: pep_name"), OaRequestKey
+		// return fmt.Errorf("Missing: pep_name"), OaRequestKey
 	}
 	paramsPersonalData["pep_name"] = pep_name
 
 	pep_position := c.FormValue("pep_position")
 	if pep_position == "" {
-		return fmt.Errorf("Missing: pep_position"), OaRequestKey
+		// return fmt.Errorf("Missing: pep_position"), OaRequestKey
 	}
 	paramsPersonalData["pep_position"] = pep_position
 

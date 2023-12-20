@@ -34,7 +34,7 @@ func GetProductInfoKeyModels(c *[]ProductInfoKey) (int, error) {
 WHERE rec_status = 1
 ORDER BY product_info_key ASC`
 
-	log.Println(query)
+	// log.Println(query)
 
 	err := db.Db.Select(c, query)
 	if err != nil {
@@ -62,7 +62,7 @@ func GetProductInfoValueModels(c *[]ProductInfoValue) (int, error) {
 WHERE a.rec_status = 1
 ORDER BY a.product_info_value_key DESC`
 
-	log.Println(query)
+	// log.Println(query)
 
 	err := db.Db.Select(c, query)
 	if err != nil {
