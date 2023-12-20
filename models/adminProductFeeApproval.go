@@ -201,8 +201,7 @@ func ProductFeeCreateRequest(paramsFee map[string]string, feeItems []FeeItemData
 		fields += key + ", "
 		values += "?, "
 		bindvars = append(bindvars, value)
-		log.Println(key)
-
+		// log.Println(key)
 	}
 	fields = fields[:(len(fields) - 2)]
 	values = values[:(len(values) - 2)]
