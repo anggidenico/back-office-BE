@@ -171,7 +171,7 @@ func GetProductFeeApprovalDetail(rec_pk string) ProductFeeUpdateDetails {
 		result.Existing.DaysInyearName = &days_inyear
 
 		qFeeItem2 := `SELECT item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item_request WHERE product_fee_key = ` + strconv.FormatUint(*result.Existing.FeeKey, 10)
-		// log.Println(qFeeItem)
+		log.Println(qFeeItem)
 		// rows, err := tx.Query(qFeeItem)
 		var FeeItems []ProductFeeItemRequest
 		err = db.Db.Select(&FeeItems, qFeeItem2)
@@ -238,6 +238,10 @@ func ProductFeeCreateRequest(paramsFee map[string]string, feeItems []FeeItemData
 		recCreatedDate := paramsFee["rec_created_date"]
 		recCreatedBy := paramsFee["rec_created_by"]
 		recAction := paramsFee["rec_action"]
+
+		if _, ok := paramsFee["product_fee_key"]; ok {
+			productFeeKey = paramsFee["product_fee_key"]
+		}
 
 		queryItem += `('` + productFeeKey + `','` + seqNo + `','` + rowMax + `','` + principleLimit + `','` + feeValue + `','` + itemNotes + `','` + recStatus + `','` + recCreatedDate + `','` + recCreatedBy + `','` + recAction + `'),`
 	}

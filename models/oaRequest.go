@@ -402,7 +402,7 @@ func GetAllOaRequestIndividu(c *[]OaRequest, limit uint64, offset uint64, nolimi
 	query := `SELECT oa_request.*
 			  FROM oa_request AS oa_request 
 			  INNER JOIN oa_personal_data AS pd ON pd.oa_request_key = oa_request.oa_request_key AND pd.rec_status = 1 
-			  WHERE oa_request.rec_created_by != "` + userID + `"`
+			  WHERE oa_request.rec_created_by != "` + userID + `" AND oa_request.oa_entry_end != NULL`
 	var present bool
 	var whereClause []string
 	var condition string
