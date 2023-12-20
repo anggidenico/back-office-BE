@@ -170,8 +170,8 @@ func GetProductFeeApprovalDetail(rec_pk string) ProductFeeUpdateDetails {
 		days_inyear := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Existing.DaysInyear)
 		result.Existing.DaysInyearName = &days_inyear
 
-		qFeeItem2 := `SELECT item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item_request WHERE product_fee_key = ` + strconv.FormatUint(*result.Existing.FeeKey, 10)
-		log.Println(qFeeItem)
+		qFeeItem2 := `SELECT item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item WHERE product_fee_key = ` + strconv.FormatUint(*result.Existing.FeeKey, 10)
+		// log.Println(qFeeItem)
 		// rows, err := tx.Query(qFeeItem)
 		var FeeItems []ProductFeeItemRequest
 		err = db.Db.Select(&FeeItems, qFeeItem2)
