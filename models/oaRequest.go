@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -388,7 +389,7 @@ func GetAllOaRequest(c *[]OaRequest, limit uint64, offset uint64, nolimit bool, 
 	}
 
 	// Main query
-	// log.Println("========== QUERY GET OA REQUEST ========== >>>", query)
+	log.Println("OA REQUEST LIST:", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
