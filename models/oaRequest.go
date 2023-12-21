@@ -446,7 +446,7 @@ func GetAllOaRequestIndividu(c *[]OaRequest, limit uint64, offset uint64, nolimi
 	}
 
 	// Main query
-	// log.Println("GetAllOaRequestIndividu", query)
+	log.Println("Get All Oa Request Individu:", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
