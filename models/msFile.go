@@ -260,6 +260,7 @@ type MsFileModels struct {
 	FileNotes       *string `db:"file_notes" json:"file_notes"`
 	FileObj         *string `db:"file_obj" json:"file_obj"`
 	RecStatus       uint64  `db:"rec_status" json:"rec_status"`
+	RecOrder        *uint8  `db:"rec_order" json:"rec_order"`
 	RecCreatedDate  *string `db:"rec_created_date" json:"rec_created_date"`
 	RecCreatedBy    *string `db:"rec_created_by" json:"rec_created_by"`
 	RecModifiedDate *string `db:"rec_modified_date" json:"rec_modified_date"`
