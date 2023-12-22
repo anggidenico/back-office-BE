@@ -132,14 +132,14 @@ func SaveStep6(c echo.Context) (error, int64) {
 			}
 
 			if file_upload != nil {
-				err = os.MkdirAll(config.BasePathImage+"/images/oa_manual/"+oa_request_key, 0755)
+				err = os.MkdirAll(config.BasePathImage+File_Directory_OaRequest+oa_request_key, 0755)
 				if err != nil {
 					return err, OaRequestKey
 				}
 
 				extension := filepath.Ext(file_upload.Filename)
-				filename := strings.ReplaceAll(data.Value, " ", "_") + "_" + lib.RandStringBytesMaskImprSrc(26)
-				targetDir := config.BasePathImage + "/images/oa_manual/" + oa_request_key + "/" + filename + extension
+				filename := strings.ReplaceAll(data.Value, " ", "_") + "_" + lib.RandStringBytesMaskImprSrc(5)
+				targetDir := config.BasePathImage + File_Directory_OaRequest + oa_request_key + "/" + filename + extension
 				err = lib.UploadImage(file_upload, targetDir)
 				if err != nil {
 					return err, OaRequestKey
@@ -154,9 +154,11 @@ func SaveStep6(c echo.Context) (error, int64) {
 				createFile["rec_created_by"] = lib.UserIDStr
 				createFile["file_name"] = filename
 				createFile["file_ext"] = extension
-				createFile["file_path"] = "/images/oa_manual/" + oa_request_key + "/" + filename + extension
-				createFile["file_url"] = config.ImageUrl + "/images/oa_manual/" + oa_request_key + "/" + filename + extension
+				createFile["file_path"] = File_Directory_OaRequest + oa_request_key + "/" + filename + extension
+				createFile["file_url"] = config.ImageUrl + File_Directory_OaRequest + oa_request_key + "/" + filename + extension
 				createFile["file_notes"] = file_remarks
+				createFile["rec_attribute_id1"] = strconv.FormatUint(data.Key, 10)
+				createFile["rec_attribute_id2"] = data.Value
 
 				updatePersonalData := make(map[string]string)
 				if data.Key == 579 {

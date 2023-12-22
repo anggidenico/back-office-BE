@@ -147,8 +147,16 @@ type OaRequestDetailResponse struct {
 	// PositionOther              *string              `json:"position_other,omitempty"`
 	// RelationOccupationOther    *string              `json:"relation_occupation_other,omitempty"`
 	// RelationBusinessFieldOther *string              `json:"relation_business_fields_other,omitempty"`
-	SiteReferer *string `json:"site_referer"`
-	OaSource    *string `json:"oa_source"`
+	SiteReferer *string   `json:"site_referer"`
+	OaSource    *string   `json:"oa_source"`
+	OaFiles     []OaFiles `json:"oa_files"`
+}
+
+type OaFiles struct {
+	FileName    string  `json:"file_name"`
+	FileUrl     string  `json:"file_url"`
+	FileRemarks *string `json:"file_remarks"`
+	FileType    *string `json:"file_type"`
 }
 
 type Address struct {

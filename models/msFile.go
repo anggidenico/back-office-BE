@@ -249,14 +249,28 @@ func UpdateMsFileWithIn(params map[string]string, value []string, field string) 
 }
 
 type MsFileModels struct {
-	FileKey        uint64 `db:"file_key" json:"file_key"`
-	FilePath       string `db:"file_path" json:"file_path"`
-	RecCreatedDate string `db:"rec_created_date" json:"rec_created_date"`
+	FileKey         uint64  `db:"file_key" json:"file_key"`
+	RefFKKey        uint64  `db:"ref_fk_key" json:"ref_fk_key"`
+	RefFkDomain     string  `db:"ref_fk_domain" json:"ref_fk_domain"`
+	FileName        *string `db:"file_name" json:"file_name"`
+	FileExt         *string `db:"file_ext" json:"file_ext"`
+	BlobMode        *string `db:"blob_mode" json:"blob_mode"`
+	FilePath        *string `db:"file_path" json:"file_path"`
+	FileUrl         *string `db:"file_url" json:"file_url"`
+	FileNotes       *string `db:"file_notes" json:"file_notes"`
+	FileObj         *string `db:"file_obj" json:"file_obj"`
+	RecStatus       uint64  `db:"rec_status" json:"rec_status"`
+	RecCreatedDate  *string `db:"rec_created_date" json:"rec_created_date"`
+	RecCreatedBy    *string `db:"rec_created_by" json:"rec_created_by"`
+	RecModifiedDate *string `db:"rec_modified_date" json:"rec_modified_date"`
+	RecModifiedBy   *string `db:"rec_modified_by" json:"rec_modified_by"`
+	RecAttributeId1 *string `db:"rec_attribute_id1" json:"rec_attribute_id1"`
+	RecAttributeId2 *string `db:"rec_attribute_id2" json:"rec_attribute_id2"`
 }
 
 func GetMsFileDataWithCondition(c *[]MsFileModels, params map[string]string) (int, error) {
 
-	query := `SELECT t1.file_key, t1.file_path, t1.rec_created_date FROM ms_file t1 WHERE t1.rec_status = 1`
+	query := `SELECT * FROM ms_file t1 WHERE t1.rec_status = 1`
 
 	if valueMap, ok := params["ref_fk_key"]; ok {
 		query += ` AND t1.ref_fk_key = ` + valueMap
