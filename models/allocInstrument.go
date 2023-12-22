@@ -167,7 +167,7 @@ func GetAllocInstrumentModels(c *[]AllocInstrument) (int, error) {
 	JOIN ms_product b ON a.product_key = b.product_key
 	JOIN ffs_periode c ON a.periode_key = c.periode_key
 	JOIN ms_instrument d ON a.instrument_key = d.instrument_key
-	WHERE a.rec_status = 1 ORDER BY a.alloc_instrument_key DESC` //order by
+	WHERE a.rec_status = 1 ORDER BY rec_order DESC` //order by
 
 	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)

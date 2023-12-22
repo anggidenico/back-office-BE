@@ -37,7 +37,7 @@ func GetFfsPeriodeModels(c *[]FfsPeriode) (int, error) {
 	date_opened,
 	date_closed 
 	FROM ffs_periode 
-	WHERE rec_status = 1 order by rec_order`
+	WHERE rec_status = 1 order by rec_order DESC`
 
 	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
