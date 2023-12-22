@@ -251,29 +251,10 @@ func CountAdminGetCurrency(c *CountData, params map[string]string, searchLike st
 }
 
 func CreateMsCurrency(params map[string]string) (int, error) {
-	query := "INSERT INTO ms_currency"
-	// Get params
-	var fields, values string
-	var bindvars []interface{}
-	for key, value := range params {
-		fields += key + ", "
-		values += "?, "
-		bindvars = append(bindvars, value)
-	}
-	fields = fields[:(len(fields) - 2)]
-	values = values[:(len(values) - 2)]
+	query := GenerateInsertQuery("ms_currency", params)
 
-	// Combine params to build query
-	query += "(" + fields + ") VALUES(" + values + ")"
-	// log.Println("==========  ==========>>>", query)
-
-	tx, err := db.Db.Begin()
-	if err != nil {
-		// log.Error(err)
-		return http.StatusBadGateway, err
-	}
-	_, err = tx.Exec(query, bindvars...)
-	tx.Commit()
+	// log.Println(query)
+	_, err := db.Db.Exec(query)
 	if err != nil {
 		// log.Error(err)
 		return http.StatusBadRequest, err
