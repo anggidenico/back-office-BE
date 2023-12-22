@@ -1214,10 +1214,10 @@ func GetTransactionDetail(c echo.Context) error {
 	status, err = models.GetMsFileDataWithCondition(&fls, prmGetFile)
 	if len(fls) > 0 {
 		for _, fl := range fls {
-			aa := config.ImageUrl + fl.FilePath
+			aa := config.ImageUrl + *fl.FilePath
 			responseData.UrlUpload = append(responseData.UrlUpload, &aa)
 		}
-		responseData.FileUploadDate = &fls[0].RecCreatedDate
+		responseData.FileUploadDate = &*fls[0].RecCreatedDate
 	}
 
 	var response lib.Response
