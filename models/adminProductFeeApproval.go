@@ -170,7 +170,7 @@ func GetProductFeeApprovalDetail(rec_pk string) ProductFeeUpdateDetails {
 		days_inyear := GetForeignKeyValue("gen_lookup", "lkp_name", "lookup_key", *result.Existing.DaysInyear)
 		result.Existing.DaysInyearName = &days_inyear
 
-		qFeeItem2 := `SELECT item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item_request WHERE product_fee_key = ` + strconv.FormatUint(*result.Existing.FeeKey, 10)
+		qFeeItem2 := `SELECT item_seqno, row_max, principle_limit, fee_value, item_notes FROM ms_product_fee_item WHERE product_fee_key = ` + strconv.FormatUint(*result.Existing.FeeKey, 10)
 		// log.Println(qFeeItem)
 		// rows, err := tx.Query(qFeeItem)
 		var FeeItems []ProductFeeItemRequest
@@ -201,8 +201,7 @@ func ProductFeeCreateRequest(paramsFee map[string]string, feeItems []FeeItemData
 		fields += key + ", "
 		values += "?, "
 		bindvars = append(bindvars, value)
-		log.Println(key)
-
+		// log.Println(key)
 	}
 	fields = fields[:(len(fields) - 2)]
 	values = values[:(len(values) - 2)]
@@ -238,6 +237,10 @@ func ProductFeeCreateRequest(paramsFee map[string]string, feeItems []FeeItemData
 		recCreatedDate := paramsFee["rec_created_date"]
 		recCreatedBy := paramsFee["rec_created_by"]
 		recAction := paramsFee["rec_action"]
+
+		if _, ok := paramsFee["fee_key"]; ok {
+			productFeeKey = paramsFee["fee_key"]
+		}
 
 		queryItem += `('` + productFeeKey + `','` + seqNo + `','` + rowMax + `','` + principleLimit + `','` + feeValue + `','` + itemNotes + `','` + recStatus + `','` + recCreatedDate + `','` + recCreatedBy + `','` + recAction + `'),`
 	}

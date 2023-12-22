@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"mf-bo-api/db"
 	"net/http"
 	"strconv"
@@ -388,7 +389,7 @@ func GetAllOaRequest(c *[]OaRequest, limit uint64, offset uint64, nolimit bool, 
 	}
 
 	// Main query
-	// log.Println("========== QUERY GET OA REQUEST ========== >>>", query)
+	log.Println("OA REQUEST LIST:", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
@@ -399,10 +400,7 @@ func GetAllOaRequest(c *[]OaRequest, limit uint64, offset uint64, nolimit bool, 
 }
 
 func GetAllOaRequestIndividu(c *[]OaRequest, limit uint64, offset uint64, nolimit bool, params map[string]string, userID string) (int, error) {
-	query := `SELECT oa_request.*
-			  FROM oa_request AS oa_request 
-			  INNER JOIN oa_personal_data AS pd ON pd.oa_request_key = oa_request.oa_request_key AND pd.rec_status = 1 
-			  WHERE oa_request.rec_created_by != "` + userID + `"`
+	query := `SELECT oa_request.* FROM oa_request AS oa_request INNER JOIN oa_personal_data AS pd ON pd.oa_request_key = oa_request.oa_request_key AND pd.rec_status = 1 WHERE oa_request.rec_created_by != "` + userID + `" AND oa_request.oa_entry_end IS NOT NULL`
 	var present bool
 	var whereClause []string
 	var condition string
@@ -448,7 +446,7 @@ func GetAllOaRequestIndividu(c *[]OaRequest, limit uint64, offset uint64, nolimi
 	}
 
 	// Main query
-	// log.Println("GetAllOaRequestIndividu", query)
+	log.Println("Get All Oa Request Individu:", query)
 	err := db.Db.Select(c, query)
 	if err != nil {
 		// log.Println(err)
