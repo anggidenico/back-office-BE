@@ -198,9 +198,9 @@ func UpdateBenchmarkProdController(c echo.Context) error {
 	if benchmarkKey == "" {
 		return lib.CustomError(http.StatusBadRequest, "Missing benchmark_key", "Missing benchmark_key")
 	}
-	benchmarkRatio, err := strconv.ParseInt(c.FormValue("benchmark_ratio"), 10, 64)
-	if err != nil {
-		return lib.CustomError(http.StatusBadRequest, "Invalid benchmark_ratio", "Invalid benchmark_ratio")
+	benchmarkRatio := c.FormValue("benchmark_ratio")
+	if benchmarkRatio == "" {
+		return lib.CustomError(http.StatusBadRequest, "Missing benchmark_ratio", "Missing benchmark_ratio")
 	}
 	benchmarkRemarks := c.FormValue("benchmark_remarks")
 	if benchmarkRemarks == "" {
