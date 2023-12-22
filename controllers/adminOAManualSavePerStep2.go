@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"mf-bo-api/config"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
@@ -118,15 +119,17 @@ func SaveStep6(c echo.Context) (error, int64) {
 	}
 	paramsOaRequest["oa_request_key"] = oa_request_key
 
+	var file_upload *multipart.FileHeader
+	log.Println(file_upload)
+
 	getParamsData := models.GetOptionByLookupGroupKey("105")
 	if len(getParamsData) > 0 {
 		for _, data := range getParamsData {
 
 			file_remarks := c.FormValue("file_remarks_" + strconv.FormatUint(data.Key, 10))
 
-			var file_upload *multipart.FileHeader
-
 			file_upload, err := c.FormFile("file_upload_" + strconv.FormatUint(data.Key, 10))
+			log.Println("file_upload_" + strconv.FormatUint(data.Key, 10))
 			if err != nil {
 				return err, OaRequestKey
 			}
