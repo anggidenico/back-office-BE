@@ -38,30 +38,14 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	params["sec_parent_key"] = secParentKey
 
 	secCategory := c.FormValue("securities_category")
-	if secCategory != "" {
-		value, err := strconv.Atoi(secCategory)
-		if err != nil {
-			return lib.CustomError(value, "securities_category must be number", "securities_category must be number")
-		}
-	}
+
 	params["securities_category"] = secCategory
 
 	secType := c.FormValue("security_type")
-	if secType != "" {
-		value, err := strconv.Atoi(secType)
-		if err != nil {
-			return lib.CustomError(value, "security_type must be number", "security_type must be number")
-		}
-	}
+
 	params["security_type"] = secType
 
 	currencyKey := c.FormValue("currency_key")
-	if currencyKey != "" {
-		value, err := strconv.Atoi(currencyKey)
-		if err != nil {
-			return lib.CustomError(value, "currency_key must be number", "currency_key must be number")
-		}
-	}
 	params["currency_key"] = currencyKey
 
 	isinCode := c.FormValue("isin_code")
@@ -95,21 +79,11 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	params["sec_tenor_month"] = secTenorMonth
 
 	securityStatus := c.FormValue("security_status")
-	if securityStatus != "" {
-		value, err := strconv.Atoi(securityStatus)
-		if err != nil {
-			return lib.CustomError(value, "security_status must be number", "security_status must be number")
-		}
-	}
+
 	params["security_status"] = securityStatus
 
 	secShares := c.FormValue("sec_shares")
-	if secShares != "" {
-		value, err := strconv.Atoi(secShares)
-		if err != nil {
-			return lib.CustomError(value, "sec_shares must be number", "sec_shares must be number")
-		}
-	}
+
 	params["sec_shares"] = secShares
 
 	flagSyariahStr := c.FormValue("flag_syariah")
@@ -147,39 +121,19 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	}
 
 	stockMarket := c.FormValue("stock_market")
-	if stockMarket != "" {
-		value, err := strconv.Atoi(stockMarket)
-		if err != nil {
-			return lib.CustomError(value, "stock_market must be number", "stock_market must be number")
-		}
-	}
+
 	params["stock_market"] = stockMarket
 
 	secPaRates := c.FormValue("sec_pa_rates")
-	if secPaRates != "" {
-		value, err := strconv.Atoi(secPaRates)
-		if err != nil {
-			return lib.CustomError(value, "sec_pa_rates must be number", "sec_pa_rates must be number")
-		}
-	}
+
 	params["sec_pa_rates"] = secPaRates
 
 	secPrincipleValue := c.FormValue("sec_principle_value")
-	if secPrincipleValue != "" {
-		value, err := strconv.Atoi(secPrincipleValue)
-		if err != nil {
-			return lib.CustomError(value, "sec_principle_value must be number", "sec_principle_value must be number")
-		}
-	}
+
 	params["sec_principle_value"] = secPrincipleValue
 
 	taxRates := c.FormValue("tax_rates")
-	if taxRates != "" {
-		value, err := strconv.Atoi(taxRates)
-		if err != nil {
-			return lib.CustomError(value, "tax_rates must be number", "tax_rates must be number")
-		}
-	}
+
 	params["tax_rates"] = taxRates
 
 	participantKey := c.FormValue("participant_key")
@@ -192,12 +146,7 @@ func CreateMsSecuritiesController(c echo.Context) error {
 	params["participant_key"] = participantKey
 
 	couponType := c.FormValue("coupon_type")
-	if couponType != "" {
-		value, err := strconv.Atoi(couponType)
-		if err != nil {
-			return lib.CustomError(value, "coupon_type must be number", "coupon_type must be number")
-		}
-	}
+
 	params["coupon_type"] = couponType
 
 	recOrder := c.FormValue("rec_order")
@@ -423,41 +372,19 @@ func UpdateMsSecuritiesController(c echo.Context) error {
 		if err != nil {
 			return lib.CustomError(value, "sec_parent_key must be number", "sec_parent_key must be number")
 		}
-		params["sec_parent_key"] = secParentKey
-	} else {
-		params["sec_parent_key"] = nil
 	}
+	params["sec_parent_key"] = secParentKey
 
 	secCategory := c.FormValue("securities_category")
-	if secCategory != "" {
-		value, err := strconv.Atoi(secCategory)
-		if err != nil {
-			return lib.CustomError(value, "securities_category must be number", "securities_category must be number")
-		}
-		params["securities_category"] = secCategory
-	} else {
-		params["securities_category"] = nil
-	}
+
+	params["securities_category"] = secCategory
+
 	secType := c.FormValue("security_type")
-	if secType != "" {
-		value, err := strconv.Atoi(secType)
-		if err != nil {
-			return lib.CustomError(value, "security_type must be number", "security_type must be number")
-		}
-		params["security_type"] = secType
-	} else {
-		params["security_type"] = nil
-	}
+
+	params["security_type"] = secType
+
 	currencyKey := c.FormValue("currency_key")
-	if currencyKey != "" {
-		value, err := strconv.Atoi(currencyKey)
-		if err != nil {
-			return lib.CustomError(value, "currency_key must be number", "currency_key must be number")
-		}
-		params["currency_key"] = currencyKey
-	} else {
-		params["currency_key"] = nil
-	}
+	params["currency_key"] = currencyKey
 
 	isinCode := c.FormValue("isin_code")
 	params["isin_code"] = isinCode
@@ -468,116 +395,84 @@ func UpdateMsSecuritiesController(c echo.Context) error {
 		if err != nil {
 			return lib.CustomError(value, "sector_key must be number", "sector_key must be number")
 		}
-		params["sector_key"] = sectorKey
-	} else {
-		params["sector_key"] = nil
 	}
+	params["sector_key"] = sectorKey
+
 	secClassification := c.FormValue("sec_classification")
 	if secClassification != "" {
 		value, err := strconv.Atoi(secClassification)
 		if err != nil {
 			return lib.CustomError(value, "sec_classification must be number", "sec_classification must be number")
 		}
-		params["sec_classification"] = secClassification
-	} else {
-		params["sec_classification"] = nil
 	}
+	params["sec_classification"] = secClassification
+
 	secTenorMonth := c.FormValue("sec_tenor_month")
 	if secTenorMonth != "" {
 		value, err := strconv.Atoi(secTenorMonth)
 		if err != nil {
 			return lib.CustomError(value, "sec_tenor_month must be number", "sec_tenor_month must be number")
 		}
-		params["sec_tenor_month"] = secTenorMonth
-	} else {
-		params["sec_tenor_month"] = nil
 	}
+	params["sec_tenor_month"] = secTenorMonth
 
 	securityStatus := c.FormValue("security_status")
-	if securityStatus != "" {
-		value, err := strconv.Atoi(securityStatus)
-		if err != nil {
-			return lib.CustomError(value, "security_status must be number", "security_status must be number")
-		}
-		params["security_status"] = securityStatus
-	} else {
-		params["security_status"] = nil
-	}
+
+	params["security_status"] = securityStatus
 
 	secShares := c.FormValue("sec_shares")
-	if secShares != "" {
-		value, err := strconv.Atoi(secShares)
-		if err != nil {
-			return lib.CustomError(value, "sec_shares must be number", "sec_shares must be number")
-		}
-		params["sec_shares"] = secShares
-	} else {
-		params["sec_shares"] = nil
-	}
+
+	params["sec_shares"] = secShares
 
 	flagSyariahStr := c.FormValue("flag_syariah")
 	flagSyariah, err := strconv.ParseBool(flagSyariahStr)
 	if err != nil {
 		return lib.CustomError(http.StatusBadRequest, "Invalid value for flag_syariah", err.Error())
 	}
-	params["flag_syariah"] = flagSyariah
+	if flagSyariah == true {
+		params["flag_syariah"] = "1"
+	} else {
+		params["flag_syariah"] = "0"
+
+	}
 
 	flagIsBreakableStr := c.FormValue("flag_is_breakable")
 	flagIsBreakable, err := strconv.ParseBool(flagIsBreakableStr)
 	if err != nil {
 		return lib.CustomError(http.StatusBadRequest, "Invalid value for flag_is_breakable", err.Error())
 	}
-	params["flag_is_breakable"] = flagIsBreakable
+	if flagIsBreakable == true {
+		params["flag_is_breakable"] = "1"
+	} else {
+		params["flag_is_breakable"] = "0"
+	}
 
 	flaghasCouponStr := c.FormValue("flag_has_coupon")
 	flagHasCoupon, err := strconv.ParseBool(flaghasCouponStr)
 	if err != nil {
 		return lib.CustomError(http.StatusBadRequest, "Invalid value for flag_has_coupon", err.Error())
 	}
-	params["flag_has_coupon"] = flagHasCoupon
+	if flagHasCoupon == true {
+		params["flag_has_coupon"] = "1"
+	} else {
+		params["flag_has_coupon"] = "0"
+	}
 
 	stockMarket := c.FormValue("stock_market")
-	if stockMarket != "" {
-		value, err := strconv.Atoi(stockMarket)
-		if err != nil {
-			return lib.CustomError(value, "stock_market must be number", "stock_market must be number")
-		}
-		params["stock_market"] = stockMarket
-	} else {
-		params["stock_market"] = nil
-	}
+
+	params["stock_market"] = stockMarket
 
 	secPaRates := c.FormValue("sec_pa_rates")
-	if secPaRates != "" {
-		value, err := strconv.Atoi(secPaRates)
-		if err != nil {
-			return lib.CustomError(value, "sec_pa_rates must be number", "sec_pa_rates must be number")
-		}
-		params["sec_pa_rates"] = secPaRates
-	} else {
-		params["sec_pa_rates"] = nil
-	}
+
+	params["sec_pa_rates"] = secPaRates
+
 	secPrincipleValue := c.FormValue("sec_principle_value")
-	if secPrincipleValue != "" {
-		value, err := strconv.Atoi(secPrincipleValue)
-		if err != nil {
-			return lib.CustomError(value, "sec_principle_value must be number", "sec_principle_value must be number")
-		}
-		params["sec_principle_value"] = secPrincipleValue
-	} else {
-		params["sec_principle_value"] = nil
-	}
+
+	params["sec_principle_value"] = secPrincipleValue
 
 	taxRates := c.FormValue("tax_rates")
-	if taxRates != "" {
-		value, err := strconv.Atoi(taxRates)
-		if err != nil {
-			return lib.CustomError(value, "tax_rates must be number", "tax_rates must be number")
-		}
-		params["tax_rates"] = taxRates
-	} else {
-		params["tax_rates"] = nil
-	}
+
+	params["tax_rates"] = taxRates
 
 	participantKey := c.FormValue("participant_key")
 	if participantKey != "" {
@@ -585,35 +480,24 @@ func UpdateMsSecuritiesController(c echo.Context) error {
 		if err != nil {
 			return lib.CustomError(value, "participant_key must be number", "participant_key must be number")
 		}
-		params["participant_key"] = participantKey
-	} else {
-		params["participant_key"] = nil
 	}
+	params["participant_key"] = participantKey
 
 	couponType := c.FormValue("coupon_type")
-	if couponType != "" {
-		value, err := strconv.Atoi(couponType)
-		if err != nil {
-			return lib.CustomError(value, "coupon_type must be number", "coupon_type must be number")
-		}
-		params["coupon_type"] = couponType
-	} else {
-		params["coupon_type"] = nil
-	}
+
+	params["coupon_type"] = couponType
 
 	recOrder := c.FormValue("rec_order")
 	if recOrder != "" {
 		if len(recOrder) > 11 {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be exactly 11 characters", "rec_order be exactly 11 characters")
 		}
-		value, err := strconv.Atoi(recOrder)
+		_, err := strconv.Atoi(recOrder)
 		if err != nil {
 			return lib.CustomError(http.StatusBadRequest, "rec_order should be a number", "rec_order should be a number")
 		}
-		params["rec_order"] = strconv.Itoa(value)
-	} else {
-		params["rec_order"] = "0"
 	}
+	params["rec_order"] = recOrder
 
 	today := time.Now()
 	pastDue := today.AddDate(1, 0, 0)
