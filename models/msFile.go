@@ -267,6 +267,7 @@ type MsFileModels struct {
 	RecModifiedBy   *string `db:"rec_modified_by" json:"rec_modified_by"`
 	RecAttributeId1 *string `db:"rec_attribute_id1" json:"rec_attribute_id1"`
 	RecAttributeId2 *string `db:"rec_attribute_id2" json:"rec_attribute_id2"`
+	RecAttributeId3 *string `db:"rec_attribute_id3" json:"rec_attribute_id3"`
 }
 
 func GetMsFileDataWithCondition(c *[]MsFileModels, params map[string]string) (int, error) {
