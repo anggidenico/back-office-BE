@@ -310,7 +310,7 @@ func AdminCreateMsCurrency(c echo.Context) error {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
 			// log.Error("Wrong input for parameter: rec_order")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
+			// return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
 	}
@@ -395,7 +395,7 @@ func AdminUpdateMsCurrency(c echo.Context) error {
 		n, err := strconv.ParseUint(recOrder, 10, 64)
 		if err != nil || n == 0 {
 			// log.Error("Wrong input for parameter: rec_order")
-			return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
+			// return lib.CustomError(http.StatusBadRequest, "Wrong input for parameter: rec_order", "Wrong input for parameter: rec_order")
 		}
 		params["rec_order"] = recOrder
 	}

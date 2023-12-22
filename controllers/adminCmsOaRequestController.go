@@ -20,6 +20,8 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+var File_Directory_OaRequest = "/images/oa_request/"
+
 func initAuthCs() error {
 	// log.Println("initAuthCs")
 	var roleKeyCs uint64
@@ -643,7 +645,7 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 		responseData.PlaceBirth = oapersonal.PlaceBirth
 		responseData.PhoneHome = oapersonal.PhoneHome
 
-		dir := config.ImageUrl + "/images/user/" + strconv.FormatUint(*oareq.UserLoginKey, 10) + "/"
+		dir := config.ImageUrl + File_Directory_OaRequest + strconv.FormatUint(oareq.OaRequestKey, 10) + "/"
 
 		if oapersonal.PicKtp != nil && *oapersonal.PicKtp != "" {
 			path := dir + *oapersonal.PicKtp
@@ -674,6 +676,26 @@ func ResultOaRequestData(keyStr string, c echo.Context, isHistory bool) error {
 		responseData.RelationFullName = oapersonal.RelationFullName
 		responseData.PepName = oapersonal.PepName
 		responseData.PepPosition = oapersonal.PepPosition
+
+		var getFiles []models.MsFileModels
+		prmGetFile := make(map[string]string)
+		prmGetFile["ref_fk_domain"] = "oa_request"
+		prmGetFile["ref_fk_key"] = strconv.FormatUint(oareq.OaRequestKey, 10)
+		_, err = models.GetMsFileDataWithCondition(&getFiles, prmGetFile)
+		if err != nil {
+			return lib.CustomError(http.StatusNotFound, err.Error(), err.Error())
+		}
+
+		if len(getFiles) > 0 {
+			for _, data := range getFiles {
+				var files models.OaFiles
+				files.FileName = *data.FileName
+				files.FileRemarks = data.FileNotes
+				files.FileType = data.RecAttributeId2
+				files.FileUrl = *data.FileUrl
+				responseData.OaFiles = append(responseData.OaFiles, files)
+			}
+		}
 
 		//mapping gen lookup
 		var personalDataLookupIds []string
