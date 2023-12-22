@@ -46,7 +46,7 @@ func GetBenchmarkModels(c *[]Benchmark) (int, error) {
 	a.rec_attribute_id3
 	FROM ffs_benchmark a 
 	JOIN ms_fund_type b 
-	ON a.fund_type_key = b.fund_type_key WHERE a.rec_status = 1 ORDER BY a.benchmark_key DESC` //order by
+	ON a.fund_type_key = b.fund_type_key WHERE a.rec_status = 1 ORDER BY a.rec_order ASC` //order by
 
 	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)

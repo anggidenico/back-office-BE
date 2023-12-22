@@ -289,7 +289,7 @@ func GetPriceListFilterModels(priceLists *[]PriceList, startDate string, endDate
 		query += " AND a.benchmark_key=?"
 	}
 
-	query += " ORDER BY a.price_key DESC"
+	query += " ORDER BY a.rec_order ASC"
 
 	var err error
 	if benchmarkKey != "" {

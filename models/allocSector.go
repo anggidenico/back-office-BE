@@ -48,7 +48,7 @@ func GetSectorSecuModels(c *[]SectorKey) (int, error) {
 	sector_name
 	FROM ms_securities_sector
 	WHERE rec_status =1 
-	ORDER BY rec_created_date DESC`
+	ORDER BY rec_order ASC`
 	// log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
 	if err != nil {

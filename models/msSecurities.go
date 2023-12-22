@@ -235,7 +235,7 @@ LEFT JOIN gen_lookup h ON a.stock_market = h.lookup_key
 LEFT JOIN ms_participant i ON a.participant_key = i.participant_key
 LEFT JOIN gen_lookup j ON a.coupon_type = j.lookup_key
 WHERE a.rec_status = 1
-ORDER BY a.sec_key DESC;`
+ORDER BY a.rec_order ASC;`
 
 	// log.Println(query)
 

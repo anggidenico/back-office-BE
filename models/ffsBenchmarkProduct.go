@@ -50,7 +50,7 @@ func GetBenchmarkProductModels(c *[]BenchmarkProduct) (int, error) {
 	JOIN ffs_benchmark c
 	ON a.benchmark_key = c.benchmark_key
 	WHERE a.rec_status = 1 
-	ORDER BY a.rec_created_date DESC`
+	ORDER BY a.rec_order ASC`
 
 	log.Println("====================>>>", query)
 	err := db.Db.Select(c, query)
