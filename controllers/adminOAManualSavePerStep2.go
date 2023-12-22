@@ -7,7 +7,6 @@ import (
 	"mf-bo-api/config"
 	"mf-bo-api/lib"
 	"mf-bo-api/models"
-	"mime/multipart"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -119,8 +118,8 @@ func SaveStep6(c echo.Context) (error, int64) {
 	}
 	paramsOaRequest["oa_request_key"] = oa_request_key
 
-	var file_upload *multipart.FileHeader
-	log.Println(file_upload)
+	// var file_upload *multipart.FileHeader
+	// log.Println(file_upload)
 
 	getParamsData := models.GetOptionByLookupGroupKey("105")
 	if len(getParamsData) > 0 {
@@ -129,12 +128,14 @@ func SaveStep6(c echo.Context) (error, int64) {
 			file_remarks := c.FormValue("file_remarks_" + strconv.FormatUint(data.Key, 10))
 
 			file_upload, err := c.FormFile("file_upload_" + strconv.FormatUint(data.Key, 10))
-			log.Println("file_upload_" + strconv.FormatUint(data.Key, 10))
 			if err != nil {
 				return err, OaRequestKey
 			}
 
 			if file_upload != nil {
+
+				log.Println("PARAMS file_upload_" + strconv.FormatUint(data.Key, 10) + " ADA")
+
 				err = os.MkdirAll(config.BasePathImage+File_Directory_OaRequest+oa_request_key, 0755)
 				if err != nil {
 					return err, OaRequestKey
@@ -178,6 +179,8 @@ func SaveStep6(c echo.Context) (error, int64) {
 				if err != nil {
 					return err, OaRequestKey
 				}
+			} else {
+				log.Println("PARAMS file_upload_" + strconv.FormatUint(data.Key, 10) + " KOSONG")
 			}
 		}
 	}
