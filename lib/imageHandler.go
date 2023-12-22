@@ -13,20 +13,22 @@ func UploadImage(file *multipart.FileHeader, target string) error {
 	// Open file
 	src, err := file.Open()
 	if err != nil {
+		log.Println(err.Error())
 		return err
 	}
 	defer src.Close()
 
-	log.Println("UPLOAD SOURCE:", src)
+	// log.Println("UPLOAD SOURCE:", src)
 
 	// Prepare destination file
 	dst, err := os.Create(target)
 	if err != nil {
+		log.Println(err.Error())
 		return err
 	}
 	defer dst.Close()
 
-	log.Println("UPLOAD DESTINATION:", dst)
+	// log.Println("UPLOAD DESTINATION:", dst)
 
 	// Copy
 	_, err = io.Copy(dst, src)
