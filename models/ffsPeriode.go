@@ -68,7 +68,7 @@ func GetFfsPeriodeModels(c *[]FfsPeriode) (int, error) {
 	return http.StatusOK, nil
 }
 func GetFfsPeriodeDetailModels(c *FfsPeriodeDetail, PeriodeKey string) (int, error) {
-	query := `
+	query := `SELECT
 	periode_date,
 	periode_name,
 	date_opened,
